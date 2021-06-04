@@ -1,0 +1,10 @@
+rootProject.name = "JSLAll"
+
+include("JSLCore")
+include("JSLExtensions")
+include("JSLExamples")
+//include("JSLLogging")
+
+//project(":JSLCore").projectDir = file("../JSLCore")
+//project(":JSLExtensions").projectDir = file("../JSLExtensions")
+//project(":JSLExamples").projectDir = file("../JSLExamples")

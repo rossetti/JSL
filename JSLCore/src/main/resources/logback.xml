@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2018. Manuel D. Rossetti, rossetti@uark.edu
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
+
+<configuration>
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <Pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/logFile.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>logs/logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 2 days' worth of history capped at 30MB total size -->
+            <maxHistory>2</maxHistory>
+            <totalSizeCap>30MB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="JOOQFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/jooqLog.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>logs/jooqLog.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 2 days' worth of history capped at 30MB total size -->
+            <maxHistory>2</maxHistory>
+            <totalSizeCap>30MB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="JSLDB" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/jslDbLog.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>logs/jslDbLog.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 2 days' worth of history capped at 30MB total size -->
+            <maxHistory>2</maxHistory>
+            <totalSizeCap>30MB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="JSLEXCEL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/jslExcelLog.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>logs/jslExcelLog.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 2 days' worth of history capped at 30MB total size -->
+            <maxHistory>2</maxHistory>
+            <totalSizeCap>30MB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="hikari" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/hikari.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>logs/hikari.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 2 days' worth of history capped at 30MB total size -->
+            <maxHistory>2</maxHistory>
+            <totalSizeCap>30MB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="jslx.dbutilities.dbutil.DatabaseIfc" level="DEBUG" additivity="false">
+        <appender-ref ref="JSLDB" />
+    </logger>
+
+    <logger name="com.zaxxer.hikari" level="OFF" additivity="false">
+        <appender-ref ref="hikari" />
+    </logger>
+
+    <logger name="jslx.excel.ExcelUtil" level="DEBUG" additivity="false">
+        <appender-ref ref="JSLEXCEL" />
+    </logger>
+
+    <logger name="org.jooq" level="WARN" additivity="false">
+        <appender-ref ref="JOOQFILE" />
+    </logger>
+
+    <logger name="org.jooq.tools.LoggerListener" level="DEBUG" additivity="false">
+        <appender-ref ref="JOOQFILE" />
+    </logger>
+
+    <root level="INFO">
+        <!--<appender-ref ref="consoleAppender" />-->
+        <appender-ref ref="FILE"/>
+        <appender-ref ref ="consoleAppender"/>
+    </root>
+</configuration>

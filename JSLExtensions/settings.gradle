@@ -1,0 +1,5 @@
+rootProject.name = "JSLExtensions"
+
+include(":JSLCore")
+
+project(":JSLCore").projectDir = file("../JSLCore")

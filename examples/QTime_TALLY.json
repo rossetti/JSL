@@ -1,0 +1,28 @@
+{
+  "dataName": "QTime",
+  "pathToFile": "/Users/rossetti/Documents/Development/JSL/JSLExtensions/../examples/QTime_TALLY.wdf",
+  "numberOfReplications": 3,
+  "numObsInEachReplication": [
+    9980,
+    10022,
+    10044
+  ],
+  "timeOfLastObsInEachReplication": [
+    9999.232769601,
+    9999.923177939,
+    9998.7663436535
+  ],
+  "minNumObsForReplications": 9980,
+  "endReplicationAverages": [
+    1.8452402438114583,
+    1.6564233109346558,
+    1.7161083296481046
+  ],
+  "timeBtwObsInEachReplication": [
+    1.001992846711437,
+    0.9978860129754359,
+    0.9955818968670737
+  ],
+  "batchSize": 1.0,
+  "statisticType": "TALLY"
+}
