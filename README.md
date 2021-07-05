@@ -21,56 +21,63 @@ Please be aware that the book and javadoc documentation may lag the releases due
 
 ## Gradle and Build Details
 
-The JSL is organized as a multi-project gradle build.  There are three sub-projects:
+The JSL is organized as a multi-project gradle build.  There are two sub-projects:
 
-JSLCore - the main simulation functionality, with only dependency on SL4J
+JSLCore - the main simulation functionality, with a limited number of dependencies
 
 JSLExtensions - an extension of the JSL that adds database, Excel and other functionality that has many open source dependencies
 
+Additional projects are available for illustrating and other work related to the JSL.
+
 JSExamples - a project that has example code that illustrates the JSLCore and JSLExtensions being used.
 
-The current jar files are found [here](https://archiva.uark.edu/repository/jsl/edu/uark/jsl/). This is an archiva maven repository, 
-which you can include in your gradle build via the maven closure. The build is organized as
-three separate projects to allow the JSLCore to have the least amount of dependencies and 
-thus the smallest jar footprint.
+JSLExampleProject - a pre-configured project using gradle that is setup to use the JSLCore and JSLExtensions
 
-```gradle
-repositories {
-    maven {
-        setUrl("https://archiva.uark.edu/repository/jsl")
-    }
-}
-```
+JSLTesting - a separate project that does some very basic testing related to the JSL
+
+JSLKotlin - very preliminary work on porting the JSL to Kotlin
 
 To add the JSL to your gradle build files use the following artifact coordinates:
 
-group = "edu.uark.jsl"
+group = "io.github.rossetti"
 name = "JSLCore"
-version = "R1.0.6"
+version = "R1.0.7"
 
-group = "edu.uark.jsl"
-name = "JSLExamples"
-version = "R1.0.6"
-
-group = "edu.uark.jsl"
+group = "io.github.rossetti"
 name = "JSLExtensions"
-version = "R1.0.6"
+version = "R1.0.7"
 
 Of course, the version numbers may be different for additional releases. As an example, for kotlin DLS:
 
 ```gradle
+plugins {
+    `java-library`
+}
+
+//group = "org.example"
+//version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
 dependencies {
 
-    // to include just JSLCore, uncomment the next line
-//    api(group = "edu.uark.jsl", name = "JSLCore", version = "R1.0.6")
+    // next two lines allows use of JSL libraries within the project
+    // update the release number when new releases become available
+    api(group = "io.github.rossetti", name = "JSLCore", version = "R1.0.7")
+    api(group = "io.github.rossetti", name = "JSLExtensions", version = "R1.0.7")
 
-    // to include JSLExtensions and also JSLCore classes, uncomment the next line
-//    api(group = "edu.uark.jsl", name = "JSLExtensions", version = "R1.0.6")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+}
 
-    // to include JSLExamples, JSLExtensions, and also JSLCore classes, uncomment the next line
-    api(group = "edu.uark.jsl", name = "JSLExamples", version = "R1.0.6")
+tasks.getByName<Test>("test") {
+    useJUnitPlatform()
+}
 
-    testCompile("junit", "junit", "4.12")
+configure<JavaPluginConvention> {
+    sourceCompatibility = JavaVersion.VERSION_11
 }
 ```
 
@@ -84,6 +91,8 @@ the repository.  IntelliJ will recognize the JSL project as a gradle build and c
 
 ## Release Notes
 
-Latest Release: R1.0.6
+Latest Release: R1.0.7
+	The project has been moved to GitHub and now available on maven central.
 
-Release 1.0.6 is not backwards compatible. There are changes to the JSL class that are likely to cause users to need to update their code.
+Latest Release: R1.0.6
+	Release 1.0.6 is not backwards compatible. There are changes to the JSL class that are likely to cause users to need to update their code.
