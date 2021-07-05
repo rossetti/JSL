@@ -1,29 +1,27 @@
-// An example gradle build file for a project that depends on the JSL
-
 plugins {
     `java-library`
 }
 
+//group = "org.example"
+//version = "1.0-SNAPSHOT"
+
 repositories {
-    maven {
-        setUrl("https://archiva.uark.edu/repository/jsl")
-    }
-    jcenter()
     mavenCentral()
 }
 
 dependencies {
 
-    // to include just JSLCore, uncomment the next line
-//    api(group = "edu.uark.jsl", name = "JSLCore", version = "R1.0.6")
+    // next two lines allows use of JSL libraries within the project
+    // update the release number when new releases become available
+    api(group = "io.github.rossetti", name = "JSLCore", version = "R1.0.7")
+    api(group = "io.github.rossetti", name = "JSLExtensions", version = "R1.0.7")
 
-    // to include JSLExtensions and also JSLCore classes, uncomment the next line
-//    api(group = "edu.uark.jsl", name = "JSLExtensions", version = "R1.0.6")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+}
 
-    // to include JSLExamples, JSLExtensions, and also JSLCore classes, uncomment the next line
-    api(group = "edu.uark.jsl", name = "JSLExamples", version = "R1.0.6")
-
-    testCompile("junit", "junit", "4.12")
+tasks.getByName<Test>("test") {
+    useJUnitPlatform()
 }
 
 configure<JavaPluginConvention> {

@@ -1,3 +1,7 @@
+
+// this build is really just to capture java docs from JSL projects
+// JSLCore, JSLExtensions, JSLExamples
+
 plugins {
     // java
     `java-library`

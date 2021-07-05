@@ -50,7 +50,9 @@ import jsl.utilities.statistic.welch.WelchDataFileAnalyzer;
  *  the WelchDataFileAnalyzer class
  *
  * @author rossetti
+ * @deprecated Dependence on javafx will be removed from the JSL in future versions. See JSLChartUtil for alternatives
  */
+@Deprecated(forRemoval = true)
 public class WelchChart extends Application {
 
     private DataInputStream myDIn;

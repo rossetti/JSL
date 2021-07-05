@@ -35,7 +35,7 @@ public class TestHello {
 //        ShiftedRV srv = new ShiftedRV(60.0, rv);
         TriangularRV srv = new TriangularRV(56.0, 128.0,166.0 );
         for (int i = 0; i < 70; i++) {
-            JSL.out.printf("%.1f %n", srv.getValue());
+            JSL.getInstance().out.printf("%.1f %n", srv.getValue());
         }
     }
 }

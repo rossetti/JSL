@@ -31,7 +31,6 @@ import jsl.utilities.random.rvariable.ExponentialRV;
 import jsl.utilities.statistic.BatchStatistic;
 import jslx.charts.JSLChartUtil;
 import jsl.utilities.statistic.welch.*;
-import jslx.fxutilities.WelchChart;
 import tech.tablesaw.plotly.components.Figure;
 
 import java.io.IOException;
@@ -217,49 +216,5 @@ public class CaptureWarmUpData {
         twWDFAnalyzer.makeCSVWelchPlotDataFile();
         // write out the full data to CSV
         twWDFAnalyzer.makeCSVWelchDataFile();
-    }
-
-
-    /**  Illustrates how to collect Welch data to files
-     *
-     * @throws IOException if something goes wrong with the files
-     */
-    public static void illustrateJavaFxWelchPlot() throws IOException {
-        // create the simulation
-        Simulation sim = new Simulation("DTP_WelchFile");
-        // get the model
-        Model m = sim.getModel();
-        // add DriveThroughPharmacy to the main model
-        DriveThroughPharmacy driveThroughPharmacy = new DriveThroughPharmacy(m);
-        driveThroughPharmacy.setArrivalRS(new ExponentialRV(1.0));
-        driveThroughPharmacy.setServiceRS(new ExponentialRV(0.7));
-        // get references to the responses that need analysis
-        ResponseVariable rv = m.getResponseVariable("System Time");
-        TimeWeighted tw = m.getTimeWeighted("# in System");
-        // create the observers for the responses
-        WelchFileObserver rv_welch = new WelchFileObserver(rv, 1.0);
-        WelchFileObserver tw_welch = new WelchFileObserver(tw, 10.0);
-        // set the parameters of the experiment
-        sim.setNumberOfReplications(5);
-        sim.setLengthOfReplication(5000.0);
-        SimulationReporter r = sim.makeSimulationReporter();
-        System.out.println("Simulation started.");
-        sim.run();
-        System.out.println("Simulation completed.");
-        r.printAcrossReplicationSummaryStatistics();
-        // get the WelchDataFileAnalyzer for the system time
-        WelchDataFileAnalyzer rvWDFAnalyzer = rv_welch.makeWelchDataFileAnalyzer();
-        // write out the plot data to CSV
-        rvWDFAnalyzer.makeCSVWelchPlotDataFile();
-        // write out the full data to CSV
-        rvWDFAnalyzer.makeCSVWelchDataFile();
-        // get the WelchDataFileAnalyzer for the # in system
-        WelchDataFileAnalyzer twWDFAnalyzer = tw_welch.makeWelchDataFileAnalyzer();
-        // write out the plot data to CSV
-        twWDFAnalyzer.makeCSVWelchPlotDataFile();
-        // write out the full data to CSV
-        twWDFAnalyzer.makeCSVWelchDataFile();
-
-        WelchChart.display(rvWDFAnalyzer);
     }
 }

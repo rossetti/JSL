@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+@Deprecated(forRemoval = true)
 public class JavaFXUtils {
 
     public static void main(String[] args) {

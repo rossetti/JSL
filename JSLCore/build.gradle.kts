@@ -4,51 +4,15 @@ plugins {
     // java
     `java-library`
     // uncomment for publishing task
-//    `maven-publish`
+    `maven-publish`
+    // uncomment for signing the jars during publishing task
+    signing
 }
 
-version = "1.0-SNAPSHOT"
-
-//match properties in ~/.gradle/gradle.properties, stored in $GRADLE_USER_HOME/.gradle/gradle.properties
-// uncomment for publishing task
-
-//val uaArchivaUser: String by project
-//val uaArchivaPassword: String by project
-//
-//task<Jar>("sourcesJar") {
-//    classifier = "sources"
-//    from(sourceSets.main.get().allJava)
-//}
-//
-//task<Jar>("javadocJar") {
-//    classifier = "javadoc"
-//    from(tasks.javadoc.get().destinationDir)
-//}
-//
-//publishing {
-//    repositories {
-//        maven {
-//            credentials {
-//                username = uaArchivaUser
-//                password = uaArchivaPassword
-//            }
-//            setUrl("https://archiva.uark.edu/repository/jsl")
-//            metadataSources {
-//                gradleMetadata()
-//            }
-//        }
-//    }
-//    publications {
-//        val mavenPublication = create<MavenPublication>("jslcore") {
-//            groupId = "edu.uark.jsl"
-//            artifactId = "JSLCore"
-//            version = "R1.0.1"
-//            from(components["java"])
-//            artifact(tasks["sourcesJar"])
-//            artifact(tasks["javadocJar"])
-//        }
-//    }
-//}
+// commented to not make snapshot
+//version = "1.0-SNAPSHOT"
+group = "io.github.rossetti"
+version = "R1.0.7"
 
 repositories {
     jcenter()
@@ -83,4 +47,75 @@ tasks.jar {
 //        )
 //    }
     exclude("logback.xml")
+}
+
+// these extensions are needed when publishing to maven
+// because maven requires javadoc jar, sources jar, and the build jar
+// these jars are placed in build/libs by default
+java {
+    // comment this out to not make jar file with javadocs during normal build
+    withJavadocJar()
+    // comment this out to not make jar file with source during normal build
+    withSourcesJar()
+}
+
+// run the publishing task to generate the signed jars required for maven central
+// jars will be found in build/JSL/releases or build/JSL/snapshots
+publishing {
+    publications {
+        create<MavenPublication>("JSLCore") {
+            groupId = "io.github.rossetti"
+            artifactId = "JSLCore"
+            // update this field when generating new release
+            version = "R1.0.7"
+            from(components["java"])
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionOf("runtimeClasspath")
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name.set("JSLCore")
+                description.set("The JSL, an open source library for simulation")
+                url.set("https://github.com/rossetti/JSL")
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("rossetti")
+                        name.set("Manuel D. Rossetti")
+                        email.set("rossetti@uark.edu")
+                    }
+                }
+                scm {
+                    connection.set("https://github.com/rossetti/JSL.git")
+                    developerConnection.set("git@github.com:rossetti/JSL.git")
+                    url.set("https://github.com/rossetti/JSL")
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            // change URLs to point to your repos, e.g. http://my.org/repo
+            // this publishes to local folder within build directory
+            // avoids having to log into maven, etc, but requires manual upload of releases
+            val releasesRepoUrl = uri(layout.buildDirectory.dir("JSL/releases"))
+            val snapshotsRepoUrl = uri(layout.buildDirectory.dir("JSL/snapshots"))
+            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+        }
+    }
+}
+
+// signing requires config information in folder user home directory
+// .gradle/gradle.properties. To publish jars without signing, just comment out
+signing {
+    sign(publishing.publications["JSLCore"])
 }

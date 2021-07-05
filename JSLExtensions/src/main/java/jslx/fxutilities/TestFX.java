@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+@Deprecated(forRemoval = true)
 public class TestFX extends Application{
 
     public static void main(String[] args) {
