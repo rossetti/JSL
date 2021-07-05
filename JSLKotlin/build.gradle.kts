@@ -1,24 +1,34 @@
-// JSLExamples
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+// An example gradle build file for a project that depends on the JSL
 
 plugins {
-    java
+    `java-library`
+    kotlin("jvm") version "1.5.10"
 }
+group = "io.github.rossetti"
+version = "1.0-SNAPSHOT"
 
 repositories {
-    jcenter()
+
     mavenCentral()
 }
 
 dependencies {
 
-    // use multi-project build dependency to ensure changes to JSLCore and JSLExtension can be
-    // immediately used within JSLExamples
-	implementation(project(":JSLCore"))
-    implementation(project(":JSLExtensions"))
+    api(project(":JSLCore"))
+    api(project(":JSLExamples"))
+    api(project(":JSLExtensions"))
+
+    testImplementation(kotlin("test"))
 }
 
-configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_11
+tasks.test {
+    useJUnit()
+}
+
+tasks.withType<KotlinCompile>() {
+    kotlinOptions.jvmTarget = "11"
 }
 
 // this is supposed to exclude the logback.xml resource file from the generated jar

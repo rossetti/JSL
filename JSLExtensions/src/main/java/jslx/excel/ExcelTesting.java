@@ -60,14 +60,14 @@ public class ExcelTesting {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException, SQLException  {
-//        createWorkBookTest("testworkbook");
-       //readWorkBookTest("testworkbook");
+        createWorkBookTest("testworkbook");
+       readWorkBookTest("testworkbook");
 //        writeSheetAsCSVTest();
 //        writeWorkbookAsCSVTest();
 //        XSSFWorkbook workbook = ExcelUtil.openExistingExcelWorkbook(JSL.ExcelDir.resolve("results.xlsx"));
 //        System.out.println(workbook.getSheetName(0));
-        writeResultsToWorkbookWorkSheetTest1("name1");
-        writeResultsToWorkbookWorkSheetTest1("name2");
+//        writeResultsToWorkbookWorkSheetTest1("name1");
+//        writeResultsToWorkbookWorkSheetTest1("name2");
     }
 
     public static void writeResultsToWorkbookWorkSheetTest1(String sheetName){
