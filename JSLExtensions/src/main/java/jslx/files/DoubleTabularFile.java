@@ -1,4 +1,4 @@
-package jslx;
+package jslx.files;
 
 import java.nio.file.Path;
 import java.util.List;
