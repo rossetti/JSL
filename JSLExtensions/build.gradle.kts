@@ -71,6 +71,8 @@ dependencies {
     implementation(group = "org.apache.derby", name = "derbytools", version = "10.15.1.3")
 
     implementation(group = "org.postgresql", name = "postgresql", version = "42.2.21")
+    
+    implementation(group = "org.xerial", name = "sqlite-jdbc", version = "3.36.0.1")
 
     implementation(group = "com.zaxxer", name = "HikariCP", version = "3.4.5")
 

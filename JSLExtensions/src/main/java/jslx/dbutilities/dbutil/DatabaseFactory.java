@@ -8,6 +8,10 @@ import org.apache.derby.jdbc.ClientDataSource;
 import org.apache.derby.jdbc.EmbeddedDataSource;
 import org.jooq.SQLDialect;
 import org.jooq.exception.DataAccessException;
+import org.sqlite.SQLiteConfig;
+import org.sqlite.SQLiteConnection;
+import org.sqlite.SQLiteDataSource;
+import org.sqlite.SQLiteOpenMode;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -17,6 +21,7 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
@@ -155,7 +160,7 @@ public class DatabaseFactory {
             DatabaseIfc.LOGGER.info("Deleting directory to derby database {}", pathToDb);
         } catch (IOException e) {
             DatabaseIfc.LOGGER.error("Unable to delete directory to derby database {}", pathToDb);
-            throw new DataAccessException("Unable to delete directory to derby database {}");
+            throw new DataAccessException("Unable to delete directory to derby database: " + pathToDb.toString());
         }
     }
 
@@ -564,5 +569,178 @@ public class DatabaseFactory {
     public static boolean isEmbeddedDerbyDatabase(File file) {
         Objects.requireNonNull(file, "The supplied file was null");
         return isEmbeddedDerbyDatabase(file.toPath());
+    }
+
+    /**
+     * Checks if a file is a valid SQLite database
+     * Strategy:
+     * - path must reference a regular file
+     * - if file exists, check if it is larger than 100 bytes (SQLite header size)
+     * - then check if a database operation works
+     *
+     * @param pathToFile the path to the database file, must not be null
+     * @return true if the path points to a valid SQLite database file
+     */
+    public static boolean isSQLiteDatabase(Path pathToFile) {
+        Objects.requireNonNull(pathToFile, "The supplied path was null");
+        // the path itself must be a directory or a file, i.e. it must exist
+        if (!Files.exists(pathToFile)) {
+            return false;
+        }
+        // now the thing exists, check if it is a regular file
+        if (!Files.isRegularFile(pathToFile, LinkOption.NOFOLLOW_LINKS)) {
+            // if it is not a regular file, then it cannot be an SQLite database
+            return false;
+        }
+        // it must be a regular file, need to check its size
+        // now try a database operation specific to SQLite
+        SQLiteDataSource ds = new SQLiteDataSource();
+        ds.setDatabaseName(pathToFile.toString());
+        ds.setReadOnly(true);
+        try {
+            SQLiteConnection sqLiteConnection = ds.getConnection("", "");
+            sqLiteConnection.libversion();
+            sqLiteConnection.close();
+        } catch (SQLException exception) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Deletes a SQLite database
+     * Strategy:
+     * - simply deletes the file at the end of the path
+     * - it may or not be a valid SQLiteDatabase
+     *
+     * @param pathToDb the path to the database file, must not be null
+     */
+    public static void deleteSQLiteDatabase(Path pathToDb) {
+        Objects.requireNonNull(pathToDb, "The supplied path was null");
+        try {
+            Files.deleteIfExists(pathToDb);
+            DatabaseIfc.LOGGER.info("Deleting SQLite database {}", pathToDb);
+        } catch (IOException e) {
+            DatabaseIfc.LOGGER.error("Unable to delete SQLite database {}", pathToDb);
+            throw new DataAccessException("Unable to delete SQLite database" + pathToDb.toString());
+        }
+    }
+
+    /**
+     * @param pathToDb the path to the database file, must not be null
+     * @return the data source
+     */
+    public static SQLiteDataSource createSQLiteDataSource(Path pathToDb) {
+        Objects.requireNonNull(pathToDb, "The supplied path was null");
+        SQLiteDataSource ds = new SQLiteDataSource();
+        ds.setDatabaseName(pathToDb.toString());
+        // there is a bug in the SQLiteDataSource class, it will not work without setting the URL
+        // even though the name of the database has been set.
+        ds.setUrl("jdbc:sqlite:" + pathToDb);
+        ds.setConfig(createDefaultSQLiteConfiguration());
+        DatabaseIfc.LOGGER.info("Created SQLite data source {}", pathToDb);
+        return ds;
+    }
+
+    /** Creates a recommended non-read only configuration that has been tested for
+     *  performance.  https://ericdraken.com/sqlite-performance-testing/
+     *
+     * @return the configuration
+     */
+    public static SQLiteConfig createDefaultSQLiteConfiguration(){
+        return createDefaultSQLiteConfiguration(false);
+    }
+
+    /** Creates a recommended configuration that has been tested for
+     *  performance.  https://ericdraken.com/sqlite-performance-testing/
+     *
+     * @param readOnly indicates read only mode
+     * @return the configuration
+     */
+    public static SQLiteConfig createDefaultSQLiteConfiguration(boolean readOnly) {
+        SQLiteConfig config = new SQLiteConfig();
+        final int cacheSize = 1000;
+        final int pageSize = 8192;
+        config.setReadOnly(readOnly);
+        config.setTempStore(SQLiteConfig.TempStore.MEMORY);  // Hold indices in memory
+        config.setCacheSize(cacheSize);
+        config.setPageSize(pageSize);
+        config.setJounalSizeLimit(cacheSize * pageSize);
+        config.setOpenMode(SQLiteOpenMode.NOMUTEX);
+        config.setLockingMode(SQLiteConfig.LockingMode.NORMAL);
+        config.setTransactionMode(SQLiteConfig.TransactionMode.IMMEDIATE);
+        config.setSynchronous(SQLiteConfig.SynchronousMode.NORMAL);
+        // If read-only, then use the existing journal, if any
+        if (!readOnly) {
+            config.setJournalMode(SQLiteConfig.JournalMode.WAL);
+        }
+        return config;
+    }
+
+    /**
+     * @param dbLabel    a label for the database
+     * @param dataSource the data source for connections
+     * @return the created database
+     */
+    public static DatabaseIfc createSQLiteDatabase(String dbLabel, SQLiteDataSource dataSource) {
+        Objects.requireNonNull(dbLabel, "The database label was null");
+        Objects.requireNonNull(dataSource, "The data source was null");
+        return new Database(dbLabel, dataSource, SQLDialect.SQLITE);
+    }
+
+    /**
+     * If the database already exists it is deleted
+     *
+     * @param dbName the name of the SQLite database. Must not be null
+     * @param dbDir  a path to the directory to hold the database. Must not be null
+     * @return the created database
+     */
+    public static DatabaseIfc createSQLiteDatabase(String dbName, Path dbDir) {
+        Objects.requireNonNull(dbName, "The database name was null");
+        Objects.requireNonNull(dbDir, "The path to the database must not be null");
+        Path pathToDb = dbDir.resolve(dbName);
+        // if it exists, delete it
+        if (Files.exists(pathToDb)) {
+            deleteSQLiteDatabase(pathToDb);
+        }
+        SQLiteDataSource ds = createSQLiteDataSource(pathToDb);
+        return createSQLiteDatabase(dbName, ds);
+    }
+
+    /**
+     * If the database already exists it is deleted. Created within JSLDatabase.dbDir
+     *
+     * @param dbName the name of the SQLite database. Must not be null
+     * @return the created database
+     */
+    public static DatabaseIfc createSQLiteDatabase(String dbName) {
+        return createSQLiteDatabase(dbName, JSLDatabase.dbDir);
+    }
+
+    /**
+     * The database file must already exist at the path
+     *
+     * @param pathToDb the path to the database file, must not be null
+     * @return the database
+     */
+    public static DatabaseIfc getSQLiteDatabase(Path pathToDb) {
+        Objects.requireNonNull(pathToDb, "The path to the database file was null");
+        if (!isSQLiteDatabase(pathToDb)) {
+            throw new IllegalStateException("The path does represent a valid SQLite database " + pathToDb);
+        }
+        // must exist and be at path
+        SQLiteDataSource dataSource = createSQLiteDataSource(pathToDb);
+        return new Database(pathToDb.getFileName().toString(), dataSource, SQLDialect.SQLITE);
+    }
+
+    /**
+     * The database file must already exist within the JSLDatabase.dbDir directory
+     *
+     * @param fileName the name of database file, must not be null
+     * @return the database
+     */
+    public static DatabaseIfc getSQLiteDatabase(String fileName) {
+        Objects.requireNonNull(fileName, "The file anme to the database was null");
+        return getSQLiteDatabase(JSLDatabase.dbDir.resolve(fileName));
     }
 }

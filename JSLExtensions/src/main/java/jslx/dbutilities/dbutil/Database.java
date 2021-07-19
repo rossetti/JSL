@@ -21,6 +21,7 @@ import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
 import javax.sql.DataSource;
+import java.sql.DatabaseMetaData;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -93,6 +94,7 @@ public class Database implements DatabaseIfc {
         setJooQDefaultExecutionLoggingOption(false);
         // force it to be made by establishing a connection to get the meta data
         getDatabaseMetaData();
+        LOGGER.info("Established connection to Database {} ", dbLabel);
     }
 
     @Override

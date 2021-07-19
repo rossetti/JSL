@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -17,13 +18,15 @@ public class DatabaseFactoryTest {
 
     public static void main(String[] args) throws IOException {
 
+        testSQLite();
+//        testSQLite2();
         // testDerbyLocalHost();
         // testDataSourceConnection();
         // testParsing();
         //     testDatabaseCreation();
         //testDerbyEmbeddedExisting();
         //       testExcelDbExport();
-              testExcelDbImport();
+//              testExcelDbImport();
 
         //       metaDataTest();
 
@@ -38,13 +41,35 @@ public class DatabaseFactoryTest {
 //        testDatabaseCreation();
     }
 
+    public static void testSQLite(){
+//        Path dbPath = JSLDatabase.dbDir.resolve("sql-murder-mystery.db");
+//        Path dbPath = JSLDatabase.dbDir.resolve("empty.db");
+        //boolean test = DatabaseFactory.isSQLiteDatabase(dbPath);
+        //System.out.println("Is dbPath a SQLite database? " + test);
+        DatabaseIfc database = DatabaseFactory.createSQLiteDatabase("someDB.db");
+        database.executeCommand("drop table if exists person");
+        database.executeCommand("create table person (id integer, name string)");
+        List<String> allTableNames = database.getAllTableNames();
+        for(String s: allTableNames){
+            System.out.println("Table: " + s);
+        }
+        database.executeCommand("insert into person values(1, 'PersonA')");
+        database.executeCommand("insert into person values(2, 'PersonB')");
+        database.printTableAsText("person");
+        System.out.println("Done!");
+    }
+
+    public static void testSQLite2(){
+        DatabaseIfc database = DatabaseFactory.getSQLiteDatabase("someDB.db");
+        database.printTableAsText("person");
+        System.out.println("Done!");
+    }
+
     public static void testDatabaseCreation(){
         Path path = Paths.get("/Users/rossetti/Documents/Development/Temp");
         String name = "manuel";
         DatabaseIfc database = DatabaseFactory.createEmbeddedDerbyDatabase(name, path);
         database.getDatabaseMetaData();
-
-
     }
 
     public static void testDataSourceConnection() {
@@ -278,4 +303,5 @@ public class DatabaseFactoryTest {
         System.out.println(schemas);
 
     }
+
 }

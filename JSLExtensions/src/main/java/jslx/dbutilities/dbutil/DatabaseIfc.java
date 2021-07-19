@@ -713,7 +713,7 @@ public interface DatabaseIfc {
         boolean flag = false;
         try (Statement statement = con.createStatement()) {
             statement.execute(cmd);
-            LOGGER.trace("Executed SQL: {}", cmd);
+            LOGGER.info("Executed SQL: {}", cmd);
             statement.close();
             flag = true;
         } catch (SQLException ex) {
