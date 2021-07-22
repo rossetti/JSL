@@ -1,24 +1,14 @@
 package jslx.tabularfiles;
 
-public class Cell<T> {
+abstract public class Cell {
 
-    private T thing;
+    private final DataType dataType;
 
-    T getValue(){return thing;}
-
-    void setValue(T value){
-        thing = value;
+    public Cell(DataType dataType) {
+        this.dataType = dataType;
     }
 
-    public Cell(T thing) {
-        this.thing = thing;
-    }
-
-    public static void main(String[] args) {
-        Cell<Boolean> cell = new Cell<>(false);
-
-        Boolean aBoolean = cell.getValue();
-
-
+    public final DataType getDataType() {
+        return dataType;
     }
 }
