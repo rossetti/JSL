@@ -76,8 +76,8 @@ public class Row {
     /**
      * @return the number of columns of tabular data
      */
-    public final int numberColumns() {
-        return myTabularFile.numberColumns();
+    public final int getNumberColumns() {
+        return myTabularFile.getNumberColumns();
     }
 
     /**

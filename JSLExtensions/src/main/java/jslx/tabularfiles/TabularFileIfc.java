@@ -119,6 +119,61 @@ public interface TabularFileIfc {
     }
 
     /**
+     * Test if the object is any of {Double, Long, Integer, Boolean, Float, Short, Byte}
+     *
+     * @param element the element to test
+     * @return true if it is numeric
+     */
+    static boolean isNumeric(Object element) {
+        if (element instanceof Double) {
+            return true;
+        } else if (element instanceof Integer) {
+            return true;
+        } else if (element instanceof Long) {
+            return true;
+        } else if (element instanceof Boolean) {
+            return true;
+        } else if (element instanceof Float) {
+            return true;
+        } else if (element instanceof Short) {
+            return true;
+        } else if (element instanceof Byte) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param element the element to convert
+     * @return the element as a double, the element must be numeric
+     */
+    static double asDouble(Object element) {
+        if (!isNumeric(element)) {
+            throw new IllegalArgumentException("The element was not of numeric type");
+        }
+        if (element instanceof Double) {
+            return ((Double) element).doubleValue();
+        } else if (element instanceof Integer) {
+            return ((Integer) element).doubleValue();
+        } else if (element instanceof Long) {
+            return ((Long) element).doubleValue();
+        } else if (element instanceof Boolean) {
+            if (((Boolean) element).booleanValue())
+                return 1.0;
+            else return 0.0;
+        } else if (element instanceof Float) {
+            return ((Float) element).doubleValue();
+        } else if (element instanceof Short) {
+            return ((Short) element).doubleValue();
+        } else if (element instanceof Byte) {
+            return ((Byte) element).doubleValue();
+        } else {
+            throw new IllegalArgumentException("The element was not of numeric type");
+        }
+    }
+
+    /**
      * @return the list of columns associated with the tabular data file
      */
     LinkedHashMap<String, DataType> getColumnTypes();
@@ -154,7 +209,7 @@ public interface TabularFileIfc {
     /**
      * @return the number of columns of tabular data
      */
-    default int numberColumns() {
+    default int getNumberColumns() {
         return getColumnTypes().size();
     }
 

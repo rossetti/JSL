@@ -2,8 +2,6 @@ package jslx.tabularfiles;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Maps;
-import jsl.utilities.JSLArrayUtil;
 
 import java.util.*;
 
@@ -26,11 +24,10 @@ abstract public class TabularFile implements TabularFileIfc {
 
     private final LinkedHashMap<String, DataType> myColumnTypes;
     private final BiMap<String, Integer> myNameAndIndex;
-    private final BiMap<Integer, Integer> myNumericIndexes;
+    private final BiMap<Integer, Integer> myNumericIndices;
+    private final BiMap<Integer, Integer> myTextIndices;
     private final List<String> myColumnNames;
     private final List<DataType> myDataTypes;
-    private final int[] myNumericIndices;
-    private final int[] myTextIndices;
 
     public TabularFile(LinkedHashMap<String, DataType> columnTypes){
         Objects.requireNonNull(columnTypes, "The column information map must not be null");
@@ -44,24 +41,60 @@ abstract public class TabularFile implements TabularFileIfc {
         }
         myDataTypes = new ArrayList<>();
         myNameAndIndex = HashBiMap.create();
-        List<Integer> numeric = new ArrayList<>();
-        List<Integer> text = new ArrayList<>();
+        int i = 0;
+        int cntNumeric = 0;
+        int cntText = 0;
+        myNumericIndices = HashBiMap.create();
+        myTextIndices = HashBiMap.create();
         for(String name: myColumnNames){
-            myNameAndIndex.put(name, myDataTypes.size());
+            myNameAndIndex.put(name, i);
             DataType type = myColumnTypes.get(name);
             if (type == DataType.NUMERIC){
-                numeric.add(myDataTypes.size());
+                myNumericIndices.put(i, cntNumeric);
+                cntNumeric++;
             } else {
-                text.add(myDataTypes.size());
+                myTextIndices.put(i, cntText);
+                cntText++;
             }
             myDataTypes.add(type);
+            i++;
         }
-        myNumericIndices = JSLArrayUtil.toPrimitiveInteger(numeric);
-        myTextIndices = JSLArrayUtil.toPrimitiveInteger(text);
-        myNumericIndexes = HashBiMap.create();
-        for(int i=0; i<myNumericIndices.length; i++){
-            myNumericIndexes.put(myNumericIndices[i], i);
-        }
+    }
+
+    /** Returns the storage index of the numeric column at column index
+     *
+     * @param colNum the column index
+     * @return the assigned storage-index for the numeric value
+     */
+    final int getNumericStorageIndex(int colNum){
+        return myNumericIndices.get(colNum);
+    }
+
+    /** Returns the storage index of the text column at column index
+     *
+     * @param colNum the column index
+     * @return the assigned storage-index for the text value
+     */
+    final int getTextStorageIndex(int colNum){
+        return myTextIndices.get(colNum);
+    }
+
+    /** Returns the column index associated with the storage index
+     *
+     * @param storageIndex the storage index to find
+     * @return the column index
+     */
+    final int getColumnIndexForNumeric(int storageIndex){
+        return myNumericIndices.inverse().get(storageIndex);
+    }
+
+    /** Returns the column index associated with the storage index
+     *
+     * @param storageIndex the storage index to find
+     * @return the column index
+     */
+    final int getColumnIndexForText(int storageIndex){
+        return myTextIndices.inverse().get(storageIndex);
     }
 
     /**
@@ -117,7 +150,7 @@ abstract public class TabularFile implements TabularFileIfc {
      * @return the total number of numeric columns
      */
     public final int getNumNumericColumns() {
-        return myNumericIndices.length;
+        return myNumericIndices.size();
     }
 
     /**
@@ -125,7 +158,7 @@ abstract public class TabularFile implements TabularFileIfc {
      * @return the total number of text columns
      */
     public final int getNumTextColumns() {
-        return myTextIndices.length;
+        return myTextIndices.size();
     }
 
     /**
@@ -165,4 +198,35 @@ abstract public class TabularFile implements TabularFileIfc {
     public final boolean isAllText(){
         return myDataTypes.size() == getNumTextColumns();
     }
+
+    /**
+     *
+     * @param elements the elements to check
+     * @return true if all elements match the correct types
+     */
+    public final boolean checkTypes(Object[] elements){
+        if (elements == null){
+            return false;
+        }
+        if (elements.length != getNumberColumns()){
+            return false;
+        }
+        List<DataType> dataTypes = getDataTypes();
+        int i = 0;
+        for(DataType type: dataTypes){
+            if (type == DataType.NUMERIC){
+                if (!TabularFileIfc.isNumeric(elements[i])){
+                    return false;
+                }
+            } else {
+                // must be text
+                if (TabularFileIfc.isNumeric(elements[i])){
+                    return false;
+                }
+            }
+            i++;
+        }
+        return true;
+    }
+
 }
