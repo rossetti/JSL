@@ -1,241 +1,281 @@
 package jslx.tabularfiles;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-public class Row {
+/**
+ * An abstraction for a row within a tabular file.
+ * The access to the columns is 0-based.  Why? Because most if not all of java's
+ * data containers (arrays, lists, etc.) are 0-based.  The the first column has index 0,
+ * 2nd column has index 1, etc.
+ */
+public class Row implements RowGetterIfc, RowSetterIfc, RowIfc {
 
     private final TabularFile myTabularFile;
-    private final List<Cell> myCells;
-    //TODO consider getting rid of cells and just using arrays double[] and String[]
-    // for the data in a row because the number is known in advance
+    private final String[] textData;
+    private final double[] numericData;
+    private long myRowNum;
 
     public Row(TabularFile tabularFile) {
         Objects.requireNonNull(tabularFile, "The tabular file was null");
         myTabularFile = tabularFile;
-        List<DataType> dataTypes = myTabularFile.getDataTypes();
-        myCells = new ArrayList<>();
-        for(DataType type: dataTypes){
-            if (type == DataType.NUMERIC){
-                myCells.add(new NumericCell());
-            } else {
-                myCells.add(new TextCell());
-            }
-        }
+        textData = new String[tabularFile.getNumTextColumns()];
+        numericData = new double[tabularFile.getNumNumericColumns()];
+        Arrays.fill(numericData, Double.NaN);
     }
 
     /**
-     *
-     * @return the total number of numeric columns
+     * @return the number of this row if it was returned from a tabular file
      */
+    public final long getRowNum() {
+        return myRowNum;
+    }
+
+    final void setRowNum(long rowNum) {
+        myRowNum = rowNum;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        Formatter formatter = new Formatter(sb);
+        int n = getNumberColumns();
+        formatter.format("|%-20d|", myRowNum);
+        for (int i = 0; i < n; i++) {
+            if (getDataType(i) == DataType.NUMERIC) {
+                formatter.format("%-20f|", getNumeric(i));
+            } else {
+                // must be string
+                formatter.format("%-20s|", getText(i));
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public int getBytes() {
+        int n = numericData.length * 8;
+        for (String s : textData) {
+            if (s != null) {
+                n = n + s.getBytes().length;
+            }
+        }
+        return n;
+    }
+
+    @Override
     public final int getNumNumericColumns() {
         return myTabularFile.getNumNumericColumns();
     }
 
-    /**
-     *
-     * @return the total number of text columns
-     */
+    @Override
     public final int getNumTextColumns() {
         return myTabularFile.getNumTextColumns();
     }
 
-    /**
-     *
-     * @return the map of columns associated with this row
-     */
+    @Override
     public final LinkedHashMap<String, DataType> getColumnTypes() {
         return myTabularFile.getColumnTypes();
     }
 
-    /**
-     * @return an ordered list of the column names for the row
-     */
+    @Override
     public final List<String> getColumnNames() {
         return myTabularFile.getColumnNames();
     }
 
-    /**
-     * @return an ordered list of the column data types
-     */
+    @Override
     public final List<DataType> getDataTypes() {
         return myTabularFile.getDataTypes();
     }
 
-    /**
-     *
-     * @param colNum 0 based indexing
-     * @return the data type of the column at the index
-     */
+    @Override
     public final DataType getDataType(int colNum) {
         return myTabularFile.getDataType(colNum);
     }
 
-    /**
-     * @return the number of columns of tabular data
-     */
+    @Override
     public final int getNumberColumns() {
         return myTabularFile.getNumberColumns();
     }
 
-    /**
-     *
-     * @return true if all cells are NUMERIC
-     */
-    public final boolean isAllNumeric(){
+    @Override
+    public final boolean isAllNumeric() {
         return myTabularFile.isAllNumeric();
     }
 
-    /**
-     *
-     * @return true if all cells are TEXT
-     */
-    public final boolean isAllText(){
+    @Override
+    public final boolean isAllText() {
         return myTabularFile.isAllText();
     }
 
-    /**
-     *
-     * @param col the index of the column, 0 based
-     * @return the data type of the column associated with this cell
-     */
-    public final DataType getType(int col){
+    @Override
+    public final DataType getType(int col) {
         return myTabularFile.getDataType(col);
     }
 
-    /**
-     *
-     * @param col the index of the column, 0 based
-     * @return the name of the column associated with this cell
-     */
-    public final String getColumnName(int col){
+    @Override
+    public final String getColumnName(int col) {
         return myTabularFile.getColumnName(col);
     }
 
-    /**
-     *
-     * @param name the name to look up
-     * @return the index or -1 if not found
-     */
-    public final int getColumn(String name){
+    @Override
+    public final int getColumn(String name) {
         return myTabularFile.getColumn(name);
     }
 
-    /**
-     *
-     * @param i the index into the row (0 based)
-     * @return true if the cell at location i is NUMERIC
-     */
-    public final boolean isNumeric(int i){
+    @Override
+    public final boolean isNumeric(int i) {
         return myTabularFile.isNumeric(i);
     }
 
-    /**
-     *
-     * @param i i the index into the row (0 based)
-     * @return true if the cell at location i is TEXT
-     */
-    public final boolean isText(int i){
+    @Override
+    public final boolean isText(int i) {
         return myTabularFile.isText(i);
     }
 
-    /**
-     *
-     * @param i i the index into the row (0 based)
-     * @param value the value to set, will throw an exception of the cell is not NUMERIC
-     */
-    public final void setValue(int i, double value){
-        if (isText(i)){
-            throw new IllegalStateException("The cell does not contain a double value");
+    @Override
+    public final void setNumeric(int colNum, double value) {
+        if (isText(colNum)) {
+            throw new IllegalStateException("The row does not contain a double value at this index");
         }
-        NumericCell c = (NumericCell) myCells.get(i);;
-        c.setValue(value);
+        // colNum is the actual index across all columns
+        // must store the double at it's appropriate index in the storage array
+        numericData[myTabularFile.getNumericStorageIndex(colNum)] = value;
     }
 
-    /**
-     *
-     * @param i i the index into the row (0 based)
-     * @param value the value to set, will throw an exception of the cell is not TEXT
-     */
-    public final void setValue(int i, String value){
-        if (isNumeric(i)){
-            throw new IllegalStateException("The cell does not contain a text value");
+    @Override
+    public final void setText(int colNum, String value) {
+        if (isNumeric(colNum)) {
+            throw new IllegalStateException("The row does not contain a text value at this index");
         }
-        TextCell c = (TextCell) myCells.get(i);
-        c.setValue(value);
+        // colNum is the actual index across all columns
+        // must store the string at it's appropriate index in the storage array
+        textData[myTabularFile.getTextStorageIndex(colNum)] = value;
     }
 
-    /**
-     *
-     * @param i i the index into the row (0 based)
-     * @return the value as a double, will throw an exception if the cell is not NUMERIC
-     */
-    public final double getDouble(int i){
-        if (isText(i)){
-            throw new IllegalStateException("The cell does not contain a double value");
+    @Override
+    public final double getNumeric(int colNum) {
+        if (isText(colNum)) {
+            throw new IllegalStateException("The row does not contain a double value at this index");
         }
-        NumericCell c = (NumericCell) myCells.get(i);
-        return c.getValue();
+        return numericData[myTabularFile.getNumericStorageIndex(colNum)];
     }
 
-    /**
-     *
-     * @param i i the index into the row (0 based)
-     * @return the value as a double, will throw an exception if the cell is not TEXT
-     */
-    public final String getText(int i){
-        if (isNumeric(i)){
-            throw new IllegalStateException("The cell does not contain a text value");
-        }
-        TextCell c = (TextCell) myCells.get(i);
-        return c.getValue();
+    @Override
+    public final double[] getNumeric() {
+        return Arrays.copyOf(numericData, numericData.length);
     }
 
-    /** Sets the numeric cells according to the data in the array.
-     *  The number of numeric cells must match the size of the array.
-     *  The assignment occurs in column order until all cells are assigned.
-     *
-     * @param data an array of data for the numeric rows
-     */
-    public final void setNumericCells(double[] data){
+    @Override
+    public final String getText(int colNum) {
+        if (isNumeric(colNum)) {
+            throw new IllegalStateException("The row does not contain a text value at this index");
+        }
+        return textData[myTabularFile.getTextStorageIndex(colNum)];
+    }
+
+    @Override
+    public final String[] getText() {
+        return Arrays.copyOf(textData, textData.length);
+    }
+
+    @Override
+    public final int setNumeric(double[] data) {
         Objects.requireNonNull(data, "The data array was null");
-        if (data.length != getNumNumericColumns()){
-            throw new IllegalArgumentException("The array did not have the correct number of numeric elements");
+        int n = Math.min(data.length, numericData.length);
+        System.arraycopy(data, 0, numericData, 0, n);
+        return n;
+    }
+
+    @Override
+    public final int setText(String[] data) {
+        Objects.requireNonNull(data, "The data array was null");
+        int n = Math.min(data.length, textData.length);
+        System.arraycopy(data, 0, textData, 0, n);
+        return n;
+    }
+
+    @Override
+    public final int setText(List<String> data) {
+        Objects.requireNonNull(data, "The data list was null");
+        String[] stringArray = data.toArray(new String[data.size()]);
+        return setText(stringArray);
+    }
+
+    @Override
+    public final double getNumeric(String columnName) {
+        return getNumeric(getColumn(columnName));
+    }
+
+    @Override
+    public final String getText(String columnName) {
+        return getText(getColumn(columnName));
+    }
+
+    @Override
+    public final void setNumeric(String columnName, double value) {
+        setNumeric(getColumn(columnName), value);
+    }
+
+    @Override
+    public final void setText(String columnName, String value) {
+        setText(getColumn(columnName), value);
+    }
+
+    @Override
+    public final Object[] getElements() {
+        Object[] elements = new Object[getNumberColumns()];
+        // need to copy elements from storage arrays to correct object location
+        // go from storage arrays to elements because type is known
+        for (int i = 0; i < numericData.length; i++) {
+            // look up the index of the column
+            int col = myTabularFile.getColumnIndexForNumeric(i);
+            elements[col] = numericData[i];
         }
-        int i = 0;
-        for(Cell cell: myCells){
-            if (cell.getDataType() == DataType.NUMERIC){
-                NumericCell nc = (NumericCell) cell;
-                nc.setValue(data[i]);
-                i++;
+        for (int i = 0; i < textData.length; i++) {
+            // look up the index of the column
+            int col = myTabularFile.getColumnIndexForText(i);
+            elements[col] = textData[i];
+        }
+        return elements;
+    }
+
+    @Override
+    public final Object getElement(int colNum) {
+        if (getDataType(colNum) == DataType.NUMERIC) {
+            return getNumeric(colNum);
+        } else {
+            return getText(colNum);
+        }
+    }
+
+    @Override
+    public final void setElements(Object[] elements) {
+        Objects.requireNonNull(elements, "The array of elements was null!");
+        if (elements.length != getNumberColumns()) {
+            throw new IllegalArgumentException("The number of elements does not equal the number of columns");
+        }
+        if (myTabularFile.checkTypes(elements) == false) {
+            throw new IllegalArgumentException("The elements do not match the types for each column");
+        }
+        // the type of the elements are unknown and must be tested
+        // must convert numeric elements to doubles, non-numeric to strings
+        for (int i = 0; i < elements.length; i++) {
+            setElement(i, elements[i]);
+        }
+    }
+
+    @Override
+    public final void setElement(int colNum, Object element) {
+        if (TabularFile.isNumeric(element)) {
+            setNumeric(colNum, TabularFile.asDouble(element));
+        } else {
+            // not NUMERIC
+            if (element == null) {
+                setText(colNum, null);
+            } else {
+                setText(colNum, element.toString());
             }
         }
     }
 
-    /** Sets the text cells according to the data in the array.
-     *  The number of text cells must match the size of the array.
-     *  The assignment occurs in column order until all cells are assigned
-     *
-     * @param data an array of data for the numeric rows
-     */
-    public final void setTextCells(String[] data){
-        Objects.requireNonNull(data, "The data array was null");
-        if (data.length != getNumTextColumns()){
-            throw new IllegalArgumentException("The array did not have the correct number of text elements");
-        }
-        int i = 0;
-        for(Cell cell: myCells){
-            if (cell.getDataType() == DataType.TEXT){
-                TextCell nc = (TextCell) cell;
-                nc.setValue(data[i]);
-                i++;
-            }
-        }
-    }
-
-    //TODO add setters and getters based on column name
-    //TODO set elements with array of Objects across columns
-    //TODO set and get based on Objects
 }

@@ -721,26 +721,39 @@ public class DatabaseFactory {
      * The database file must already exist at the path
      *
      * @param pathToDb the path to the database file, must not be null
+     * @param readOnly true indicates that the database is read only
      * @return the database
      */
-    public static DatabaseIfc getSQLiteDatabase(Path pathToDb) {
+    public static DatabaseIfc getSQLiteDatabase(Path pathToDb, boolean readOnly) {
         Objects.requireNonNull(pathToDb, "The path to the database file was null");
         if (!isSQLiteDatabase(pathToDb)) {
             throw new IllegalStateException("The path does represent a valid SQLite database " + pathToDb);
         }
         // must exist and be at path
         SQLiteDataSource dataSource = createSQLiteDataSource(pathToDb);
+        dataSource.setReadOnly(readOnly);
         return new Database(pathToDb.getFileName().toString(), dataSource, SQLDialect.SQLITE);
     }
 
     /**
+     * The database file must already exist at the path. It is opened for reading and writing
+     *
+     * @param pathToDb the path to the database file, must not be null
+     * @return the database
+     */
+    public static DatabaseIfc getSQLiteDatabase(Path pathToDb) {
+        return getSQLiteDatabase(pathToDb, false);
+    }
+
+    /**
      * The database file must already exist within the JSLDatabase.dbDir directory
+     * It is opened for reading and writing.
      *
      * @param fileName the name of database file, must not be null
      * @return the database
      */
     public static DatabaseIfc getSQLiteDatabase(String fileName) {
-        Objects.requireNonNull(fileName, "The file anme to the database was null");
+        Objects.requireNonNull(fileName, "The file name to the database was null");
         return getSQLiteDatabase(JSLDatabase.dbDir.resolve(fileName));
     }
 }

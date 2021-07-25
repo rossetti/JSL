@@ -1,70 +1,78 @@
 package jslx.tabularfiles;
 
-import jslx.dbutilities.dbutil.DatabaseFactory;
-import jslx.dbutilities.dbutil.DatabaseIfc;
-import org.jooq.*;
-import org.jooq.impl.SQLDataType;
-import org.jooq.impl.UpdatableRecordImpl;
 
-import java.time.LocalDateTime;
+import jsl.utilities.random.rvariable.NormalRV;
+import jslx.dbutilities.JSLDatabase;
 
-import static org.jooq.impl.DSL.constraint;
+import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class TestTabularWork {
 
     public static void main(String[] args) {
 
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println(now);
+        // demonstrate reading a file
+        writeFile();
+        // demonstrate reading a file
+        readFile();
+    }
 
-        DatabaseIfc db = DatabaseFactory.createSQLiteDatabase("test.db");
-        DSLContext dsl = db.getDSLContext();
-        dsl.createTable("Data")
-//                .column("ID", SQLDataType.INTEGER)
-                .column("c1", SQLDataType.DOUBLE)
-                .column("c2", SQLDataType.INTEGER)
-                .column("c3", SQLDataType.BIGINT)
-                .column("c4", SQLDataType.VARCHAR)
-//                .constraints(
-//                        constraint("PK").primaryKey("ID"))
-                .execute();
+    private static void writeFile() {
+        Path path = JSLDatabase.dbDir.resolve("demoFile");
+        LinkedHashMap<String, DataType> columns = TabularFile.columns(3, DataType.NUMERIC);
+        columns.put("c4", DataType.TEXT);
+        columns.put("c5", DataType.NUMERIC);
 
-        Table<?> table = db.getTable("Data");
-        Record record = table.newRecord();
+        TabularOutputFile tif = new TabularOutputFile(columns, path);
+        System.out.println(tif);
 
+        NormalRV n = new NormalRV(10, 1);
+        int k = 15;
+        // get a row
+        RowSetterIfc row = tif.getRow();
+        System.out.println("Writing rows...");
+        for (int i = 1; i <= k; i++) {
+            // reuse the row, many times
+            row.setNumeric(n.sample(5));
+            row.setText(3, "text data " + i);
+            tif.writeRow(row);
+        }
+        // don't forget to flush
+        tif.flushRows();
+        System.out.println("Done writing rows!");
+        System.out.println();
+    }
 
-        Field<Double> field1 = (Field<Double>) record.field("c1");
-        Field<Integer> field2 = (Field<Integer>) record.field("c2");
-        Field<Long> field3 = (Field<Long>) record.field("c3");
-        Field<String> field4 = (Field<String>) record.field("c4");
-//        Field<Integer> field0 = (Field<Integer>) record.field("ID");
+    private static void readFile(){
+        Path path = JSLDatabase.dbDir.resolve("demoFile");
+        TabularInputFile tif = new TabularInputFile(path);
+        System.out.println(tif);
 
-        System.out.println(field1);
-//        Row row = record.fieldsRow();
-//        System.out.println(row);
-//        record.setValue(field, Double.valueOf(20.0));
-//
-//        Result<Record> records = db.selectAll("Data");
-        //dsl.batchStore(records).
+        for(RowGetterIfc row: tif){
+            System.out.println(row);
+        }
+        System.out.println();
+        System.out.println();
 
-        UpdatableRecordImpl record1 = new UpdatableRecordImpl(table);
+        List<RowGetterIfc> rows = tif.fetchRows(1, 5);
+        for (RowGetterIfc row : rows) {
+            System.out.println(row);
+        }
+        System.out.println();
+        System.out.println();
 
-        record1.set(field1, Double.valueOf(20.0));
-//        dsl.insertInto(table, field0, field1, field2, field3, field4)
-//                .values(100, 20.d, 111, 1000L, "testit")
-//                .execute();
+        TabularInputFile.RowIterator iterator = tif.iterator(9);
+        while (iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
 
-        dsl.insertInto(table, field1, field2, field3, field4)
-                .values(20.d, 111, 1000L, "testit")
-                .execute();
+        System.out.println();
+        System.out.println();
+        Double[] numericColumn = tif.getNumericColumn(0, 10, true);
+        for (Double v : numericColumn) {
+            System.out.println(v);
+        }
 
-//        record1.attach(dsl.configuration());
-//        int i = record1.store();
-//        System.out.println("i = " + i);
-
-//        record1.store();
-
-
-        db.printTableAsText("Data");
     }
 }

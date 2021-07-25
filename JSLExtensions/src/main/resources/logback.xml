@@ -124,7 +124,7 @@
         <appender-ref ref="JOOQFILE" />
     </logger>
 
-    <logger name="org.jooq.tools.LoggerListener" level="DEBUG" additivity="false">
+    <logger name="org.jooq.tools.LoggerListener" level="INFO" additivity="false">
         <appender-ref ref="JOOQFILE" />
     </logger>
 
