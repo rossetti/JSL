@@ -2,8 +2,11 @@ package jslx.tabularfiles;
 
 
 import jsl.utilities.random.rvariable.NormalRV;
+import jsl.utilities.reporting.JSL;
 import jslx.dbutilities.JSLDatabase;
+import jslx.excel.ExcelUtil;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,7 +16,7 @@ public class TestTabularWork {
     public static void main(String[] args) {
 
         // demonstrate reading a file
-        writeFile();
+//        writeFile();
         // demonstrate reading a file
         readFile();
     }
@@ -73,6 +76,14 @@ public class TestTabularWork {
         for (Double v : numericColumn) {
             System.out.println(v);
         }
+
+        try {
+            tif.writeToExcelWorkbook("demoData.xlsx", JSL.getInstance().getExcelDir());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        tif.printAsText();;
 
     }
 }

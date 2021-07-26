@@ -18,6 +18,8 @@ import jslx.dbutilities.dbutil.DatabaseIfc;
 import org.jooq.*;
 import org.jooq.impl.SQLDataType;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.sql.Types;
 
@@ -30,6 +32,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
     private final Table<?> myTable;
     private int myDefaultRowBufferSize = 100;// maximum number of records held inside iterators
     private final long myTotalNumberRows;
+    private final String myDataTableName;
 
     public TabularInputFile(Path pathToFile) {
         this(getColumnTypes(pathToFile), pathToFile);
@@ -40,10 +43,10 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         // determine the name of the data table
         String fileName = pathToFile.getFileName().toString();
         String fixedFileName = fileName.replaceAll("[^a-zA-Z]", "");
-        String dataTableName = fixedFileName.concat("_Data");
+        myDataTableName = fixedFileName.concat("_Data");
         // open up the database file
         myDb = DatabaseFactory.getSQLiteDatabase(pathToFile, true);
-        myTable = myDb.getTable(dataTableName);
+        myTable = myDb.getTable(myDataTableName);
         myTotalNumberRows = myDb.getDSLContext().fetchCount(myTable);
     }
 
@@ -491,4 +494,45 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         return texts;
     }
 
+    /**
+     *
+     * @param out the file to write to
+     */
+    public final void writeAsCSV(PrintWriter out) {
+        myDb.writeTableAsCSV(myDataTableName, out);
+    }
+
+    /**
+     *  Print to standard out as CSV
+     */
+    public final void printAsCSV() {
+        myDb.printTableAsCSV(myDataTableName);
+    }
+
+    /**
+     *
+     * @param out the file to write to as text
+     */
+    public final void writeAsText(PrintWriter out) {
+        myDb.writeTableAsText(myDataTableName, out);
+    }
+
+    /**
+     *  Print to standard out as text
+     */
+    public final void printAsText() {
+        myDb.printTableAsText(myDataTableName);
+    }
+
+    /**
+     *
+     * @param wbName the name of the workbook, must not be null
+     * @param wbDirectory the path to the directory to contain the workbook, must not be null
+     * @throws IOException if something goes wrong with the writing
+     */
+    public void writeToExcelWorkbook(String wbName, Path wbDirectory) throws IOException {
+        List<String> names = new ArrayList<>();
+        names.add(myDataTableName);
+        myDb.writeDbToExcelWorkbook(names, wbName, wbDirectory);
+    }
 }
