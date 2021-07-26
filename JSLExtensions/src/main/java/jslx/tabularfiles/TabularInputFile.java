@@ -1,39 +1,44 @@
 package jslx.tabularfiles;
 
-
-/*
-    Reading requires:
-     - iterating forward through each row until end of rows
-     - need a row or record abstraction
-     - convenience methods for getting arrays of rows when columns all have same type
-     - convenience methods for getting arrays of column values
-     - convenience methods for getting matrix of row/column values when data is all same type
-     - probably need a Cell abstraction, intersection of row and column
- */
-
-import jsl.utilities.JSLArrayUtil;
-import jslx.dbutilities.JSLDatabase;
 import jslx.dbutilities.dbutil.DatabaseFactory;
 import jslx.dbutilities.dbutil.DatabaseIfc;
 import org.jooq.*;
-import org.jooq.impl.SQLDataType;
+import org.jooq.impl.DSL;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.sql.Types;
 
 import java.util.*;
 import java.util.function.Consumer;
 
+/**
+ *  An abstraction for reading rows of tabular data. Columns of the tabular
+ *  data can be of numeric or text.  Using this sub-class of TabularFile
+ *  users can read rows of data.  The user is responsible for iterating rows with
+ *  data of the appropriate type for the column and reading the row into their program.
+ *
+ *  Use the static methods of TabularFile to create and define the columns of the file.
+ *  Use the methods of this class to read rows.
+ *
+ * @see jslx.tabularfiles.TabularFile
+ * @see jslx.tabularfiles.TestTabularWork  For example code
+ */
 public class TabularInputFile extends TabularFile implements Iterable<RowGetterIfc> {
 
+    public final static int DEFAULT_ROW_BUFFER_SIZE = 100;
     private final DatabaseIfc myDb;
-    private final Table<?> myTable;
-    private int myDefaultRowBufferSize = 100;// maximum number of records held inside iterators
+    private int myRowBufferSize = DEFAULT_ROW_BUFFER_SIZE;// maximum number of records held inside iterators
     private final long myTotalNumberRows;
     private final String myDataTableName;
+    private final List<Field> myFields; // DSL fields for JOOQ queries
+    private final Field<Long> myRowId;  // DSL field for getting rowid
+    private final Table<Record> myDataTable; // DSL element for the data table
 
+    /**
+     *
+     * @param pathToFile the path to a valid file that was written using TabularOutputFile
+     */
     public TabularInputFile(Path pathToFile) {
         this(getColumnTypes(pathToFile), pathToFile);
     }
@@ -44,10 +49,26 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         String fileName = pathToFile.getFileName().toString();
         String fixedFileName = fileName.replaceAll("[^a-zA-Z]", "");
         myDataTableName = fixedFileName.concat("_Data");
+        myDataTable = DSL.table(myDataTableName);
         // open up the database file
         myDb = DatabaseFactory.getSQLiteDatabase(pathToFile, true);
-        myTable = myDb.getTable(myDataTableName);
-        myTotalNumberRows = myDb.getDSLContext().fetchCount(myTable);
+        myTotalNumberRows = myDb.getDSLContext().fetchCount(myDataTable);
+        myFields = setupFields();
+        myRowId = DSL.field("rowid", Long.class);
+    }
+
+    private List<Field> setupFields(){
+        List<Field> fields = new ArrayList<>();
+        for(Map.Entry<String, DataType> ct: myColumnTypes.entrySet()){
+            if (ct.getValue() == DataType.NUMERIC){
+                Field<Double> field = DSL.field(ct.getKey(), Double.class);
+                fields.add(field);
+            } else {
+                Field<String> field = DSL.field(ct.getKey(), String.class);
+                fields.add(field);
+            }
+        }
+        return fields;
     }
 
     /**
@@ -96,6 +117,26 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         return columnTypes;
     }
 
+    /**
+     *
+     * @return the current row buffer size
+     */
+    public final int getRowBufferSize() {
+        return myRowBufferSize;
+    }
+
+    /**
+     *
+     * @param rowBufferSize must be at least 1, bigger implies more memory.
+     */
+    public void setRowBufferSize(int rowBufferSize) {
+        if (rowBufferSize <= 0){
+            myRowBufferSize = DEFAULT_ROW_BUFFER_SIZE;
+        } else {
+            myRowBufferSize = rowBufferSize;
+        }
+    }
+
     @Override
     public RowIterator iterator() {
         return new RowIterator();
@@ -109,22 +150,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         return new RowIterator(startingRow);
     }
 
-    private class SQLiteRowId implements RowId {
-
-        private final Long myValue;
-
-        public SQLiteRowId(long value) {
-            myValue = value;
-        }
-
-        @Override
-        public Object value() {
-            return myValue;
-        }
-    }
-
     public final class RowIterator implements Iterator<RowGetterIfc> {
-        private final long myStartingRowNum;
         private long myCurrentRowNum;
         private long myRemainingNumRows;
         private List<RowGetterIfc> myBufferedRows;
@@ -138,12 +164,11 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
             if (startingRowNum <= 0) {
                 throw new IllegalArgumentException("The row number must be > 0");
             }
-            myStartingRowNum = startingRowNum;
             myCurrentRowNum = startingRowNum - 1;
             myRemainingNumRows = myTotalNumberRows - myCurrentRowNum;
             // fill the initial buffer
-            long n = Math.min(myDefaultRowBufferSize, myRemainingNumRows);
-            myBufferedRows = fetchRows(myStartingRowNum, myStartingRowNum + n);
+            long n = Math.min(myRowBufferSize, myRemainingNumRows);
+            myBufferedRows = fetchRows(startingRowNum, startingRowNum + n);
             myRowIterator = myBufferedRows.listIterator();
         }
 
@@ -174,7 +199,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
                 // buffer has no more rows, need to check if more rows remain
                 if (hasNext()) {
                     // refill the buffer
-                    long n = Math.min(myDefaultRowBufferSize, myRemainingNumRows);
+                    long n = Math.min(myRowBufferSize, myRemainingNumRows);
                     long startingRow = myCurrentRowNum + 1;
                     myBufferedRows = fetchRows(startingRow, startingRow + n);
                     myRowIterator = myBufferedRows.listIterator();
@@ -211,7 +236,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param maxRowNum the maximum row number, must be greater than minRowNum, and 2 or bigger
      * @return the list of rows, the list may be empty, if there are no rows in the row number range
      */
-    public List<RowGetterIfc> fetchRows(long minRowNum, long maxRowNum) {
+    public final List<RowGetterIfc> fetchRows(long minRowNum, long maxRowNum) {
         return convertRecordsToRows(selectRows(minRowNum, maxRowNum), minRowNum);
     }
 
@@ -223,7 +248,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param rowNum the row number, must be 1 or more and less than getTotalNumberRows()
      * @return the row
      */
-    public RowGetterIfc fetchOneRow(long rowNum) {
+    public final RowGetterIfc fetchOneRow(long rowNum) {
         if (rowNum <= 0) {
             throw new IllegalArgumentException("The row number must be > 0");
         }
@@ -241,7 +266,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param rowNum the row number, must be 1 or more
      * @return the row wrapped in an Optional
      */
-    public Optional<RowGetterIfc> fetchRow(long rowNum) {
+    public final Optional<RowGetterIfc> fetchRow(long rowNum) {
         if (rowNum <= 0) {
             throw new IllegalArgumentException("The row number must be > 0");
         }
@@ -249,10 +274,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
             return Optional.empty();
         }
         DSLContext dsl = myDb.getDSLContext();
-        Field<RowId> rowID = myTable.rowid();
-        Condition condition = rowID.eq(new SQLiteRowId(rowNum));
-        Field<?>[] fields = myTable.fields();
-        Record record = dsl.select(fields).from(myTable).where(condition).fetchOne();
+        Record record = dsl.select(myFields).from(myDataTable).where(myRowId.eq(rowNum)).fetchOne();
         if (record == null) {
             return Optional.empty();
         }
@@ -269,11 +291,9 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         if (minRowNum > maxRowNum) {
             throw new IllegalArgumentException("The minimum row number must be < the maximum row number.");
         }
-        DSLContext dsl = myDb.getDSLContext();
-        Field<RowId> rowID = myTable.rowid();
-        Condition condition = rowID.between(new SQLiteRowId(minRowNum), new SQLiteRowId(maxRowNum));
-        Field<?>[] fields = myTable.fields();
-        Result<Record> records = dsl.select(fields).from(myTable).where(condition).fetch();
+        DSLContext create = myDb.getDSLContext();
+        Condition condition = myRowId.between(minRowNum, maxRowNum);
+        Result<Record> records = create.select(myFields).from(myDataTable).where(condition).fetch();
         return records;
     }
 
@@ -316,7 +336,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param maxRows the total number of rows to extract starting at row 1
      * @return a map of all of the data keyed by column name
      */
-    public LinkedHashMap<String, Double[]> getNumericColumns(int maxRows) {
+    public final LinkedHashMap<String, Double[]> getNumericColumns(int maxRows) {
         return getNumericColumns(maxRows, false);
     }
 
@@ -325,7 +345,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param removeMissing if true, then missing (NaN values) are removed
      * @return a map of all of the data keyed by column name
      */
-    public LinkedHashMap<String, Double[]> getNumericColumns(int maxRows, boolean removeMissing) {
+    public final LinkedHashMap<String, Double[]> getNumericColumns(int maxRows, boolean removeMissing) {
         LinkedHashMap<String, Double[]> map = new LinkedHashMap<>();
         List<String> names = getNumericColumnNames();
         for (String name : names) {
@@ -339,7 +359,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param maxRows the total number of rows to extract starting at row 1
      * @return a map of all of the data keyed by column name
      */
-    public LinkedHashMap<String, String[]> getTextColumns(int maxRows) {
+    public final LinkedHashMap<String, String[]> getTextColumns(int maxRows) {
         return getTextColumns(maxRows, false);
     }
 
@@ -348,7 +368,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param removeMissing if true, then missing (NaN values) are removed
      * @return a map of all of the data keyed by column name
      */
-    public LinkedHashMap<String, String[]> getTextColumns(int maxRows, boolean removeMissing) {
+    public final LinkedHashMap<String, String[]> getTextColumns(int maxRows, boolean removeMissing) {
         LinkedHashMap<String, String[]> map = new LinkedHashMap<>();
         List<String> names = getNumericColumnNames();
         for (String name : names) {
@@ -365,7 +385,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param maxRows the total number of rows to extract starting at row 1
      * @return the array of values, including any missing values marked as null
      */
-    public Double[] getNumericColumn(int colNum, int maxRows) {
+    public final Double[] getNumericColumn(int colNum, int maxRows) {
         return getNumericColumn(colNum, maxRows, false);
     }
 
@@ -376,7 +396,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param maxRows    the total number of rows to extract starting at row 1
      * @return the array of values, including any missing values marked as null
      */
-    public Double[] getNumericColumn(String columnName, int maxRows) {
+    public final Double[] getNumericColumn(String columnName, int maxRows) {
         Objects.requireNonNull(columnName, "The name of the column cannot be null");
         return getNumericColumn(getColumn(columnName), maxRows, false);
     }
@@ -389,7 +409,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param removeMissing if true, then missing (NaN values) are removed
      * @return the array of values
      */
-    public Double[] getNumericColumn(String columnName, int maxRows, boolean removeMissing) {
+    public final Double[] getNumericColumn(String columnName, int maxRows, boolean removeMissing) {
         Objects.requireNonNull(columnName, "The name of the column cannot be null");
         return getNumericColumn(getColumn(columnName), maxRows, removeMissing);
     }
@@ -402,7 +422,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param removeMissing if true, then missing (NaN values) are removed
      * @return the array of values
      */
-    public Double[] getNumericColumn(int colNum, int maxRows, boolean removeMissing) {
+    public final Double[] getNumericColumn(int colNum, int maxRows, boolean removeMissing) {
         if (colNum < 0) {
             throw new IllegalArgumentException("The column number must be >= 0");
         }
@@ -416,13 +436,12 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
             throw new IllegalArgumentException("The max number of rows must be >= 0");
         }
         DSLContext dsl = myDb.getDSLContext();
-        Field<RowId> rowID = myTable.rowid();
-        Field<?> theField = myTable.field(colNum);
-        Condition condition = rowID.le(new SQLiteRowId(maxRows));
-        if (removeMissing) {
-            condition = condition.and(theField.isNotNull());
+        Condition c = myRowId.le((long) maxRows);
+        Field<Double> theField = myFields.get(colNum);
+        if (removeMissing){
+            c = c.and(theField.isNotNull());
         }
-        Double[] doubles = dsl.select().from(myTable).where(condition).fetchArray(colNum, Double.class);
+        Double[] doubles = dsl.select(theField).from(myDataTable).where(c).fetchArray(theField, Double.class);
         return doubles;
     }
 
@@ -433,7 +452,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param maxRows the total number of rows to extract starting at row 1
      * @return the array of values, including any missing values marked as null
      */
-    public String[] getTextColumn(int colNum, int maxRows) {
+    public final String[] getTextColumn(int colNum, int maxRows) {
         return getTextColumn(colNum, maxRows, false);
     }
 
@@ -444,7 +463,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param maxRows    the total number of rows to extract starting at row 1
      * @return the array of values, including any missing values marked as null
      */
-    public String[] getTextColumn(String columnName, int maxRows) {
+    public final String[] getTextColumn(String columnName, int maxRows) {
         Objects.requireNonNull(columnName, "The name of the column cannot be null");
         return getTextColumn(getColumn(columnName), maxRows, false);
     }
@@ -457,7 +476,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param removeMissing if true, then missing (NaN values) are removed
      * @return the array of values
      */
-    public String[] getTextColumn(String columnName, int maxRows, boolean removeMissing) {
+    public final String[] getTextColumn(String columnName, int maxRows, boolean removeMissing) {
         Objects.requireNonNull(columnName, "The name of the column cannot be null");
         return getTextColumn(getColumn(columnName), maxRows, removeMissing);
     }
@@ -470,7 +489,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param removeMissing if true, then missing (NaN values) are removed
      * @return the array of values
      */
-    public String[] getTextColumn(int colNum, int maxRows, boolean removeMissing) {
+    public final String[] getTextColumn(int colNum, int maxRows, boolean removeMissing) {
         if (colNum < 0) {
             throw new IllegalArgumentException("The column number must be >= 0");
         }
@@ -484,13 +503,12 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
             throw new IllegalArgumentException("The max number of rows must be >= 0");
         }
         DSLContext dsl = myDb.getDSLContext();
-        Field<RowId> rowID = myTable.rowid();
-        Field<?> theField = myTable.field(colNum);
-        Condition condition = rowID.le(new SQLiteRowId(maxRows));
-        if (removeMissing) {
-            condition = condition.and(theField.isNotNull());
+        Condition c = myRowId.le((long) maxRows);
+        Field<String> theField = myFields.get(colNum);
+        if (removeMissing){
+            c = c.and(theField.isNotNull());
         }
-        String[] texts = dsl.select().from(myTable).where(condition).fetchArray(colNum, String.class);
+        String[] texts = dsl.select(theField).from(myDataTable).where(c).fetchArray(theField, String.class);
         return texts;
     }
 
@@ -530,7 +548,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param wbDirectory the path to the directory to contain the workbook, must not be null
      * @throws IOException if something goes wrong with the writing
      */
-    public void writeToExcelWorkbook(String wbName, Path wbDirectory) throws IOException {
+    public final void writeToExcelWorkbook(String wbName, Path wbDirectory) throws IOException {
         List<String> names = new ArrayList<>();
         names.add(myDataTableName);
         myDb.writeDbToExcelWorkbook(names, wbName, wbDirectory);

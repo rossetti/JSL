@@ -1,21 +1,5 @@
 package jslx.tabularfiles;
-/*
-   Writing requires:
-    - definition of columns
-    - creating the file if it not already existing
-    - if already existing, deciding to write over or append
-    - each write goes to a new row
-    - assume sequential, cannot go back rows
-    - insert new row (writes and commits)
-    - write adds data to row, commit saves data in current row
-    - convenience for writing array of same type
-    - need a row or record abstraction
-    - probably need a Cell abstraction, intersection of row and column
- */
-//TODO use a builder pattern to define and add the columns
 
-import jsl.utilities.random.rvariable.NormalRV;
-import jslx.dbutilities.JSLDatabase;
 import jslx.dbutilities.dbutil.DatabaseFactory;
 import jslx.dbutilities.dbutil.DatabaseIfc;
 import org.jooq.*;
@@ -31,7 +15,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ *  An abstraction for writing rows of tabular data. Columns of the tabular
+ *  data can be of numeric or text.  Using this sub-class of TabularFile
+ *  users can write rows of data.  The user is responsible for filling rows with
+ *  data of the appropriate type for the column and writing the row to the file.
+ *
+ *  Use the static methods of TabularFile to create and define the columns of the file.
+ *  Use the methods of this class to write rows.  After writing the rows, it is important
+ *  to call the flush() method to ensure that all buffered rows are committed to the file.
+ *
+ * @see jslx.tabularfiles.TabularFile
+ * @see jslx.tabularfiles.TestTabularWork  For example code
+ */
 public class TabularOutputFile extends TabularFile {
+//TODO use a builder pattern to define and add the columns
 
     private final static int DEFAULT_PAGE_SIZE = 8192;
     private final static int MIN_DEFAULT_ROWS_IN_BATCH = 32;

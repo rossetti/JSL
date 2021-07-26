@@ -3,6 +3,7 @@ package jslx.dbutilities.dbutil;
 import jsl.utilities.reporting.JSL;
 import jslx.dbutilities.JSLDatabase;
 import org.jooq.*;
+import org.jooq.impl.DSL;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -56,7 +57,19 @@ public class DatabaseFactoryTest {
         database.executeCommand("insert into person values(1, 'PersonA')");
         database.executeCommand("insert into person values(2, 'PersonB')");
         database.printTableAsText("person");
+        Table<?> person = database.getTable("person");
+        int n = database.getDSLContext().fetchCount(person);
+        System.out.println(" number persons = " + n);
         System.out.println("Done!");
+        Table<Record> table = DSL.table("person");
+        Field<Long> rowid = DSL.field("rowid",Long.class);
+        SelectJoinStep<Record1<Long>> data = DSL.select(rowid).from(table);
+        database.getDSLContext().select(rowid).from(table).fetch().format(System.out);
+        Condition c = rowid.eq(1L);
+
+        database.getDSLContext().select(rowid).from(table).where(c).fetch().format(System.out);
+
+
     }
 
     public static void testSQLite2(){
