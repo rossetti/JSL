@@ -26,6 +26,8 @@ import java.util.function.Consumer;
  */
 public class TabularInputFile extends TabularFile implements Iterable<RowGetterIfc> {
 
+    //TODO I do not know why sqlite is leaving the shm and wal files every time this class is used
+
     public final static int DEFAULT_ROW_BUFFER_SIZE = 100;
     private final DatabaseIfc myDb;
     private int myRowBufferSize = DEFAULT_ROW_BUFFER_SIZE;// maximum number of records held inside iterators
