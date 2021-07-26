@@ -671,9 +671,10 @@ public class DatabaseFactory {
         config.setTransactionMode(SQLiteConfig.TransactionMode.IMMEDIATE);
         config.setSynchronous(SQLiteConfig.SynchronousMode.NORMAL);
         // If read-only, then use the existing journal, if any
-        if (!readOnly) {
-            config.setJournalMode(SQLiteConfig.JournalMode.WAL);
-        }
+        //TODO removed to prevent creation of shm and wal files
+//        if (!readOnly) {
+//            config.setJournalMode(SQLiteConfig.JournalMode.WAL);
+//        }
         return config;
     }
 
