@@ -240,6 +240,26 @@ public class Row implements RowGetterIfc, RowSetterIfc, RowIfc {
     }
 
     @Override
+    public final String toCSV(){
+        StringJoiner sb = new StringJoiner(",");
+        Object[] elements = getElements();
+        for(Object element: elements){
+            sb.add(element.toString());
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public final String[] asStringArray(){
+        String[] strings = new String[getNumberColumns()];
+        Object[] elements = getElements();
+        for(int i=0; i< strings.length; i++){
+            strings[i] = elements[i].toString();
+        }
+        return strings;
+    }
+
+    @Override
     public final Object getElement(int colNum) {
         if (getDataType(colNum) == DataType.NUMERIC) {
             return getNumeric(colNum);

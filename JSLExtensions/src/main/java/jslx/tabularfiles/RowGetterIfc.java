@@ -53,4 +53,16 @@ public interface RowGetterIfc extends RowIfc {
      * @return an object representation of the element at the column
      */
     Object getElement(int colNum);
+
+    /**
+     *
+     * @return the row as an array of strings
+     */
+    String[] asStringArray();
+
+    /**
+     *
+     * @return the row as comma separated values. The row does not contain a line separator.
+     */
+    String toCSV();
 }

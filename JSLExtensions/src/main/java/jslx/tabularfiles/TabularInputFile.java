@@ -1,5 +1,7 @@
 package jslx.tabularfiles;
 
+import com.opencsv.CSVWriter;
+import jsl.utilities.JSLArrayUtil;
 import jslx.dbutilities.dbutil.DatabaseFactory;
 import jslx.dbutilities.dbutil.DatabaseIfc;
 import org.jooq.*;
@@ -7,8 +9,10 @@ import org.jooq.impl.DSL;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -519,15 +523,23 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         return texts;
     }
 
-    /**
+    /** A very simple write to CSV. If you need something more complex, then
+     *  iterate the rows yourself. This CSV does not apply quote characters to any elements.
      *
-     * @param out the file to write to
+     * @param out the file to write to the data to, the writer is NOT closed
      */
-    public final void writeAsCSV(PrintWriter out) {
-        myDb.writeTableAsCSV(myDataTableName, out);
+    public final void writeAsCSV(PrintWriter out, boolean header) {
+        CSVWriter writer = new CSVWriter(out);
+        if (header){
+            writer.writeNext(getColumnNames().toArray(new String[0]),false);
+        }
+        for(RowGetterIfc row: this){
+            writer.writeNext(row.asStringArray(),false);
+        }
+        writer.flushQuietly();
     }
 
-    /**
+    /** This is not optimized for large files and may have memory and performance issues.
      *  Print to standard out as CSV
      */
     public final void printAsCSV() {
@@ -542,14 +554,14 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         myDb.writeTableAsText(myDataTableName, out);
     }
 
-    /**
+    /** This is not optimized for large files and may have memory and performance issues.
      *  Print to standard out as text
      */
     public final void printAsText() {
         myDb.printTableAsText(myDataTableName);
     }
 
-    /**
+    /** This is not optimized for large files and may have memory and performance issues.
      *
      * @param wbName the name of the workbook, must not be null
      * @param wbDirectory the path to the directory to contain the workbook, must not be null
@@ -559,5 +571,17 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         List<String> names = new ArrayList<>();
         names.add(myDataTableName);
         myDb.writeDbToExcelWorkbook(names, wbName, wbDirectory);
+    }
+
+    /** Transforms the file into an SQLite database file
+     *
+     * @return a reference to the database
+     * @throws IOException if something goes wrong
+     */
+    public final DatabaseIfc asDatabase() throws IOException {
+        Path parent = myPath.getParent();
+        Path dbFile = parent.resolve(myPath.getFileName().toString()+".sqlite");
+        Files.copy(myPath, dbFile, StandardCopyOption.REPLACE_EXISTING);
+        return DatabaseFactory.getSQLiteDatabase(dbFile);
     }
 }
