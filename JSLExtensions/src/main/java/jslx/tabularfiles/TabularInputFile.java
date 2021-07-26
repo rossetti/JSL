@@ -27,6 +27,9 @@ import java.util.function.Consumer;
 public class TabularInputFile extends TabularFile implements Iterable<RowGetterIfc> {
 
     //TODO I do not know why sqlite is leaving the shm and wal files every time this class is used
+    // one possible solution is to use DSL.using(connection, SQLDialect.SQLITE) so that the connection can be
+    // explicitly opened and closed. The shm and wal files are probably not being left in TabularOutputFile
+    // execution because those writes are wrapped in a transaction, which is closing the connection
 
     public final static int DEFAULT_ROW_BUFFER_SIZE = 100;
     private final DatabaseIfc myDb;
