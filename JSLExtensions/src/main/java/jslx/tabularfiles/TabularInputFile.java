@@ -1,7 +1,6 @@
 package jslx.tabularfiles;
 
 import com.opencsv.CSVWriter;
-import jsl.utilities.JSLArrayUtil;
 import jslx.dbutilities.dbutil.DatabaseFactory;
 import jslx.dbutilities.dbutil.DatabaseIfc;
 import org.jooq.*;
@@ -248,7 +247,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @return the list of rows, the list may be empty, if there are no rows in the row number range
      */
     public final List<RowGetterIfc> fetchRows(long minRowNum, long maxRowNum) {
-        return convertRecordsToRows(selectRows(minRowNum, maxRowNum), minRowNum);
+        return convertRecordsToRows(selectRecords(minRowNum, maxRowNum), minRowNum);
     }
 
     /**
@@ -292,7 +291,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         return Optional.of(convertRecordToRow(record, rowNum));
     }
 
-    private Result<Record> selectRows(long minRowNum, long maxRowNum) {
+    private Result<Record> selectRecords(long minRowNum, long maxRowNum) {
         if (minRowNum <= 0) {
             throw new IllegalArgumentException("The minimum row number must be > 0");
         }
@@ -308,7 +307,144 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         return records;
     }
 
-    private List<RowGetterIfc> convertRecordsToRows(Result<Record> records, long startingRowNum) {
+//    /**
+//     *  A class to make iterating of JOOQ records buffered and easier
+//     *  //TODO consider added a more generic version of this class to dbutil package
+//     */
+//    private class BufferedRecordIterator implements Iterator<Record> {
+//        private long myCurrentRowNum;
+//        private long myRemainingNumRows;
+//        private List<Record> myBufferedRecords;
+//        private Iterator<Record> myRecordIterator;
+//
+//        public BufferedRecordIterator() {
+//            this(1);
+//        }
+//
+//        public BufferedRecordIterator(long startingRowNum) {
+//            if (startingRowNum <= 0) {
+//                throw new IllegalArgumentException("The row number must be > 0");
+//            }
+//            myCurrentRowNum = startingRowNum - 1;
+//            myRemainingNumRows = myTotalNumberRows - myCurrentRowNum;
+//            // fill the initial buffer
+//            long n = Math.min(myRowBufferSize, myRemainingNumRows);
+//            myBufferedRecords = selectRecords(startingRowNum, startingRowNum + n);
+//            myRecordIterator = myBufferedRecords.listIterator();
+//        }
+//
+//        public final long getCurrentRowNum() {
+//            return myCurrentRowNum;
+//        }
+//
+//        public final long getRemainingNumRows() {
+//            return myRemainingNumRows;
+//        }
+//
+//        @Override
+//        public final boolean hasNext() {
+//            return myRemainingNumRows > 0;
+//        }
+//
+//        @Override
+//        public final Record next() {
+//            if (myRecordIterator.hasNext()) {
+//                // some rows left in the buffer
+//                // decrement number of rows remaining and return the next row
+//                // after next the cursor is ready to return next row
+//                // so current is the one just returned
+//                myCurrentRowNum = myCurrentRowNum + 1;
+//                myRemainingNumRows = myRemainingNumRows - 1;
+//                return myRecordIterator.next();
+//            } else {
+//                // buffer has no more rows, need to check if more rows remain
+//                if (hasNext()) {
+//                    // refill the buffer
+//                    long n = Math.min(myRowBufferSize, myRemainingNumRows);
+//                    long startingRow = myCurrentRowNum + 1;
+//                    myBufferedRecords = selectRecords(startingRow, startingRow + n);
+//                    myRecordIterator = myBufferedRecords.listIterator();
+//                    // buffer must have rows
+//                    // move to first row in new buffer and return it
+//                    myCurrentRowNum = myCurrentRowNum + 1;
+//                    myRemainingNumRows = myRemainingNumRows - 1;
+//                    return myRecordIterator.next();
+//                } else {
+//                    return null;
+//                }
+//            }
+//        }
+//
+//        @Override
+//        public final void forEachRemaining(Consumer<? super Record> action) {
+//            Iterator.super.forEachRemaining(action);
+//        }
+//    }
+
+    /**
+     *  A class to make iterating of JOOQ records buffered and easier.
+     *  Grabs and returns batches of records until no records are left
+     *  //TODO consider added a more generic version of this class to dbutil package
+     *  // use in work related to importing a tabular file into a general database
+     */
+    protected class BufferedRecordsIterator implements Iterator<Result<Record>> {
+        private long myCurrentRowNum;
+        private long myRemainingNumRows;
+        private final int myBufferSize;
+
+        public BufferedRecordsIterator() {
+            this(1, myRowBufferSize);
+        }
+
+        public BufferedRecordsIterator(int myBufferSize) {
+            this(1, myBufferSize);
+        }
+
+        public BufferedRecordsIterator(long startingRowNum, int bufferSize) {
+            if (startingRowNum <= 0) {
+                throw new IllegalArgumentException("The row number must be > 0");
+            }
+            if (bufferSize <= 0){
+                throw new IllegalArgumentException("The buffer size must be > 0");
+            }
+            myBufferSize = bufferSize - 1;
+            myCurrentRowNum = startingRowNum - 1;
+            myRemainingNumRows = myTotalNumberRows - myCurrentRowNum;
+        }
+
+        @Override
+        public final boolean hasNext() {
+            // if there are rows remaining to place in the buffer
+            return myRemainingNumRows > 0;
+        }
+
+        @Override
+        public final Result<Record> next() {
+            // user asked for records, check if there are any remaining rows to put in the buffer, if not return null
+            if (myRemainingNumRows <= 0){
+                return null;
+            }
+            // there must be rows to return, figure out how many to return
+            // there is at least one row remaining, go ahead and refill
+            long n = Math.min(myBufferSize, myRemainingNumRows);
+            long startingRow = myCurrentRowNum + 1;
+            // fill the records with a new batch
+            Result<Record> records = selectRecords(startingRow, startingRow + n);
+            // move the row indicator up by the number in the buffer
+            myCurrentRowNum = myCurrentRowNum + records.size();
+            // update the number of remaining rows by the number records returned
+            myRemainingNumRows = myRemainingNumRows - records.size();
+            // return the records
+            return records;
+        }
+
+        @Override
+        public final void forEachRemaining(Consumer<? super Result<Record>> action) {
+            Iterator.super.forEachRemaining(action);
+        }
+    }
+
+    protected List<RowGetterIfc> convertRecordsToRows(Result<Record> records, long startingRowNum) {
         Objects.requireNonNull(records, "The Result of records was null");
         List<RowGetterIfc> rows = new ArrayList<>();
         for (Record record : records) {
@@ -318,7 +454,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         return rows;
     }
 
-    private RowGetterIfc convertRecordToRow(Record record, long rowNum) {
+    protected RowGetterIfc convertRecordToRow(Record record, long rowNum) {
         Objects.requireNonNull(record, "The record was null");
         Row row = new Row(this);
         row.setRowNum(rowNum);
@@ -539,26 +675,57 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         writer.flushQuietly();
     }
 
-    /** This is not optimized for large files and may have memory and performance issues.
-     *  Print to standard out as CSV
+    /**
+     *  Writes all of the rows.
+     *  This is not optimized for large files and may have memory and performance issues.
      */
-    public final void printAsCSV() {
-        myDb.printTableAsCSV(myDataTableName);
+    public final void writeAsText(PrintWriter out){
+        writeAsText(1, out);
+    }
+
+    /** Writes from the given row to the end of the file.
+     * This is not optimized for large files and may have memory and performance issues.
+     *
+     * @param minRow the row to start the printing
+     */
+    public final void writeAsText(long minRow, PrintWriter out){
+        writeAsText(minRow, getTotalNumberRows(), out);
+    }
+
+    /** This is not optimized for large files and may have memory and performance issues.
+     *
+     * @param minRow the row to start the printing
+     * @param maxRow the row to end the printing
+     */
+    public final void writeAsText(long minRow, long maxRow, PrintWriter out) {
+        Result<Record> records = selectRecords(minRow, maxRow);
+        records.format(out);
     }
 
     /**
-     *
-     * @param out the file to write to as text
+     *  Prints all of the rows.
+     *  This is not optimized for large files and may have memory and performance issues.
      */
-    public final void writeAsText(PrintWriter out) {
-        myDb.writeTableAsText(myDataTableName, out);
+    public final void printAsText(){
+        printAsText(1);
+    }
+
+    /** Prints from the given row to the end of the file
+     * This is not optimized for large files and may have memory and performance issues.
+     * @param minRow the row to start the printing
+     */
+    public final void printAsText(long minRow){
+        printAsText(minRow, getTotalNumberRows());
     }
 
     /** This is not optimized for large files and may have memory and performance issues.
-     *  Print to standard out as text
+     *
+     * @param minRow the row to start the printing
+     * @param maxRow the row to end the printing
      */
-    public final void printAsText() {
-        myDb.printTableAsText(myDataTableName);
+    public final void printAsText(long minRow, long maxRow) {
+        Result<Record> records = selectRecords(minRow, maxRow);
+        records.format(System.out);
     }
 
     /** This is not optimized for large files and may have memory and performance issues.
@@ -584,4 +751,21 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         Files.copy(myPath, dbFile, StandardCopyOption.REPLACE_EXISTING);
         return DatabaseFactory.getSQLiteDatabase(dbFile);
     }
+
+//    public void printBufferedRecords(int bufferSize){
+//        BufferedRecordsIterator iterator = new BufferedRecordsIterator(2);
+//        System.out.println();
+//        TXTFormat txtFormat = new TXTFormat();
+//        txtFormat = txtFormat.horizontalHeaderBorder(false);
+//        txtFormat = txtFormat.horizontalTableBorder(false);
+//        txtFormat = txtFormat.horizontalCellBorder(false);
+//        while(iterator.hasNext()){
+//            Result<Record> next = iterator.next();
+////            next.format(System.out);
+//            for(Record r: next){
+//                r.format(System.out, txtFormat);
+//            }
+//            System.out.println();
+//        }
+//    }
 }

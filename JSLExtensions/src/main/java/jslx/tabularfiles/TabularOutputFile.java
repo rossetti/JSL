@@ -30,6 +30,7 @@ import java.util.Objects;
  */
 public class TabularOutputFile extends TabularFile {
 //TODO use a builder pattern to define and add the columns
+    //TODO consider permitting the appending of rows to an existing file
 
     private final static int DEFAULT_PAGE_SIZE = 8192;
     private final static int MIN_DEFAULT_ROWS_IN_BATCH = 32;

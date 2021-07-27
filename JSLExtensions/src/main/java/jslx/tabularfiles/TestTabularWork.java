@@ -17,7 +17,7 @@ public class TestTabularWork {
     public static void main(String[] args) {
 
         // demonstrate reading a file
-        writeFile();
+//        writeFile();
         // demonstrate reading a file
         readFile();
     }
@@ -98,8 +98,8 @@ public class TestTabularWork {
             e.printStackTrace();
         }
 
-        // You can pretty print the data
-        tif.printAsText();
+        // You can pretty print rows of the data
+        tif.printAsText(1, 5);
 
         // You can write the data to CSV
         PrintWriter printWriter = JSL.getInstance().makePrintWriter("data.csv");
@@ -112,6 +112,8 @@ public class TestTabularWork {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println("Done with demo example.");
 
     }
 }
