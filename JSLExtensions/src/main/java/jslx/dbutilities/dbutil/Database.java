@@ -19,6 +19,7 @@ package jslx.dbutilities.dbutil;
 import org.jooq.*;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
+import org.jooq.conf.Settings;
 
 import javax.sql.DataSource;
 import java.sql.DatabaseMetaData;
@@ -45,7 +46,7 @@ public class Database implements DatabaseIfc {
     private final DataSource myDataSource;
     private final SQLDialect mySQLDialect;
     private String myDefaultSchemaName;
-    private DSLContext myDSLContext;
+    private final DSLContext myDSLContext;
 
     /** Create a Database.  The SQLDialect is guessed based on establishing a connection
      * with the supplied DataSource. If the dialect cannot be guessed then an exception will occur.
@@ -71,6 +72,19 @@ public class Database implements DatabaseIfc {
      *                   be consistent with the database referenced by the connection
      */
     public Database(String dbLabel, DataSource dataSource, SQLDialect dialect) {
+        this(dbLabel, dataSource, dialect, null);
+    }
+
+    /**
+     * @param dbLabel    a string representing a label for the database must not be null. This label
+     *                   may or may not have any relation to the actual name of the database. This is
+     *                   used for labeling purposes.
+     * @param dataSource the DataSource backing the database, must not be null
+     * @param dialect    the SLQ dialect for this type of database. It obviously must
+     *                   be consistent with the database referenced by the connection
+     * @param settings  the JOOQ settings for the database context, may be null
+     */
+    public Database(String dbLabel, DataSource dataSource, SQLDialect dialect, Settings settings) {
         Objects.requireNonNull(dbLabel, "The database name was null");
         Objects.requireNonNull(dataSource, "The database source was null");
 
@@ -90,7 +104,11 @@ public class Database implements DatabaseIfc {
         myLabel = dbLabel;
         myDataSource = dataSource;
         mySQLDialect = dialect;
-        myDSLContext = DSL.using(dataSource, dialect);
+        if (settings == null) {
+            myDSLContext = DSL.using(dataSource, dialect);
+        }else {
+            myDSLContext = DSL.using(dataSource, dialect, settings);
+        }
         setJooQDefaultExecutionLoggingOption(false);
         // force it to be made by establishing a connection to get the meta data
         getDatabaseMetaData();
