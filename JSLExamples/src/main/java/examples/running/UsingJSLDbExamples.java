@@ -39,7 +39,7 @@ public class UsingJSLDbExamples {
     public static void main(String[] args) {
 
         // shows how to use the default database
-        testJSLDatabase();
+//        testJSLDatabase();
 
         // shows how to use a database instead of the default
 //        testJSLDatabaseObserver();
@@ -48,7 +48,7 @@ public class UsingJSLDbExamples {
 //        testTwoDatabases();
 
         // shows that previous simulation results can be accessed w/o rerunning.
-//        showDbReuse();
+        showDbReuse();
 
         // show multiple simulation runs captured to a database
 //               testMCBRuns();

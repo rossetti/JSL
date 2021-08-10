@@ -97,9 +97,9 @@ dependencies {
 
     //TODO work to update version of POI or consider using https://github.com/dhatim/fastexcel/ instead
     // https://mvnrepository.com/artifact/org.apache.poi/poi
-    api(group = "org.apache.poi", name = "poi", version = "4.1.2")
+    api(group = "org.apache.poi", name = "poi", version = "5.0.0")
     // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
-    api(group = "org.apache.poi", name = "poi-ooxml", version = "4.1.2")
+    api(group = "org.apache.poi", name = "poi-ooxml", version = "5.0.0")
 
     // include local jar files found in libs folder in the compile
     implementation(fileTree(baseDir = "libs"))

@@ -60,28 +60,33 @@ public class ExcelTesting {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException, SQLException  {
-        createWorkBookTest("testworkbook");
-       readWorkBookTest("testworkbook");
+//        createWorkBookTest("testworkbook");
+//       readWorkBookTest("testworkbook");
 //        writeSheetAsCSVTest();
 //        writeWorkbookAsCSVTest();
-//        XSSFWorkbook workbook = ExcelUtil.openExistingExcelWorkbook(JSL.ExcelDir.resolve("results.xlsx"));
-//        System.out.println(workbook.getSheetName(0));
+
 //        writeResultsToWorkbookWorkSheetTest1("name1");
 //        writeResultsToWorkbookWorkSheetTest1("name2");
+
+//        XSSFWorkbook workbook = ExcelUtil.openExistingXSSFWorkbookReadOnly(excelDir.resolve("results.xlsx"));
+//        System.out.println(workbook.getSheetName(0));
     }
 
     public static void writeResultsToWorkbookWorkSheetTest1(String sheetName){
         // get some results to write
-        DatabaseIfc db = DatabaseFactory.getEmbeddedDerbyDatabase("JSLDb_DLB_with_Q");
-        JSLDatabase jslDatabase = new JSLDatabase(db);
+        // create a reference to the previously created database
+        Path path = JSL.getInstance().getOutDir().resolve("DLB_with_Q_OutputDir");
+        DatabaseIfc database = DatabaseFactory.getEmbeddedDerbyDatabase("DLB_with_Q_JSLDb", path);
+        // use the database as the backing database for the new JSLDatabase instance
+        JSLDatabase jslDatabase = new JSLDatabase(database);
         Result<AcrossRepViewRecord> records = jslDatabase.getAcrossRepViewRecords();
         records.format(System.out);
 
-        Path path = JSL.getInstance().getExcelDir().resolve("results.xlsx");
+        Path pathToWb = JSL.getInstance().getExcelDir().resolve("results.xlsx");
         //XSSFWorkbook workbook = ExcelUtil.openExistingXSSFWorkbook(path);
         Result<Record> result = records.into(records.fields());
 
-        ExcelUtil.writeResultRecordsToExcelWorkbook(path, sheetName, result);
+        ExcelUtil.writeResultRecordsToExcelWorkbook(pathToWb, sheetName, result);
         System.out.println();
         System.out.println("Done!");
     }
