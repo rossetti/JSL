@@ -65,8 +65,8 @@ public class ExcelTesting {
 //        writeSheetAsCSVTest();
 //        writeWorkbookAsCSVTest();
 
-//        writeResultsToWorkbookWorkSheetTest1("name1");
-//        writeResultsToWorkbookWorkSheetTest1("name2");
+        writeResultsToWorkbookWorkSheetTest1("name1");
+        writeResultsToWorkbookWorkSheetTest1("name2");
 
 //        XSSFWorkbook workbook = ExcelUtil.openExistingXSSFWorkbookReadOnly(excelDir.resolve("results.xlsx"));
 //        System.out.println(workbook.getSheetName(0));
