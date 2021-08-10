@@ -12,22 +12,22 @@ import java.util.Set;
 @Deprecated(forRemoval = true)
 public class JavaFXUtils {
 
-    public static void main(String[] args) {
-
-        Platform.startup(() ->
-        {
-            new TestFX().start(new Stage());
-            // This block will be executed on JavaFX Thread
-        });
-
-        System.out.println("I'm here!");
-
-//        Platform.runLater(new Runnable() {
-//            public void run() {
-//                new TestFX().start(new Stage());
-//            }
+//    public static void main(String[] args) {
+//
+//        Platform.startup(() ->
+//        {
+//            new TestFX().start(new Stage());
+//            // This block will be executed on JavaFX Thread
 //        });
-    }
+//
+//        System.out.println("I'm here!");
+//
+////        Platform.runLater(new Runnable() {
+////            public void run() {
+////                new TestFX().start(new Stage());
+////            }
+////        });
+//    }
 
     /**
      * Constructs a JavaFX XYChart.Series from the supplied data arrays. The

@@ -3,8 +3,10 @@ package jslx.tabularfiles;
 
 import jsl.utilities.random.rvariable.NormalRV;
 import jsl.utilities.reporting.JSL;
+import jslx.TablesawUtil;
 import jslx.dbutilities.JSLDatabase;
 import jslx.dbutilities.dbutil.DatabaseIfc;
+import tech.tablesaw.api.Table;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,8 +18,8 @@ public class TestTabularWork {
 
     public static void main(String[] args) {
 
-        // demonstrate reading a file
-//        writeFile();
+        // demonstrate writing a file
+        writeFile();
         // demonstrate reading a file
         readFile();
     }
@@ -112,6 +114,10 @@ public class TestTabularWork {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println();
+        Table table = TablesawUtil.makeTable(tif);
+        System.out.println(table.printAll());
 
         System.out.println("Done with demo example.");
 

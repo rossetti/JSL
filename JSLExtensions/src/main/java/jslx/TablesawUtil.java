@@ -7,6 +7,7 @@ import jslx.dbutilities.JSLDatabase;
 import jslx.dbutilities.dbutil.DatabaseIfc;
 import jslx.excel.ExcelUtil;
 import jslx.excel.ExcelWorkbookAsCSV;
+import jslx.tabularfiles.TabularInputFile;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jooq.Record;
@@ -21,6 +22,7 @@ import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -104,6 +106,35 @@ public class TablesawUtil {
             return Table.create(tableName);
         }
         return db1;
+    }
+
+    /**
+     * Makes a Tablesaw table based on the data within the tabular file. If there is an exception or
+     * other issue accessing the data in the table, then an empty Table is returned (no columns). In
+     * either case a warning message is logged.  Any exceptions are squelched.
+     *
+     * @param tabularInputFile the tabular file to convert, must not be null
+     * @return the Tablesaw table
+     */
+    public static Table makeTable(TabularInputFile tabularInputFile){
+        Objects.requireNonNull(tabularInputFile, "The TabularInputFile was null");
+        // get it as a database
+        String fileName = tabularInputFile.getPath().getFileName().toString();
+        String fixedFileName = fileName.replaceAll("[^a-zA-Z]", "");
+        String dataTableName = fixedFileName.concat("_Data");
+        try {
+            DatabaseIfc database = tabularInputFile.asDatabase();
+            Table tbl = makeTable(database, dataTableName);
+            // delete the database, no longer needed
+            Path parent = tabularInputFile.getPath().getParent();
+            Path dbFile = parent.resolve(fixedFileName+".sqlite");
+            Files.deleteIfExists(dbFile);
+            return tbl;
+        } catch (IOException e) {
+            LOGGER.warn("There was a exception when creating Tablesaw table {} from tabular file {}, returned an empty table",
+                    dataTableName, tabularInputFile.getPath());
+            return Table.create(dataTableName);
+        }
     }
 
      /** Makes a Tablesaw table based on the data within the table of the JSLDatabase. If the table is not

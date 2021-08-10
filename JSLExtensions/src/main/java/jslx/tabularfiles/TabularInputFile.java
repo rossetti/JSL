@@ -385,6 +385,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      *  A class to make iterating of JOOQ records buffered and easier.
      *  Grabs and returns batches of records until no records are left
      *  //TODO consider added a more generic version of this class to dbutil package
+     *  //TODO see also jooq cursors
      *  // use in work related to importing a tabular file into a general database
      */
     protected class BufferedRecordsIterator implements Iterator<Result<Record>> {
