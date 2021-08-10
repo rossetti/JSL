@@ -19,6 +19,7 @@ package examples.running;
 import examples.queueing.DriverLicenseBureauWithQ;
 import jsl.simulation.Simulation;
 import jsl.simulation.SimulationReporter;
+import jsl.utilities.reporting.JSL;
 import jslx.dbutilities.dbutil.DatabaseFactory;
 import jslx.dbutilities.dbutil.DatabaseIfc;
 import jsl.utilities.random.rvariable.ExponentialRV;
@@ -28,6 +29,7 @@ import jsl.utilities.statistic.MultipleComparisonAnalyzer;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,19 +45,19 @@ public class UsingJSLDbExamples {
 //        testJSLDatabaseObserver();
 
         // shows that 2 databases can be observing at the same time
-        //testTwoDatabases();
+//        testTwoDatabases();
 
         // shows that previous simulation results can be accessed w/o rerunning.
-        //showDbReuse();
+//        showDbReuse();
 
         // show multiple simulation runs captured to a database
-        //       testMCBRuns();
+//               testMCBRuns();
 
         // shows 2 databases (default and a postgres database)
         //testPostgressDb();
 
         // shows running the same simulation twice in a row
-        //showMultipleRunsOfSameSimulation();
+//        showMultipleRunsOfSameSimulation();
 
     }
 
@@ -209,13 +211,12 @@ public class UsingJSLDbExamples {
 
     /**
      * Illustrate how to get data from a previously executed simulation that
-     * had data in database. This method assumes that a database called, JSLDb_DriveThroughPharmacy
-     * exists within the jslOutput/db directory.
+     * had data in database. This method assumes that method, testJSLDatabase(), has already been executed
      */
     public static void showDbReuse() {
-        // assumes that a database called JSLDb_DriveThroughPharmacy is in the jslOutput/db directory
         // create a reference to the previously created database
-        DatabaseIfc database = DatabaseFactory.getEmbeddedDerbyDatabase("JSLDb_DriveThroughPharmacy");
+        Path path = JSL.getInstance().getOutDir().resolve("DLB_with_Q_OutputDir");
+        DatabaseIfc database = DatabaseFactory.getEmbeddedDerbyDatabase("DLB_with_Q_JSLDb", path);
         // use the database as the backing database for the new JSLDatabase instance
         JSLDatabase jslDatabase = new JSLDatabase(database);
         // just write out some results

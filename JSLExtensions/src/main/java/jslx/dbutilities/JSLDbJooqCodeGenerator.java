@@ -16,10 +16,11 @@
 
 package jslx.dbutilities;
 
+import jsl.utilities.JSLFileUtil;
 import jslx.dbutilities.dbutil.DatabaseFactory;
 import jslx.dbutilities.dbutil.Database;
 import jslx.dbutilities.dbutil.DatabaseIfc;
-import org.apache.commons.io.FileUtils;
+//import org.apache.commons.io.FileUtils;
 import org.jooq.SQLDialect;
 
 import javax.sql.DataSource;
@@ -40,7 +41,7 @@ public class JSLDbJooqCodeGenerator {
     public static DatabaseIfc makeEmptyDb(String dbName, String scriptName) throws IOException {
         System.out.println("Making database: " + dbName);
 
-        FileUtils.deleteDirectory(JSLDatabase.dbDir.resolve(dbName).toFile());
+        JSLFileUtil.deleteDirectory(JSLDatabase.dbDir.resolve(dbName).toFile());
 
         Path createScript = JSLDatabase.dbScriptsDir.resolve(scriptName);
         Path dbPath = JSLDatabase.dbDir.resolve(dbName);
@@ -56,7 +57,7 @@ public class JSLDbJooqCodeGenerator {
         String dbName = "tmpJSLDb";
         System.out.println("Making database: " + dbName);
         Path dbPath = JSLDatabase.dbDir.resolve(dbName);
-        FileUtils.deleteDirectory(dbPath.toFile());
+        JSLFileUtil.deleteDirectory(dbPath.toFile());
        // Path createScript = Paths.get("src").resolve("main").resolve("resources").resolve("JSLDb.sql");
         Path createScript = Paths.get("src").resolve("main").resolve("resources").resolve("JSLDb.sql");
         DataSource derbyDataSource = DatabaseFactory.createEmbeddedDerbyDataSource(dbPath, true);
@@ -68,7 +69,7 @@ public class JSLDbJooqCodeGenerator {
                 "src/main/java", "jslx.dbutilities.jsldbsrc");
         System.out.println("Completed code generation.");
         System.out.println("Deleting the database");
-        FileUtils.deleteDirectory(dbPath.toFile());
+        JSLFileUtil.deleteDirectory(dbPath.toFile());
     }
 
 //    public static void runCodeGenerationUsingScriptOnly() throws Exception {

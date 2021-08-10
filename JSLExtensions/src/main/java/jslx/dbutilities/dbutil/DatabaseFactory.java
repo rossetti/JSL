@@ -2,8 +2,8 @@ package jslx.dbutilities.dbutil;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import jsl.utilities.JSLFileUtil;
 import jslx.dbutilities.JSLDatabase;
-import org.apache.commons.io.FileUtils;
 import org.apache.derby.jdbc.ClientDataSource;
 import org.apache.derby.jdbc.EmbeddedDataSource;
 import org.jooq.SQLDialect;
@@ -21,7 +21,6 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
@@ -155,13 +154,21 @@ public class DatabaseFactory {
      * @param pathToDb the path to the embedded database on disk
      */
     public static void deleteEmbeddedDerbyDatabase(Path pathToDb) {
-        try {
-            FileUtils.deleteDirectory(pathToDb.toFile());
+        boolean b = JSLFileUtil.deleteDirectory(pathToDb.toFile());
+        if (b){
             DatabaseIfc.LOGGER.info("Deleting directory to derby database {}", pathToDb);
-        } catch (IOException e) {
+        } else {
             DatabaseIfc.LOGGER.error("Unable to delete directory to derby database {}", pathToDb);
-            throw new DataAccessException("Unable to delete directory to derby database: " + pathToDb.toString());
+//            throw new DataAccessException("Unable to delete directory to derby database: " + pathToDb.toString());
         }
+
+//        try {
+//            JSLFileUtil.deleteDirectory(pathToDb.toFile());
+//            DatabaseIfc.LOGGER.info("Deleting directory to derby database {}", pathToDb);
+//        } catch (IOException e) {
+//            DatabaseIfc.LOGGER.error("Unable to delete directory to derby database {}", pathToDb);
+//            throw new DataAccessException("Unable to delete directory to derby database: " + pathToDb.toString());
+//        }
     }
 
     /**
@@ -470,7 +477,7 @@ public class DatabaseFactory {
 
         File target = directory.resolve(dupName).toFile();
         File source = sourceDB.toFile();
-        FileUtils.copyDirectory(source, target);
+        JSLFileUtil.copyDirectory(source, target);
     }
 
     /**
@@ -512,7 +519,7 @@ public class DatabaseFactory {
         // translate paths to files
         File target = directory.resolve(dupName).toFile();
         File source = sourceDB.toFile();
-        FileUtils.copyDirectory(source, target);
+        JSLFileUtil.copyDirectory(source, target);
         s.executeUpdate("CALL SYSCS_UTIL.SYSCS_UNFREEZE_DATABASE()");
         s.close();
     }

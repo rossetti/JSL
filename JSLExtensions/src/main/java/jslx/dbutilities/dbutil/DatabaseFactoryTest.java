@@ -19,13 +19,14 @@ public class DatabaseFactoryTest {
 
     public static void main(String[] args) throws IOException {
 
-        testSQLite();
+//        testSQLite();
 //        testSQLite2();
         // testDerbyLocalHost();
         // testDataSourceConnection();
         // testParsing();
-        //     testDatabaseCreation();
-        //testDerbyEmbeddedExisting();
+             testDatabaseCreation();
+        testDerbyEmbeddedWithCreateScript();
+        testDerbyEmbeddedExisting();
         //       testExcelDbExport();
 //              testExcelDbImport();
 
@@ -39,7 +40,7 @@ public class DatabaseFactoryTest {
 //        testPostgresPropertiesFile();
 
 //        testSPDatabaseCreation();
-//        testDatabaseCreation();
+
     }
 
     public static void testSQLite(){
@@ -189,8 +190,8 @@ public class DatabaseFactoryTest {
     }
 
     public static void testDerbyEmbeddedExisting() {
-        Path path = JSLDatabase.dbDir.resolve("JSLDb_DLB_with_Q");
-        DatabaseIfc db = DatabaseFactory.getEmbeddedDerbyDatabase("JSLDb_DLB_with_Q");
+        Path path = JSLDatabase.dbDir.resolve("TmpDb");
+        DatabaseIfc db = DatabaseFactory.getEmbeddedDerbyDatabase("TmpDb");
 //        DataSource dataSource = DatabaseFactory.createEmbeddedDerbyDataSource(path);
 //        Database db = new Database("JSL", dataSource, SQLDialect.DERBY);
         db.setJooQDefaultExecutionLoggingOption(true);

@@ -6,10 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,9 +15,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- *  Provides some basic file utilities. Addtional utilities can be found in Google Guava and
- *  Apache Commons IO.  However, this basic IO provides basic needs without external libraries and
- *  is integrated withe JSL functionality.
+ * Provides some basic file utilities. Addtional utilities can be found in Google Guava and
+ * Apache Commons IO.  However, this basic IO provides basic needs without external libraries and
+ * is integrated withe JSL functionality.
  */
 public class JSLFileUtil {
 
@@ -99,12 +96,13 @@ public class JSLFileUtil {
         }
     }
 
-    /** Makes the file in the directory that the program launched within
+    /**
+     * Makes the file in the directory that the program launched within
      *
      * @param fileName the name of the file to make
      * @return the created PrintWriter, may be System.out if an IOException occurred
      */
-    public static PrintWriter makePrintWriter(String fileName){
+    public static PrintWriter makePrintWriter(String fileName) {
         Objects.requireNonNull(fileName, "The supplied file name was null");
         return makePrintWriter(getProgramLaunchDirectory().resolve(fileName));
     }
@@ -177,13 +175,12 @@ public class JSLFileUtil {
     }
 
     /**
-     *
      * @param pathToFile the path to the file, must not be null and must not be a directory
      * @return the reference to the File
      */
-    public static File makeFile(Path pathToFile){
+    public static File makeFile(Path pathToFile) {
         Objects.requireNonNull(pathToFile, "The path to the file was null!");
-        if (Files.isDirectory(pathToFile)){
+        if (Files.isDirectory(pathToFile)) {
             throw new IllegalArgumentException("The path was a directory not a file!");
         }
         createDirectories(pathToFile.getParent());
@@ -288,7 +285,7 @@ public class JSLFileUtil {
         if (file.length() == 0) {
             throw new IOException("The file was empty");
         }
-        if (!isTexFileName(file.getName())){
+        if (!isTexFileName(file.getName())) {
             throw new IllegalArgumentException("The file was not a tex file");
         }
         ProcessBuilder b = new ProcessBuilder();
@@ -359,96 +356,90 @@ public class JSLFileUtil {
     }
 
     /**
-     *
      * @param fileName the name of the file as a string
      * @return true if the extension for the file is txt or TXT
      */
-    public static boolean isTextFileName(String fileName){
-        if (fileName == null){
+    public static boolean isTextFileName(String fileName) {
+        if (fileName == null) {
             return false;
         }
         Optional<String> optionalS = getExtensionByStringFileName(fileName);
-        if (optionalS.isEmpty()){
+        if (optionalS.isEmpty()) {
             return false;
         }
         return optionalS.get().equalsIgnoreCase("txt");
     }
 
     /**
-     *
      * @param pathToFile
      * @return true if extension on path is txt
      */
-    public static boolean isTextFile(Path pathToFile){
-        if (pathToFile == null){
+    public static boolean isTextFile(Path pathToFile) {
+        if (pathToFile == null) {
             return false;
         }
         Optional<String> optionalS = getExtensionFromPath(pathToFile);
-        if (optionalS.isEmpty()){
+        if (optionalS.isEmpty()) {
             return false;
         }
         return optionalS.get().equalsIgnoreCase("txt");
     }
 
     /**
-     *
      * @param fileName the name of the file as a string
      * @return true if the extension for the file is txt or TXT
      */
-    public static boolean isCSVFileName(String fileName){
-        if (fileName == null){
+    public static boolean isCSVFileName(String fileName) {
+        if (fileName == null) {
             return false;
         }
         Optional<String> optionalS = getExtensionByStringFileName(fileName);
-        if (optionalS.isEmpty()){
+        if (optionalS.isEmpty()) {
             return false;
         }
         return optionalS.get().equalsIgnoreCase("csv");
     }
 
     /**
-     *
      * @param pathToFile
      * @return true if extension on path is csv
      */
-    public static boolean isCSVFile(Path pathToFile){
-        if (pathToFile == null){
+    public static boolean isCSVFile(Path pathToFile) {
+        if (pathToFile == null) {
             return false;
         }
         Optional<String> optionalS = getExtensionFromPath(pathToFile);
-        if (optionalS.isEmpty()){
+        if (optionalS.isEmpty()) {
             return false;
         }
         return optionalS.get().equalsIgnoreCase("csv");
     }
 
     /**
-     *
      * @param fileName the name of the file as a string
      * @return true if the extension for the file is tex
      */
-    public static boolean isTexFileName(String fileName){
-        if (fileName == null){
+    public static boolean isTexFileName(String fileName) {
+        if (fileName == null) {
             return false;
         }
         Optional<String> optionalS = getExtensionByStringFileName(fileName);
-        if (optionalS.isEmpty()){
+        if (optionalS.isEmpty()) {
             return false;
         }
         return optionalS.get().equalsIgnoreCase("tex");
     }
 
     /**
-     *
      * @param pathToFile
      * @return true if extension on path is tex
      */
-    public static boolean isTeXFile(Path pathToFile){
-        if (pathToFile == null){
+    public static boolean isTeXFile(Path pathToFile) {
+        if (pathToFile == null) {
             return false;
         }
         Optional<String> optionalS = getExtensionFromPath(pathToFile);
-        if (optionalS.isEmpty()){
+        if (optionalS.isEmpty()) {
             return false;
         }
         return optionalS.get().equalsIgnoreCase("tex");
@@ -500,5 +491,79 @@ public class JSLFileUtil {
             s = name.substring(dot) + ext;
         }
         return (s);
+    }
+
+    public static boolean deleteDirectory(Path pathToDir) {
+        Objects.requireNonNull(pathToDir, "The supplied path was null");
+        return deleteDirectory(pathToDir.toFile());
+    }
+
+    /**
+     * Recursively deletes
+     *
+     * @param directoryToBeDeleted the file reference to the directory to delete
+     * @return true if deleted
+     */
+    public static boolean deleteDirectory(File directoryToBeDeleted) {
+        Objects.requireNonNull(directoryToBeDeleted, "The supplied file directory was null");
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
+    }
+
+    private static void copyDirectoryInternal(File sourceDirectory, File destinationDirectory) throws IOException {
+        Objects.requireNonNull(sourceDirectory, "The source directory was null");
+        Objects.requireNonNull(destinationDirectory, "The destination directory was null");
+        if (!destinationDirectory.exists()) {
+            destinationDirectory.mkdir();
+        }
+        for (String f : sourceDirectory.list()) {
+            copyDirectory(new File(sourceDirectory, f), new File(destinationDirectory, f));
+        }
+    }
+
+    /**
+     *
+     * @param source the source directory as a file, must not be null
+     * @param destination the destination directory as a file, must not be null
+     * @throws IOException if a problem occurs
+     */
+    public static void copyDirectory(Path source, Path destination) throws IOException{
+        Objects.requireNonNull(source, "The source directory was null");
+        Objects.requireNonNull(destination, "The destination directory was null");
+        copyDirectory(source.toFile(), destination.toFile());
+    }
+
+    /**
+     *
+     * @param source the source directory as a file, must not be null
+     * @param destination the destination directory as a file, must not be null
+     * @throws IOException if a problem occurs
+     */
+    public static void copyDirectory(File source, File destination) throws IOException {
+        Objects.requireNonNull(source, "The source directory was null");
+        Objects.requireNonNull(destination, "The destination directory was null");
+        if (source.isDirectory()) {
+            copyDirectoryInternal(source, destination);
+        } else {
+            copyFile(source, destination);
+        }
+    }
+
+    private static void copyFile(File sourceFile, File destinationFile) throws IOException {
+        Objects.requireNonNull(sourceFile, "The source file was null");
+        Objects.requireNonNull(destinationFile, "The destination file was null");
+        try (InputStream in = new FileInputStream(sourceFile);
+             OutputStream out = new FileOutputStream(destinationFile)) {
+            byte[] buf = new byte[1024];
+            int length;
+            while ((length = in.read(buf)) > 0) {
+                out.write(buf, 0, length);
+            }
+        }
     }
 }

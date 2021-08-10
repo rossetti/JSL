@@ -38,7 +38,7 @@ dependencies {
 
     api(group = "org.apache.commons", name = "commons-math3", version = "3.6.1")
 
-    api(group = "commons-io", name = "commons-io", version = "2.7")
+//    api(group = "commons-io", name = "commons-io", version = "2.11.0")
 
     // https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-core
     api(group = "tech.tablesaw", name = "tablesaw-core", version =  "0.38.2")
@@ -130,9 +130,9 @@ tasks.jar {
 // these jars are placed in build/libs by default
 java {
     // comment this out to not make jar file with javadocs during normal build
-//    withJavadocJar()
+    withJavadocJar()
     // comment this out to not make jar file with source during normal build
-//    withSourcesJar()
+    withSourcesJar()
 }
 
 // run the publishing task to generate the signed jars required for maven central
@@ -143,7 +143,7 @@ publishing {
             groupId = "io.github.rossetti"
             artifactId = "JSLExtensions"
             // update this field when making a new release
-            version = "R1.0.7"
+            version = "R1.0.8"
             from(components["java"])
             versionMapping {
                 usage("java-api") {
