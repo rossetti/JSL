@@ -134,6 +134,7 @@ public interface DatabaseIfc {
      * This method calls the DataSource for a connection. You are responsible for closing the connection.
      *
      * @return a connection to the database
+     * @throws SQLException if there is a problem with the connection
      */
     default Connection getConnection() throws SQLException {
         return getDataSource().getConnection();
@@ -603,6 +604,8 @@ public interface DatabaseIfc {
 
     /**
      * Writes all the tables to an Excel workbook, uses name of schema, uses the working directory
+     * @param schemaName the name of the schema containing the tables
+     * @throws IOException if there is a problem
      */
     default void writeDbToExcelWorkbook(String schemaName) throws IOException {
         writeDbToExcelWorkbook(schemaName, null, null);
@@ -613,6 +616,7 @@ public interface DatabaseIfc {
      *
      * @param schemaName  the name of the schema that should contain the tables
      * @param wbDirectory directory of the workbook, if null uses the working directory
+     * @throws IOException if there is a problem
      */
     default void writeDbToExcelWorkbook(String schemaName, Path wbDirectory) throws IOException {
         writeDbToExcelWorkbook(schemaName, null, wbDirectory);
@@ -623,6 +627,7 @@ public interface DatabaseIfc {
      *
      * @param schemaName the name of the schema that should contain the tables
      * @param wbName     name of the workbook, if null uses name of database
+     * @throws IOException if there is a problem
      */
     default void writeDbToExcelWorkbook(String schemaName, String wbName) throws IOException {
         writeDbToExcelWorkbook(schemaName, wbName, null);
@@ -634,6 +639,7 @@ public interface DatabaseIfc {
      * @param schemaName  the name of the schema that should contain the tables, must not be null
      * @param wbName      name of the workbook, if null uses name of database
      * @param wbDirectory directory of the workbook, if null uses the working directory
+     * @throws IOException if there is a problem
      */
     default void writeDbToExcelWorkbook(String schemaName, String wbName, Path wbDirectory) throws IOException {
         Objects.requireNonNull(schemaName, "The schema name was null");
@@ -657,6 +663,7 @@ public interface DatabaseIfc {
      * @param tableNames  a list of table names that should be written to Excel, must not be null
      * @param wbName      name of the workbook, if null uses name of database
      * @param wbDirectory directory of the workbook, if null uses the working directory
+     * @throws IOException if there is a problem
      */
     default void writeDbToExcelWorkbook(List<String> tableNames, String wbName, Path wbDirectory) throws IOException {
         Objects.requireNonNull(tableNames, "The list of table names was null");
@@ -757,6 +764,7 @@ public interface DatabaseIfc {
      *
      * @param path the path
      * @return true if all commands are executed
+     * @throws IOException if there is a problem
      */
     default boolean executeScript(Path path) throws IOException {
         if (path == null) {
@@ -816,6 +824,7 @@ public interface DatabaseIfc {
      *
      * @param filePath a path to the file for parsing
      * @return the list of strings of the commands
+     * @throws IOException if there is a problem
      */
     public static List<String> parseQueriesInSQLScript(Path filePath) throws IOException {
         if (filePath == null) {
@@ -918,6 +927,7 @@ public interface DatabaseIfc {
      *
      * @param str A big string that has SQL queries
      * @return a list of strings representing each SQL command
+     * @throws IOException the exception
      */
     public static List<String> parseQueriesInString(String str) throws IOException {
         List<String> queries = new ArrayList<>();
@@ -982,6 +992,7 @@ public interface DatabaseIfc {
      * @param schemaName  the name of the schema for which tables need to be generated, must not be null
      * @param pkgDirName  the directory that holds the target package, must not be null
      * @param packageName name of package to be created to hold generated code, must not be null
+     * @throws Exception if there is a problem
      */
     public static void jooqCodeGenerationDerbyDatabase(DataSource dataSource, String schemaName,
                                                        String pkgDirName, String packageName) throws Exception {
@@ -1012,6 +1023,7 @@ public interface DatabaseIfc {
      * @param schemaName           the name of the schema for which tables need to be generated, must not be null
      * @param pkgDirName           the directory that holds the target package, must not be null
      * @param packageName          name of package to be created to hold generated code, must not be null
+     * @throws Exception if there is a problem
      */
     public static void jooqCodeGeneration(Path pathToCreationScript, String schemaName,
                                           String pkgDirName, String packageName) throws Exception {

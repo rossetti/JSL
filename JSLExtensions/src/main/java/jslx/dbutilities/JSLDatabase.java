@@ -346,6 +346,7 @@ public class JSLDatabase {
 
     /**
      * Called by the JSLDatabaseObserver before the simulation experiment is run
+     * @param simulation the simulation
      */
     protected void beforeExperiment(Simulation simulation) {
         // insert the new simulation run into the database
@@ -357,6 +358,7 @@ public class JSLDatabase {
 
     /**
      * Called by JSLDatabaseObserver after the simulation experiment replication is run
+     * @param simulation the simulation
      */
     protected void afterReplication(Simulation simulation) {
         List<ResponseVariable> rvs = simulation.getModel().getResponseVariables();
@@ -375,6 +377,7 @@ public class JSLDatabase {
 
     /**
      * Called by JSLDatabaseObserver after the simulation experiment is run
+     * @param simulation the simulation
      */
     protected void afterExperiment(Simulation simulation) {
         finalizeCurrentSimulationRunRecord(simulation);
@@ -1364,6 +1367,7 @@ public class JSLDatabase {
 
     /**
      * Writes all the tables to an Excel workbook,  uses JSL.ExcelDir for the directory
+     * @throws IOException the checked exception
      */
     public void writeDbToExcelWorkbook() throws IOException {
         myDb.writeDbToExcelWorkbook(getJSLSchemaName(), JSL.getInstance().getExcelDir());
@@ -1373,6 +1377,7 @@ public class JSLDatabase {
      * Writes all the tables to an Excel workbook, uses name of database
      *
      * @param wbDirectory directory of the workbook, if null uses the working directory
+     * @throws IOException the checked exception
      */
     public void writeDbToExcelWorkbook(Path wbDirectory) throws IOException {
         myDb.writeDbToExcelWorkbook(getJSLSchemaName(), wbDirectory);
@@ -1382,6 +1387,7 @@ public class JSLDatabase {
      * Writes all the tables to an Excel workbook uses JSL.ExcelDir for the directory
      *
      * @param wbName name of the workbook, if null uses name of database
+     * @throws IOException the checked exception
      */
     public void writeDbToExcelWorkbook(String wbName) throws IOException {
         myDb.writeDbToExcelWorkbook(getJSLSchemaName(), wbName, JSL.getInstance().getExcelDir());
@@ -1392,6 +1398,7 @@ public class JSLDatabase {
      *
      * @param wbName      name of the workbook, if null uses name of database
      * @param wbDirectory directory of the workbook, if null uses the working directory
+     * @throws IOException the checked exception
      */
     public void writeDbToExcelWorkbook(String wbName, Path wbDirectory) throws IOException {
         myDb.writeDbToExcelWorkbook(getJSLSchemaName(), wbName, wbDirectory);

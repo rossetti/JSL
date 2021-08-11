@@ -16,13 +16,13 @@
 
 package jslx.dbutilities.dbutil;
 
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.conf.Settings;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
-import org.jooq.conf.Settings;
 
 import javax.sql.DataSource;
-import java.sql.DatabaseMetaData;
 import java.util.Objects;
 import java.util.Optional;
 

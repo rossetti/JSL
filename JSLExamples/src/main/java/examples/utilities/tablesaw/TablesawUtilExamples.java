@@ -39,15 +39,17 @@ public class TablesawUtilExamples {
         table.setName("DLBWithQData");
         System.out.println();
         System.out.println(table.printAll());
+        System.out.println();
         // make a Table from the across_rep_view table from within the JSLDatabase
         Table table1 = TablesawUtil.makeTable(db, "across_rep_view");
         System.out.println(table1.printAll());
+        System.out.println();
         // write the Tablesaw table to an excel workbook in the JSL.ExcelDir directory
-        TablesawUtil.writeTableToExcelWorkbook(table, "TableData.xlsx");
+        ExcelUtil.writeTableToExcelWorkbook(table, "TableData.xlsx");
         // Get the path to that workbook
         Path path = JSL.getInstance().getExcelDir().resolve("TableData.xlsx");
         // make a new Tablesaw table from the workbook
-        Table table2 = TablesawUtil.makeTable(path, "DLBWithQData", "Table2");
+        Table table2 = ExcelUtil.makeTable(path, "DLBWithQData", "Table2");
         System.out.println(table2.printAll());
     }
 

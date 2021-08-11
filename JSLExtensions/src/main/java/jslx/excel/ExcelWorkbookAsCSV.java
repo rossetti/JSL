@@ -96,6 +96,7 @@ public class ExcelWorkbookAsCSV {
     /**
      * @param sheetName the name of the sheet to write to the file
      * @param path      the path to the file to write to
+     * @throws IOException an exception
      */
     public final void writeXSSFSheetToCSV(String sheetName, Path path) throws IOException {
         if (sheetName == null) {
@@ -135,6 +136,7 @@ public class ExcelWorkbookAsCSV {
      * each output file the name of each sheet
      *
      * @param pathToOutPutDirectory where to write the files
+     * @throws IOException an exception
      */
     public final void writeXSSFWorkbookToCSV(Path pathToOutPutDirectory) throws IOException {
         try {

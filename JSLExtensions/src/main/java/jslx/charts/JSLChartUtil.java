@@ -82,6 +82,7 @@ public class JSLChartUtil {
      *
      * @param figureToPlot the constructed figure to plot
      * @param pathToSaveFigure the path to the file that will hold the html for the plot
+     * @throws IOException if a problem with the temp files occurs
      */
     public static void showPlot(Figure figureToPlot, Path pathToSaveFigure) throws IOException {
         Objects.requireNonNull(figureToPlot, "The figure to plot was null!");
@@ -96,6 +97,7 @@ public class JSLChartUtil {
      *
      * @param dataName    the name of the response
      * @param partialSums the partial sums to plot
+     * @return the figure
      */
     public static Figure makePartialSumsPlotFigure(String dataName, double[] partialSums) {
         Objects.requireNonNull(dataName, "The data name was null!");
@@ -130,6 +132,7 @@ public class JSLChartUtil {
      * This will only permit less than 50K points
      *
      * @param analyzer the WelchDataFileAnalyzer that has the Welch data to display
+     * @return the figure
      */
     public static Figure makeWelchPlotFigure(WelchDataFileAnalyzer analyzer) {
         Objects.requireNonNull(analyzer, "The data array collector was null!");
@@ -143,6 +146,8 @@ public class JSLChartUtil {
      * This will only permit less than 50K points
      *
      * @param analyzer the WelchDataFileAnalyzer that has the Welch data to display
+     * @param totalNumObservations the number of observations to plot
+     * @return the figure
      */
     public static Figure makeWelchPlotFigure(WelchDataFileAnalyzer analyzer, int totalNumObservations) {
         Objects.requireNonNull(analyzer, "The data array collector was null!");
@@ -157,6 +162,7 @@ public class JSLChartUtil {
      * Stick with less than 50K points
      *
      * @param dataArrayObserver the WelchDataArrayObserver that has the Welch data to display
+     * @return the figure
      */
     public static Figure makeWelchPlotFigure(WelchDataArrayObserver dataArrayObserver) {
         Objects.requireNonNull(dataArrayObserver, "The data array collector was null!");
@@ -171,9 +177,11 @@ public class JSLChartUtil {
      * Warning: This method uses plotly. If there are too many data points then it may not work.
      * Stick with less than 50K points
      *
+     * @param title the title of the chart
      * @param dataName the name of the response
      * @param avg      the Welch averages
      * @param cumAvg   the cumulative averages
+     * @return the figure
      */
     public static Figure makeWelchPlotFigure(String title, String dataName, double[] avg, double[] cumAvg) {
         Objects.requireNonNull(title, "The title was null!");

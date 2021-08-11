@@ -56,9 +56,6 @@ public class ExcelTesting {
 //    public static Path excelDir = Paths.get(".", "jsl/utilities/excel");
     final static Logger logger = ExcelUtil.LOG;
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) throws IOException, SQLException  {
 //        createWorkBookTest("testworkbook");
 //       readWorkBookTest("testworkbook");
@@ -130,7 +127,7 @@ public class ExcelTesting {
      * Tests the opening of a workbook in the current working directory with the
      * supplied name reading from its first sheet.
      *
-     * @param wbName
+     * @param wbName the name to read
      */
     public static void readWorkBookTest(String wbName) {
         System.out.println("Reading from " + wbName + " .... ");
@@ -158,6 +155,7 @@ public class ExcelTesting {
     /**
      * Tests the writing an Excel sheet to a comma separated value file.
      * Depends on having ColonialTemp.xlsx in the current working directory
+     * @throws IOException the checked exception
      */
     public static void writeSheetAsCSVTest() throws IOException {
         Path path = excelDir.resolve("ColonialTemp.xlsx");
@@ -169,6 +167,7 @@ public class ExcelTesting {
      * Tests the writing an Excel workbook to a set of comma separated value files.
      * Depends on having ColonialTemp.xlsx in the current working directory
      * Writes to a directory called excelOutput in the current working directory
+     * @throws IOException the checked exception
      */
     public static void writeWorkbookAsCSVTest() throws IOException {
         Path path = excelDir.resolve("ColonialTemp.xlsx");

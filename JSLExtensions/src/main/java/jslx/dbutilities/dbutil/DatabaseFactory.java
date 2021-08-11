@@ -457,24 +457,15 @@ public class DatabaseFactory {
      * @throws IOException thrown if the system file copy commands fail
      */
     public static void copyEmbeddedDerbyDatabase(Path sourceDB, String dupName, Path directory) throws IOException {
-        if (sourceDB == null) {
-            throw new IllegalArgumentException("The path to the source must not be null!");
-        }
-
-        if (dupName == null) {
-            throw new IllegalArgumentException("The duplicate's name must not be null!");
-        }
-        if (directory == null) {
-            throw new IllegalArgumentException("The directory must not be null!");
-        }
+        Objects.requireNonNull(sourceDB, "The path to the source must not be null!");
+        Objects.requireNonNull(dupName, "The duplicate database name not be null!");
+        Objects.requireNonNull(directory, "The path to the directory must not be null!");
         if (!Files.isDirectory(directory)) {
             throw new IllegalArgumentException("The directory path was not a directory!");
         }
-
         if (Files.exists(directory.resolve(dupName))) {
             throw new IllegalArgumentException("A database with the supplied name already exists in the directory! db name = " + dupName);
         }
-
         File target = directory.resolve(dupName).toFile();
         File source = sourceDB.toFile();
         JSLFileUtil.copyDirectory(source, target);
@@ -486,7 +477,8 @@ public class DatabaseFactory {
      * and directory path must not already exist
      *
      * @param ds        a DataSource to the embedded derby database, obviously it must point to the derby database
-     * @param dupName   the name of the duplicate database, obviouisly it must reference the same database that is
+     * @param sourceDB  the path to the source database
+     * @param dupName   the name of the duplicate database, obviously it must reference the same database that is
      *                  referenced by the DataSource
      * @param directory the directory to place the database in
      * @throws SQLException thrown if the derby commands fail
@@ -494,24 +486,16 @@ public class DatabaseFactory {
      */
     public static final void copyEmbeddedDerbyDatabase(DataSource ds, Path sourceDB, String dupName, Path directory)
             throws SQLException, IOException {
-        if (ds == null) {
-            throw new IllegalArgumentException("The data source must not be null");
-        }
-
-        if (dupName == null) {
-            throw new IllegalArgumentException("The duplicate's name must not be null!");
-        }
-        if (directory == null) {
-            throw new IllegalArgumentException("The directory must not be null!");
-        }
+        Objects.requireNonNull(ds, "The data source must not be null!");
+        Objects.requireNonNull(sourceDB, "The path to the source must not be null!");
+        Objects.requireNonNull(dupName, "The duplicate database name not be null!");
+        Objects.requireNonNull(directory, "The path to the directory must not be null!");
         if (!Files.isDirectory(directory)) {
             throw new IllegalArgumentException("The directory path was not a directory!");
         }
-
         if (Files.exists(directory.resolve(dupName))) {
             throw new IllegalArgumentException("A database with the supplied name already exists in the directory! db name = " + dupName);
         }
-
         Statement s = ds.getConnection().createStatement();
         // freeze the database
         s.executeUpdate("CALL SYSCS_UTIL.SYSCS_FREEZE_DATABASE()");

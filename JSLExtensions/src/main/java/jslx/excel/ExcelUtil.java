@@ -23,15 +23,15 @@ package jslx.excel;
 
 import com.opencsv.CSVWriterBuilder;
 import com.opencsv.ICSVWriter;
+import jsl.utilities.reporting.JSL;
+import jslx.TablesawUtil;
 import jslx.dbutilities.dbutil.DatabaseIfc;
-//import org.apache.poi.ooxml.util.SAXHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.WorkbookUtil;
-//import org.apache.poi.util.SAXHelper;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
@@ -61,9 +61,9 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-//import tech.tablesaw.columns.Column;
 
-/**
+/** A utility class for reading and writing to Excel from various formats.
+ *
  * @author rossetti
  */
 public class ExcelUtil {
@@ -74,6 +74,10 @@ public class ExcelUtil {
 
     final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             .withZone(ZoneId.systemDefault());
+    /**
+     * Used to assign unique enum constants
+     */
+    private static int myEnumCounter_;
 
     /**
      * Runs writeDBAsExcelWorkbook() to write the supplied database to an Excel workbook with one sheet for
@@ -558,6 +562,7 @@ public class ExcelUtil {
     /**
      * @param sheet  the sheet to process
      * @param fields the fields associated with each row
+     * @param skipFirstRow true means first row is skipped
      * @return a list of lists of the java objects representing each cell of each row of the sheet
      */
     public static List<List<Object>> readSheetAsObjects(Sheet sheet, Field<?>[] fields, boolean skipFirstRow) {
@@ -580,6 +585,7 @@ public class ExcelUtil {
     /**
      * @param sheet  the sheet to process
      * @param fields the fields associated with each row
+     * @param skipFirstRow true means first row is skipped
      * @return a list of the arrays of the java objects representing each cell of each row of the sheet
      */
     public static List<Object[]> readSheetAsListOfObjects(Sheet sheet, Field<?>[] fields, boolean skipFirstRow) {
@@ -1153,4 +1159,162 @@ public class ExcelUtil {
         }
     }
 
+    /** Writes the table to a workbook. A new workbook is created and a sheet with the same
+     *  name as the table is created. The data is written to the sheet.
+     *
+     * @param table the Tablesaw Table to write out, must not be null
+     * @param wbName the name to the workbook, must not be null. If there already is a workbook file at the path
+     *                 location, then it is over written
+     */
+    public static void writeTableToExcelWorkbook(tech.tablesaw.api.Table table, String wbName){
+        Objects.requireNonNull(wbName, "The supplied file name was null");
+        Path path = JSL.getInstance().getExcelDir().resolve(wbName);
+       writeTableToExcelWorkbook(table, path);
+    }
+
+    /** Writes the table to a new workbook. A new workbook is created and a sheet with the same
+     *  name as the table is created. The data is written to the sheet.
+     *
+     * @param table the Tablesaw Table to write out, must not be null
+     * @param pathToWb the path to the workbook, must not be null. If there already is a workbook file at the path
+     *                 location, then it is over written
+     */
+    public static void writeTableToExcelWorkbook(tech.tablesaw.api.Table table, Path pathToWb){
+        Objects.requireNonNull(table, "The Tablesaw table was null");
+        Objects.requireNonNull(pathToWb, "The path to the new workbook was null");
+        if (Files.exists(pathToWb)) {
+            try {
+                boolean b = Files.deleteIfExists(pathToWb);
+                LOG.info("The file {} was written over to with table {}", pathToWb, table.name());
+            } catch (IOException e) {
+                LOG.error("There was an error deleting file {} when trying to write table {}", pathToWb, table.name());
+            }
+        }
+        Workbook wb = new XSSFWorkbook();
+        LOG.info("Created workbook {} for writing table", pathToWb);
+        String sheetName = table.name();
+        if (sheetName == null){
+            sheetName = "TablesawData" + getNextEnumConstant();
+        }
+        Sheet sheet = createSheet(wb, sheetName);
+        writeTableAsExcelSheet(table, sheet);
+        LOG.info("Wrote {} Tablesaw rows to sheet {} in workbook {}", table.rowCount(), sheetName, pathToWb);
+        try (OutputStream fileOut = new FileOutputStream(pathToWb.toString())) {
+            wb.write(fileOut);
+            LOG.info("Wrote workbook {} to file.", pathToWb);
+            wb.close();
+        }catch (FileNotFoundException e) {
+            LOG.error("FileNotFoundException {} ", pathToWb, e);
+            e.printStackTrace();
+        } catch (IOException e) {
+            LOG.error("IOException {} ", pathToWb, e);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Writes the contents from a Tablesaw Table to the Excel sheet. Includes the column names as the first row of
+     * the sheet.
+     *
+     * @param table the Tablesaw Table, must not be null
+     * @param sheet the Excel sheet to write to, must not be null
+     */
+    public static void writeTableAsExcelSheet(tech.tablesaw.api.Table table, Sheet sheet) {
+        Objects.requireNonNull(table, "The Tablesaw table must not be null");
+        Objects.requireNonNull(sheet, "The workbook sheet must not be null");
+
+        List<String> columnNames = table.columnNames();
+        Row header = sheet.createRow(0);
+        int i = 0;
+        for (String name : columnNames) {
+            Cell cell = header.createCell(i);
+            cell.setCellValue(name);
+            sheet.setColumnWidth(i, (name.length() + 2) * 256);
+            i++;
+        }
+        // make all of the rows and their cells
+        int nCols = columnNames.size();
+        int nRows = TablesawUtil.getMaxColumnSize(table);
+        Cell[][] cells = new Cell[nRows][nCols];
+        int rowCnt = 1;
+        // this makes cells even if the cell might not hold data
+        for (int r = 0; r < nRows; r++) {
+            Row excelRow = sheet.createRow(rowCnt);
+            for (int c = 0; c < nCols; c++) {
+                cells[r][c] = excelRow.createCell(c, CellType.BLANK);
+            }
+            rowCnt++;
+        }
+        // now fill the cells from the rows of the columns of the table
+        for (int c = 0; c < nCols; c++) {
+            for (int r = 0; r < table.column(c).size(); r++) {
+                writeCell(cells[r][c], table.column(c).get(r));
+            }
+        }
+    }
+
+    /**
+     * Should be used by subclasses to get the next constant
+     * so that unique constants can be used
+     *
+     * @return the constant
+     */
+    public static int getNextEnumConstant() {
+        return (++myEnumCounter_);
+    }
+
+    /** Makes a Tablesaw table from a sheet within an Excel workbook. There are some assumptions here.
+     * 1) the sheet contains columns of data with each column holding the same data type
+     * 2) that the sheet can be converted to a valid csv file format
+     *
+     * If something goes wrong an empty table is create and a warning is logged.
+     *
+     * If you have trouble with this, then you might first translate the Excel workbook to a csv file
+     * and then use the many options available within Tablesaw to import the data from csv.
+     *
+     * @param pathToWorkbook must not be null, the path to the Excel workbook
+     * @param sheetName must not be null, must be a valid sheet name within the workbook
+     * @return the table, will have the same name as the sheet
+     */
+    public static tech.tablesaw.api.Table makeTable(Path pathToWorkbook, String sheetName){
+        return makeTable(pathToWorkbook, sheetName, null);
+    }
+
+    /** Makes a Tablesaw table from a sheet within an Excel workbook. There are some assumptions here.
+     * 1) the sheet contains columns of data with each column holding the same data type
+     * 2) that the sheet can be converted to a valid csv file format.
+     *
+     * If something goes wrong an empty table is create and a warning is logged.
+     *
+     * If you have trouble with this, then you might first translate the Excel workbook to a csv file
+     * and then use the many options available within Tablesaw to import the data from csv.
+     *
+     * @param pathToWorkbook must not be null, the path to the Excel workbook
+     * @param sheetName must not be null, must be a valid sheet name within the workbook
+     * @param tableName the name that you want for the created table, if null it will have the sheet name
+     * @return the table
+     */
+    public static tech.tablesaw.api.Table makeTable(Path pathToWorkbook, String sheetName, String tableName){
+        Objects.requireNonNull(sheetName, "The Excel sheet name was null");
+        try {
+            // convert sheet to temporary csv file
+            File csv = JSL.getInstance().makeFile(tableName+".csv");
+            ExcelWorkbookAsCSV ewb = new ExcelWorkbookAsCSV(pathToWorkbook);
+            ewb.writeXSSFSheetToCSV(sheetName, csv.toPath());
+            // create the table from csv
+            tech.tablesaw.api.Table table = tech.tablesaw.api.Table.read().csv(csv);
+            if (tableName == null){
+                tableName = sheetName;
+            }
+            table.setName(tableName);
+            // delete the temporary csv file
+            csv.delete();
+            return table;
+        } catch (IOException e) {
+            TablesawUtil.LOGGER.warn("Attempted to make Tablesaw table {} from Excel workbook {} from sheet {} failed, returned an empty Table",
+                    tableName, pathToWorkbook.toString(), sheetName);
+        }
+        // if we get here there was a problem, make an empty table
+        return tech.tablesaw.api.Table.create(tableName);
+    }
 }
