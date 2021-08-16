@@ -13,8 +13,8 @@ dependencies {
 
     // next two lines allows use of JSL libraries within the project
     // update the release number when new releases become available
-    api(group = "io.github.rossetti", name = "JSLCore", version = "R1.0.7")
-    api(group = "io.github.rossetti", name = "JSLExtensions", version = "R1.0.7")
+    api(group = "io.github.rossetti", name = "JSLCore", version = "R1.0.8")
+    api(group = "io.github.rossetti", name = "JSLExtensions", version = "R1.0.8")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
