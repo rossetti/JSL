@@ -247,3 +247,9 @@ JSLKotlin/gradle/wrapper/gradle-wrapper.properties
 JSLCore/:JSLCore.iml
 JSLExamples/:JSLExamples.iml
 JSLExtensions/:JSLExtensions.iml
+
+JSLCore/out
+JSLExtensions/out
+JSLKotlin/out
+JSLExamples/out
+JSLExampleProject/out
