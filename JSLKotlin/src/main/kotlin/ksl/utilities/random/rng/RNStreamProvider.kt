@@ -25,6 +25,7 @@ class RNStreamProvider(defaultStreamNum: Int = 1) : RNStreamProviderIfc {
             "The default stream number must be > 0!"
         }
         defaultStreamNumber = defaultStreamNum
+        defaultRNStream()
     }
 
     override fun nextRNStream(): RNStreamIfc {

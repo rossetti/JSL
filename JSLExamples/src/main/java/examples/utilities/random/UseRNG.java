@@ -36,7 +36,7 @@ public class UseRNG {
     public static void main(String[] args) {
         test();
 //        example1();
-        //example2();
+        example2();
        // crnExample1();
         //crnExample2();
  //       antitheticExample1();

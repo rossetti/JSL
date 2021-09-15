@@ -2,19 +2,20 @@ package ksl.utilities.random.rng
 
 
 fun main() {
-    test()
-    test1()
-    test2()
+    testIt()
+//    test()
+//    test1()
+//    test2()
 }
 
 fun test() {
     val rnp = RNStreamProvider()
-    val defaultStream = rnp.nextRNStream()
+    val defaultStream = rnp.defaultRNStream()
     for (i in 1..3) {
         println("u = " + defaultStream.randU01())
     }
     val f = RNStreamProvider()
-    val s1 = f.nextRNStream()
+    val s1 = f.defaultRNStream()
     println("default stream")
     for (i in 1..3) {
         println("u = " + s1.randU01())
@@ -34,6 +35,21 @@ fun test() {
     //TODO doesn't match JSL generator
     for (i in 1..3) {
         println("u = " + s2.randU01())
+    }
+}
+
+
+fun testIt() {
+    val p1 = RNStreamProvider()
+    //val stream = p1.nextRNStream()
+    val stream = p1.defaultRNStream()
+    for (i in 0..8) {
+        println(stream.randU01())
+    }
+    println()
+    val stream2 = p1.nextRNStream()
+    for (i in 0..8) {
+        println(stream2.randU01())
     }
 }
 
