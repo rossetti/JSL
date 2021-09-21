@@ -980,7 +980,7 @@ public class JSLRandom {
             myBeta = new Beta(alpha1, alpha2);
         }
         myBeta.setParameters(alpha1, alpha2);
-        return myBeta.getRandomVariable(rng).getValue();
+        return myBeta.invCDF(rng.randU01());
     }
 
     /**
