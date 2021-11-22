@@ -25,29 +25,43 @@ public final class GeometricRV extends AbstractRVariable {
 
     private final double myProbSuccess;
 
+    /**
+     *
+     * @param prob probability of success, must be in range (0,1)
+     */
     public GeometricRV(double prob){
         this(prob, JSLRandom.nextRNStream());
     }
 
+    /**
+     *
+     * @param prob probability of success, must be in range (0,1)
+     * @param streamNum the stream number to use
+     */
     public GeometricRV(double prob, int streamNum){
         this(prob, JSLRandom.rnStream(streamNum));
     }
 
-    public GeometricRV(double prob, RNStreamIfc rng){
-        super(rng);
-        if ((prob < 0.0) || (prob > 1.0)) {
-            throw new IllegalArgumentException("Probability must be [0,1]");
+    /**
+     *
+     * @param prob probability of success, must be in range (0,1)
+     * @param stream the random number stream to use
+     */
+    public GeometricRV(double prob, RNStreamIfc stream){
+        super(stream);
+        if ((prob <= 0.0) || (prob >= 1.0)) {
+            throw new IllegalArgumentException("Probability must be (0,1)");
         }
         myProbSuccess = prob;
     }
 
     /**
      *
-     * @param rng the RNStreamIfc to use
+     * @param stream the random number stream to use
      * @return a new instance with same parameter value
      */
-    public final GeometricRV newInstance(RNStreamIfc rng){
-        return new GeometricRV(this.myProbSuccess, rng);
+    public final GeometricRV newInstance(RNStreamIfc stream){
+        return new GeometricRV(this.myProbSuccess, stream);
     }
 
     @Override
@@ -66,8 +80,7 @@ public final class GeometricRV extends AbstractRVariable {
 
     @Override
     protected final double generate() {
-        double v = JSLRandom.rGeometric(myProbSuccess, myRNStream);
-        return v;
+        return JSLRandom.rGeometric(myProbSuccess, myRNStream);
     }
 
     /**

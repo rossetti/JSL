@@ -23,27 +23,41 @@ import jsl.utilities.random.rng.RNStreamIfc;
  */
 public final class BinomialRV extends AbstractRVariable {
 
-    private double myProbSuccess;
+    private final double myProbSuccess;
 
-    private int myNumTrials;
+    private final int myNumTrials;
 
-    public BinomialRV(double prob, int numTrials){
-        this(prob, numTrials, JSLRandom.nextRNStream());
+    /**
+     * @param pSuccess the probability of success, must be in (0,1)
+     * @param numTrials  the number of trials, must be greater than 0
+     */
+    public BinomialRV(double pSuccess, int numTrials){
+        this(pSuccess, numTrials, JSLRandom.nextRNStream());
     }
 
-    public BinomialRV(double prob, int numTrials, int streamNum){
-        this(prob, numTrials, JSLRandom.rnStream(streamNum));
+    /**
+     * @param pSuccess  the probability of success, must be in (0,1)
+     * @param numTrials   the number of trials, must be greater than 0
+     * @param streamNum the stream number from the stream provider to use
+     */
+    public BinomialRV(double pSuccess, int numTrials, int streamNum){
+        this(pSuccess, numTrials, JSLRandom.rnStream(streamNum));
     }
 
-    public BinomialRV(double prob, int numTrials, RNStreamIfc rng){
-        super(rng);
-        if ((prob < 0.0) || (prob > 1.0)) {
+    /**
+     * @param pSuccess  the probability of success, must be in (0,1)
+     * @param numTrials   the number of trials, must be greater than 0
+     * @param stream the stream from the stream provider to use
+     */
+    public BinomialRV(double pSuccess, int numTrials, RNStreamIfc stream){
+        super(stream);
+        if ((pSuccess < 0.0) || (pSuccess > 1.0)) {
             throw new IllegalArgumentException("Success Probability must be [0,1]");
         }
         if (numTrials <= 0) {
             throw new IllegalArgumentException("Number of trials must be >= 1");
         }
-        myProbSuccess = prob;
+        myProbSuccess = pSuccess;
         myNumTrials = numTrials;
     }
 
@@ -80,8 +94,7 @@ public final class BinomialRV extends AbstractRVariable {
 
     @Override
     protected final double generate() {
-        double v = JSLRandom.rBinomial(myProbSuccess, myNumTrials, myRNStream);
-        return v;
+        return JSLRandom.rBinomial(myProbSuccess, myNumTrials, myRNStream);
     }
 
     /**

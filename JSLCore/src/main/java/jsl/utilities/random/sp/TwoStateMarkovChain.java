@@ -127,7 +127,7 @@ public class TwoStateMarkovChain implements TwoStateMarkovChainIfc, Controllable
         if ((state < 0) || (state > 1)) {
             throw new IllegalArgumentException("The state must be 0 or 1");
         }
-        myInitialState = state;
+        myState = state;
     }
 
     public int getState() {

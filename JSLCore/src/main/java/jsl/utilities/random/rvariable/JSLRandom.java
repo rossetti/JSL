@@ -132,16 +132,16 @@ public class JSLRandom {
 
     /**
      * @param pSuccess the probability of success, must be in (0,1)
-     * @param rng      the RNStreamIfc
+     * @param stream      the RNStreamIfc
      * @return the random value
      */
-    public static double rBernoulli(double pSuccess, RNStreamIfc rng) {
-        Objects.requireNonNull(rng, "The supplied RNStreamIfc was null");
+    public static double rBernoulli(double pSuccess, RNStreamIfc stream) {
+        Objects.requireNonNull(stream, "The supplied RNStreamIfc was null");
         if ((pSuccess <= 0.0) || (pSuccess >= 1.0)) {
             throw new IllegalArgumentException("Success Probability must be (0,1)");
         }
 
-        if (rng.randU01() <= pSuccess) {
+        if (stream.randU01() <= pSuccess) {
             return (1.0);
         } else {
             return (0.0);
@@ -170,18 +170,18 @@ public class JSLRandom {
     /**
      * @param pSuccess the probability of success, must be in (0,1)
      * @param nTrials  the number of trials, must be greater than 0
-     * @param rng      the RNStreamIfc, must not be null
+     * @param stream      the RNStreamIfc, must not be null
      * @return the random value
      */
-    public static int rBinomial(double pSuccess, int nTrials, RNStreamIfc rng) {
-        Objects.requireNonNull(rng, "The supplied RNStreamIfc was null");
+    public static int rBinomial(double pSuccess, int nTrials, RNStreamIfc stream) {
+        Objects.requireNonNull(stream, "The supplied RNStreamIfc was null");
         if (nTrials <= 0) {
             throw new IllegalArgumentException("Number of trials must be >= 1");
         }
         if ((pSuccess <= 0.0) || (pSuccess >= 1.0)) {
             throw new IllegalArgumentException("Success Probability must be (0,1)");
         }
-        return Binomial.binomialInvCDF(rng.randU01(), nTrials, pSuccess);
+        return Binomial.binomialInvCDF(stream.randU01(), nTrials, pSuccess);
     }
 
     /**
@@ -271,8 +271,8 @@ public class JSLRandom {
      */
     public static int rGeometric(double pSuccess, RNStreamIfc rng) {
         Objects.requireNonNull(rng, "The supplied RNStreamIfc was null");
-        if ((pSuccess < 0.0) || (pSuccess > 1.0)) {
-            throw new IllegalArgumentException("Success Probability must be [0,1]");
+        if ((pSuccess <= 0.0) || (pSuccess >= 1.0)) {
+            throw new IllegalArgumentException("Success Probability must be (0,1)");
         }
         double u = rng.randU01();
         return ((int) Math.ceil((Math.log(1.0 - u) / (Math.log(1.0 - pSuccess))) - 1.0));
@@ -288,7 +288,7 @@ public class JSLRandom {
     }
 
     /**
-     * @param pSuccess   the probability of success
+     * @param pSuccess   the probability of success, must be in (0,1)
      * @param rSuccesses number of trials until rth success
      * @param streamNum  the stream number from the stream provider to use
      * @return the random value
@@ -298,7 +298,7 @@ public class JSLRandom {
     }
 
     /**
-     * @param pSuccess   the probability of success
+     * @param pSuccess   the probability of success, must be in (0,1)
      * @param rSuccesses number of trials until rth success
      * @param rng        the RNStreamIfc, must not be null
      * @return the random value

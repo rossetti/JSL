@@ -19,29 +19,43 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  NegativeBinomial(probability of success, number of successes)
+ *  NegativeBinomial(probability of success, number of trials until rth success)
  */
 public final class NegativeBinomialRV extends AbstractRVariable {
 
-    private double myProbSuccess;
+    private final double myProbSuccess;
 
-    private double myNumSuccesses;
+    private final double myNumSuccesses;
 
+    /**
+     * @param prob   the probability of success, must be in (0,1)
+     * @param numSuccess number of trials until rth success
+      */
     public NegativeBinomialRV(double prob, double numSuccess){
         this(prob, numSuccess, JSLRandom.nextRNStream());
     }
 
+    /**
+     * @param prob   the probability of success, must be in (0,1)
+     * @param numSuccess number of trials until rth success
+     * @param streamNum  the stream number from the stream provider to use
+     */
     public NegativeBinomialRV(double prob, double numSuccess, int streamNum){
         this(prob, numSuccess, JSLRandom.rnStream(streamNum));
     }
 
-    public NegativeBinomialRV(double prob, double numSuccess, RNStreamIfc rng){
-        super(rng);
-        if ((prob < 0.0) || (prob > 1.0)) {
-            throw new IllegalArgumentException("Success Probability must be [0,1]");
+    /**
+     * @param prob   the probability of success, must be in (0,1)
+     * @param numSuccess number of trials until rth success
+     * @param stream  the stream from the stream provider to use
+     */
+    public NegativeBinomialRV(double prob, double numSuccess, RNStreamIfc stream){
+        super(stream);
+        if ((prob <= 0.0) || (prob >= 1.0)) {
+            throw new IllegalArgumentException("Success Probability must be (0,1)");
         }
         if (numSuccess <= 0) {
-            throw new IllegalArgumentException("Number of successes must be > 0");
+            throw new IllegalArgumentException("Number of trials until rth success must be > 0");
         }
         myProbSuccess = prob;
         myNumSuccesses = numSuccess;
@@ -49,11 +63,11 @@ public final class NegativeBinomialRV extends AbstractRVariable {
 
     /**
      *
-     * @param rng the RngIfc to use
+     * @param stream the random number stream to use
      * @return a new instance with same parameter value
      */
-    public final NegativeBinomialRV newInstance(RNStreamIfc rng){
-        return new NegativeBinomialRV(this.myProbSuccess, this.myNumSuccesses, rng);
+    public NegativeBinomialRV newInstance(RNStreamIfc stream){
+        return new NegativeBinomialRV(this.myProbSuccess, this.myNumSuccesses, stream);
     }
 
     @Override
@@ -69,7 +83,7 @@ public final class NegativeBinomialRV extends AbstractRVariable {
      *
      * @return The success probability
      */
-    public final double getProbabilityOfSuccess() {
+    public double getProbabilityOfSuccess() {
         return (myProbSuccess);
     }
 
@@ -78,15 +92,14 @@ public final class NegativeBinomialRV extends AbstractRVariable {
      *
      * @return the number of success
      */
-    public final double getDesiredNumberOfSuccesses() {
+    public double getDesiredNumberOfSuccesses() {
         return (myNumSuccesses);
     }
 
 
     @Override
-    protected final double generate() {
-        double v = JSLRandom.rNegBinomial(myProbSuccess, myNumSuccesses, myRNStream);
-        return v;
+    protected double generate() {
+        return JSLRandom.rNegBinomial(myProbSuccess, myNumSuccesses, myRNStream);
     }
 
     /**

@@ -67,7 +67,7 @@ public final class ExponentialRV extends AbstractRVariable {
      * @param rng the RngIfc to use
      * @return a new instance with same parameter value
      */
-    public final ExponentialRV newInstance(RNStreamIfc rng){
+    public ExponentialRV newInstance(RNStreamIfc rng){
         return new ExponentialRV(this.mean, rng);
     }
 
@@ -82,14 +82,13 @@ public final class ExponentialRV extends AbstractRVariable {
      *
      * @return the mean value
      */
-    public final double getMean() {
+    public double getMean() {
         return mean;
     }
 
     @Override
-    protected final double generate() {
-        double v = JSLRandom.rExponential(mean, myRNStream);
-        return v;
+    protected double generate() {
+        return JSLRandom.rExponential(mean, myRNStream);
     }
 
     /**
