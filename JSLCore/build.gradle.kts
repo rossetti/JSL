@@ -15,22 +15,27 @@ group = "io.github.rossetti"
 version = "R1.0.8"
 
 repositories {
-    jcenter()
+//    jcenter()
     mavenCentral()
+}
+
+tasks.withType<JavaCompile> {
+    val compilerArgs = options.compilerArgs
+    compilerArgs.addAll(listOf("-Xlint:unchecked"))
 }
 
 dependencies {
 
     //https://github.com/google/gson
-    api(group = "com.google.code.gson", name = "gson", version = "2.8.6")
+    api(group = "com.google.code.gson", name = "gson", version = "2.8.9")
 	// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    api(group = "org.slf4j", name = "slf4j-api", version = "1.7.30")
+    api(group = "org.slf4j", name = "slf4j-api", version = "1.7.32")
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
 //    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
-    api(group = "ch.qos.logback", name = "logback-classic", version = "1.2.3")
+    api(group = "ch.qos.logback", name = "logback-classic", version = "1.2.10")
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
-    api(group = "ch.qos.logback", name = "logback-core", version = "1.2.3")
+    api(group = "ch.qos.logback", name = "logback-core", version = "1.2.10")
 
 }
 

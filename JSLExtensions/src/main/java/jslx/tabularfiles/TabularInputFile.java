@@ -585,6 +585,8 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         }
         DSLContext dsl = myDb.getDSLContext();
         Condition c = myRowId.le((long) maxRows);
+        @SuppressWarnings("unchecked")
+        // returns Field, instead of Field<Double>, but it must be a double by construction
         Field<Double> theField = myFields.get(colNum);
         if (removeMissing){
             c = c.and(theField.isNotNull());
@@ -652,6 +654,8 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         }
         DSLContext dsl = myDb.getDSLContext();
         Condition c = myRowId.le((long) maxRows);
+        @SuppressWarnings("unchecked")
+        // returns Field, instead of Field<String>, but it must be a String by construction
         Field<String> theField = myFields.get(colNum);
         if (removeMissing){
             c = c.and(theField.isNotNull());
