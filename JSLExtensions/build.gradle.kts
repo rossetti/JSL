@@ -20,7 +20,7 @@ tasks.withType<JavaCompile> {
 //version = "1.0-SNAPSHOT"
 
 group = "io.github.rossetti"
-version = "R1.0.9"
+version = "R1.0.10"
 
 repositories {
     //jcenter()
@@ -102,9 +102,9 @@ dependencies {
 
     //TODO work to update version of POI or consider using https://github.com/dhatim/fastexcel/ instead
     // https://mvnrepository.com/artifact/org.apache.poi/poi
-    api(group = "org.apache.poi", name = "poi", version = "5.0.0")
+    api(group = "org.apache.poi", name = "poi", version = "5.2.0")
     // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
-    api(group = "org.apache.poi", name = "poi-ooxml", version = "5.0.0")
+    api(group = "org.apache.poi", name = "poi-ooxml", version = "5.2.0")
 
     // include local jar files found in libs folder in the compile
     implementation(fileTree(baseDir = "libs"))
@@ -148,7 +148,7 @@ publishing {
             groupId = "io.github.rossetti"
             artifactId = "JSLExtensions"
             // update this field when making a new release
-            version = "R1.0.9"
+            version = "R1.0.10"
             from(components["java"])
             versionMapping {
                 usage("java-api") {

@@ -12,7 +12,7 @@ plugins {
 // commented to not make snapshot
 //version = "1.0-SNAPSHOT"
 group = "io.github.rossetti"
-version = "R1.0.9"
+version = "R1.0.10"
 
 repositories {
 //    jcenter()
@@ -72,7 +72,7 @@ publishing {
             groupId = "io.github.rossetti"
             artifactId = "JSLCore"
             // update this field when generating new release
-            version = "R1.0.9"
+            version = "R1.0.10"
             from(components["java"])
             versionMapping {
                 usage("java-api") {
