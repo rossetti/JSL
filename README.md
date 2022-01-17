@@ -93,7 +93,7 @@ the repository.  IntelliJ will recognize the JSL project as a gradle build and c
 
 Latest Release: R1.0.10
 - Update dependency on Apache POI to 5.2.0 to remove log4j vulnerabilities
-- 
+
 Latest Release: R1.0.9
 - Updated random variable classes
 - Update dependency on Apache POI to 5.0.0
