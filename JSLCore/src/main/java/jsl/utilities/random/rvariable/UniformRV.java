@@ -19,26 +19,26 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  Continuous uniform(min, max) random variable
+ * Continuous uniform(min, max) random variable
  */
 public final class UniformRV extends AbstractRVariable {
 
     private final double min;
     private final double max;
 
-    public UniformRV(){
+    public UniformRV() {
         this(0.0, 1.0);
     }
 
-    public UniformRV(double min, double max){
+    public UniformRV(double min, double max) {
         this(min, max, JSLRandom.nextRNStream());
     }
 
-    public UniformRV(double min, double max, int streamNum){
+    public UniformRV(double min, double max, int streamNum) {
         this(min, max, JSLRandom.rnStream(streamNum));
     }
 
-    public UniformRV(double min, double max, RNStreamIfc rng){
+    public UniformRV(double min, double max, RNStreamIfc rng) {
         super(rng);
         if (min >= max) {
             throw new IllegalArgumentException("Lower limit must be < upper limit. lower limit = " + min + " upper limit = " + max);
@@ -48,11 +48,10 @@ public final class UniformRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param rng the RngIfc to use
      * @return a new instance with same parameter value
      */
-    public final UniformRV newInstance(RNStreamIfc rng){
+    public UniformRV newInstance(RNStreamIfc rng) {
         return new UniformRV(this.min, this.max, rng);
     }
 
@@ -64,22 +63,26 @@ public final class UniformRV extends AbstractRVariable {
                 '}';
     }
 
-    /** Gets the lower limit
+    /**
+     * Gets the lower limit
+     *
      * @return The lower limit
      */
-    public final double getMinimum() {
+    public double getMinimum() {
         return (min);
     }
 
-    /** Gets the upper limit
+    /**
+     * Gets the upper limit
+     *
      * @return The upper limit
      */
-    public final double getMaximum() {
+    public double getMaximum() {
         return (max);
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         double v = JSLRandom.rUniform(min, max, myRNStream);
         return v;
     }
@@ -98,7 +101,7 @@ public final class UniformRV extends AbstractRVariable {
                 setName(RVariableIfc.RVType.Uniform.name());
             }
 
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream){
+            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
                 double min = getDoubleControl("min");
                 double max = getDoubleControl("max");
                 return new UniformRV(min, max, rnStream);

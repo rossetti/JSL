@@ -19,22 +19,22 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  LogLogistic(shape, scale) random variable
+ * LogLogistic(shape, scale) random variable
  */
 public final class LogLogisticRV extends AbstractRVariable {
 
     private final double myShape;
     private final double myScale;
 
-    public LogLogisticRV(double shape, double scale){
+    public LogLogisticRV(double shape, double scale) {
         this(shape, scale, JSLRandom.nextRNStream());
     }
 
-    public LogLogisticRV(double shape, double scale, int streamNum){
+    public LogLogisticRV(double shape, double scale, int streamNum) {
         this(shape, scale, JSLRandom.rnStream(streamNum));
     }
 
-    public LogLogisticRV(double shape, double scale, RNStreamIfc rng){
+    public LogLogisticRV(double shape, double scale, RNStreamIfc rng) {
         super(rng);
         if (shape <= 0) {
             throw new IllegalArgumentException("Shape parameter must be positive");
@@ -47,11 +47,10 @@ public final class LogLogisticRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param rng the RngIfc to use
      * @return a new instance with same parameter value
      */
-    public final LogLogisticRV newInstance(RNStreamIfc rng){
+    public LogLogisticRV newInstance(RNStreamIfc rng) {
         return new LogLogisticRV(this.getShape(), this.getScale(), rng);
     }
 
@@ -63,14 +62,18 @@ public final class LogLogisticRV extends AbstractRVariable {
                 '}';
     }
 
-    /** Gets the shape
+    /**
+     * Gets the shape
+     *
      * @return The shape parameter as a double
      */
     public double getShape() {
         return myShape;
     }
 
-    /** Gets the scale parameter
+    /**
+     * Gets the scale parameter
+     *
      * @return The scale parameter as a double
      */
     public double getScale() {
@@ -78,7 +81,7 @@ public final class LogLogisticRV extends AbstractRVariable {
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         double v = JSLRandom.rLogLogistic(myShape, myScale, myRNStream);
         return v;
     }

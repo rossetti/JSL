@@ -19,35 +19,34 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  Bernoulli(probability of success) random variable
+ * Bernoulli(probability of success) random variable
  */
 public final class BernoulliRV extends AbstractRVariable {
 
     private final double myProbSuccess;
 
-    /** Uses a new stream from the default provider of streams
+    /**
+     * Uses a new stream from the default provider of streams
      *
      * @param prob the probability, must be in (0,1)
      */
-    public BernoulliRV(double prob){
+    public BernoulliRV(double prob) {
         this(prob, JSLRandom.nextRNStream());
     }
 
     /**
-     *
-     * @param prob the probability, must be in (0,1)
+     * @param prob      the probability, must be in (0,1)
      * @param streamNum the stream number
      */
-    public BernoulliRV(double prob, int streamNum){
+    public BernoulliRV(double prob, int streamNum) {
         this(prob, JSLRandom.rnStream(streamNum));
     }
 
     /**
-     *
-     * @param prob the probability, must be in (0,1)
+     * @param prob   the probability, must be in (0,1)
      * @param stream the RNStreamIfc to use
      */
-    public BernoulliRV(double prob, RNStreamIfc stream){
+    public BernoulliRV(double prob, RNStreamIfc stream) {
         super(stream);
         if ((prob <= 0.0) || (prob >= 1.0)) {
             throw new IllegalArgumentException("Probability must be (0,1)");
@@ -56,11 +55,10 @@ public final class BernoulliRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param stream the RNStreamIfc to use
      * @return a new instance with same parameter value
      */
-    public final BernoulliRV newInstance(RNStreamIfc stream){
+    public BernoulliRV newInstance(RNStreamIfc stream) {
         return new BernoulliRV(this.myProbSuccess, stream);
     }
 
@@ -71,7 +69,9 @@ public final class BernoulliRV extends AbstractRVariable {
                 '}';
     }
 
-    /** Gets the success probability
+    /**
+     * Gets the success probability
+     *
      * @return The success probability
      */
     public double getProbabilityOfSuccess() {
@@ -79,11 +79,12 @@ public final class BernoulliRV extends AbstractRVariable {
     }
 
     @Override
-    protected double generate(){
+    protected double generate() {
         return JSLRandom.rBernoulli(myProbSuccess, myRNStream);
     }
 
-    /** Returns a randomly generated boolean according to the Bernoulli distribution
+    /**
+     * Returns a randomly generated boolean according to the Bernoulli distribution
      *
      * @return a randomly generated boolean
      */
@@ -95,17 +96,18 @@ public final class BernoulliRV extends AbstractRVariable {
         }
     }
 
-    /** Returns a boolean array filled via getBoolean()
+    /**
+     * Returns a boolean array filled via getBoolean()
      *
-     * @param n the generate size, must be at least 1
+     * @param n the generation size, must be at least 1
      * @return the array
      */
-    public boolean[] getBooleanSample(int n){
-        if (n <= 0){
+    public boolean[] getBooleanSample(int n) {
+        if (n <= 0) {
             throw new IllegalArgumentException("The generate size must be > 0");
         }
         boolean[] b = new boolean[n];
-        for(int i=0;i<n;i++){
+        for (int i = 0; i < n; i++) {
             b[i] = getBoolean();
         }
         return b;

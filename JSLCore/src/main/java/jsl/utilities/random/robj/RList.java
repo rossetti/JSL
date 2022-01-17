@@ -20,6 +20,10 @@ import jsl.utilities.random.rvariable.JSLRandom;
 
 import java.util.*;
 
+/** Defines an abstract base class for random lists
+ *
+ * @param <T> the type in the list
+ */
 abstract public class RList<T> implements RListIfc<T> {
 
     protected List<T> myElements;
@@ -27,14 +31,15 @@ abstract public class RList<T> implements RListIfc<T> {
     protected RNStreamIfc myStream;
 
     public RList() {
-        myElements = new ArrayList<T>();
+        myElements = new ArrayList<>();
         myStream = JSLRandom.nextRNStream();
     }
 
-    /** The object cannot be null, but it can be added more than once
-     *  See how List handles multiple instances of the same object
+    /**
+     * The object cannot be null, but it can be added more than once
+     * See how List handles multiple instances of the same object
      *
-     * @param obj
+     * @param obj the object to add
      */
     @Override
     public boolean add(T obj) {

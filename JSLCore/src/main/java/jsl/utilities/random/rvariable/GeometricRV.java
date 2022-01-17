@@ -19,35 +19,32 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  Geometric(probability of success) random variable, range 0, 1, 2, ..
+ * Geometric(probability of success) random variable, range 0, 1, 2, etc.
  */
 public final class GeometricRV extends AbstractRVariable {
 
     private final double myProbSuccess;
 
     /**
-     *
      * @param prob probability of success, must be in range (0,1)
      */
-    public GeometricRV(double prob){
+    public GeometricRV(double prob) {
         this(prob, JSLRandom.nextRNStream());
     }
 
     /**
-     *
-     * @param prob probability of success, must be in range (0,1)
+     * @param prob      probability of success, must be in range (0,1)
      * @param streamNum the stream number to use
      */
-    public GeometricRV(double prob, int streamNum){
+    public GeometricRV(double prob, int streamNum) {
         this(prob, JSLRandom.rnStream(streamNum));
     }
 
     /**
-     *
-     * @param prob probability of success, must be in range (0,1)
+     * @param prob   probability of success, must be in range (0,1)
      * @param stream the random number stream to use
      */
-    public GeometricRV(double prob, RNStreamIfc stream){
+    public GeometricRV(double prob, RNStreamIfc stream) {
         super(stream);
         if ((prob <= 0.0) || (prob >= 1.0)) {
             throw new IllegalArgumentException("Probability must be (0,1)");
@@ -56,11 +53,10 @@ public final class GeometricRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param stream the random number stream to use
      * @return a new instance with same parameter value
      */
-    public final GeometricRV newInstance(RNStreamIfc stream){
+    public GeometricRV newInstance(RNStreamIfc stream) {
         return new GeometricRV(this.myProbSuccess, stream);
     }
 
@@ -71,15 +67,17 @@ public final class GeometricRV extends AbstractRVariable {
                 '}';
     }
 
-    /** Gets the success probability
+    /**
+     * Gets the success probability
+     *
      * @return The success probability
      */
-    public final double getProbabilityOfSuccess() {
+    public double getProbabilityOfSuccess() {
         return (myProbSuccess);
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         return JSLRandom.rGeometric(myProbSuccess, myRNStream);
     }
 

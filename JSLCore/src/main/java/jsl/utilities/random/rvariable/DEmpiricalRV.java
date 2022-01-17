@@ -21,11 +21,11 @@ import jsl.utilities.random.rng.RNStreamIfc;
 import java.util.Arrays;
 
 /**
- *  Discrete Empirical Random Variable. Randomly selects from the supplied
- *  values in the value array according to the supplied CDF array. The probability array
- *  must have valid probability elements and last element equal to 1.
- *  Every element must be greater than or equal to the previous element in the CDF array.
- *  That is, monotonically increasing.
+ * Discrete Empirical Random Variable. Randomly selects from the supplied
+ * values in the value array according to the supplied CDF array. The CDF array
+ * must have valid probability elements and last element equal to 1.
+ * Every element must be greater than or equal to the previous element in the CDF array.
+ * That is, monotonically increasing.
  */
 public final class DEmpiricalRV extends AbstractRVariable {
 
@@ -36,22 +36,22 @@ public final class DEmpiricalRV extends AbstractRVariable {
      * Randomly selects from the array using the supplied cdf
      *
      * @param values array to select from
-     * @param cdf the cumulative probability associated with each element of
-     * array
+     * @param cdf    the cumulative probability associated with each element of
+     *               array
      */
-    public DEmpiricalRV(double[] values, double[] cdf){
+    public DEmpiricalRV(double[] values, double[] cdf) {
         this(values, cdf, JSLRandom.nextRNStream());
     }
 
     /**
      * Randomly selects from the array using the supplied cdf
      *
-     * @param values array to select from
-     * @param cdf the cumulative probability associated with each element of
-     * array
+     * @param values    array to select from
+     * @param cdf       the cumulative probability associated with each element of
+     *                  array
      * @param streamNum the stream number
      */
-    public DEmpiricalRV(double[] values, double[] cdf, int streamNum){
+    public DEmpiricalRV(double[] values, double[] cdf, int streamNum) {
         this(values, cdf, JSLRandom.rnStream(streamNum));
     }
 
@@ -59,11 +59,11 @@ public final class DEmpiricalRV extends AbstractRVariable {
      * Randomly selects from the array using the supplied cdf
      *
      * @param values array to select from
-     * @param cdf the cumulative probability associated with each element of
-     * array
-     * @param rng the source of randomness
+     * @param cdf    the cumulative probability associated with each element of
+     *               array
+     * @param rng    the source of randomness
      */
-    public DEmpiricalRV(double[] values, double[] cdf, RNStreamIfc rng){
+    public DEmpiricalRV(double[] values, double[] cdf, RNStreamIfc rng) {
         super(rng);
         if (rng == null) {
             throw new IllegalArgumentException("The supplied RngIfc was null");
@@ -85,27 +85,24 @@ public final class DEmpiricalRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param rng the RNStreamIfc to use
      * @return a new instance with same parameter value
      */
-    public final DEmpiricalRV newInstance(RNStreamIfc rng){
+    public DEmpiricalRV newInstance(RNStreamIfc rng) {
         return new DEmpiricalRV(this.myValues, this.myCDF, rng);
     }
 
     /**
-     *
      * @return the values to select from
      */
-    public final double[] getValues(){
+    public double[] getValues() {
         return Arrays.copyOf(myValues, myValues.length);
     }
 
     /**
-     *
      * @return the cdf to select with
      */
-    public final double[] getCDF(){
+    public double[] getCDF() {
         return Arrays.copyOf(myCDF, myCDF.length);
     }
 
@@ -118,7 +115,7 @@ public final class DEmpiricalRV extends AbstractRVariable {
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         if (myCDF.length == 1) {
             return myValues[0];
         }
@@ -142,8 +139,8 @@ public final class DEmpiricalRV extends AbstractRVariable {
         return new RVControls(RVariableIfc.RVType.DEmpirical) {
             @Override
             protected final void fillControls() {
-                addDoubleArrayControl("values", new double[] {0.0, 1.0});
-                addDoubleArrayControl("cdf", new double[] {0.5, 1.0});
+                addDoubleArrayControl("values", new double[]{0.0, 1.0});
+                addDoubleArrayControl("cdf", new double[]{0.5, 1.0});
                 setName(RVariableIfc.RVType.DEmpirical.name());
             }
 

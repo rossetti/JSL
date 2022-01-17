@@ -19,22 +19,22 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  discrete uniform(min, max) random variable
+ * discrete uniform(min, max) random variable
  */
 public final class DUniformRV extends AbstractRVariable {
 
     private final int min;
     private final int max;
 
-    public DUniformRV(int min, int max){
+    public DUniformRV(int min, int max) {
         this(min, max, JSLRandom.nextRNStream());
     }
 
-    public DUniformRV(int min, int max, int streamNum){
+    public DUniformRV(int min, int max, int streamNum) {
         this(min, max, JSLRandom.rnStream(streamNum));
     }
 
-    public DUniformRV(int min, int max, RNStreamIfc rng){
+    public DUniformRV(int min, int max, RNStreamIfc rng) {
         super(rng);
         if (min >= max) {
             throw new IllegalArgumentException("Lower limit must be < upper limit. lower limit = " + min + " upper limit = " + max);
@@ -44,11 +44,10 @@ public final class DUniformRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param rng the RNStreamIfc to use
      * @return a new instance with same parameter value
      */
-    public final DUniformRV newInstance(RNStreamIfc rng){
+    public DUniformRV newInstance(RNStreamIfc rng) {
         return new DUniformRV(this.min, this.max, rng);
     }
 
@@ -60,22 +59,26 @@ public final class DUniformRV extends AbstractRVariable {
                 '}';
     }
 
-    /** Gets the lower limit
+    /**
+     * Gets the lower limit
+     *
      * @return The lower limit
      */
-    public final double getMinimum() {
+    public double getMinimum() {
         return (min);
     }
 
-    /** Gets the upper limit
+    /**
+     * Gets the upper limit
+     *
      * @return The upper limit
      */
-    public final double getMaximum() {
+    public double getMaximum() {
         return (max);
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         double v = JSLRandom.rDUniform(min, max, myRNStream);
         return v;
     }

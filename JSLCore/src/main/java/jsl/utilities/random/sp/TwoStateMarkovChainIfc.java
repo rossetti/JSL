@@ -16,11 +16,12 @@
 
 package jsl.utilities.random.sp;
 
+import jsl.utilities.random.SampleIfc;
+
 /**
- *
  * @author rossetti
  */
-public interface TwoStateMarkovChainIfc {
+public interface TwoStateMarkovChainIfc extends SampleIfc {
 
     int getInitialState();
 
@@ -36,7 +37,6 @@ public interface TwoStateMarkovChainIfc {
 
     /**
      * Sets the state back to the initial state
-     *
      */
     void reset();
 

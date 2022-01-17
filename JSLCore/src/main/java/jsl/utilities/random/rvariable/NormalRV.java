@@ -19,7 +19,7 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  Normal(mean, variance)
+ * Normal(mean, variance)
  */
 public final class NormalRV extends AbstractRVariable {
 
@@ -32,21 +32,21 @@ public final class NormalRV extends AbstractRVariable {
     private boolean nextNormalFlag = false;
 
     /**
-     *  N(0,1)
+     * N(0,1)
      */
-    public NormalRV(){
-        this(0,1.0);
+    public NormalRV() {
+        this(0, 1.0);
     }
 
-    public NormalRV(double mean, double variance){
+    public NormalRV(double mean, double variance) {
         this(mean, variance, JSLRandom.nextRNStream());
     }
 
-    public NormalRV(double mean, double variance, int streamNum){
+    public NormalRV(double mean, double variance, int streamNum) {
         this(mean, variance, JSLRandom.rnStream(streamNum));
     }
 
-    public NormalRV(double mean, double variance, RNStreamIfc rng){
+    public NormalRV(double mean, double variance, RNStreamIfc rng) {
         super(rng);
         myMean = mean;
         if (variance <= 0) {
@@ -56,11 +56,10 @@ public final class NormalRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param rng the RNStreamIfc to use
      * @return a new instance with same parameter value
      */
-    public final NormalRV newInstance(RNStreamIfc rng){
+    public NormalRV newInstance(RNStreamIfc rng) {
         return new NormalRV(this.myMean, this.myVar, rng);
     }
 
@@ -73,31 +72,28 @@ public final class NormalRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @return mean of the random variable
      */
-    public final double getMean() {
+    public double getMean() {
         return myMean;
     }
 
     /**
-     *
      * @return variance of the random variable
      */
-    public final double getVariance() {
+    public double getVariance() {
         return myVar;
     }
 
     /**
-     *
      * @return the standard deviation of the random variable
      */
-    public final double getStandardDeviation(){
+    public double getStandardDeviation() {
         return Math.sqrt(getVariance());
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         double v = JSLRandom.rNormal(myMean, myVar, myRNStream);
         return v;
     }
@@ -125,12 +121,13 @@ public final class NormalRV extends AbstractRVariable {
         };
     }
 
-    /** Gets a random variate from this normal distribution
-     *  via the polar method.
+    /**
+     * Gets a random variate from this normal distribution
+     * via the polar method.
      *
      * @return a normally distributed random variate
      */
-    public final double polarMethodRandomVariate() {
+    public double polarMethodRandomVariate() {
         if (nextNormalFlag == true) {
             nextNormalFlag = false;
             return (myMean + getStandardDeviation() * nextNormal);

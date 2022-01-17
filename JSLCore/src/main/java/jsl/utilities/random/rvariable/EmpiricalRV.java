@@ -20,21 +20,21 @@ import jsl.utilities.random.rng.RNStreamIfc;
 import jsl.utilities.random.robj.DPopulation;
 
 /**
- *  A random variable that samples from the provided data
+ * A random variable that samples from the provided data
  */
 public final class EmpiricalRV extends AbstractRVariable {
 
     private final DPopulation myPop;
 
-    public EmpiricalRV(double[] data){
+    public EmpiricalRV(double[] data) {
         this(data, JSLRandom.nextRNStream());
     }
 
-    public EmpiricalRV(double [] data, int streamNum) {
+    public EmpiricalRV(double[] data, int streamNum) {
         this(data, JSLRandom.rnStream(streamNum));
     }
 
-    public EmpiricalRV(double [] data, RNStreamIfc rng) {
+    public EmpiricalRV(double[] data, RNStreamIfc rng) {
         super(rng);
         if (rng == null) {
             throw new IllegalArgumentException("The supplied RngIfc was null");
@@ -42,7 +42,7 @@ public final class EmpiricalRV extends AbstractRVariable {
         if (data == null) {
             throw new IllegalArgumentException("The supplied data array was null");
         }
-        if (data.length == 0){
+        if (data.length == 0) {
             throw new IllegalArgumentException("The supplied data array had no elements.");
         }
         myPop = new DPopulation(data);
@@ -54,7 +54,7 @@ public final class EmpiricalRV extends AbstractRVariable {
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         double v = myPop.getValue();
         return v;
     }

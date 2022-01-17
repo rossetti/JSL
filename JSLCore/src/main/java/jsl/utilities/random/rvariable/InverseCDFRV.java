@@ -22,13 +22,14 @@ import jsl.utilities.random.rng.RNStreamIfc;
 import java.util.Objects;
 
 /**
- *  Facilitates the creation of random variables from distributions that implement InverseCDFIfc
+ * Facilitates the creation of random variables from distributions that implement InverseCDFIfc
  */
 public class InverseCDFRV extends AbstractRVariable {
 
     private final InverseCDFIfc myInverse;
 
-    /** Makes one using the next stream from the underlying stream provider
+    /**
+     * Makes one using the next stream from the underlying stream provider
      *
      * @param invFun the inverse of the distribution function, must not be null
      */
@@ -36,21 +37,21 @@ public class InverseCDFRV extends AbstractRVariable {
         this(invFun, JSLRandom.nextRNStream());
     }
 
-    /** Makes one using the supplied stream number to assign the stream
+    /**
+     * Makes one using the supplied stream number to assign the stream
      *
-     * @param invFun the inverse of the distribution function, must not be null
+     * @param invFun    the inverse of the distribution function, must not be null
      * @param streamNum a positive integer
      */
-    public InverseCDFRV(InverseCDFIfc invFun, int streamNum){
+    public InverseCDFRV(InverseCDFIfc invFun, int streamNum) {
         this(invFun, JSLRandom.rnStream(streamNum));
     }
 
     /**
-     *
      * @param invFun the inverse of the distribution function, must not be null
-     * @param rng a random number stream, must not be null
+     * @param rng    a random number stream, must not be null
      */
-    public InverseCDFRV(InverseCDFIfc invFun, RNStreamIfc rng){
+    public InverseCDFRV(InverseCDFIfc invFun, RNStreamIfc rng) {
         super(rng);
         Objects.requireNonNull(invFun, "The supplied inverse function was null");
         myInverse = invFun;

@@ -19,7 +19,7 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  Pearson Type 6(alpha1, alpha2, beta) random variable
+ * Pearson Type 6(alpha1, alpha2, beta) random variable
  */
 public final class PearsonType6RV extends AbstractRVariable {
 
@@ -27,15 +27,15 @@ public final class PearsonType6RV extends AbstractRVariable {
     private final double myAlpha2;
     private final double myBeta;
 
-    public PearsonType6RV(double alpha1, double alpha2, double beta){
+    public PearsonType6RV(double alpha1, double alpha2, double beta) {
         this(alpha1, alpha2, beta, JSLRandom.nextRNStream());
     }
 
-    public PearsonType6RV(double alpha1, double alpha2, double beta, int streamNum){
+    public PearsonType6RV(double alpha1, double alpha2, double beta, int streamNum) {
         this(alpha1, alpha2, beta, JSLRandom.rnStream(streamNum));
     }
 
-    public PearsonType6RV(double alpha1, double alpha2, double beta, RNStreamIfc rng){
+    public PearsonType6RV(double alpha1, double alpha2, double beta, RNStreamIfc rng) {
         super(rng);
         if (alpha1 <= 0.0) {
             throw new IllegalArgumentException("The 1st shape parameter must be > 0.0");
@@ -52,11 +52,10 @@ public final class PearsonType6RV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param rng the RngIfc to use
      * @return a new instance with same parameter value
      */
-    public final PearsonType6RV newInstance(RNStreamIfc rng){
+    public PearsonType6RV newInstance(RNStreamIfc rng) {
         return new PearsonType6RV(getAlpha1(), getAlpha2(), myBeta, rng);
     }
 
@@ -69,20 +68,20 @@ public final class PearsonType6RV extends AbstractRVariable {
                 '}';
     }
 
-    public final double getAlpha1() {
+    public double getAlpha1() {
         return myAlpha1;
     }
 
-    public final double getAlpha2() {
+    public double getAlpha2() {
         return myAlpha2;
     }
 
-    public final double getBeta() {
+    public double getBeta() {
         return myBeta;
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         double v = JSLRandom.rPearsonType6(myAlpha1, myAlpha2, myBeta, myRNStream);
         return v;
     }

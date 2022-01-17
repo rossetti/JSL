@@ -19,7 +19,7 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  Binomial(probability of success, number of trials)
+ * BinomialRV(probability of success, number of trials)
  */
 public final class BinomialRV extends AbstractRVariable {
 
@@ -28,28 +28,28 @@ public final class BinomialRV extends AbstractRVariable {
     private final int myNumTrials;
 
     /**
-     * @param pSuccess the probability of success, must be in (0,1)
-     * @param numTrials  the number of trials, must be greater than 0
+     * @param pSuccess  the probability of success, must be in (0,1)
+     * @param numTrials the number of trials, must be greater than 0
      */
-    public BinomialRV(double pSuccess, int numTrials){
+    public BinomialRV(double pSuccess, int numTrials) {
         this(pSuccess, numTrials, JSLRandom.nextRNStream());
     }
 
     /**
      * @param pSuccess  the probability of success, must be in (0,1)
-     * @param numTrials   the number of trials, must be greater than 0
+     * @param numTrials the number of trials, must be greater than 0
      * @param streamNum the stream number from the stream provider to use
      */
-    public BinomialRV(double pSuccess, int numTrials, int streamNum){
+    public BinomialRV(double pSuccess, int numTrials, int streamNum) {
         this(pSuccess, numTrials, JSLRandom.rnStream(streamNum));
     }
 
     /**
      * @param pSuccess  the probability of success, must be in (0,1)
-     * @param numTrials   the number of trials, must be greater than 0
-     * @param stream the stream from the stream provider to use
+     * @param numTrials the number of trials, must be greater than 0
+     * @param stream    the stream from the stream provider to use
      */
-    public BinomialRV(double pSuccess, int numTrials, RNStreamIfc stream){
+    public BinomialRV(double pSuccess, int numTrials, RNStreamIfc stream) {
         super(stream);
         if ((pSuccess < 0.0) || (pSuccess > 1.0)) {
             throw new IllegalArgumentException("Success Probability must be [0,1]");
@@ -62,11 +62,10 @@ public final class BinomialRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param rng the RNStreamIfc to use
      * @return a new instance with same parameter value
      */
-    public final BinomialRV newInstance(RNStreamIfc rng){
+    public BinomialRV newInstance(RNStreamIfc rng) {
         return new BinomialRV(this.myProbSuccess, this.myNumTrials, rng);
     }
 
@@ -78,22 +77,26 @@ public final class BinomialRV extends AbstractRVariable {
                 '}';
     }
 
-    /** Gets the success probability
+    /**
+     * Gets the success probability
+     *
      * @return The success probability
      */
-    public final double getProb() {
+    public double getProb() {
         return (myProbSuccess);
     }
 
-    /** Gets the number of trials
+    /**
+     * Gets the number of trials
+     *
      * @return the number of trials
      */
-    public final int getTrials() {
+    public int getTrials() {
         return (myNumTrials);
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         return JSLRandom.rBinomial(myProbSuccess, myNumTrials, myRNStream);
     }
 

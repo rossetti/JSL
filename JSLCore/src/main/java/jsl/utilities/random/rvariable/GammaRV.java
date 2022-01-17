@@ -20,31 +20,30 @@ import jsl.utilities.distributions.Gamma;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  Gamma(shape, scale) random variable
+ * Gamma(shape, scale) random variable
  */
 public final class GammaRV extends AbstractRVariable {
 
     private final Gamma myGamma;
 
-    public GammaRV(double shape, double scale){
+    public GammaRV(double shape, double scale) {
         this(shape, scale, JSLRandom.nextRNStream());
     }
 
-    public GammaRV(double shape, double scale, int streamNum){
+    public GammaRV(double shape, double scale, int streamNum) {
         this(shape, scale, JSLRandom.rnStream(streamNum));
     }
 
-    public GammaRV(double shape, double scale, RNStreamIfc rng){
+    public GammaRV(double shape, double scale, RNStreamIfc rng) {
         super(rng);
         myGamma = new Gamma(shape, scale);
     }
 
     /**
-     *
      * @param rng the RNStreamIfc to use
      * @return a new instance with same parameter value
      */
-    public final GammaRV newInstance(RNStreamIfc rng){
+    public GammaRV newInstance(RNStreamIfc rng) {
         return new GammaRV(this.getShape(), this.getScale(), rng);
     }
 
@@ -56,14 +55,18 @@ public final class GammaRV extends AbstractRVariable {
                 '}';
     }
 
-    /** Gets the shape
+    /**
+     * Gets the shape
+     *
      * @return The shape parameter as a double
      */
     public double getShape() {
         return myGamma.getShape();
     }
 
-    /** Gets the scale parameter
+    /**
+     * Gets the scale parameter
+     *
      * @return The scale parameter as a double
      */
     public double getScale() {
@@ -71,7 +74,7 @@ public final class GammaRV extends AbstractRVariable {
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         double v = myGamma.invCDF(myRNStream.randU01());
         return v;
     }
@@ -99,11 +102,13 @@ public final class GammaRV extends AbstractRVariable {
         };
     }
 
-    /** Provides a random number via the standard acceptance rejection technique
-     *  see Law and Kelton for the algorithm
+    /**
+     * Provides a random number via the standard acceptance rejection technique
+     * see Law and Kelton for the algorithm
+     *
      * @return double a random number distributed according to the receiver.
      */
-    public final double randomViaAcceptanceRejection() {
+    public double randomViaAcceptanceRejection() {
         double r;
 
         if (getShape() > 1) {

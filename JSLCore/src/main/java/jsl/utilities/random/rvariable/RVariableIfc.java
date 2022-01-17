@@ -18,10 +18,7 @@ package jsl.utilities.random.rvariable;
 
 import jsl.utilities.PreviousValueIfc;
 import jsl.utilities.random.RandomIfc;
-import jsl.utilities.random.SampleIfc;
-import jsl.utilities.random.rng.GetRandomNumberStreamIfc;
 import jsl.utilities.random.rng.RNStreamIfc;
-import jsl.utilities.random.rng.SetRandomNumberStreamIfc;
 
 import java.util.function.DoubleSupplier;
 import java.util.stream.DoubleStream;

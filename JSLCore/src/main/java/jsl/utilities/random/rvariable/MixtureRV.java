@@ -22,21 +22,21 @@ import jsl.utilities.random.robj.DEmpiricalList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MixtureRV extends AbstractRVariable {
+public final class MixtureRV extends AbstractRVariable {
 
     private final DEmpiricalList<RVariableIfc> myRVList;
 
     /**
-     * @param list   a list holding the random variables to select from
-     * @param cdf    the cumulative probability associated with each element of the list
+     * @param list a list holding the random variables to select from
+     * @param cdf  the cumulative probability associated with each element of the list
      */
     public MixtureRV(List<RVariableIfc> list, double[] cdf) {
         this(list, cdf, JSLRandom.nextRNStream());
     }
 
     /**
-     * @param list   a list holding the random variables to select from
-     * @param cdf    the cumulative probability associated with each element of the list
+     * @param list      a list holding the random variables to select from
+     * @param cdf       the cumulative probability associated with each element of the list
      * @param streamNum the stream number
      */
     public MixtureRV(List<RVariableIfc> list, double[] cdf, int streamNum) {

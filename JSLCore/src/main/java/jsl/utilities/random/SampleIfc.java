@@ -19,7 +19,6 @@ package jsl.utilities.random;
 public interface SampleIfc {
 
     /**
-     *
      * @return generates a random value
      */
     double sample();

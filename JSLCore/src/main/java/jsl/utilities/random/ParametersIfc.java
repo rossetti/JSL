@@ -15,21 +15,23 @@
  */
 package jsl.utilities.random;
 
-/** Represents a general mechanism for setting and getting
- *  the parameters of a function via a array of doubles
- * 
- * @author rossetti
+/**
+ * Represents a general mechanism for setting and getting
+ * the parameters of a function via an array of doubles
  *
+ * @author rossetti
  */
 public interface ParametersIfc {
 
-    /** Sets the parameters
+    /**
+     * Sets the parameters
      *
      * @param parameters an array of doubles representing the parameters
      */
     void setParameters(double[] parameters);
 
-    /** Gets the parameters
+    /**
+     * Gets the parameters
      *
      * @return Returns an array of the parameters
      */

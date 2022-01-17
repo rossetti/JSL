@@ -5,27 +5,27 @@ import jsl.utilities.random.rng.RNStreamIfc;
 import java.util.Objects;
 
 /**
- *  Shifts the generated value of the supplied random variable by the shift amount.
- *  The shift amount must be positive.
+ * Shifts the generated value of the supplied random variable by the shift amount.
+ * The shift amount must be positive.
  */
 public final class ShiftedRV extends AbstractRVariable {
 
     private final double myShift;
     private final RVariableIfc myRV;
 
-    /** Uses a stream from the default stream factory
+    /**
+     * Uses a stream from the default stream factory
      *
      * @param shift a non-negative value
-     * @param rv the random variable to shift
+     * @param rv    the random variable to shift
      */
-    public ShiftedRV(double shift, RVariableIfc rv){
+    public ShiftedRV(double shift, RVariableIfc rv) {
         this(shift, rv, JSLRandom.nextRNStream());
     }
 
     /**
-     *
-     * @param shift a non-negative value
-     * @param rv the random variable to shift
+     * @param shift     a non-negative value
+     * @param rv        the random variable to shift
      * @param streamNum the stream number
      */
     public ShiftedRV(double shift, RVariableIfc rv, int streamNum) {
@@ -33,10 +33,9 @@ public final class ShiftedRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param shift a non-negative value
-     * @param rv the random variable to shift
-     * @param rng the generator to use
+     * @param rv    the random variable to shift
+     * @param rng   the generator to use
      */
     public ShiftedRV(double shift, RVariableIfc rv, RNStreamIfc rng) {
         super(rng);

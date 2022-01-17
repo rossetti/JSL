@@ -6,26 +6,29 @@ public class StudentTRV extends AbstractRVariable {
 
     private final double myDoF;
 
-    /** Constructs a StudentT distribution dof degrees of freedom
+    /**
+     * Constructs a StudentT distribution dof degrees of freedom
      *
-     * @param dof  degrees of freedom
+     * @param dof degrees of freedom
      */
     public StudentTRV(double dof) {
-        this (dof, JSLRandom.nextRNStream());
+        this(dof, JSLRandom.nextRNStream());
     }
 
-    /** Constructs a StudentT distribution dof degrees of freedom
+    /**
+     * Constructs a StudentT distribution dof degrees of freedom
      *
-     * @param dof  degrees of freedom
+     * @param dof       degrees of freedom
      * @param streamNum the stream number
      */
     public StudentTRV(double dof, int streamNum) {
         this(dof, JSLRandom.rnStream(streamNum));
     }
 
-    /** Constructs a StudentT distribution dof degrees of freedom
+    /**
+     * Constructs a StudentT distribution dof degrees of freedom
      *
-     * @param dof  degrees of freedom
+     * @param dof degrees of freedom
      * @param rng the random number generator
      */
     public StudentTRV(double dof, RNStreamIfc rng) {
@@ -37,10 +40,9 @@ public class StudentTRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @return the degrees of freedom
      */
-    public final double getDegreesOfFreedom(){
+    public final double getDegreesOfFreedom() {
         return myDoF;
     }
 
@@ -54,8 +56,9 @@ public class StudentTRV extends AbstractRVariable {
         return new StudentTRV(myDoF, rng);
     }
 
-    /** Directly generate a random variate using Bailey's
-     *  acceptance-rejection algorithm
+    /**
+     * Directly generate a random variate using Bailey's
+     * acceptance-rejection algorithm
      *
      * @return the generated random variable
      */
