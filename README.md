@@ -11,11 +11,11 @@ https://rossetti.git-pages.uark.edu/jslbookdownbook
 
 If you are looking for the JSL documentation you can find it here:
 
-https://rossetti.git-pages.uark.edu/JSL-Documentation/
+https://rossetti.github.io/JSLJavaDocs/
 
 The repository for the documentation is here:
 
-https://git.uark.edu/rossetti/JSL-Documentation
+https://github.com/rossetti/JSLJavaDocs
 
 Please be aware that the book and javadoc documentation may lag the releases due to lack of developer time.
 
