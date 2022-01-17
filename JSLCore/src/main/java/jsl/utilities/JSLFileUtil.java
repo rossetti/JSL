@@ -342,7 +342,7 @@ public class JSLFileUtil {
      * Special Cases:
      * <p>
      * No extension – this method will return an empty String
-     * Only extension – this method will return the String after the dot, e.g. “gitignore”
+     * Only extension – this method will return the String after the dot, e.g. 'gitignore'
      * See www.baeldung.com/java-file-extension
      * Used here to avoid having to use external library
      *
