@@ -113,7 +113,7 @@ public class DPopulation implements RandomIfc, SampleIfc, ControllableIfc, Param
      *  but an independent generator
      *
      * @return Returns a new instance of the population with the same parameters
-     *   but an different random stream
+     *   but a different random stream
      */
     @Override
     public final DPopulation newInstance() {
@@ -125,7 +125,7 @@ public class DPopulation implements RandomIfc, SampleIfc, ControllableIfc, Param
      *
      * @param stream a random number stream, must not null.
      * @return Returns a new instance of the population with the same parameters
-     *   but an different random stream
+     *   but a different random stream
      */
     public final DPopulation newInstance(RNStreamIfc stream) {
         return (new DPopulation(getParameters(), stream));

@@ -1,7 +1,7 @@
 package jsl.utilities.random.rvariable;
 
-import jsl.utilities.math.JSLMath;
 import jsl.utilities.distributions.DistributionIfc;
+import jsl.utilities.math.JSLMath;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 public class TruncatedRV extends AbstractRVariable {
@@ -44,7 +44,7 @@ public class TruncatedRV extends AbstractRVariable {
      * @param cdfUL        The upper limit of the range of support of the distribution
      * @param truncLL      The truncated lower limit (if moved in from cdfLL), must be &gt;= cdfLL
      * @param truncUL      The truncated upper limit (if moved in from cdfUL), must be &lt;= cdfUL
-     * @param streamNum A positive integer to identify the stream
+     * @param streamNum    A positive integer to identify the stream
      */
     public TruncatedRV(DistributionIfc distribution, double cdfLL, double cdfUL,
                        double truncLL, double truncUL, int streamNum) {

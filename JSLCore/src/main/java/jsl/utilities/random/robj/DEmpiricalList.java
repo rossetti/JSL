@@ -20,6 +20,10 @@ import jsl.utilities.random.rvariable.JSLRandom;
 
 import java.util.*;
 
+/** Randomly selects the elements in the list according to a supplied CDF across the items
+ *
+ * @param <T> the type of elements in the list
+ */
 public class DEmpiricalList<T> implements RElementIfc<T> {
 
     protected final List<T> myElements;
@@ -28,10 +32,21 @@ public class DEmpiricalList<T> implements RElementIfc<T> {
 
     protected RNStreamIfc myRNG;
 
+    /**
+     *
+     * @param elements the list of elements, must not be null
+     * @param cdf an array holding the cumulative probabilities across the elements in the list
+     */
     public DEmpiricalList(List<T> elements, double[] cdf) {
         this(elements, cdf, JSLRandom.nextRNStream());
     }
 
+    /**
+     *
+     * @param elements the list of elements, must not be null
+     * @param cdf an array holding the cumulative probabilities across the elements in the list
+     * @param rng the underlying random number stream to use for randomness
+     */
     public DEmpiricalList(List<T> elements, double[] cdf, RNStreamIfc rng) {
         Objects.requireNonNull(rng, "The RNStreamIfc was null");
         if (elements == null) {
@@ -50,10 +65,9 @@ public class DEmpiricalList<T> implements RElementIfc<T> {
     }
 
     /**
-     *
      * @return a copy of the underlying CDF array
      */
-    public double[] getCDF(){
+    public double[] getCDF() {
         return Arrays.copyOf(myCDF, myCDF.length);
     }
 
@@ -133,29 +147,29 @@ public class DEmpiricalList<T> implements RElementIfc<T> {
 
         List<String> cities = Arrays.asList("KC", "CH", "NY");
 
-        DEmpiricalList<String> originSet = new DEmpiricalList<String>(cities, new double[] {0.4, 0.8, 1.0});
+        DEmpiricalList<String> originSet = new DEmpiricalList<>(cities, new double[]{0.4, 0.8, 1.0});
 
         for (int i = 1; i <= 10; i++) {
             System.out.println(originSet.getRandomElement());
         }
 
-        Map<String, DEmpiricalList<String>> od = new HashMap<String, DEmpiricalList<String>>();
+        Map<String, DEmpiricalList<String>> od = new HashMap<>();
 
-        DEmpiricalList<String> kcdset = new DEmpiricalList<String>(
+        DEmpiricalList<String> kcdset = new DEmpiricalList<>(
                 Arrays.asList("CO", "AT", "NY"),
-                new double[] {0.2, 0.6, 1.0}
+                new double[]{0.2, 0.6, 1.0}
         );
 
-        DEmpiricalList<String> chdset = new DEmpiricalList<String>(
+        var chdset = new DEmpiricalList<>(
                 Arrays.asList("AT", "NY", "KC"),
-                new double[] {0.2, 0.6, 1.0}
+                new double[]{0.2, 0.6, 1.0}
         );
 
-        DEmpiricalList<String> nydset = new DEmpiricalList<String>(
+        DEmpiricalList<String> nydset = new DEmpiricalList<>(
                 Arrays.asList("AT", "KC", "CH"),
-                new double[] {0.2, 0.6, 1.0}
+                new double[]{0.2, 0.6, 1.0}
         );
-        
+
         od.put("KC", kcdset);
         od.put("CH", chdset);
         od.put("NY", nydset);

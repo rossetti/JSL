@@ -24,12 +24,12 @@ import java.util.Optional;
 import static jsl.utilities.random.rvariable.RVariableIfc.RVType.*;
 
 /**
- *  Permits construction of random variables based on factory instances defined by
- *  controls.  The controls hold the (key, value) pairs that represent distributional
- *  parameters by name.  The user of the control is responsible for setting legal
- *  parameter values on the controls as required by the desired random variable type.
- *  The returned control can be used to make many instances of random variables based
- *  on its current parameter settings.
+ * Permits construction of random variables based on factory instances defined by
+ * controls.  The controls hold the (key, value) pairs that represent distributional
+ * parameters by name.  The user of the control is responsible for setting legal
+ * parameter values on the controls as required by the desired random variable type.
+ * The returned control can be used to make many instances of random variables based
+ * on its current parameter settings.
  */
 public class RVFactory {
 
@@ -64,11 +64,10 @@ public class RVFactory {
     }
 
     /**
-     *
      * @param type the type of the random variable
      * @return an optional holding the control or empty if the type was not found
      */
-    public static Optional<RVControls> getRVControls(RVariableIfc.RVType type){
+    public static Optional<RVControls> getRVControls(RVariableIfc.RVType type) {
         Objects.requireNonNull(type, "The random variable type must not be null");
         return Optional.ofNullable(myFactories.get(type));
     }

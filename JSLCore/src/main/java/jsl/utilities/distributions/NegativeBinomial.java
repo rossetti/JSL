@@ -69,7 +69,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      * Constructs a NegativeBinomial with p probability of success based on n
      * success
      *
-     * @param prob The success probability
+     * @param prob The success probability, must be in range (0,1)
      * @param numSuccess The desired number of successes
      */
     public NegativeBinomial(double prob, double numSuccess) {
@@ -80,7 +80,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      * Constructs a NegativeBinomial with p probability of success based on n
      * success
      *
-     * @param prob The success probability
+     * @param prob The success probability, must be in range (0,1)
      * @param numSuccess The desired number of successes
      * @param name an optional name/label
      */
@@ -194,7 +194,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      * Sets the probability throws IllegalArgumentException when probability is
      * outside the range (0,1)
      *
-     * @param prob the probability of success
+     * @param prob the probability of success, must be in range (0,1)
      */
     private void setProbabilityOfSuccess(double prob) {
         if ((prob <= 0.0) || (prob >= 1.0)) {
@@ -298,7 +298,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      *
      * @param j the value to be evaluated
      * @param r number of successes
-     * @param p the probability
+     * @param p the probability, must be in range (0,1)
      * @return the probability
      */
     public static double recursivePMF(int j, double r, double p) {
@@ -336,7 +336,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      *
      * @param j the value to be evaluated
      * @param r number of successes
-     * @param p the probability
+     * @param p the probability, must be in range (0,1)
      * @return the probability
      */
     public static double recursiveCDF(int j, double r, double p) {
@@ -387,7 +387,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      * 
      * @param j value for which prob is needed
      * @param r num of successes
-     * @param p prob of success
+     * @param p prob of success, must be in range (0,1)
      * @return the probability mass function evaluated at j
      */
     public static double negBinomialPMF(int j, double r, double p) {
@@ -399,7 +399,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      *
      * @param j value for which prob is needed
      * @param r num of successes
-     * @param p prob of success
+     * @param p prob of success, must be in range (0,1)
      * @param recursive true indicates that the recursive logarithmic algorithm should be used
      * @return the probability
      */
@@ -434,7 +434,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      * 
      * @param j value for which cdf is needed
      * @param r num of successes
-     * @param p prob of success
+     * @param p prob of success, must be in range (0,1)
      * @return the probability
      */
     public static double negBinomialCDF(int j, double r, double p) {
@@ -446,7 +446,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      *
      * @param j value for which cdf is needed
      * @param r num of successes
-     * @param p prob of success
+     * @param p prob of success, must be in range (0,1)
      * @param recursive true indicates that the recursive logarithmic algorithm should be used
      * @return the probability
      */
@@ -476,7 +476,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      *
      * @param j value for which ccdf is needed
      * @param r num of successes
-     * @param p prob of success
+     * @param p prob of success, must be in range (0,1)
      * @return the probability
      */
     public static double negBinomialCCDF(int j, double r, double p) {
@@ -488,7 +488,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      *
      * @param j value for which ccdf is needed
      * @param r num of successes
-     * @param p prob of success
+     * @param p prob of success, must be in range (0,1)
      * @param recursive true indicates that the recursive logarithmic algorithm should be used
      * @return the probability
      */
@@ -515,7 +515,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      *
      * @param j value for which 1st order loss function is needed
      * @param r num of successes
-     * @param p prob of success
+     * @param p prob of success, must be in range (0,1)
      * @return the loss function value
      */
     public static double negBinomialLF1(int j, double r, double p) {
@@ -527,7 +527,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      *
      * @param j value for which 1st order loss function is needed
      * @param r num of successes
-     * @param p prob of success
+     * @param p prob of success, must be in range (0,1)
      * @param recursive true indicates that the recursive logarithmic algorithm should be used
      * @return the loss function value
      */
@@ -562,7 +562,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      * 
      * @param j value for which 2nd order loss function is needed
      * @param r num of successes
-     * @param p prob of success
+     * @param p prob of success, must be in range (0,1)
      * @return the loss function value
      */
     public static double negBinomialLF2(int j, double r, double p) {
@@ -622,7 +622,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      *
      * @param x The probability that the quantile is needed for
      * @param r The number of successes parameter
-     * @param p The probability of success, must be in range [0,1)
+     * @param p The probability of success, must be in range (0,1)
      * @return the inverse CDF value
      */
     public static int negBinomialInvCDF(double x, double p, double r) {
@@ -634,7 +634,7 @@ public class NegativeBinomial extends Distribution implements DiscreteDistributi
      * 
      * @param x The probability that the quantile is needed for
      * @param r The number of successes parameter
-     * @param p The probability of success, must be in range [0,1)
+     * @param p The probability of success, must be in range (0,1)
      * @param recursive true indicates that the recursive logarithmic algorithm should be used
      * @return the inverse CDF value
      */

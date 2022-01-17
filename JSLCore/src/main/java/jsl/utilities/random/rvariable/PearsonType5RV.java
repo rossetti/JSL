@@ -19,22 +19,22 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  Pearson Type 5(shape, scale) random variable
+ * Pearson Type 5(shape, scale) random variable
  */
 public final class PearsonType5RV extends AbstractRVariable {
 
     private final double myShape;
     private final double myScale;
 
-    public PearsonType5RV(double shape, double scale){
+    public PearsonType5RV(double shape, double scale) {
         this(shape, scale, JSLRandom.nextRNStream());
     }
 
-    public PearsonType5RV(double shape, double scale, int streamNum){
+    public PearsonType5RV(double shape, double scale, int streamNum) {
         this(shape, scale, JSLRandom.rnStream(streamNum));
     }
 
-    public PearsonType5RV(double shape, double scale, RNStreamIfc rng){
+    public PearsonType5RV(double shape, double scale, RNStreamIfc rng) {
         super(rng);
         if (shape <= 0) {
             throw new IllegalArgumentException("Shape parameter must be positive");
@@ -47,11 +47,10 @@ public final class PearsonType5RV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param rng the RngIfc to use
      * @return a new instance with same parameter value
      */
-    public final PearsonType5RV newInstance(RNStreamIfc rng){
+    public PearsonType5RV newInstance(RNStreamIfc rng) {
         return new PearsonType5RV(this.getShape(), this.getScale(), rng);
     }
 
@@ -63,14 +62,18 @@ public final class PearsonType5RV extends AbstractRVariable {
                 '}';
     }
 
-    /** Gets the shape
+    /**
+     * Gets the shape
+     *
      * @return The shape parameter as a double
      */
     public double getShape() {
         return myShape;
     }
 
-    /** Gets the scale parameter
+    /**
+     * Gets the scale parameter
+     *
      * @return The scale parameter as a double
      */
     public double getScale() {
@@ -78,7 +81,7 @@ public final class PearsonType5RV extends AbstractRVariable {
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         double v = JSLRandom.rPearsonType5(myShape, myScale, myRNStream);
         return v;
     }

@@ -11,6 +11,11 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.0.8"
 }
 
+tasks.withType<JavaCompile> {
+    val compilerArgs = options.compilerArgs
+    compilerArgs.addAll(listOf("-Xlint:unchecked"))
+}
+
 // comment out to not make snapshot
 //version = "1.0-SNAPSHOT"
 
@@ -18,7 +23,7 @@ plugins {
 //version = "R1.0.7"
 
 repositories {
-    jcenter()
+    //jcenter()
     mavenCentral()
 }
 
@@ -34,17 +39,17 @@ dependencies {
     // this permits changes to the JSLCore to be immediately reflected in JSLExtensions
 	api(project(":JSLCore"))
 
-    api(group = "com.opencsv", name = "opencsv", version = "5.2")
+    api(group = "com.opencsv", name = "opencsv", version = "5.5.2")
 
     api(group = "org.apache.commons", name = "commons-math3", version = "3.6.1")
 
 //    api(group = "commons-io", name = "commons-io", version = "2.11.0")
 
     // https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-core
-    api(group = "tech.tablesaw", name = "tablesaw-core", version =  "0.38.2")
+    api(group = "tech.tablesaw", name = "tablesaw-core", version =  "0.42.0")
 
     // https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-jsplot
-    api(group = "tech.tablesaw", name = "tablesaw-jsplot", version = "0.38.2")
+    api(group = "tech.tablesaw", name = "tablesaw-jsplot", version = "0.42.0")
 
     // https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-excel
     // no documentation available
@@ -54,7 +59,7 @@ dependencies {
 //    api(group ="org.knowm.xchart", name = "xchart", version = "3.8.0")
 
     // https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-smile
-    api(group = "tech.tablesaw", name = "tablesaw-smile", version = "0.32.1")
+//    api(group = "tech.tablesaw", name = "tablesaw-smile", version = "0.42.0")
 
     // https://github.com/d3xsystems/d3x-morpheus
 //    api(group = "com.d3xsystems", name = "d3x-morpheus-core", version = "1.0.31")
@@ -62,38 +67,38 @@ dependencies {
 //    api(group = "com.d3xsystems", name = "d3x-morpheus-db", version = "1.0.31")
 //    api(group = "com.d3xsystems", name = "d3x-morpheus-excel", version = "1.0.31")
 
-    api(group = "com.google.guava", name = "guava", version = "30.1.1-jre")
+    api(group = "com.google.guava", name = "guava", version = "31.0.1-jre")
 
     // https://db.apache.org/derby/releases/release-10.15.1.3.cgi#New+Features
-    implementation(group = "org.apache.derby", name = "derby", version = "10.15.1.3")
-    implementation(group = "org.apache.derby", name = "derbyshared", version = "10.15.1.3")
-    implementation(group = "org.apache.derby", name = "derbyclient", version = "10.15.1.3")
-    implementation(group = "org.apache.derby", name = "derbytools", version = "10.15.1.3")
+    implementation(group = "org.apache.derby", name = "derby", version = "10.15.2.0")
+    implementation(group = "org.apache.derby", name = "derbyshared", version = "10.15.2.0")
+    implementation(group = "org.apache.derby", name = "derbyclient", version = "10.15.2.0")
+    implementation(group = "org.apache.derby", name = "derbytools", version = "10.15.2.0")
 
-    implementation(group = "org.postgresql", name = "postgresql", version = "42.2.21")
+    implementation(group = "org.postgresql", name = "postgresql", version = "42.3.1")
     
-    implementation(group = "org.xerial", name = "sqlite-jdbc", version = "3.36.0.1")
+    implementation(group = "org.xerial", name = "sqlite-jdbc", version = "3.36.0.3")
 
-    implementation(group = "com.zaxxer", name = "HikariCP", version = "3.4.5")
+    implementation(group = "com.zaxxer", name = "HikariCP", version = "5.0.1")
 
     // https://mvnrepository.com/artifact/org.jooq/jooq
-    api(group = "org.jooq", name = "jooq", version = "3.14.11")
+    api(group = "org.jooq", name = "jooq", version = "3.16.1")
     // https://mvnrepository.com/artifact/org.jooq/jooq-meta
-    api(group = "org.jooq", name = "jooq-meta", version = "3.14.11")
+    api(group = "org.jooq", name = "jooq-meta", version = "3.16.1")
     // https://mvnrepository.com/artifact/org.jooq/jooq-codegen
-    api(group = "org.jooq", name = "jooq-codegen", version = "3.14.11")
+    api(group = "org.jooq", name = "jooq-codegen", version = "3.16.1")
     // this is to use jooq code generation from script
-    runtimeOnly(group = "org.jooq", name = "jooq-meta-extensions", version = "3.14.11")
+    runtimeOnly(group = "org.jooq", name = "jooq-meta-extensions", version = "3.16.1")
 
     // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
-    api(group = "javax.xml.bind", name = "jaxb-api", version = "2.3.1")
+//    api(group = "javax.xml.bind", name = "jaxb-api", version = "2.3.1")
 
     // https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime
-    api(group = "org.glassfish.jaxb", name = "jaxb-runtime", version = "2.3.1")
+//    api(group = "org.glassfish.jaxb", name = "jaxb-runtime", version = "2.3.1")
 
     // https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api
     //https://github.com/jOOQ/jOOQ/issues/7565
-    api( group= "javax.annotation", name = "javax.annotation-api", version = "1.3.2")
+//    api( group= "javax.annotation", name = "javax.annotation-api", version = "1.3.2")
 
     //TODO work to update version of POI or consider using https://github.com/dhatim/fastexcel/ instead
     // https://mvnrepository.com/artifact/org.apache.poi/poi

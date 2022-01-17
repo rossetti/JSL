@@ -12,6 +12,7 @@ public class TestOpenCSV {
     public static void main(String[] args) throws FileNotFoundException {
 
         //the IDE warnings (yellow) can be ignored since we know the type
+        @SuppressWarnings("unchecked")
         List<Data> dataList = new CsvToBeanBuilder(new FileReader("examples/data.csv"))
                 .withType(Data.class).build().parse();
 

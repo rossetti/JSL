@@ -19,7 +19,7 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  Triangularmin, mode, max) random variable
+ * Triangular(min, mode, max) random variable
  */
 public final class TriangularRV extends AbstractRVariable {
 
@@ -29,15 +29,15 @@ public final class TriangularRV extends AbstractRVariable {
 
     private final double myMode;
 
-    public TriangularRV(double min, double mode, double max){
+    public TriangularRV(double min, double mode, double max) {
         this(min, mode, max, JSLRandom.nextRNStream());
     }
 
-    public TriangularRV(double min, double mode, double max, int streamNum){
+    public TriangularRV(double min, double mode, double max, int streamNum) {
         this(min, mode, max, JSLRandom.rnStream(streamNum));
     }
 
-    public TriangularRV(double min, double mode, double max, RNStreamIfc rng){
+    public TriangularRV(double min, double mode, double max, RNStreamIfc rng) {
         super(rng);
         if (min > mode) {
             throw new IllegalArgumentException("min must be <= mode");
@@ -57,40 +57,36 @@ public final class TriangularRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param rng the RngIfc to use
      * @return a new instance with same parameter value
      */
-    public final TriangularRV newInstance(RNStreamIfc rng){
+    public TriangularRV newInstance(RNStreamIfc rng) {
         return new TriangularRV(myMin, myMode, myMax, rng);
     }
 
     /**
-     *
      * @return the minimum
      */
-    public final double getMinimum() {
+    public double getMinimum() {
         return (myMin);
     }
 
     /**
-     *
      * @return the mode or most likely value
      */
-    public final double getMode() {
+    public double getMode() {
         return (myMode);
     }
 
     /**
-     *
      * @return the maximum
      */
-    public final double getMaximum() {
+    public double getMaximum() {
         return (myMax);
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         double v = JSLRandom.rTriangular(myMin, myMode, myMax, myRNStream);
         return v;
     }

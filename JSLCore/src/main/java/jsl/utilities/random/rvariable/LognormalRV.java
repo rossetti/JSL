@@ -19,7 +19,7 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  Lognormal(mean, variance). The mean and variance are for the lognormal random variables
+ * Lognormal(mean, variance). The mean and variance are for the lognormal random variables
  */
 public final class LognormalRV extends AbstractRVariable {
 
@@ -27,15 +27,15 @@ public final class LognormalRV extends AbstractRVariable {
 
     private final double myVar;
 
-    public LognormalRV(double mean, double variance){
+    public LognormalRV(double mean, double variance) {
         this(mean, variance, JSLRandom.nextRNStream());
     }
 
-    public LognormalRV(double mean, double variance, int streamNum){
+    public LognormalRV(double mean, double variance, int streamNum) {
         this(mean, variance, JSLRandom.rnStream(streamNum));
     }
 
-    public LognormalRV(double mean, double variance, RNStreamIfc rng){
+    public LognormalRV(double mean, double variance, RNStreamIfc rng) {
         super(rng);
         if (mean <= 0) {
             throw new IllegalArgumentException("Mean must be positive");
@@ -49,11 +49,10 @@ public final class LognormalRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param rng the RngIfc to use
      * @return a new instance with same parameter value
      */
-    public final LognormalRV newInstance(RNStreamIfc rng){
+    public LognormalRV newInstance(RNStreamIfc rng) {
         return new LognormalRV(this.myMean, this.myVar, rng);
     }
 
@@ -66,23 +65,21 @@ public final class LognormalRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @return mean of the random variable
      */
-    public final double getMean() {
+    public double getMean() {
         return myMean;
     }
 
     /**
-     *
      * @return variance of the random variable
      */
-    public final double getVariance() {
+    public double getVariance() {
         return myVar;
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         double v = JSLRandom.rLogNormal(myMean, myVar, myRNStream);
         return v;
     }

@@ -9,11 +9,11 @@ public class VConstantRV extends ConstantRV {
     }
 
     /**
-     *
      * @param value the value to use for the degenerate distribution
      */
     public void setValue(double value) {
         myPreviousValue = myValue;
-        myValue = value;}
+        myValue = value;
+    }
 
 }

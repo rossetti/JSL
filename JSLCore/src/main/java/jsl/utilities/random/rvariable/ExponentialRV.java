@@ -19,7 +19,7 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  Exponential(mean) random variable
+ * Exponential(mean) random variable
  */
 public final class ExponentialRV extends AbstractRVariable {
 
@@ -28,33 +28,32 @@ public final class ExponentialRV extends AbstractRVariable {
     /**
      * Defaults to mean = 1.0
      */
-    public ExponentialRV(){
+    public ExponentialRV() {
         this(1.0);
     }
 
-    /** Uses a new stream from the default stream factory
+    /**
+     * Uses a new stream from the default stream factory
      *
      * @param mean must be greater than 0.0
      */
-    public ExponentialRV(double mean){
+    public ExponentialRV(double mean) {
         this(mean, JSLRandom.nextRNStream());
     }
 
     /**
-     *
-     * @param mean must be greater than 0.0
+     * @param mean      must be greater than 0.0
      * @param streamNum the stream number
      */
-    public ExponentialRV(double mean, int streamNum){
+    public ExponentialRV(double mean, int streamNum) {
         this(mean, JSLRandom.rnStream(streamNum));
     }
 
     /**
-     *
      * @param mean must be greater than 0.0
-     * @param rng must be null
+     * @param rng  must be null
      */
-    public ExponentialRV(double mean, RNStreamIfc rng){
+    public ExponentialRV(double mean, RNStreamIfc rng) {
         super(rng);
         if (mean <= 0.0) {
             throw new IllegalArgumentException("Exponential mean must be > 0.0");
@@ -63,11 +62,10 @@ public final class ExponentialRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param rng the RngIfc to use
      * @return a new instance with same parameter value
      */
-    public final ExponentialRV newInstance(RNStreamIfc rng){
+    public ExponentialRV newInstance(RNStreamIfc rng) {
         return new ExponentialRV(this.mean, rng);
     }
 
@@ -79,17 +77,15 @@ public final class ExponentialRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @return the mean value
      */
-    public final double getMean() {
+    public double getMean() {
         return mean;
     }
 
     @Override
-    protected final double generate() {
-        double v = JSLRandom.rExponential(mean, myRNStream);
-        return v;
+    protected double generate() {
+        return JSLRandom.rExponential(mean, myRNStream);
     }
 
     /**

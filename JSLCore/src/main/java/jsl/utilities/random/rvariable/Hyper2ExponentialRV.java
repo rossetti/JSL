@@ -3,7 +3,7 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- * Two Exponentials mixed to get a hyper-exponential. For higher
+ * Two exponential random variables mixed to get a hyper-exponential. For higher
  * order hyper-exponential use MixtureRV.  The mixing probability is the
  * probability of getting the first exponential distribution with mean1
  */
@@ -47,7 +47,9 @@ public class Hyper2ExponentialRV extends AbstractRVariable {
         }
     }
 
-    /** Gets the mixing probability
+    /**
+     * Gets the mixing probability
+     *
      * @return The mixing probability
      */
     public final double getMixingProb() {
@@ -55,7 +57,6 @@ public class Hyper2ExponentialRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @return the mean1 value
      */
     public final double getMean1() {
@@ -63,7 +64,6 @@ public class Hyper2ExponentialRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @return the mean1 value
      */
     public final double getMean2() {
@@ -71,12 +71,11 @@ public class Hyper2ExponentialRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param stream the RNStreamIfc to use
      * @return a new instance with same parameter value
      */
     @Override
-    public final Hyper2ExponentialRV newInstance(RNStreamIfc stream){
+    public final Hyper2ExponentialRV newInstance(RNStreamIfc stream) {
         return new Hyper2ExponentialRV(myMixingProb, myMean1, myMean2, stream);
     }
 

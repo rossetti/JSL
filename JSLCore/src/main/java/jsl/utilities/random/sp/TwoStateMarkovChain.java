@@ -21,7 +21,6 @@ import jsl.utilities.controls.ControllableIfc;
 import jsl.utilities.controls.Controls;
 import jsl.utilities.random.ParametersIfc;
 import jsl.utilities.random.RandomIfc;
-import jsl.utilities.random.rng.RNStreamControlIfc;
 import jsl.utilities.random.rng.RNStreamIfc;
 import jsl.utilities.random.rvariable.BernoulliRV;
 import jsl.utilities.random.rvariable.JSLRandom;
@@ -41,15 +40,18 @@ import java.util.Objects;
 public class TwoStateMarkovChain implements TwoStateMarkovChainIfc, ControllableIfc,
         ParametersIfc, NewInstanceIfc<TwoStateMarkovChain>, RandomIfc {
 
-    /** A counter to count the number of created to assign "unique" ids
+    /**
+     * A counter to count the number of created to assign "unique" ids
      */
     private static int myIdCounter_;
 
-    /** The id of this object
+    /**
+     * The id of this object
      */
     protected int myId;
 
-    /** Holds the name of the name of the object for the IdentityIfc
+    /**
+     * Holds the name of the name of the object for the IdentityIfc
      */
     protected String myName;
 
@@ -101,7 +103,9 @@ public class TwoStateMarkovChain implements TwoStateMarkovChainIfc, Controllable
         return myName;
     }
 
-    /** Sets the name
+    /**
+     * Sets the name
+     *
      * @param str The name as a string.
      */
     public final void setName(String str) {
@@ -127,7 +131,7 @@ public class TwoStateMarkovChain implements TwoStateMarkovChainIfc, Controllable
         if ((state < 0) || (state > 1)) {
             throw new IllegalArgumentException("The state must be 0 or 1");
         }
-        myInitialState = state;
+        myState = state;
     }
 
     public int getState() {
@@ -169,7 +173,7 @@ public class TwoStateMarkovChain implements TwoStateMarkovChainIfc, Controllable
     }
 
     @Override
-    public final double sample(){
+    public final double sample() {
         return getValue();
     }
 
@@ -298,7 +302,7 @@ public class TwoStateMarkovChain implements TwoStateMarkovChainIfc, Controllable
 
     protected class RandomControls extends Controls {
 
-        protected void fillControls(){
+        protected void fillControls() {
             addDoubleArrayControl("parameters", getParameters());
         }
     }

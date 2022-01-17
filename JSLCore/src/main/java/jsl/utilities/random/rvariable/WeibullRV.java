@@ -51,7 +51,7 @@ public final class WeibullRV extends AbstractRVariable {
      * @param rng the RngIfc to use
      * @return a new instance with same parameter value
      */
-    public final WeibullRV newInstance(RNStreamIfc rng){
+    public WeibullRV newInstance(RNStreamIfc rng){
         return new WeibullRV(this.getShape(), this.getScale(), rng);
     }
 
@@ -78,7 +78,7 @@ public final class WeibullRV extends AbstractRVariable {
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         double v = JSLRandom.rWeibull(myShape, myScale, myRNStream);
         return v;
     }

@@ -21,7 +21,7 @@ import jsl.utilities.IdentityIfc;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  Allows a constant to pretend to be a random variable
+ * Allows a constant to pretend to be a random variable
  */
 public class ConstantRV implements RVariableIfc, IdentityIfc {
 
@@ -47,25 +47,23 @@ public class ConstantRV implements RVariableIfc, IdentityIfc {
     protected double myValue;
     private final Identity myIdentity;
 
-    public ConstantRV(double value){
+    public ConstantRV(double value) {
         myIdentity = new Identity();
         myValue = value;
     }
 
     /**
-     *
      * @param rng the RNStreamIfc to use
      * @return a new instance with same parameter value
      */
-    public final ConstantRV newInstance(RNStreamIfc rng){
+    public final ConstantRV newInstance(RNStreamIfc rng) {
         return new ConstantRV(myValue);
     }
 
     /**
-     *
      * @return a new instance with same parameter value
      */
-    public final ConstantRV newInstance(){
+    public final ConstantRV newInstance() {
         return new ConstantRV(myValue);
     }
 
@@ -86,7 +84,9 @@ public class ConstantRV implements RVariableIfc, IdentityIfc {
         return myIdentity.getId();
     }
 
-    /** Sets the name
+    /**
+     * Sets the name
+     *
      * @param str The name as a string.
      */
     public final void setName(String str) {
@@ -148,7 +148,7 @@ public class ConstantRV implements RVariableIfc, IdentityIfc {
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                Double value = getDoubleControl("value");
+                double value = getDoubleControl("value");
                 return new ConstantRV(value);
             }
         };

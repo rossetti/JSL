@@ -19,7 +19,7 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  Normal(mean, variance)
+ * Normal(mean, variance)
  */
 public final class LaplaceRV extends AbstractRVariable {
 
@@ -27,15 +27,15 @@ public final class LaplaceRV extends AbstractRVariable {
 
     private final double myScale;
 
-    public LaplaceRV(double mean, double scale){
+    public LaplaceRV(double mean, double scale) {
         this(mean, scale, JSLRandom.nextRNStream());
     }
 
-    public LaplaceRV(double mean, double scale, int streamNum){
+    public LaplaceRV(double mean, double scale, int streamNum) {
         this(mean, scale, JSLRandom.rnStream(streamNum));
     }
 
-    public LaplaceRV(double mean, double scale, RNStreamIfc rng){
+    public LaplaceRV(double mean, double scale, RNStreamIfc rng) {
         super(rng);
         myMean = mean;
         if (scale <= 0) {
@@ -45,11 +45,10 @@ public final class LaplaceRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @param rng the RngIfc to use
      * @return a new instance with same parameter value
      */
-    public final LaplaceRV newInstance(RNStreamIfc rng){
+    public LaplaceRV newInstance(RNStreamIfc rng) {
         return new LaplaceRV(this.myMean, this.myScale, rng);
     }
 
@@ -62,23 +61,21 @@ public final class LaplaceRV extends AbstractRVariable {
     }
 
     /**
-     *
      * @return mean of the random variable
      */
-    public final double getMean() {
+    public double getMean() {
         return myMean;
     }
 
     /**
-     *
      * @return the scale parameter
      */
-    public final double getScale() {
+    public double getScale() {
         return myScale;
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         double v = JSLRandom.rLaplace(myMean, myScale, myRNStream);
         return v;
     }

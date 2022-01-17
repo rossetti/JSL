@@ -18,6 +18,10 @@ package jsl.utilities.random.robj;
 import java.util.HashMap;
 import java.util.Map;
 
+/** Uniformly selects elements from the list (with equal probability)
+ *
+ * @param <T> the type of element stored in the list
+ */
 public class DUniformList<T> extends RList<T> {
 
     public DUniformList() {
@@ -42,7 +46,7 @@ public class DUniformList<T> extends RList<T> {
 
     public static void main(String[] args) {
 
-        DUniformList<String> originSet = new DUniformList<String>();
+        DUniformList<String> originSet = new DUniformList<>();
 
         originSet.add("KC");
         originSet.add("CH");
@@ -52,21 +56,21 @@ public class DUniformList<T> extends RList<T> {
             System.out.println(originSet.getRandomElement());
         }
 
-        Map<String, DUniformList<String>> od = new HashMap<String, DUniformList<String>>();
+        Map<String, DUniformList<String>> od = new HashMap<>();
 
-        DUniformList<String> kcdset = new DUniformList<String>();
+        DUniformList<String> kcdset = new DUniformList<>();
 
         kcdset.add("CO");
         kcdset.add("AT");
         kcdset.add("NY");
 
-        DUniformList<String> chdset = new DUniformList<String>();
+        DUniformList<String> chdset = new DUniformList<>();
 
         chdset.add("AT");
         chdset.add("NY");
         chdset.add("KC");
 
-        DUniformList<String> nydset = new DUniformList<String>();
+        DUniformList<String> nydset = new DUniformList<>();
 
         nydset.add("AT");
         nydset.add("KC");

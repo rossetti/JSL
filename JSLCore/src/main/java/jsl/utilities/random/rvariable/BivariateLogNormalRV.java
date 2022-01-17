@@ -17,14 +17,15 @@ package jsl.utilities.random.rvariable;
 
 import jsl.utilities.random.rng.RNStreamIfc;
 
-/** Allows for the generation of bivariate normal
- *  random variables
+/**
+ * Allows for the generation of bi-variate lognormal
+ * random variables
  *
  * @author rossetti
  */
-public class BivariateLogNormalRV extends AbstractMVRVariable{
+public class BivariateLogNormalRV extends AbstractMVRVariable {
 
-    private final  BivariateNormalRV myBVN;
+    private final BivariateNormalRV myBVN;
 
     private final double myMu1;
 
@@ -36,52 +37,53 @@ public class BivariateLogNormalRV extends AbstractMVRVariable{
 
     private final double myRho;
 
-    /** Constructs a standard bivariate normal with no correlation
-     *
+    /**
+     * Constructs a standard bi-variate lognormal with no correlation
      */
     public BivariateLogNormalRV() {
         this(1.0, 1.0, 1.0, 1.0, 0.0, JSLRandom.nextRNStream());
     }
 
-    /** Constructs a standard bivariate normal with no correlation
-     *
+    /**
+     * Constructs a standard bi-variate log normal with no correlation
      */
     public BivariateLogNormalRV(RNStreamIfc rng) {
         this(1.0, 1.0, 1.0, 1.0, 0.0, rng);
     }
 
     /**
-     *
      * @param mean1 mean of first coordinate
-     * @param var1 variance of first coordinate
+     * @param var1  variance of first coordinate
      * @param mean2 mean of 2nd coordinate
-     * @param var2 variance of 2nd coordinate
-     * @param rho correlation between X1 and X2
+     * @param var2  variance of 2nd coordinate
+     * @param rho   correlation between X1 and X2
      */
     public BivariateLogNormalRV(double mean1, double var1, double mean2, double var2, double rho) {
         this(mean1, var1, mean2, var2, rho, JSLRandom.nextRNStream());
     }
 
-    /** Constructs a bivariate normal with the provided parameters
+    /**
+     * Constructs a bi-variate lognormal with the provided parameters
      *
-     * @param m1 mean of first coordinate
-     * @param v1 variance of first coordinate
-     * @param m2 mean of 2nd coordinate
-     * @param v2 variance of 2nd coordinate
-     * @param r correlation between X1 and X2
+     * @param m1        mean of first coordinate
+     * @param v1        variance of first coordinate
+     * @param m2        mean of 2nd coordinate
+     * @param v2        variance of 2nd coordinate
+     * @param r         correlation between X1 and X2
      * @param streamNum the stream number
      */
     public BivariateLogNormalRV(double m1, double v1, double m2, double v2, double r, int streamNum) {
         this(m1, v1, m2, v2, r, JSLRandom.rnStream(streamNum));
     }
 
-    /** Constructs a bivariate normal with the provided parameters
+    /**
+     * Constructs a bi-variate lognormal with the provided parameters
      *
-     * @param m1 mean of first coordinate
-     * @param v1 variance of first coordinate
-     * @param m2 mean of 2nd coordinate
-     * @param v2 variance of 2nd coordinate
-     * @param r correlation between X1 and X2
+     * @param m1  mean of first coordinate
+     * @param v1  variance of first coordinate
+     * @param m2  mean of 2nd coordinate
+     * @param v2  variance of 2nd coordinate
+     * @param r   correlation between X1 and X2
      * @param rng the RNStreamIfc to use
      */
     public BivariateLogNormalRV(double m1, double v1, double m2, double v2, double r, RNStreamIfc rng) {
@@ -108,7 +110,7 @@ public class BivariateLogNormalRV extends AbstractMVRVariable{
         myVar2 = v2;
         myRho = r;
 
-        // calculate parameters of underlying bivariate normal
+        // calculate parameters of underlying bi-variate normal
         // get the means
         double mean1 = Math.log((m1 * m1) / Math.sqrt(m1 * m1 + v1));
         double mean2 = Math.log((m2 * m2) / Math.sqrt(m2 * m2 + v2));
@@ -123,7 +125,8 @@ public class BivariateLogNormalRV extends AbstractMVRVariable{
     }
 
 
-    /** Gets the first mean
+    /**
+     * Gets the first mean
      *
      * @return Gets the first mean
      */
@@ -131,7 +134,8 @@ public class BivariateLogNormalRV extends AbstractMVRVariable{
         return myMu1;
     }
 
-    /** Gets the first variance
+    /**
+     * Gets the first variance
      *
      * @return the first variance
      */
@@ -139,7 +143,8 @@ public class BivariateLogNormalRV extends AbstractMVRVariable{
         return myVar1;
     }
 
-    /** Gets the second mean
+    /**
+     * Gets the second mean
      *
      * @return the second mean
      */
@@ -147,7 +152,8 @@ public class BivariateLogNormalRV extends AbstractMVRVariable{
         return myMu2;
     }
 
-    /** Gets the 2nd variance
+    /**
+     * Gets the 2nd variance
      *
      * @return the 2nd variance
      */
@@ -155,7 +161,8 @@ public class BivariateLogNormalRV extends AbstractMVRVariable{
         return myVar2;
     }
 
-    /** Gets the correlation
+    /**
+     * Gets the correlation
      *
      * @return the correlation
      */
@@ -166,7 +173,7 @@ public class BivariateLogNormalRV extends AbstractMVRVariable{
     @Override
     public double[] sample() {
         double[] x = myBVN.sample();
-        // transform them to bivariate lognormal
+        // transform them to bi-variate lognormal
         x[0] = Math.exp(x[0]);
         x[1] = Math.exp(x[1]);
         return x;

@@ -19,7 +19,7 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  JohnsonB(alpha1, alpha2, min, max) random variable
+ * GeneralizeBetaRV(alpha1, alpha2, min, max) random variable
  */
 public final class GeneralizedBetaRV extends AbstractRVariable {
 
@@ -29,30 +29,29 @@ public final class GeneralizedBetaRV extends AbstractRVariable {
 
     private final BetaRV myBeta;
 
-    public GeneralizedBetaRV(double alpha1, double alpha2, double min, double max){
+    public GeneralizedBetaRV(double alpha1, double alpha2, double min, double max) {
         this(alpha1, alpha2, min, max, JSLRandom.nextRNStream());
     }
 
-    public GeneralizedBetaRV(double alpha1, double alpha2, double min, double max, int streamNum){
+    public GeneralizedBetaRV(double alpha1, double alpha2, double min, double max, int streamNum) {
         this(alpha1, alpha2, min, max, JSLRandom.rnStream(streamNum));
     }
 
-    public GeneralizedBetaRV(double alpha1, double alpha2, double min, double max, RNStreamIfc rng){
+    public GeneralizedBetaRV(double alpha1, double alpha2, double min, double max, RNStreamIfc rng) {
         super(rng);
-        myBeta = new BetaRV(alpha1, alpha2, rng);
         if (max <= min) {
             throw new IllegalArgumentException("the min must be < than the max");
         }
+        myBeta = new BetaRV(alpha1, alpha2, rng);
         myMin = min;
         myMax = max;
     }
 
     /**
-     *
      * @param rng the RNStreamIfc to use
      * @return a new instance with same parameter value
      */
-    public final GeneralizedBetaRV newInstance(RNStreamIfc rng){
+    public GeneralizedBetaRV newInstance(RNStreamIfc rng) {
         return new GeneralizedBetaRV(getAlpha1(), getAlpha2(), myMin, myMax, rng);
     }
 
@@ -66,38 +65,40 @@ public final class GeneralizedBetaRV extends AbstractRVariable {
                 '}';
     }
 
-    /** Gets the lower limit
+    /**
+     * Gets the lower limit
+     *
      * @return The lower limit
      */
-    public final double getMinimum() {
+    public double getMinimum() {
         return (myMin);
     }
 
-    /** Gets the upper limit
+    /**
+     * Gets the upper limit
+     *
      * @return The upper limit
      */
-    public final double getMaximum() {
+    public double getMaximum() {
         return (myMax);
     }
 
     /**
-     *
      * @return the first shape parameter
      */
-    public final double getAlpha1() {
+    public double getAlpha1() {
         return myBeta.getAlpha1();
     }
 
     /**
-     *
      * @return the second shape parameter
      */
-    public final double getAlpha2() {
+    public double getAlpha2() {
         return myBeta.getAlpha2();
     }
 
     @Override
-    protected final double generate() {
+    protected double generate() {
         double x = myBeta.getValue();
         double v = myMin + (myMax - myMin) * x;
         return v;

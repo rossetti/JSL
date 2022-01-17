@@ -4,8 +4,13 @@ plugins {
     java
 }
 
+tasks.withType<JavaCompile> {
+    val compilerArgs = options.compilerArgs
+    compilerArgs.addAll(listOf("-Xlint:unchecked"))
+}
+
 repositories {
-    jcenter()
+//    jcenter()
     mavenCentral()
 }
 

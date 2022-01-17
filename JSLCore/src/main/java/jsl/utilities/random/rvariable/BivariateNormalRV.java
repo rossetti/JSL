@@ -18,12 +18,13 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.distributions.Normal;
 import jsl.utilities.random.rng.RNStreamIfc;
 
-/** Allows for the generation of bivariate normal
- *  random variables
+/**
+ * Allows for the generation of bi-variate normal
+ * random variables
  *
  * @author rossetti
  */
-public class BivariateNormalRV extends AbstractMVRVariable{
+public class BivariateNormalRV extends AbstractMVRVariable {
 
     private final double myMu1;
 
@@ -35,53 +36,54 @@ public class BivariateNormalRV extends AbstractMVRVariable{
 
     private final double myRho;
 
-    /** Constructs a standard bivariate normal with no correlation
-     *
+    /**
+     * Constructs a standard bi-variate normal with no correlation
      */
     public BivariateNormalRV() {
         this(0.0, 1.0, 0.0, 1.0, 0.0, JSLRandom.nextRNStream());
     }
 
-    /** Constructs a standard bivariate normal with no correlation
-     *
+    /**
+     * Constructs a standard bi-variate normal with no correlation
      */
     public BivariateNormalRV(RNStreamIfc rng) {
         this(0.0, 1.0, 0.0, 1.0, 0.0, rng);
     }
 
     /**
-     *
      * @param mean1 mean of first coordinate
-     * @param var1 variance of first coordinate
+     * @param var1  variance of first coordinate
      * @param mean2 mean of 2nd coordinate
-     * @param var2 variance of 2nd coordinate
-     * @param rho correlation between X1 and X2
+     * @param var2  variance of 2nd coordinate
+     * @param rho   correlation between X1 and X2
      */
     public BivariateNormalRV(double mean1, double var1, double mean2, double var2, double rho) {
         this(mean1, var1, mean2, var2, rho, JSLRandom.nextRNStream());
     }
 
-    /** Constructs a bivariate normal with the provided parameters
+    /**
+     * Constructs a bi-variate normal with the provided parameters
      *
-     * @param mean1 mean of first coordinate
-     * @param var1 variance of first coordinate
-     * @param mean2 mean of 2nd coordinate
-     * @param var2 variance of 2nd coordinate
-     * @param rho correlation between X1 and X2
+     * @param mean1     mean of first coordinate
+     * @param var1      variance of first coordinate
+     * @param mean2     mean of 2nd coordinate
+     * @param var2      variance of 2nd coordinate
+     * @param rho       correlation between X1 and X2
      * @param streamNum the stream number
      */
     public BivariateNormalRV(double mean1, double var1, double mean2, double var2, double rho, int streamNum) {
         this(mean1, var1, mean2, var2, rho, JSLRandom.rnStream(streamNum));
     }
 
-    /** Constructs a bivariate normal with the provided parameters
+    /**
+     * Constructs a bi-variate normal with the provided parameters
      *
      * @param mean1 mean of first coordinate
-     * @param var1 variance of first coordinate
+     * @param var1  variance of first coordinate
      * @param mean2 mean of 2nd coordinate
-     * @param var2 variance of 2nd coordinate
-     * @param rho correlation between X1 and X2
-     * @param rng the RNStreamIfc
+     * @param var2  variance of 2nd coordinate
+     * @param rho   correlation between X1 and X2
+     * @param rng   the RNStreamIfc
      */
     public BivariateNormalRV(double mean1, double var1, double mean2, double var2, double rho, RNStreamIfc rng) {
         super(rng);
@@ -101,7 +103,8 @@ public class BivariateNormalRV extends AbstractMVRVariable{
         myRho = rho;
     }
 
-    /** Gets the first mean
+    /**
+     * Gets the first mean
      *
      * @return the first mean
      */
@@ -109,7 +112,8 @@ public class BivariateNormalRV extends AbstractMVRVariable{
         return myMu1;
     }
 
-    /** Gets the first variance
+    /**
+     * Gets the first variance
      *
      * @return the first variance
      */
@@ -117,7 +121,8 @@ public class BivariateNormalRV extends AbstractMVRVariable{
         return myVar1;
     }
 
-    /** Gets the second mean
+    /**
+     * Gets the second mean
      *
      * @return the second mean
      */
@@ -125,7 +130,8 @@ public class BivariateNormalRV extends AbstractMVRVariable{
         return myMu2;
     }
 
-    /** Gets the 2nd variance
+    /**
+     * Gets the 2nd variance
      *
      * @return the 2nd variance
      */
@@ -133,7 +139,8 @@ public class BivariateNormalRV extends AbstractMVRVariable{
         return myVar2;
     }
 
-    /** Gets the correlation
+    /**
+     * Gets the correlation
      *
      * @return the correlation
      */

@@ -16,10 +16,13 @@
 
 package jsl.utilities.random.rvariable;
 
-import jsl.utilities.random.rng.*;
+import jsl.utilities.random.rng.GetRandomNumberStreamIfc;
+import jsl.utilities.random.rng.RNStreamControlIfc;
+import jsl.utilities.random.rng.RNStreamIfc;
+import jsl.utilities.random.rng.SetRandomNumberStreamIfc;
 
-/** An interface for defining random variables
- *
+/**
+ * An interface for defining random variables
  */
 public interface MVRVariableIfc extends RNStreamControlIfc,
         MVSampleIfc, GetRandomNumberStreamIfc, SetRandomNumberStreamIfc {

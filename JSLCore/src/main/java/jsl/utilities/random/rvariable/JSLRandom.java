@@ -15,8 +15,8 @@
  */
 package jsl.utilities.random.rvariable;
 
-import jsl.utilities.math.JSLMath;
 import jsl.utilities.distributions.*;
+import jsl.utilities.math.JSLMath;
 import jsl.utilities.random.rng.RNStreamIfc;
 import jsl.utilities.random.rng.RNStreamProvider;
 import jsl.utilities.random.rng.RNStreamProviderIfc;
@@ -84,18 +84,18 @@ public class JSLRandom {
     }
 
     /**
-     *
      * @param stream the stream associated with the default stream provider
      * @return the number associated with the provided stream or -1 if the stream was not provided by the default provider
      */
-    public static int getStreamNumber(RNStreamIfc stream){ return myStreamProvider.getStreamNumber(stream);}
+    public static int getStreamNumber(RNStreamIfc stream) {
+        return myStreamProvider.getStreamNumber(stream);
+    }
 
     /**
-     *
      * @param streamNum the stream number associated with the stream
      * @return the stream associated with the stream number from the underlying stream provider
      */
-    public static RNStreamIfc rnStream(int streamNum){
+    public static RNStreamIfc rnStream(int streamNum) {
         return myStreamProvider.rnStream(streamNum);
     }
 
@@ -132,16 +132,16 @@ public class JSLRandom {
 
     /**
      * @param pSuccess the probability of success, must be in (0,1)
-     * @param rng      the RNStreamIfc
+     * @param stream   the RNStreamIfc
      * @return the random value
      */
-    public static double rBernoulli(double pSuccess, RNStreamIfc rng) {
-        Objects.requireNonNull(rng, "The supplied RNStreamIfc was null");
+    public static double rBernoulli(double pSuccess, RNStreamIfc stream) {
+        Objects.requireNonNull(stream, "The supplied RNStreamIfc was null");
         if ((pSuccess <= 0.0) || (pSuccess >= 1.0)) {
             throw new IllegalArgumentException("Success Probability must be (0,1)");
         }
 
-        if (rng.randU01() <= pSuccess) {
+        if (stream.randU01() <= pSuccess) {
             return (1.0);
         } else {
             return (0.0);
@@ -170,18 +170,18 @@ public class JSLRandom {
     /**
      * @param pSuccess the probability of success, must be in (0,1)
      * @param nTrials  the number of trials, must be greater than 0
-     * @param rng      the RNStreamIfc, must not be null
+     * @param stream   the RNStreamIfc, must not be null
      * @return the random value
      */
-    public static int rBinomial(double pSuccess, int nTrials, RNStreamIfc rng) {
-        Objects.requireNonNull(rng, "The supplied RNStreamIfc was null");
+    public static int rBinomial(double pSuccess, int nTrials, RNStreamIfc stream) {
+        Objects.requireNonNull(stream, "The supplied RNStreamIfc was null");
         if (nTrials <= 0) {
             throw new IllegalArgumentException("Number of trials must be >= 1");
         }
         if ((pSuccess <= 0.0) || (pSuccess >= 1.0)) {
             throw new IllegalArgumentException("Success Probability must be (0,1)");
         }
-        return Binomial.binomialInvCDF(rng.randU01(), nTrials, pSuccess);
+        return Binomial.binomialInvCDF(stream.randU01(), nTrials, pSuccess);
     }
 
     /**
@@ -271,8 +271,8 @@ public class JSLRandom {
      */
     public static int rGeometric(double pSuccess, RNStreamIfc rng) {
         Objects.requireNonNull(rng, "The supplied RNStreamIfc was null");
-        if ((pSuccess < 0.0) || (pSuccess > 1.0)) {
-            throw new IllegalArgumentException("Success Probability must be [0,1]");
+        if ((pSuccess <= 0.0) || (pSuccess >= 1.0)) {
+            throw new IllegalArgumentException("Success Probability must be (0,1)");
         }
         double u = rng.randU01();
         return ((int) Math.ceil((Math.log(1.0 - u) / (Math.log(1.0 - pSuccess))) - 1.0));
@@ -288,7 +288,7 @@ public class JSLRandom {
     }
 
     /**
-     * @param pSuccess   the probability of success
+     * @param pSuccess   the probability of success, must be in (0,1)
      * @param rSuccesses number of trials until rth success
      * @param streamNum  the stream number from the stream provider to use
      * @return the random value
@@ -298,7 +298,7 @@ public class JSLRandom {
     }
 
     /**
-     * @param pSuccess   the probability of success
+     * @param pSuccess   the probability of success, must be in (0,1)
      * @param rSuccesses number of trials until rth success
      * @param rng        the RNStreamIfc, must not be null
      * @return the random value
@@ -1602,19 +1602,18 @@ public class JSLRandom {
      * sampleWithoutReplacement(x, 5); // first sample into first 5 slots
      * double[] sample = copyFirstNValues(x, 5); // now copy from the first 5 slots
      *
-     * @param x   the array to copy from
-     * @param N   the number of values to copy
-     * @param <T> the type of the array
+     * @param x the array to copy from
+     * @param n the number of values to copy
      * @return a new array with the values
      */
-    public static <T> T[] copyFirstNValues(T[] x, int N) {
+    public static double[] copyFirstNValues(double[] x, int n) {
         Objects.requireNonNull(x, "The supplied array was null");
-        if (N > x.length) {
+        if (n > x.length) {
             throw new IllegalArgumentException("Cannot copy more than the number of elements available");
         }
-        double[] y = new double[N];
+        double[] y = new double[n];
         System.arraycopy(x, 0, y, 0, y.length);
-        return (x);
+        return (y);
     }
 
     /**

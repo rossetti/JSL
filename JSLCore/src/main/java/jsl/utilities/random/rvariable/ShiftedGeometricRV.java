@@ -19,35 +19,45 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
- *  Shifted Geometric(probability of success) random variable, range 1, 2, 3, ..
+ * Shifted Geometric(probability of success) random variable, range 1, 2, 3, etc.
  */
 public final class ShiftedGeometricRV extends AbstractRVariable {
 
     private final double myProbSuccess;
 
-    public ShiftedGeometricRV(double prob){
+    /**
+     * @param prob probability of success, must be in range (0,1)
+     */
+    public ShiftedGeometricRV(double prob) {
         this(prob, JSLRandom.nextRNStream());
     }
 
-    public ShiftedGeometricRV(double prob, int streamNum){
+    /**
+     * @param prob      probability of success, must be in range (0,1)
+     * @param streamNum the stream number to use
+     */
+    public ShiftedGeometricRV(double prob, int streamNum) {
         this(prob, JSLRandom.rnStream(streamNum));
     }
 
-    public ShiftedGeometricRV(double prob, RNStreamIfc rng){
-        super(rng);
-        if ((prob < 0.0) || (prob > 1.0)) {
-            throw new IllegalArgumentException("Probability must be [0,1]");
+    /**
+     * @param prob   probability of success, must be in range (0,1)
+     * @param stream the random number stream to use
+     */
+    public ShiftedGeometricRV(double prob, RNStreamIfc stream) {
+        super(stream);
+        if ((prob <= 0.0) || (prob >= 1.0)) {
+            throw new IllegalArgumentException("Probability must be (0,1)");
         }
         myProbSuccess = prob;
     }
 
     /**
-     *
-     * @param rng the RngIfc to use
+     * @param stream the RNStreamIfc to use
      * @return a new instance with same parameter value
      */
-    public final ShiftedGeometricRV newInstance(RNStreamIfc rng){
-        return new ShiftedGeometricRV(this.myProbSuccess, rng);
+    public ShiftedGeometricRV newInstance(RNStreamIfc stream) {
+        return new ShiftedGeometricRV(this.myProbSuccess, stream);
     }
 
     @Override
@@ -57,17 +67,18 @@ public final class ShiftedGeometricRV extends AbstractRVariable {
                 '}';
     }
 
-    /** Gets the success probability
+    /**
+     * Gets the success probability
+     *
      * @return The success probability
      */
-    public final double getProbabilityOfSuccess() {
+    public double getProbabilityOfSuccess() {
         return (myProbSuccess);
     }
 
     @Override
-    protected final double generate() {
-        double v = 1.0 + JSLRandom.rGeometric(myProbSuccess, myRNStream);
-        return v;
+    protected double generate() {
+        return 1.0 + JSLRandom.rGeometric(myProbSuccess, myRNStream);
     }
 
     /**
