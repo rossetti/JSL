@@ -5,7 +5,7 @@ This is a Gradle based project.
 
 ## JSL Book
 
-https://rossetti.git-pages.uark.edu/jslbookdownbook
+https://rossetti.github.io/JSLBook/
 
 ## JSL Documentation
 
