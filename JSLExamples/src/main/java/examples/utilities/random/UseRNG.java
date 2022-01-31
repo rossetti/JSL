@@ -34,7 +34,7 @@ import jsl.utilities.statistic.StatisticXY;
 public class UseRNG {
 
     public static void main(String[] args) {
-        test();
+//        test();
 //        example1();
         example2();
        // crnExample1();

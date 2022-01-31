@@ -17,7 +17,7 @@ dependencies {
 	api(project(":JSLExtensions"))
 
 // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
-    testCompile(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.5.1")
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.5.1")
 
 //    testCompile("junit", "junit", "4.12")
 }
@@ -29,6 +29,7 @@ configure<JavaPluginConvention> {
 
 //TODO had to switch to IntelliJ for build for test to work
 // https://stackoverflow.com/questions/30474767/no-tests-found-for-given-includes-error-when-running-parameterized-unit-test-in
-//tasks.test {
-//    useJUnitPlatform()
-//}
+tasks.test {
+    useJUnitPlatform()
+}
+
