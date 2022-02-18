@@ -1189,10 +1189,8 @@ public class JSLRandom {
      * @return the randomly selected value
      */
     public static double randomlySelect(double[] array, RNStreamIfc rng) {
-        Objects.requireNonNull(rng, "The supplied RNStreamIfc was null");
-        if (array == null) {
-            throw new IllegalArgumentException("The supplied array was null");
-        }
+        Objects.requireNonNull(rng, "The supplied RNStreamIfc was null!");
+        Objects.requireNonNull(array, "The supplied array was null!");
         if (array.length == 1) {
             return array[0];
         }
@@ -1235,13 +1233,9 @@ public class JSLRandom {
      * @return the randomly selected value
      */
     public static double randomlySelect(double[] array, double[] cdf, RNStreamIfc rng) {
-        Objects.requireNonNull(rng, "The supplied RNStreamIfc was null");
-        if (array == null) {
-            throw new IllegalArgumentException("The supplied array was null");
-        }
-        if (cdf == null) {
-            throw new IllegalArgumentException("The supplied cdf was null");
-        }
+        Objects.requireNonNull(rng, "The supplied RNStreamIfc was null!");
+        Objects.requireNonNull(array, "The supplied array was null!");
+        Objects.requireNonNull(cdf, "The supplied cdf was null!");
         if (!isValidCDF(cdf)) {
             throw new IllegalArgumentException("The supplied cdf was not valid");
         }
@@ -1300,12 +1294,8 @@ public class JSLRandom {
      */
     public static int randomlySelect(int[] array, double[] cdf, RNStreamIfc rng) {
         Objects.requireNonNull(rng, "The supplied RNStreamIfc was null");
-        if (array == null) {
-            throw new IllegalArgumentException("The supplied array was null");
-        }
-        if (cdf == null) {
-            throw new IllegalArgumentException("The supplied cdf was null");
-        }
+        Objects.requireNonNull(array, "The supplied array was null!");
+        Objects.requireNonNull(cdf, "The supplied cdf was null!");
         if (!isValidCDF(cdf)) {
             throw new IllegalArgumentException("The supplied cdf was not valid");
         }
@@ -1554,7 +1544,7 @@ public class JSLRandom {
      * using the default random number generator
      *
      * @param x          the array
-     * @param sampleSize the size of the generate
+     * @param sampleSize the sample size
      */
     public static void sampleWithoutReplacement(double[] x, int sampleSize) {
         sampleWithoutReplacement(x, sampleSize, getDefaultRNStream());
@@ -1565,7 +1555,7 @@ public class JSLRandom {
      * That is, x[0], x[1], ... , x[sampleSize-1] is the random sample without replacement
      *
      * @param x          the array
-     * @param sampleSize the generate size
+     * @param sampleSize the sample size
      * @param streamNum  the stream number from the stream provider to use
      */
     public static void sampleWithoutReplacement(double[] x, int sampleSize, int streamNum) {
@@ -1577,7 +1567,7 @@ public class JSLRandom {
      * That is, x[0], x[1], ... , x[sampleSize-1] is the random sample without replacement
      *
      * @param x          the array
-     * @param sampleSize the generate size
+     * @param sampleSize the sample size
      * @param rng        the source of randomness
      */
     public static void sampleWithoutReplacement(double[] x, int sampleSize, RNStreamIfc rng) {
@@ -1654,7 +1644,7 @@ public class JSLRandom {
      * using the default random number generator
      *
      * @param x          the array
-     * @param sampleSize the generate size
+     * @param sampleSize the sample size
      */
     public static void sampleWithoutReplacement(int[] x, int sampleSize) {
         sampleWithoutReplacement(x, sampleSize, getDefaultRNStream());
@@ -1665,7 +1655,7 @@ public class JSLRandom {
      * That is, x[0], x[1], ... , x[sampleSize-1] is the random sample without replacement
      *
      * @param x          the array
-     * @param sampleSize the generate size
+     * @param sampleSize the sample size
      * @param streamNum  the stream number from the stream provider to use
      */
     public static void sampleWithoutReplacement(int[] x, int sampleSize, int streamNum) {
@@ -1677,7 +1667,7 @@ public class JSLRandom {
      * That is, x[0], x[1], ... , x[sampleSize-1] is the random sample without replacement
      *
      * @param x          the array
-     * @param sampleSize the generate size
+     * @param sampleSize the sample size
      * @param rng        the source of randomness
      */
     public static void sampleWithoutReplacement(int[] x, int sampleSize, RNStreamIfc rng) {
@@ -1735,7 +1725,7 @@ public class JSLRandom {
      * using the default random number generator
      *
      * @param x          the array
-     * @param sampleSize the generate size
+     * @param sampleSize the sample size
      */
     public static void sampleWithoutReplacement(boolean[] x, int sampleSize) {
         sampleWithoutReplacement(x, sampleSize, getDefaultRNStream());
@@ -1746,7 +1736,7 @@ public class JSLRandom {
      * That is, x[0], x[1], ... , x[sampleSize-1] is the random sample without replacement
      *
      * @param x          the array
-     * @param sampleSize the generate size
+     * @param sampleSize the sample size
      * @param streamNum  the stream number from the stream provider to use
      */
     public static void sampleWithoutReplacement(boolean[] x, int sampleSize, int streamNum) {
@@ -1758,7 +1748,7 @@ public class JSLRandom {
      * That is, x[0], x[1], ... , x[sampleSize-1] is the random sample without replacement
      *
      * @param x          the array
-     * @param sampleSize the generate size
+     * @param sampleSize the sample size
      * @param rng        the source of randomness
      */
     public static void sampleWithoutReplacement(boolean[] x, int sampleSize, RNStreamIfc rng) {
@@ -1839,7 +1829,7 @@ public class JSLRandom {
      * That is, x[0], x[1], ... , x[sampleSize-1] is the randomly sampled values without replacement
      *
      * @param x          the array
-     * @param sampleSize the generate size
+     * @param sampleSize the the sample size
      * @param rng        the source of randomness
      */
     public static <T> void sampleWithoutReplacement(T[] x, int sampleSize, RNStreamIfc rng) {
@@ -1912,7 +1902,7 @@ public class JSLRandom {
      *
      * @param <T>        the type of the list
      * @param x          the list
-     * @param sampleSize the generate size
+     * @param sampleSize the sample size
      * @param streamNum  the stream number from the stream provider to use
      */
     public static <T> void sampleWithoutReplacement(List<T> x, int sampleSize, int streamNum) {
@@ -1925,7 +1915,7 @@ public class JSLRandom {
      *
      * @param <T>        the type of the list
      * @param x          the list
-     * @param sampleSize the generate size
+     * @param sampleSize the sample size
      * @param rng        the source of randomness
      */
     public static <T> void sampleWithoutReplacement(List<T> x, int sampleSize, RNStreamIfc rng) {
