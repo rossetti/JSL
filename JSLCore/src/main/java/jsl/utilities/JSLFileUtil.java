@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Provides some basic file utilities. Addtional utilities can be found in Google Guava and
+ * Provides some basic file utilities. Additional utilities can be found in Google Guava and
  * Apache Commons IO.  However, this basic IO provides basic needs without external libraries and
  * is integrated withe JSL functionality.
  */
@@ -371,7 +371,7 @@ public class JSLFileUtil {
     }
 
     /**
-     * @param pathToFile
+     * @param pathToFile the path to the file, if null, return false
      * @return true if extension on path is txt
      */
     public static boolean isTextFile(Path pathToFile) {
@@ -401,7 +401,7 @@ public class JSLFileUtil {
     }
 
     /**
-     * @param pathToFile
+     * @param pathToFile the path to the file, if null return false
      * @return true if extension on path is csv
      */
     public static boolean isCSVFile(Path pathToFile) {
@@ -431,7 +431,7 @@ public class JSLFileUtil {
     }
 
     /**
-     * @param pathToFile
+     * @param pathToFile the path to the file, if null return false
      * @return true if extension on path is tex
      */
     public static boolean isTeXFile(Path pathToFile) {

@@ -383,7 +383,7 @@ public final class JSLMath {
      * Round the specified value upward to the next scale value.
      *
      * @param value         the value to be rounded.
-     * @param integerValued fag specified whether integer scale are used,
+     * @param integerValued flag specified whether integer scale are used,
      *                      otherwise double scale is used.
      * @return a number rounded upward to the next scale value.
      */

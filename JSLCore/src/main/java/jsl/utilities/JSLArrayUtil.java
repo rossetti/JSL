@@ -5,12 +5,13 @@ import java.nio.file.Path;
 import java.util.*;
 
 /**
- *  This class has some array manipulation methods that I have found useful over the years.
- *  Other libraries (e.g. guava and apache commons) also have array utilities which you might find useful.
+ * This class has some array manipulation methods that I have found useful over the years.
+ * Other libraries (e.g. guava and apache commons) also have array utilities which you might find useful.
  */
 public class JSLArrayUtil {
 
-    private JSLArrayUtil(){}
+    private JSLArrayUtil() {
+    }
 
     /**
      * Returns the index associated with the minimum element in the array For
@@ -21,7 +22,7 @@ public class JSLArrayUtil {
      */
     public static int getIndexOfMin(double[] x) {
         Objects.requireNonNull(x, "The array was null");
-        if (x.length == 0){
+        if (x.length == 0) {
             throw new IllegalArgumentException("The array was empty");
         }
         int index = 0;
@@ -41,7 +42,7 @@ public class JSLArrayUtil {
      */
     public static double getMin(double[] x) {
         Objects.requireNonNull(x, "The array was null");
-        if (x.length == 0){
+        if (x.length == 0) {
             throw new IllegalArgumentException("The array was empty");
         }
         return x[getIndexOfMin(x)];
@@ -56,7 +57,7 @@ public class JSLArrayUtil {
      */
     public static int getIndexOfMax(double[] x) {
         Objects.requireNonNull(x, "The array was null");
-        if (x.length == 0){
+        if (x.length == 0) {
             throw new IllegalArgumentException("The array was empty");
         }
         int index = 0;
@@ -76,7 +77,7 @@ public class JSLArrayUtil {
      */
     public static double getMax(double[] x) {
         Objects.requireNonNull(x, "The array was null");
-        if (x.length == 0){
+        if (x.length == 0) {
             throw new IllegalArgumentException("The array was empty");
         }
         return x[getIndexOfMax(x)];
@@ -91,7 +92,7 @@ public class JSLArrayUtil {
      */
     public static int getIndexOfMin(int[] x) {
         Objects.requireNonNull(x, "The array was null");
-        if (x.length == 0){
+        if (x.length == 0) {
             throw new IllegalArgumentException("The array was empty");
         }
         int index = 0;
@@ -111,7 +112,7 @@ public class JSLArrayUtil {
      */
     public static int getMin(int[] x) {
         Objects.requireNonNull(x, "The array was null");
-        if (x.length == 0){
+        if (x.length == 0) {
             throw new IllegalArgumentException("The array was empty");
         }
         return x[getIndexOfMin(x)];
@@ -126,7 +127,7 @@ public class JSLArrayUtil {
      */
     public static int getIndexOfMax(int[] x) {
         Objects.requireNonNull(x, "The array was null");
-        if (x.length == 0){
+        if (x.length == 0) {
             throw new IllegalArgumentException("The array was empty");
         }
         int index = 0;
@@ -146,7 +147,7 @@ public class JSLArrayUtil {
      */
     public static int getMax(int[] x) {
         Objects.requireNonNull(x, "The array was null");
-        if (x.length == 0){
+        if (x.length == 0) {
             throw new IllegalArgumentException("The array was empty");
         }
         return x[getIndexOfMax(x)];
@@ -161,7 +162,7 @@ public class JSLArrayUtil {
      */
     public static int getIndexOfMin(long[] x) {
         Objects.requireNonNull(x, "The array was null");
-        if (x.length == 0){
+        if (x.length == 0) {
             throw new IllegalArgumentException("The array was empty");
         }
         int index = 0;
@@ -181,7 +182,7 @@ public class JSLArrayUtil {
      */
     public static long getMin(long[] x) {
         Objects.requireNonNull(x, "The array was null");
-        if (x.length == 0){
+        if (x.length == 0) {
             throw new IllegalArgumentException("The array was empty");
         }
         return x[getIndexOfMin(x)];
@@ -196,7 +197,7 @@ public class JSLArrayUtil {
      */
     public static int getIndexOfMax(long[] x) {
         Objects.requireNonNull(x, "The array was null");
-        if (x.length == 0){
+        if (x.length == 0) {
             throw new IllegalArgumentException("The array was empty");
         }
         int index = 0;
@@ -216,7 +217,7 @@ public class JSLArrayUtil {
      */
     public static long getMax(long[] x) {
         Objects.requireNonNull(x, "The array was null");
-        if (x.length == 0){
+        if (x.length == 0) {
             throw new IllegalArgumentException("The array was empty");
         }
         return x[getIndexOfMax(x)];
@@ -232,7 +233,8 @@ public class JSLArrayUtil {
         return max - min;
     }
 
-    /** If the array is empty or null, -1 is returned.
+    /**
+     * If the array is empty or null, -1 is returned.
      *
      * @param element the element to search for
      * @param array   the array to search in
@@ -259,7 +261,8 @@ public class JSLArrayUtil {
         return -1;
     }
 
-    /** If the array is empty or null, -1 is returned.
+    /**
+     * If the array is empty or null, -1 is returned.
      *
      * @param element the element to search for
      * @param array   the array to search in
@@ -286,7 +289,8 @@ public class JSLArrayUtil {
         return -1;
     }
 
-    /** If the array is empty or null, -1 is returned.
+    /**
+     * If the array is empty or null, -1 is returned.
      *
      * @param element the element to search for
      * @param array   the array to search in
@@ -533,7 +537,8 @@ public class JSLArrayUtil {
         return matrix;
     }
 
-    /** An array is rectangular if all rows have the same number of elements (columns).
+    /**
+     * An array is rectangular if all rows have the same number of elements (columns).
      *
      * @param array the array to check
      * @return true if the array is rectangular
@@ -552,7 +557,8 @@ public class JSLArrayUtil {
         return true;
     }
 
-    /** An array is rectangular if all rows have the same number of elements (columns).
+    /**
+     * An array is rectangular if all rows have the same number of elements (columns).
      *
      * @param array the array to check
      * @return true if the array is rectangular
@@ -571,7 +577,8 @@ public class JSLArrayUtil {
         return true;
     }
 
-    /** An array is rectangular if all rows have the same number of elements (columns).
+    /**
+     * An array is rectangular if all rows have the same number of elements (columns).
      *
      * @param array the array to check
      * @return true if the array is rectangular
@@ -615,7 +622,7 @@ public class JSLArrayUtil {
      */
     public static double[] getColumn(int k, double[][] matrix) {
         Objects.requireNonNull(matrix, "The matrix was null");
-        if (!isRectangular(matrix)){
+        if (!isRectangular(matrix)) {
             throw new IllegalArgumentException("The matrix was not rectangular");
         }
         double[] column = new double[matrix[0].length]; // Here I assume a rectangular 2D array!
@@ -632,7 +639,7 @@ public class JSLArrayUtil {
      */
     public static int[] getColumn(int k, int[][] matrix) {
         Objects.requireNonNull(matrix, "The matrix was null");
-        if (!isRectangular(matrix)){
+        if (!isRectangular(matrix)) {
             throw new IllegalArgumentException("The matrix was not rectangular");
         }
         int[] column = new int[matrix[0].length]; // Here I assume a rectangular 2D array!
@@ -649,7 +656,7 @@ public class JSLArrayUtil {
      */
     public static Object[] getColumn(int index, Object[][] matrix) {
         Objects.requireNonNull(matrix, "The matrix was null");
-        if (!isRectangular(matrix)){
+        if (!isRectangular(matrix)) {
             throw new IllegalArgumentException("The matrix was not rectangular");
         }
         Object[] column = new Object[matrix[0].length]; // Here I assume a rectangular 2D array!
@@ -659,27 +666,29 @@ public class JSLArrayUtil {
         return column;
     }
 
-    /** A convenience method for copying the entire array
+    /**
+     * A convenience method for copying the entire array
      *
      * @param src the array to copy
      * @return the copy
      */
-    public static double[] copyOf(double[] src){
+    public static double[] copyOf(double[] src) {
         Objects.requireNonNull(src, "The source array was null");
-        if (src.length == 0){
+        if (src.length == 0) {
             return new double[0];
         }
         return Arrays.copyOf(src, src.length);
     }
 
-    /** A convenience method for copying the entire array
+    /**
+     * A convenience method for copying the entire array
      *
      * @param src the array to copy
      * @return the copy
      */
-    public static int[] copyOf(int[] src){
+    public static int[] copyOf(int[] src) {
         Objects.requireNonNull(src, "The source array was null");
-        if (src.length == 0){
+        if (src.length == 0) {
             return new int[0];
         }
         return Arrays.copyOf(src, src.length);
@@ -691,7 +700,7 @@ public class JSLArrayUtil {
      */
     public static double[][] copy2DArray(double[][] src) {
         Objects.requireNonNull(src, "The source array was null");
-        if (src.length == 0){
+        if (src.length == 0) {
             return new double[0][0];
         }
         double[][] target = new double[src.length][];
@@ -707,7 +716,7 @@ public class JSLArrayUtil {
      */
     public static int[][] copy2DArray(int[][] src) {
         Objects.requireNonNull(src, "The source array was null");
-        if (src.length == 0){
+        if (src.length == 0) {
             return new int[0][0];
         }
         int[][] target = new int[src.length][];
@@ -730,7 +739,7 @@ public class JSLArrayUtil {
         if (dest.length != src.length) {
             throw new IllegalArgumentException("The source array length and destination array must have the same number of rows");
         }
-        if (!isRectangular(dest)){
+        if (!isRectangular(dest)) {
             throw new IllegalArgumentException("The matrix was not rectangular");
         }
         for (int i = 0; i < src.length; i++) {
@@ -852,7 +861,8 @@ public class JSLArrayUtil {
         return flag;
     }
 
-    /**  Converts any null values to zero
+    /**
+     * Converts any null values to zero
      *
      * @param array the array to copy
      * @return the primitive array
@@ -871,16 +881,17 @@ public class JSLArrayUtil {
         return target;
     }
 
-    /** Converts any nulls to zero
+    /**
+     * Converts any nulls to zero
      *
      * @param doubleList the list to convert
      * @return the primitive array
      */
-    public static double[] toPrimitiveDouble(List<Double> doubleList){
-        if (doubleList == null){
+    public static double[] toPrimitiveDouble(List<Double> doubleList) {
+        if (doubleList == null) {
             return new double[0];
         }
-        if (doubleList.isEmpty()){
+        if (doubleList.isEmpty()) {
             return new double[0];
         }
         Double[] da = new Double[doubleList.size()];
@@ -888,7 +899,9 @@ public class JSLArrayUtil {
         return toPrimitive(doubleList.toArray(da));
     }
 
-    /** Converts any null values to zero
+    /**
+     * Converts any null values to zero
+     *
      * @param array the array to copy
      * @return the primitive array
      */
@@ -906,16 +919,17 @@ public class JSLArrayUtil {
         return target;
     }
 
-    /** Converts any nulls to zero
+    /**
+     * Converts any nulls to zero
      *
      * @param List the list to convert
      * @return the primitive array
      */
-    public static int[] toPrimitiveInteger(List<Integer> List){
-        if (List == null){
+    public static int[] toPrimitiveInteger(List<Integer> List) {
+        if (List == null) {
             return new int[0];
         }
-        if (List.isEmpty()){
+        if (List.isEmpty()) {
             return new int[0];
         }
         Integer[] da = new Integer[List.size()];
@@ -923,7 +937,9 @@ public class JSLArrayUtil {
         return toPrimitive(List.toArray(da));
     }
 
-    /** Converts any null values to zero
+    /**
+     * Converts any null values to zero
+     *
      * @param array the array to copy
      * @return the primitive array
      */
@@ -941,16 +957,17 @@ public class JSLArrayUtil {
         return target;
     }
 
-    /** Converts any nulls to zero
+    /**
+     * Converts any nulls to zero
      *
      * @param List the list to convert
      * @return the primitive array
      */
-    public static long[] toPrimitiveLong(List<Long> List){
-        if (List == null){
+    public static long[] toPrimitiveLong(List<Long> List) {
+        if (List == null) {
             return new long[0];
         }
-        if (List.isEmpty()){
+        if (List.isEmpty()) {
             return new long[0];
         }
         Long[] da = new Long[List.size()];
@@ -958,13 +975,14 @@ public class JSLArrayUtil {
         return toPrimitive(List.toArray(da));
     }
 
-    /** Convert the array of double to an array of strings with each element the
+    /**
+     * Convert the array of double to an array of strings with each element the
      * corresponding value
      *
      * @param array the array of doubles
      * @return the array of strings representing the values of the doubles
      */
-    public static String[] toString(double[] array){
+    public static String[] toString(double[] array) {
         if (array == null) {
             return new String[0];
         }
@@ -979,11 +997,10 @@ public class JSLArrayUtil {
     }
 
     /**
-     *
      * @param array the array to convert
      * @return a comma delimited string of the array, if empty or null, returns the empty string
      */
-    public static String toCSVString(double[] array){
+    public static String toCSVString(double[] array) {
         if (array == null) {
             return "";
         }
@@ -998,11 +1015,10 @@ public class JSLArrayUtil {
     }
 
     /**
-     *
      * @param array the array to convert
      * @return a comma delimited string of the array, if empty or null, returns the empty string
      */
-    public static String toCSVString(int[] array){
+    public static String toCSVString(int[] array) {
         if (array == null) {
             return "";
         }
@@ -1017,11 +1033,10 @@ public class JSLArrayUtil {
     }
 
     /**
-     *
      * @param array the array to convert
      * @return a comma delimited string of the array, if empty or null, returns the empty string
      */
-    public static String toCSVString(long[] array){
+    public static String toCSVString(long[] array) {
         if (array == null) {
             return "";
         }
@@ -1035,13 +1050,14 @@ public class JSLArrayUtil {
         return joiner.toString();
     }
 
-    /** Convert the array of double to an array of Double with each element the
+    /**
+     * Convert the array of double to an array of Double with each element the
      * corresponding value
      *
      * @param array the array of doubles
      * @return the array of Doubles representing the values of the doubles
      */
-    public static Double[] toDouble(double[] array){
+    public static Double[] toDouble(double[] array) {
         if (array == null) {
             return new Double[0];
         }
@@ -1055,13 +1071,14 @@ public class JSLArrayUtil {
         return target;
     }
 
-    /** Convert the array of int to an array of double with each element the
+    /**
+     * Convert the array of int to an array of double with each element the
      * corresponding value
      *
      * @param array the array of ints
      * @return the array of doubles representing the values of the ints
      */
-    public static double[] toDouble(int[] array){
+    public static double[] toDouble(int[] array) {
         if (array == null) {
             return new double[0];
         }
@@ -1075,13 +1092,14 @@ public class JSLArrayUtil {
         return target;
     }
 
-    /** Convert the array of int to an array of double with each element the
+    /**
+     * Convert the array of int to an array of double with each element the
      * corresponding value
      *
      * @param array the array of ints
      * @return the array of doubles representing the values of the ints
      */
-    public static double[] toDouble(Integer[] array){
+    public static double[] toDouble(Integer[] array) {
         if (array == null) {
             return new double[0];
         }
@@ -1095,13 +1113,14 @@ public class JSLArrayUtil {
         return target;
     }
 
-    /** Convert the array of long to an array of double with each element the
+    /**
+     * Convert the array of long to an array of double with each element the
      * corresponding value
      *
      * @param array the array of longs
      * @return the array of doubles representing the values of the longs
      */
-    public static double[] toDouble(long[] array){
+    public static double[] toDouble(long[] array) {
         if (array == null) {
             return new double[0];
         }
@@ -1115,13 +1134,14 @@ public class JSLArrayUtil {
         return target;
     }
 
-    /** Convert the array of long to an array of double with each element the
+    /**
+     * Convert the array of long to an array of double with each element the
      * corresponding value
      *
      * @param array the array of longs
      * @return the array of doubles representing the values of the longs
      */
-    public static double[] toDouble(Long[] array){
+    public static double[] toDouble(Long[] array) {
         if (array == null) {
             return new double[0];
         }
@@ -1135,13 +1155,14 @@ public class JSLArrayUtil {
         return target;
     }
 
-    /** Convert the 2D array of double to a 2D array of Double with each element the
+    /**
+     * Convert the 2D array of double to a 2D array of Double with each element the
      * corresponding value
      *
      * @param array the array of doubles
      * @return the array of Doubles representing the values of the doubles
      */
-    public static Double[][] toDouble(double[][] array){
+    public static Double[][] toDouble(double[][] array) {
         if (array == null) {
             return new Double[0][0];
         }
@@ -1155,13 +1176,14 @@ public class JSLArrayUtil {
         return target;
     }
 
-    /** Convert the array of int to an array of Intger with each element the
+    /**
+     * Convert the array of int to an array of Intger with each element the
      * corresponding value
      *
      * @param array the array of ints
      * @return the array of Integers representing the values of the ints
      */
-    public static Integer[] toInteger(int[] array){
+    public static Integer[] toInteger(int[] array) {
         if (array == null) {
             return new Integer[0];
         }
@@ -1175,13 +1197,14 @@ public class JSLArrayUtil {
         return target;
     }
 
-    /** Convert the 2D array of int to a 2D array of Integer with each element the
+    /**
+     * Convert the 2D array of int to a 2D array of Integer with each element the
      * corresponding value
      *
      * @param array the array of int
      * @return the array of Integer representing the values of the int
      */
-    public static Integer[][] toInteger(int[][] array){
+    public static Integer[][] toInteger(int[][] array) {
         if (array == null) {
             return new Integer[0][0];
         }
@@ -1195,7 +1218,8 @@ public class JSLArrayUtil {
         return target;
     }
 
-    /** If the string cannot be converted to a number then the array value is assigned Double.NaN
+    /**
+     * If the string cannot be converted to a number then the array value is assigned Double.NaN
      *
      * @param dblStrings an array of strings that represent doubles
      * @return the parsed doubles as an array
@@ -1209,7 +1233,7 @@ public class JSLArrayUtil {
         }
         double[] target = new double[dblStrings.length];
         for (int i = 0; i < dblStrings.length; i++) {
-            if (dblStrings[i] == null){
+            if (dblStrings[i] == null) {
                 target[i] = Double.NaN;
             } else {
                 try {
@@ -1230,7 +1254,7 @@ public class JSLArrayUtil {
      */
     public static int[][] transpose2DArray(int[][] array) {
         Objects.requireNonNull(array, "The array was null");
-        if (!isRectangular(array)){
+        if (!isRectangular(array)) {
             throw new IllegalArgumentException("The array was not rectangular");
         }
         int m = array.length;
@@ -1252,7 +1276,7 @@ public class JSLArrayUtil {
      */
     public static double[][] transpose2DArray(double[][] array) {
         Objects.requireNonNull(array, "The array was null");
-        if (!isRectangular(array)){
+        if (!isRectangular(array)) {
             throw new IllegalArgumentException("The array was not rectangular");
         }
         int m = array.length;
@@ -1296,11 +1320,11 @@ public class JSLArrayUtil {
      */
     public static double[][] copyToColumns(LinkedHashMap<String, double[]> labeledColumns) {
         Objects.requireNonNull(labeledColumns, "The source map was null");
-        if (labeledColumns.isEmpty()){
+        if (labeledColumns.isEmpty()) {
             return new double[0][0];
         }
         double[][] data = copyToRows(labeledColumns);
-        if (!isRectangular(data)){
+        if (!isRectangular(data)) {
             throw new IllegalArgumentException("The stored arrays do not have the same number of elements");
         }
         return transpose2DArray(data);
@@ -1329,7 +1353,8 @@ public class JSLArrayUtil {
         return data;
     }
 
-    /** Assumes that the file holds doubles with each value on a different line
+    /**
+     * Assumes that the file holds doubles with each value on a different line
      * 1.0
      * 4.0
      * 2.0
@@ -1338,11 +1363,11 @@ public class JSLArrayUtil {
      * @param pathToFile the path to a file holding the data
      * @return the data as an array
      */
-    public static double[] scanToArray(Path pathToFile){
+    public static double[] scanToArray(Path pathToFile) {
         Objects.requireNonNull(pathToFile, "The path to the file must not be null");
-        try (Scanner scanner = new Scanner(pathToFile.toFile())){
+        try (Scanner scanner = new Scanner(pathToFile.toFile())) {
             ArrayList<Double> list = new ArrayList<>();
-            while(scanner.hasNextDouble()){
+            while (scanner.hasNextDouble()) {
                 list.add(scanner.nextDouble());
             }
             return JSLArrayUtil.toPrimitive(list.toArray(new Double[0]));
@@ -1367,5 +1392,245 @@ public class JSLArrayUtil {
             sArray[i] = String.valueOf(array[i]);
 
         return sArray;
+    }
+
+    /**
+     * Examines each element, a_i starting at 0, and determines if all
+     * the elements are strictly increasing a_0 lt a_1 lt a_2, etc.
+     *
+     * @param array the array to check, must not be null
+     * @return true if all elements are strictly increasing, if there
+     * are 0 elements then it returns false, 1 element returns true
+     */
+    public static boolean isStrictlyIncreasing(double[] array) {
+        Objects.requireNonNull(array, "The array was null");
+        if (array.length == 0) {
+            return false;
+        }
+        if (array.length == 1) {
+            return true;
+        }
+        for (int i = 1; i < array.length; i++) {
+            if (array[i - 1] >= array[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Examines each element, a_i starting at 0, and determines if all
+     * the elements are strictly decreasing a_0 gt a_1 gt a_2, etc.
+     *
+     * @param array the array to check, must not be null
+     * @return true if all elements are strictly increasing, if there
+     * are 0 elements then it returns false, 1 element returns true
+     */
+    public static boolean isStrictlyDecreasing(double[] array) {
+        Objects.requireNonNull(array, "The array was null");
+        if (array.length == 0) {
+            return false;
+        }
+        if (array.length == 1) {
+            return true;
+        }
+        for (int i = 1; i < array.length; i++) {
+            if (array[i - 1] <= array[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Examines each element, a_i starting at 0, and determines if all
+     * the elements are increasing a_0 lte a_1 lte a_2, etc.
+     *
+     * @param array the array to check, must not be null
+     * @return true if all elements are increasing, if there
+     * are 0 elements then it returns false, 1 element returns true
+     */
+    public static boolean isIncreasing(double[] array) {
+        Objects.requireNonNull(array, "The array was null");
+        if (array.length == 0) {
+            return false;
+        }
+        if (array.length == 1) {
+            return true;
+        }
+        for (int i = 1; i < array.length; i++) {
+            if (array[i - 1] > array[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Examines each element, a_i starting at 0, and determines if all
+     * the elements are decreasing a_0 gte a_1 gte a_2, etc.
+     *
+     * @param array the array to check, must not be null
+     * @return true if all elements are decreasing, if there
+     * are 0 elements then it returns false, 1 element returns true
+     */
+    public static boolean isDecreasing(double[] array) {
+        Objects.requireNonNull(array, "The array was null");
+        if (array.length == 0) {
+            return false;
+        }
+        if (array.length == 1) {
+            return true;
+        }
+        for (int i = 1; i < array.length; i++) {
+            if (array[i - 1] < array[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Examines each element, a_i starting at 0, and determines if all
+     * the elements are equal a_0 = a_1 = a_2, etc.
+     *
+     * @param array the array to check, must not be null
+     * @return true if all elements are equal, if there
+     * are 0 elements then it returns false, 1 element returns true
+     */
+    public static boolean isAllEqual(double[] array) {
+        Objects.requireNonNull(array, "The array was null");
+        if (array.length == 0) {
+            return false;
+        }
+        if (array.length == 1) {
+            return true;
+        }
+        for (int i = 1; i < array.length; i++) {
+            if (array[i - 1] != array[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Examines each element, a_i starting at 0, and determines if all
+     * the elements are equal a_0 = a_1 = a_2, etc.
+     *
+     * @param array the array to check, must not be null
+     * @return true if all elements are equal, if there
+     * are 0 elements then it returns false, 1 element returns true
+     */
+    public static boolean isAllEqual(int[] array) {
+        Objects.requireNonNull(array, "The array was null");
+        if (array.length == 0) {
+            return false;
+        }
+        if (array.length == 1) {
+            return true;
+        }
+        for (int i = 1; i < array.length; i++) {
+            if (array[i - 1] != array[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Examines each element, a_i starting at 0, and determines if all
+     * the elements are strictly increasing a_0 lt a_1 lt a_2, etc.
+     *
+     * @param array the array to check, must not be null
+     * @return true if all elements are strictly increasing, if there
+     * are 0 elements then it returns false, 1 element returns true
+     */
+    public static boolean isStrictlyIncreasing(int[] array) {
+        Objects.requireNonNull(array, "The array was null");
+        if (array.length == 0) {
+            return false;
+        }
+        if (array.length == 1) {
+            return true;
+        }
+        for (int i = 1; i < array.length; i++) {
+            if (array[i - 1] >= array[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Examines each element, a_i starting at 0, and determines if all
+     * the elements are strictly decreasing a_0 gt a_1 gt a_2, etc.
+     *
+     * @param array the array to check, must not be null
+     * @return true if all elements are strictly increasing, if there
+     * are 0 elements then it returns false, 1 element returns true
+     */
+    public static boolean isStrictlyDecreasing(int[] array) {
+        Objects.requireNonNull(array, "The array was null");
+        if (array.length == 0) {
+            return false;
+        }
+        if (array.length == 1) {
+            return true;
+        }
+        for (int i = 1; i < array.length; i++) {
+            if (array[i - 1] <= array[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Examines each element, a_i starting at 0, and determines if all
+     * the elements are increasing a_0 lte a_1 lte a_2, etc.
+     *
+     * @param array the array to check, must not be null
+     * @return true if all elements are increasing, if there
+     * are 0 elements then it returns false, 1 element returns true
+     */
+    public static boolean isIncreasing(int[] array) {
+        Objects.requireNonNull(array, "The array was null");
+        if (array.length == 0) {
+            return false;
+        }
+        if (array.length == 1) {
+            return true;
+        }
+        for (int i = 1; i < array.length; i++) {
+            if (array[i - 1] > array[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Examines each element, a_i starting at 0, and determines if all
+     * the elements are decreasing a_0 gte a_1 gte a_2, etc.
+     *
+     * @param array the array to check, must not be null
+     * @return true if all elements are decreasing, if there
+     * are 0 elements then it returns false, 1 element returns true
+     */
+    public static boolean isDecreasing(int[] array) {
+        Objects.requireNonNull(array, "The array was null");
+        if (array.length == 0) {
+            return false;
+        }
+        if (array.length == 1) {
+            return true;
+        }
+        for (int i = 1; i < array.length; i++) {
+            if (array[i - 1] < array[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 }
