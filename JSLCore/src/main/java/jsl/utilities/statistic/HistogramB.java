@@ -83,10 +83,19 @@ public class HistogramB extends AbstractStatistic implements HistogramBIfc {
      */
     protected final List<HistogramBin> myBins;
 
+    /**
+     *
+     * @param breakPoints the break points for the histogram, must be strictly increasing
+     */
     public HistogramB(double[] breakPoints) {
         this(breakPoints, null);
     }
 
+    /**
+     *
+     * @param breakPoints the break points for the histogram, must be strictly increasing
+     * @param name an optional name for the histogram
+     */
     public HistogramB(double[] breakPoints, String name) {
         super(name);
         myBins = HistogramBIfc.makeBins(breakPoints);
@@ -100,7 +109,7 @@ public class HistogramB extends AbstractStatistic implements HistogramBIfc {
 
     @Override
     public void collect(double x) {
-        if (Double.isNaN(x) || Double.isInfinite(x)) {
+        if (isMissing(x)) {
             myNumMissing++;
             return;
         }

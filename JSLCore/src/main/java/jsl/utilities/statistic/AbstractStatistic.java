@@ -90,6 +90,15 @@ abstract public class AbstractStatistic extends AbstractCollector
     }
 
     /**
+     *
+     * @param x the observation to check
+     * @return true if NaN or infinite
+     */
+    public static boolean isMissing(double x){
+        return Double.isNaN(x) || Double.isInfinite(x);
+    }
+
+    /**
      * Returns a negative integer, zero, or a positive integer if this object is
      * less than, equal to, or greater than the specified object.
      *
