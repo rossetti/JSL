@@ -1,6 +1,6 @@
 package examples.general.running;
 
-import examples.book.chapter6.DriveThroughPharmacy;
+import examples.book.chapter6.DriveThroughPharmacyWithQ;
 import jsl.observers.ControlVariateDataCollector;
 import jsl.observers.ReplicationDataCollector;
 import jsl.simulation.Model;
@@ -21,7 +21,7 @@ public class ResponseCollectorExample {
         Simulation sim = new Simulation("Drive Through Pharmacy");
         Model m = sim.getModel();
         // add DriveThroughPharmacy to the main model
-        DriveThroughPharmacy driveThroughPharmacy = new DriveThroughPharmacy(m);
+        DriveThroughPharmacyWithQ driveThroughPharmacy = new DriveThroughPharmacyWithQ(m);
         // set the parameters of the experiment
         sim.setNumberOfReplications(10);
         sim.setLengthOfWarmUp(1000.0);
@@ -46,7 +46,7 @@ public class ResponseCollectorExample {
         Simulation sim = new Simulation("Drive Through Pharmacy");
         Model m = sim.getModel();
         // add DriveThroughPharmacy to the main model
-        DriveThroughPharmacy driveThroughPharmacy = new DriveThroughPharmacy(m);
+        DriveThroughPharmacyWithQ driveThroughPharmacy = new DriveThroughPharmacyWithQ(m);
         // set the parameters of the experiment
         sim.setNumberOfReplications(10);
         sim.setLengthOfWarmUp(1000.0);

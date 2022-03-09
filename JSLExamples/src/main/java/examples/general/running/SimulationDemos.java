@@ -21,7 +21,7 @@
  */
 package examples.general.running;
 
-import examples.book.chapter6.DriveThroughPharmacy;
+import examples.book.chapter6.DriveThroughPharmacyWithQ;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;
 import jsl.simulation.SimulationReporter;
@@ -60,7 +60,7 @@ public class SimulationDemos {
         // getTWBatchStatisticObserver the model
         Model m = sim.getModel();
         // add DriveThroughPharmacy to the main model
-        DriveThroughPharmacy driveThroughPharmacy = new DriveThroughPharmacy(m);
+        DriveThroughPharmacyWithQ driveThroughPharmacy = new DriveThroughPharmacyWithQ(m);
         driveThroughPharmacy.setArrivalRS(new ExponentialRV(1.0));
         driveThroughPharmacy.setServiceRS(new ExponentialRV(0.7));
         // set the parameters of the experiment
@@ -96,7 +96,7 @@ public class SimulationDemos {
         // getTWBatchStatisticObserver the model
         Model m = sim.getModel();
         // add DriveThroughPharmacy to the main model
-        DriveThroughPharmacy driveThroughPharmacy = new DriveThroughPharmacy(m);
+        DriveThroughPharmacyWithQ driveThroughPharmacy = new DriveThroughPharmacyWithQ(m);
         driveThroughPharmacy.setArrivalRS(new ExponentialRV(6.0));
         driveThroughPharmacy.setServiceRS(new ExponentialRV(3.0));
         // set the parameters of the experiment
@@ -124,7 +124,7 @@ public class SimulationDemos {
         Simulation sim = new Simulation("Drive Through Pharmacy");
          Model m = sim.getModel();
         // add DriveThroughPharmacy to the main model
-        DriveThroughPharmacy driveThroughPharmacy = new DriveThroughPharmacy(m);
+        DriveThroughPharmacyWithQ driveThroughPharmacy = new DriveThroughPharmacyWithQ(m);
         // set the parameters of the experiment
         sim.setNumberOfReplications(10);
         sim.setLengthOfWarmUp(1000.0);

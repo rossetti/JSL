@@ -21,7 +21,7 @@
  */
 package examples.general.running;
 
-import examples.book.chapter6.DriveThroughPharmacy;
+import examples.book.chapter6.DriveThroughPharmacyWithQ;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;
 import jsl.simulation.SimulationReporter;
@@ -63,7 +63,7 @@ public class CaptureWarmUpData {
         // get the model
         Model m = sim.getModel();
         // add DriveThroughPharmacy to the main model
-        DriveThroughPharmacy driveThroughPharmacy = new DriveThroughPharmacy(m);
+        DriveThroughPharmacyWithQ driveThroughPharmacy = new DriveThroughPharmacyWithQ(m);
         driveThroughPharmacy.setArrivalRS(new ExponentialRV(1.0));
         driveThroughPharmacy.setServiceRS(new ExponentialRV(0.7));
         // get a reference to the response, in order to turn on the trace
@@ -90,7 +90,7 @@ public class CaptureWarmUpData {
         // get the model
         Model m = sim.getModel();
         // add DriveThroughPharmacy to the main model
-        DriveThroughPharmacy driveThroughPharmacy = new DriveThroughPharmacy(m);
+        DriveThroughPharmacyWithQ driveThroughPharmacy = new DriveThroughPharmacyWithQ(m);
         driveThroughPharmacy.setArrivalRS(new ExponentialRV(1.0));
         driveThroughPharmacy.setServiceRS(new ExponentialRV(0.7));
         ResponseVariable rv = m.getResponseVariable("System Time");
@@ -131,7 +131,7 @@ public class CaptureWarmUpData {
         // get the model
         Model m = sim.getModel();
         // add DriveThroughPharmacy to the main model
-        DriveThroughPharmacy driveThroughPharmacy = new DriveThroughPharmacy(m);
+        DriveThroughPharmacyWithQ driveThroughPharmacy = new DriveThroughPharmacyWithQ(m);
         driveThroughPharmacy.setArrivalRS(new ExponentialRV(1.0));
         driveThroughPharmacy.setServiceRS(new ExponentialRV(0.7));
         // get access to the response variables
@@ -187,7 +187,7 @@ public class CaptureWarmUpData {
         // get the model
         Model m = sim.getModel();
         // add DriveThroughPharmacy to the main model
-        DriveThroughPharmacy driveThroughPharmacy = new DriveThroughPharmacy(m);
+        DriveThroughPharmacyWithQ driveThroughPharmacy = new DriveThroughPharmacyWithQ(m);
         driveThroughPharmacy.setArrivalRS(new ExponentialRV(1.0));
         driveThroughPharmacy.setServiceRS(new ExponentialRV(0.7));
         // get references to the responses that need analysis

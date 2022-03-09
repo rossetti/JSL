@@ -15,12 +15,12 @@
  */
 package examples.general.queueing;
 
-import jsl.simulation.*;
+import jsl.modeling.elements.variable.RandomVariable;
 import jsl.modeling.elements.variable.ResponseVariable;
+import jsl.modeling.elements.variable.TimeWeighted;
 import jsl.modeling.queue.QObject;
 import jsl.modeling.queue.Queue;
-import jsl.modeling.elements.variable.RandomVariable;
-import jsl.modeling.elements.variable.TimeWeighted;
+import jsl.simulation.*;
 import jsl.utilities.random.RandomIfc;
 import jsl.utilities.random.rvariable.ExponentialRV;
 
@@ -29,10 +29,12 @@ import jsl.utilities.random.rvariable.ExponentialRV;
  *  R operators are available to repair. When a machine fails, if an operator
  *  is not busy, then the operator works on the machine for the repair time.
  *  Once the machine is repaired, the time to failure may occur again.
+ *  This example illustrates the use of Java 8 method references and the
+ *  JSL's scheduling DSL.
  *
  * @author rossetti
  */
-public class MachineRepair extends SchedulingElement {
+public class MachineRepairJ8 extends SchedulingElement {
 
     private final Queue<QObject> myRepairQ;
 
@@ -59,9 +61,6 @@ public class MachineRepair extends SchedulingElement {
     private final ResponseVariable hourlyCost;
     private final ResponseVariable mySystemTime;
 
-    private final FailureAction myFailureAction = new FailureAction();
-    private final RepairAction myRepairAction = new RepairAction();
-
     /**
      *
      * @param parent the parent
@@ -70,8 +69,8 @@ public class MachineRepair extends SchedulingElement {
      * @param tbFailure the time between failures
      * @param repTime the time to repair
      */
-    public MachineRepair(ModelElement parent, int numOperators, int numMachines,
-                         RandomIfc tbFailure, RandomIfc repTime) {
+    public MachineRepairJ8(ModelElement parent, int numOperators, int numMachines,
+                           RandomIfc tbFailure, RandomIfc repTime) {
         super(parent);
         if (numMachines <= numOperators) {
             throw new IllegalArgumentException("The number of machines must be > number operators");
@@ -95,54 +94,44 @@ public class MachineRepair extends SchedulingElement {
         super.initialize();
         for (int i = 1; i <= myNumMachines; i++) {
             QObject machine = createQObject();
-            scheduleEvent(myFailureAction, myTBFailure, machine);
-        }
-    }
-
-    private class FailureAction extends EventAction {
-
-        @Override
-        public void action(JSLEvent<Object> event) {
-            myNumFailedMachines.increment();
-            myProbAllBroken.setValue(myNumFailedMachines.getValue() == myNumMachines);
-            QObject failedMachine = (QObject) event.getMessage();
-            failedMachine.setTimeStamp(getTime()); // remember time of failure
-            myRepairQ.enqueue(failedMachine);
-            if (myNumAvailableOperators.getValue() > 0) {
-                myNumAvailableOperators.decrement();
-                myNumBusyOperators.increment();
-                QObject nextMachine = myRepairQ.removeNext();
-                scheduleEvent(myRepairAction, myRepairTime, nextMachine);
-            }
-        }
-    }
-
-    private class RepairAction extends EventAction {
-
-        @Override
-        public void action(JSLEvent<Object> event) {
-            myNumFailedMachines.decrement();
-            myProbAllBroken.setValue(myNumFailedMachines.getValue() == myNumMachines);
-
-            QObject repairedMachine = (QObject) event.getMessage();
-            mySystemTime.setValue(getTime() - repairedMachine.getTimeStamp());
-            scheduleEvent(myFailureAction, myTBFailure, repairedMachine);
-
-            if (myRepairQ.isNotEmpty()) {
-                QObject nextMachine = myRepairQ.removeNext();
-                scheduleEvent(myRepairAction, myRepairTime, nextMachine);
-            } else {
-                myNumAvailableOperators.increment();
-                myNumBusyOperators.decrement();
-            }
+            schedule(this::failure).withMessage(machine).in(myTBFailure).units();
         }
     }
 
     @Override
     protected void replicationEnded() {
         double avgBroken = myNumFailedMachines.getWithinReplicationStatistic().getAverage();
-        double cost = avgBroken * breakDownCost + laborCost * myNumOperators;
+        double cost = avgBroken*breakDownCost + laborCost*myNumOperators;
         hourlyCost.setValue(cost);
+    }
+
+    private void failure(JSLEvent event) {
+        myNumFailedMachines.increment();
+        myProbAllBroken.setValue(myNumFailedMachines.getValue() == myNumMachines);
+        QObject failedMachine = (QObject) event.getMessage();
+        failedMachine.setTimeStamp(getTime()); // remember time of failure
+        myRepairQ.enqueue(failedMachine);
+        if (myNumAvailableOperators.getValue() > 0) {
+            myNumAvailableOperators.decrement();
+            myNumBusyOperators.increment();
+            QObject nextMachine = myRepairQ.removeNext();
+            schedule(this::repair).withMessage(nextMachine).in(myRepairTime).units();
+        }
+    }
+
+    private void repair(JSLEvent event) {
+        myNumFailedMachines.decrement();
+        myProbAllBroken.setValue(myNumFailedMachines.getValue() == myNumMachines);
+        QObject repairedMachine = (QObject) event.getMessage();
+        mySystemTime.setValue(getTime() - repairedMachine.getTimeStamp());
+        schedule(this::failure).withMessage(repairedMachine).in(myTBFailure).units();
+        if (myRepairQ.isNotEmpty()) {
+            QObject nextMachine = myRepairQ.removeNext();
+            schedule(this::repair).withMessage(nextMachine).in(myRepairTime).units();
+        } else {
+            myNumAvailableOperators.increment();
+            myNumBusyOperators.decrement();
+        }
     }
 
     /**
@@ -160,7 +149,8 @@ public class MachineRepair extends SchedulingElement {
         int numOperators = 1;
         RandomIfc tbf = new ExponentialRV(10.0);
         RandomIfc rt = new ExponentialRV(4.0);
-        MachineRepair machineRepair = new MachineRepair(m, numOperators, numMachines, tbf, rt);
+        MachineRepairJ8 machineRepair = new MachineRepairJ8(m, numOperators, numMachines, tbf, rt);
+
         s.run();
 
         s.printHalfWidthSummaryReport();

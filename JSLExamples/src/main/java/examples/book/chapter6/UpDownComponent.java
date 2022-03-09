@@ -94,7 +94,7 @@ public class UpDownComponent extends SchedulingElement {
             // component has just gone down, change its state value
             myCountFailures.increment();
             myState.setValue(DOWN);
-            // schedule when it goes up afer the down time
+            // schedule when it goes up after the downtime
             scheduleEvent(myUpChangeAction, myDownTime.getValue());
         }
     }
