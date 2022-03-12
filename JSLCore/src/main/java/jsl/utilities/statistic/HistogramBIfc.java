@@ -219,8 +219,8 @@ public interface HistogramBIfc extends CollectorIfc, IdentityIfc, ArraySaverIfc,
     /**
      * Create a histogram with lower limit set to zero
      *
-     * @param upperLimit the upper limit of the last bin
-     * @param numBins    the number of bins to create
+     * @param upperLimit the upper limit of the last bin, cannot be positive infinity
+     * @param numBins    the number of bins to create, must be greater than 0
      * @return the histogram
      */
     public static HistogramBIfc create(double upperLimit, int numBins) {
@@ -230,9 +230,9 @@ public interface HistogramBIfc extends CollectorIfc, IdentityIfc, ArraySaverIfc,
     /**
      * Create a histogram
      *
-     * @param lowerLimit lower limit of first bin
-     * @param upperLimit the upper limit of the last bin
-     * @param numBins    the number of bins to create
+     * @param lowerLimit lower limit of first bin, cannot be negative infinity
+     * @param upperLimit the upper limit of the last bin, cannot be positive infinity
+     * @param numBins    the number of bins to create, must be greater than 0
      * @return the histogram
      */
     static HistogramBIfc create(double lowerLimit, double upperLimit, int numBins) {
@@ -242,9 +242,9 @@ public interface HistogramBIfc extends CollectorIfc, IdentityIfc, ArraySaverIfc,
     /**
      * Create a histogram with the given name based on the provided values
      *
-     * @param lowerLimit lower limit of first bin
-     * @param upperLimit the upper limit of the last bin
-     * @param numBins    the number of bins to create
+     * @param lowerLimit lower limit of first bin, cannot be negative infinity
+     * @param upperLimit the upper limit of the last bin, cannot be positive infinity
+     * @param numBins    the number of bins to create, must be greater than zero
      * @param name       the name of the histogram
      * @return the histogram
      */
@@ -253,21 +253,21 @@ public interface HistogramBIfc extends CollectorIfc, IdentityIfc, ArraySaverIfc,
     }
 
     /**
-     * @param numBins    the number of bins to make
-     * @param lowerLimit the lower limit of the first bin
-     * @param width      the width of each bin
+     * @param numBins    the number of bins to make, must be greater than zero
+     * @param lowerLimit the lower limit of the first bin, cannot be negative infinity
+     * @param width      the width of each bin, must be greater than zero
      * @return the created histogram
      */
-    static HistogramBIfc create(int numBins, double lowerLimit, double width) {
-        return new HistogramB(createBreakPoints(numBins, lowerLimit, width));
+    static HistogramBIfc create(double lowerLimit, int numBins,  double width) {
+        return new HistogramB(createBreakPoints(lowerLimit, numBins, width));
     }
 
     /**
      * Divides the range equally across the number of bins.
      *
-     * @param lowerLimit lower limit of first bin
-     * @param upperLimit the upper limit of the last bin
-     * @param numBins    the number of bins to create
+     * @param lowerLimit lower limit of first bin, cannot be negative infinity
+     * @param upperLimit the upper limit of the last bin, cannot be positive infinity
+     * @param numBins    the number of bins to create, must be greater than zero
      * @return the break points
      */
     static double[] createBreakPoints(double lowerLimit, double upperLimit, int numBins) {
@@ -284,16 +284,16 @@ public interface HistogramBIfc extends CollectorIfc, IdentityIfc, ArraySaverIfc,
             throw new IllegalArgumentException("The number of bins must be > 0");
         }
         double binWidth = JSLMath.roundToScale((upperLimit - lowerLimit) / numBins, false);
-        return createBreakPoints(numBins, lowerLimit, binWidth);
+        return createBreakPoints(lowerLimit, numBins, binWidth);
     }
 
     /**
-     * @param numBins    the number of bins to make
-     * @param lowerLimit the lower limit of the first bin
-     * @param width      the width of each bin
+     * @param numBins    the number of bins to make, must be greater than 0
+     * @param lowerLimit the lower limit of the first bin, cannot be negative infinity
+     * @param width      the width of each bin, must be greater than 0
      * @return the constructed break points
      */
-    static double[] createBreakPoints(int numBins, double lowerLimit, double width) {
+    static double[] createBreakPoints(double lowerLimit, int numBins, double width) {
         if (Double.isInfinite(lowerLimit)) {
             throw new IllegalArgumentException("The lower limit of the range cannot be infinite.");
         }
@@ -381,7 +381,7 @@ public interface HistogramBIfc extends CollectorIfc, IdentityIfc, ArraySaverIfc,
         // now compute a number of bins for this width
         double nb = (Math.ceil(UL) - Math.floor(LL)) / binWidth;
         int numBins = (int) Math.ceil(nb);
-        return HistogramBIfc.createBreakPoints(numBins, Math.floor(LL), binWidth);
+        return HistogramBIfc.createBreakPoints(Math.floor(LL), numBins, binWidth);
     }
 
     /** Creates a list of ordered bins for use in a histogram

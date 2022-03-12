@@ -39,7 +39,7 @@ import java.util.List;
  * be no underflow. Similarly, if bk equals Double.POSITIVE_INFINITY there can be no
  * overflow.
  * <p>
- * The break points do not have to define equally sized bins. Static methods
+ * The break points do not have to define equally sized bins. Static methods within HistogramBIfc
  * are provided to create equal width bins and to create histograms with common
  * characteristics.
  * <p>
@@ -484,7 +484,7 @@ public class HistogramB extends AbstractStatistic implements HistogramBIfc {
 
     public static void main(String args[]) {
         ExponentialRV d = new ExponentialRV(2);
-        double[] points = HistogramBIfc.createBreakPoints(10, 0.0, 0.25);
+        double[] points = HistogramBIfc.createBreakPoints(0.0, 10, 0.25);
         HistogramBIfc h1 = new HistogramB(points);
         HistogramBIfc h2 = new HistogramB(HistogramBIfc.addPositiveInfinity(points));
         for (int i = 1; i <= 100; ++i) {
