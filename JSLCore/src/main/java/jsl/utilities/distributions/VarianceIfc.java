@@ -30,7 +30,7 @@ public interface VarianceIfc {
     /** Returns the variance of the distribution if defined
      * @return double  the variance of the random variable
      */
-    public abstract double getVariance();
+    double getVariance();
 
     /**
      * Returns the standard deviation for the probability distribution
@@ -38,5 +38,5 @@ public interface VarianceIfc {
      *
      * @return sqrt(getVariance())
      */
-    public abstract double getStandardDeviation();
+    double getStandardDeviation();
 }

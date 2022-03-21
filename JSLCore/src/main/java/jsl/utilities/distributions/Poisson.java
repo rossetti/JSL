@@ -21,36 +21,38 @@ import jsl.utilities.random.rvariable.GetRVariableIfc;
 import jsl.utilities.random.rvariable.PoissonRV;
 import jsl.utilities.random.rvariable.RVariableIfc;
 
-/** Represents a Poisson random variable. A Poisson random
+/**
+ * Represents a Poisson random variable. A Poisson random
  * variable represents the number of occurrences of an event with time or space.
- *
  */
 public class Poisson extends Distribution implements DiscreteDistributionIfc, LossFunctionDistributionIfc, GetRVariableIfc {
 
-    /** Used in the calculation of the incomplete gamma function
-     *
+    /**
+     * Used in the calculation of the incomplete gamma function
      */
     public final static int DEFAULT_MAX_ITERATIONS = 5000;
 
-    /** indicates whether or not pmf and cdf calculations are
-     *  done by recursive (iterative) algorithm based on logarithms
-     *  or via beta incomplete function and binomial coefficients.
-     *
+    /**
+     * indicates whether or not pmf and cdf calculations are
+     * done by recursive (iterative) algorithm based on logarithms
+     * or via beta incomplete function and binomial coefficients.
      */
     private boolean myRecursiveAlgoFlag = true;
 
-    /** the mean (parameter) of the poisson
-     *
+    /**
+     * the mean (parameter) of the poisson
      */
     private double myMean;
 
-    /** Constructs a Poisson with mean rate parameter 1.0
+    /**
+     * Constructs a Poisson with mean rate parameter 1.0
      */
     public Poisson() {
         this(1.0, null);
     }
 
-    /** Constructs a Poisson using the supplied parameter
+    /**
+     * Constructs a Poisson using the supplied parameter
      *
      * @param parameters A array that holds the parameters, parameters[0] should be the mean rate
      */
@@ -58,7 +60,8 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         this(parameters[0], null);
     }
 
-    /** Constructs a Poisson using the supplied parameter
+    /**
+     * Constructs a Poisson using the supplied parameter
      *
      * @param mean the mean rate
      */
@@ -66,7 +69,8 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         this(mean, null);
     }
 
-    /** Constructs a Poisson using the supplied parameter
+    /**
+     * Constructs a Poisson using the supplied parameter
      *
      * @param mean the mean rate
      * @param name an optional label/name
@@ -91,7 +95,8 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         return (myMean);
     }
 
-    /** Sets the mean of the Poisson distribution
+    /**
+     * Sets the mean of the Poisson distribution
      *
      * @param mean the mean rate, mean must be &gt; 0
      */
@@ -103,7 +108,6 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
     }
 
     /**
-     *
      * @return the mode of the distribution
      */
     public final int getMode() {
@@ -122,7 +126,7 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         return (cdf((int) x));
     }
 
-        public static boolean canMatchMoments(double... moments) {
+    public static boolean canMatchMoments(double... moments) {
         if (moments.length < 1) {
             throw new IllegalArgumentException("Must provide a mean.");
         }
@@ -183,7 +187,7 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         }
     }
 
-       public double thirdOrderLossFunction(double x) {
+    public double thirdOrderLossFunction(double x) {
         double term1 = Math.pow(myMean, 3) * this.complementaryCDF(x - 3);
         double term2 = 3 * myMean * myMean * x * this.complementaryCDF(x - 2);
         double term3 = 3 * myMean * x * (x + 1) * this.complementaryCDF(x - 1);
@@ -212,8 +216,9 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         return poissonPMF(x, myMean, myRecursiveAlgoFlag);
     }
 
-    /** If x is not and integer value, then the probability must be zero
-     *  otherwise pmf(int x) is used to determine the probability
+    /**
+     * If x is not and integer value, then the probability must be zero
+     * otherwise pmf(int x) is used to determine the probability
      *
      * @param x the value to evaluate
      * @return the probability at the point
@@ -226,17 +231,20 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         }
     }
 
-    /** Sets the parameters for the distribution
+    /**
+     * Sets the parameters for the distribution
      * parameters[0] should be the mean rate
+     *
      * @param parameters an array of doubles representing the parameters for
-     * the distribution
+     *                   the distribution
      */
     @Override
     public final void setParameters(double[] parameters) {
         setMean(parameters[0]);
     }
 
-    /** Gets the parameters for the distribution
+    /**
+     * Gets the parameters for the distribution
      *
      * @return Returns an array of the parameters for the distribution
      */
@@ -247,10 +255,11 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         return (param);
     }
 
-    /** Computes the probability mass function at j using a
-     *  recursive (iterative) algorithm using logarithms
+    /**
+     * Computes the probability mass function at j using a
+     * recursive (iterative) algorithm using logarithms
      *
-     * @param j the value to evaluate
+     * @param j    the value to evaluate
      * @param mean the mean
      * @return the PMF value
      */
@@ -281,10 +290,11 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         return Math.exp(lnp);
     }
 
-    /** Computes the cdf at j using a
-     *  recursive (iterative) algorithm using logarithms
+    /**
+     * Computes the cdf at j using a
+     * recursive (iterative) algorithm using logarithms
      *
-     * @param j the value to evaluate
+     * @param j    the value to evaluate
      * @param mean the mean
      * @return the CDF value
      */
@@ -326,11 +336,12 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         return sum;
     }
 
-    /** Allows static computation of prob mass function
-     *  assumes that distribution's range is {0,1, ...}
-     *  Uses the recursive logarithmic algorithm
+    /**
+     * Allows static computation of prob mass function
+     * assumes that distribution's range is {0,1, ...}
+     * Uses the recursive logarithmic algorithm
      *
-     * @param j value for which prob is needed
+     * @param j    value for which prob is needed
      * @param mean of the distribution
      * @return the PMF value
      */
@@ -338,11 +349,12 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         return poissonPMF(j, mean, true);
     }
 
-    /** Allows static computation of prob mass function
-     *  assumes that distribution's range is {0,1, ...}
+    /**
+     * Allows static computation of prob mass function
+     * assumes that distribution's range is {0,1, ...}
      *
-     * @param j value for which prob is needed
-     * @param mean of the distribution
+     * @param j         value for which prob is needed
+     * @param mean      of the distribution
      * @param recursive true indicates that the recursive logarithmic algorithm should be used
      * @return the PMF value
      */
@@ -377,11 +389,12 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
 
     }
 
-    /** Allows static computation of cdf
-     *  assumes that distribution's range is {0,1, ...}
-     *  Uses the recursive logarithmic algorithm
+    /**
+     * Allows static computation of cdf
+     * assumes that distribution's range is {0,1, ...}
+     * Uses the recursive logarithmic algorithm
      *
-     * @param j value for which prob is needed
+     * @param j    value for which prob is needed
      * @param mean of the distribution
      * @return the cdf value
      */
@@ -389,14 +402,15 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         return poissonPMF(j, mean, true);
     }
 
-    /** Allows static computation of cdf
-     *  assumes that distribution's range is {0,1, ...}
-     *  false indicated the use of the incomplete gamma function
-     *  It yields about 7 digits of accuracy, the recursive
-     *  algorithm has more accuracy
-     * 
-     * @param j value for which prob is needed
-     * @param mean of the distribution
+    /**
+     * Allows static computation of cdf
+     * assumes that distribution's range is {0,1, ...}
+     * false indicated the use of the incomplete gamma function
+     * It yields about 7 digits of accuracy, the recursive
+     * algorithm has more accuracy
+     *
+     * @param j         value for which prob is needed
+     * @param mean      of the distribution
      * @param recursive true indicates that the recursive logarithmic algorithm should be used
      * @return the cdf value
      */
@@ -420,11 +434,12 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
 
     }
 
-    /** Allows static computation of complementary cdf function
-     *  assumes that distribution's range is {0,1, ...}
-     *  Uses the recursive logarithmic algorithm
+    /**
+     * Allows static computation of complementary cdf function
+     * assumes that distribution's range is {0,1, ...}
+     * Uses the recursive logarithmic algorithm
      *
-     * @param j value for which ccdf is needed
+     * @param j    value for which ccdf is needed
      * @param mean of the distribution
      * @return the complimentary CDF value
      */
@@ -432,11 +447,12 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         return poissonCCDF(j, mean, true);
     }
 
-    /** Allows static computation of complementary cdf function
-     *  assumes that distribution's range is {0,1, ...}
+    /**
+     * Allows static computation of complementary cdf function
+     * assumes that distribution's range is {0,1, ...}
      *
-     * @param j value for which ccdf is needed
-     * @param mean of the distribution
+     * @param j         value for which ccdf is needed
+     * @param mean      of the distribution
      * @param recursive true indicates that the recursive logarithmic algorithm should be used
      * @return the complimentary CDF value
      */
@@ -453,10 +469,12 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
 
     }
 
-    /** Computes the first order loss function for the
+    /**
+     * Computes the first order loss function for the
      * distribution function for given value of x, G1(x) = E[max(X-x,0)]
-     * @param x The value to be evaluated
-     * @param mean of the distribution
+     *
+     * @param x         The value to be evaluated
+     * @param mean      of the distribution
      * @param recursive true indicates that the recursive logarithmic algorithm should be used
      * @return The loss function value, E[max(X-x,0)]
      */
@@ -477,10 +495,12 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         }
     }
 
-    /** Computes the 2nd order loss function for the
+    /**
+     * Computes the 2nd order loss function for the
      * distribution function for given value of x, G2(x) = (1/2)E[max(X-x,0)*max(X-x-1,0)]
-     * @param x The value to be evaluated
-     * @param mean of the distribution
+     *
+     * @param x         The value to be evaluated
+     * @param mean      of the distribution
      * @param recursive true indicates that the recursive logarithmic algorithm should be used
      * @return The loss function value, (1/2)E[max(X-x,0)*max(X-x-1,0)]
      */
@@ -506,11 +526,12 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         }
     }
 
-    /** Returns the quantile associated with the supplied probablity, x
-     *  assumes that distribution's range is {0,1, ...}
-     *  Uses the recursive logarithmic algorithm
+    /**
+     * Returns the quantile associated with the supplied probablity, x
+     * assumes that distribution's range is {0,1, ...}
+     * Uses the recursive logarithmic algorithm
      *
-     * @param p The probability that the quantile is needed for
+     * @param p    The probability that the quantile is needed for
      * @param mean of the distribution
      * @return the quantile associated with the supplied probablity
      */
@@ -518,11 +539,12 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
         return poissonInvCDF(p, mean, true);
     }
 
-    /** Returns the quantile associated with the supplied probablity, x
-     *  assumes that distribution's range is {0,1, ...}
+    /**
+     * Returns the quantile associated with the supplied probablity, x
+     * assumes that distribution's range is {0,1, ...}
      *
-     * @param p The probability that the quantile is needed for
-     * @param mean of the distribution
+     * @param p         The probability that the quantile is needed for
+     * @param mean      of the distribution
      * @param recursive true indicates that the recursive logarithmic algorithm should be used
      * @return the quantile associated with the supplied probablity
      */
@@ -561,16 +583,15 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
     }
 
     /**
-     *
-     * @param p the probability to search
-     * @param mean the mean of the distribution
-     * @param start the starting point of the search
+     * @param p          the probability to search
+     * @param mean       the mean of the distribution
+     * @param start      the starting point of the search
      * @param cdfAtStart the CDF at the starting point
-     * @param recursive true indicates that the recursive logarithmic algorithm should be used
+     * @param recursive  true indicates that the recursive logarithmic algorithm should be used
      * @return the found value
      */
     protected static int searchUpCDF(double p, double mean,
-            int start, double cdfAtStart, boolean recursive) {
+                                     int start, double cdfAtStart, boolean recursive) {
         int i = start;
         double cdf = cdfAtStart;
         while (p > cdf) {
@@ -581,16 +602,15 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
     }
 
     /**
-     *
-     * @param p the probability to search
-     * @param mean the mean of the distribution
-     * @param start the starting point of the search
+     * @param p          the probability to search
+     * @param mean       the mean of the distribution
+     * @param start      the starting point of the search
      * @param cdfAtStart the CDF at the starting point
-     * @param recursive true indicates that the recursive logarithmic algorithm should be used
+     * @param recursive  true indicates that the recursive logarithmic algorithm should be used
      * @return the found value
      */
     protected static int searchDownCDF(double p, double mean,
-            int start, double cdfAtStart, boolean recursive) {
+                                       int start, double cdfAtStart, boolean recursive) {
         int i = start;
         double cdfi = cdfAtStart;
         while (i > 0) {
@@ -610,8 +630,7 @@ public class Poisson extends Distribution implements DiscreteDistributionIfc, Lo
     }
 
     /**
-     *
-     * @param p the probability to search
+     * @param p    the probability to search
      * @param mean the mean of the distribution
      * @return the inverse via a normal approximation
      */

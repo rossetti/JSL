@@ -16,12 +16,13 @@
 
 package jsl.utilities.rootfinding;
 
+import jsl.utilities.Interval;
+import jsl.utilities.math.FunctionIfc;
+import jsl.utilities.math.FunctionalIterator;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import jsl.utilities.Interval;
-import jsl.utilities.math.FunctionalIterator;
-import jsl.utilities.math.FunctionIfc;
+import java.util.Objects;
 
 public abstract class RootFinder extends FunctionalIterator {
 
@@ -47,25 +48,21 @@ public abstract class RootFinder extends FunctionalIterator {
 
     /**
      * The interval for the search
-     *
      */
     protected Interval myInterval;
 
     /**
      * The initial point for the search
-     *
      */
     protected double myInitialPt;
 
     /**
      * Used in the static methods for finding intervals
-     *
      */
     protected static int numIterations = 50;
 
     /**
      * used in the static methods for finding intervals
-     *
      */
     protected static double searchFactor = 1.6;
 
@@ -120,8 +117,8 @@ public abstract class RootFinder extends FunctionalIterator {
     /**
      * Returns true if the supplied interval contains a root
      *
-     * @param interval
-     * @return
+     * @param interval the interval to check
+     * @return true if the supplied interval contains a root
      */
     public final boolean hasRoot(Interval interval) {
         return (hasRoot(interval.getLowerLimit(), interval.getUpperLimit()));
@@ -130,9 +127,9 @@ public abstract class RootFinder extends FunctionalIterator {
     /**
      * Returns true if the supplied interval contains a root
      *
-     * @param xLower
-     * @param xUpper
-     * @return
+     * @param xLower the lower limit of the interval
+     * @param xUpper the upper limit of the interval
+     * @return true if the interval contains a root
      */
     public boolean hasRoot(double xLower, double xUpper) {
         if (xLower >= xUpper) {
@@ -147,12 +144,13 @@ public abstract class RootFinder extends FunctionalIterator {
     /**
      * Returns true if the supplied interval contains a root
      *
-     * @param func
-     * @param xLower
-     * @param xUpper
-     * @return
+     * @param func   the function to check
+     * @param xLower the lower limit must be less than the upper limit
+     * @param xUpper the upper limit
+     * @return true if the supplied interval contains a root for the function
      */
     public static boolean hasRoot(FunctionIfc func, double xLower, double xUpper) {
+        Objects.requireNonNull(func, "The supplied function was null!");
         if (xLower >= xUpper) {
             return (false);
         }
@@ -166,11 +164,13 @@ public abstract class RootFinder extends FunctionalIterator {
      * Using the supplied function and the initial interval provided, try to
      * find a bracketing interval by expanding the interval outward
      *
-     * @param func
-     * @param interval
-     * @return
+     * @param func     the function to check
+     * @param interval the initial interval. This interval is modified during the search
+     * @return true if a bracketing interval has been found
      */
     public static boolean findInterval(FunctionIfc func, Interval interval) {
+        Objects.requireNonNull(func, "The supplied function was null!");
+        Objects.requireNonNull(interval, "The supplied interval was null!");
         double x1 = interval.getLowerLimit();
         double x2 = interval.getUpperLimit();
         double f1 = func.fx(x1);
@@ -197,14 +197,21 @@ public abstract class RootFinder extends FunctionalIterator {
      * subintervals and attempt to find nmax bracketing intervals that contain
      * roots
      *
-     * @param func
-     * @param interval
-     * @param n
-     * @param nmax
+     * @param func     the supplied function
+     * @param interval the starting interval
+     * @param n        the number of sub-intervals
+     * @param nmax     the maximum number of bracketing intervals
      * @return The list of bracketing intervals
      */
     public static List<Interval> findInterval(FunctionIfc func, Interval interval, int n, int nmax) {
-
+        Objects.requireNonNull(func, "The supplied function was null!");
+        Objects.requireNonNull(interval, "The supplied interval was null!");
+        if (n <= 0) {
+            throw new IllegalArgumentException("The number of sub-intervals must be at least 1");
+        }
+        if (nmax <= 0) {
+            throw new IllegalArgumentException("The number of bracketing intervals must be at least 1");
+        }
         List<Interval> intervals = new ArrayList<Interval>();
         double x1 = interval.getLowerLimit();
         double x2 = interval.getUpperLimit();
@@ -252,8 +259,8 @@ public abstract class RootFinder extends FunctionalIterator {
 
         double fL = f.fx(xLower);
         double fU = f.fx(xUpper);
-	//	System.out.println("f("+xLower+")="+fL);
-	//	System.out.println("f("+xUpper+")="+fU);
+        //	System.out.println("f("+xLower+")="+fL);
+        //	System.out.println("f("+xUpper+")="+fU);
 
         if (fL * fU > 0.0) {
             throw new IllegalArgumentException("There is no root in the provided interval");
@@ -337,7 +344,7 @@ public abstract class RootFinder extends FunctionalIterator {
      * Throws IllegalArgumentExceptons if the lower limit is &gt; upper limit and
      * if the function does not cross the axis within the provided interval.
      *
-     * @param func Sets the function to be evaluated, must not be null
+     * @param func   Sets the function to be evaluated, must not be null
      * @param xLower
      * @param xUpper
      */

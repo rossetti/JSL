@@ -25,7 +25,7 @@ import jsl.utilities.random.rvariable.GetRVariableIfc;
  * Represents the basic interface that all probability distributions must implement.
  *
  */
-public interface DistributionIfc extends DistributionFunctionIfc, NewInstanceIfc, ParametersIfc, GetRVariableIfc {
+public interface DistributionIfc<T> extends DistributionFunctionIfc, NewInstanceIfc<T>, ParametersIfc, GetRVariableIfc {
 
 }
 

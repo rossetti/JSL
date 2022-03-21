@@ -28,15 +28,15 @@ public interface ControllableIfc extends IdentityIfc {
     /** Returns a valid instance of Controls that can be used with
      *  this ControllableIfc or null
      * 
-     * @return
+     * @return valid instance of Controls
      */
-    public Controls getControls();
+    Controls getControls();
 
     /** Takes in a valid instance of Controls for this class
      *  If controls is null or if it was not created by this
      *  class this method should throw an IllegalArgumentException
      * 
-     * @param controls
+     * @param controls takes in a valid instance of Controls for this class
      */
-    public void setControls(Controls controls);
+    void setControls(Controls controls);
 }

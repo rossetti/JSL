@@ -17,18 +17,17 @@ package jsl.utilities.distributions;
 
 import jsl.simulation.JSLTooManyIterationsException;
 import jsl.utilities.Interval;
-import jsl.utilities.math.JSLMath;
 import jsl.utilities.math.FunctionIfc;
+import jsl.utilities.math.JSLMath;
+import jsl.utilities.random.rng.RNStreamIfc;
 import jsl.utilities.random.rvariable.BetaRV;
 import jsl.utilities.random.rvariable.GetRVariableIfc;
 import jsl.utilities.random.rvariable.RVariableIfc;
 import jsl.utilities.rootfinding.BisectionRootFinder;
 import jsl.utilities.rootfinding.RootFinder;
-import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
  * The standard beta distribution defined over the range from (0,1)
- *
  */
 public class Beta extends Distribution implements ContinuousDistributionIfc, InverseCDFIfc, GetRVariableIfc {
 
@@ -48,13 +47,8 @@ public class Beta extends Distribution implements ContinuousDistributionIfc, Inv
 
     private double myBetaA1A2;
 
-    private double myProb;
-
-    private final BetaRootFunction myBetaRootFunction = new BetaRootFunction();
-
     /**
      * Creates a Beta with parameters 1.0, 1.0
-     *
      */
     public Beta() {
         this(1.0, 1.0, null);
@@ -84,7 +78,7 @@ public class Beta extends Distribution implements ContinuousDistributionIfc, Inv
      *
      * @param alpha1 the alpha1 parameter
      * @param alpha2 the alpha2 parameter
-     * @param name a label
+     * @param name   a label
      */
     public Beta(double alpha1, double alpha2, String name) {
         super(name);
@@ -98,12 +92,11 @@ public class Beta extends Distribution implements ContinuousDistributionIfc, Inv
     }
 
     @Override
-    public final Interval getDomain(){
+    public final Interval getDomain() {
         return new Interval(0.0, 1.0);
     }
 
     /**
-     *
      * @return the first shape parameter
      */
     public final double getAlpha1() {
@@ -111,7 +104,6 @@ public class Beta extends Distribution implements ContinuousDistributionIfc, Inv
     }
 
     /**
-     *
      * @return the second shape parameter
      */
     public final double getAlpha2() {
@@ -180,15 +172,7 @@ public class Beta extends Distribution implements ContinuousDistributionIfc, Inv
      */
     @Override
     public double cdf(double x) {
-        if (x <= 0.0) {
-            return (0.0);
-        }
-
-        if (x >= 1.0) {
-            return (1.0);
-        }
-
-        return regularizedIncompleteBetaFunction(x, myAlpha1, myAlpha2, mylnBetaA1A2);
+        return stdBetaCDF(x, myAlpha1, myAlpha2, mylnBetaA1A2);
     }
 
     @Override
@@ -196,8 +180,8 @@ public class Beta extends Distribution implements ContinuousDistributionIfc, Inv
         if ((p < 0.0) || (p > 1.0)) {
             throw new IllegalArgumentException("Probability must be [0,1]");
         }
-
-        return (inverseBetaCDF(p));
+        return stdBetaInvCDF(p, myAlpha1, myAlpha2, mylnBetaA1A2);
+//       return (inverseBetaCDF(p));
     }
 
     @Override
@@ -286,9 +270,9 @@ public class Beta extends Distribution implements ContinuousDistributionIfc, Inv
     /**
      * Computes the regularized incomplete beta function at the supplied x
      *
-     * @param x the point to be evaluated
-     * @param a alpha 1
-     * @param b alpha 2
+     * @param x      the point to be evaluated
+     * @param a      alpha 1
+     * @param b      alpha 2
      * @param lnbeta the natural log of Beta(alpha1,alpha2)
      * @return the regularized incomplete beta function at the supplied x
      */
@@ -381,54 +365,121 @@ public class Beta extends Distribution implements ContinuousDistributionIfc, Inv
     }
 
     /**
-     * Computes the inverse of the beta CDF at the supplied probability point
-     * using an initial approximation and a root finding technique
+     * Computes the CDF of the standard beta distribution, has accuracy to about 10e-9
      *
-     * @param p the probability to evaluate
-     * @return the inverse value
+     * @param p      the probability that needs to be evaluated
+     * @param alpha1 the first shape parameter, must be greater than 0
+     * @param alpha2 the second shape parameter, must be greater than 0
      */
-    protected final double inverseBetaCDF(double p) {
+    public static double stdBetaInvCDF(double p, double alpha1, double alpha2) {
+        double lnBetaA1A2 = logBetaFunction(alpha1, alpha2);
+        return stdBetaInvCDF(p, alpha1, alpha2, lnBetaA1A2);
+    }
+
+    /**
+     * Computes the CDF of the standard beta distribution, has accuracy to about 10e-9
+     *
+     * @param p          the probability that needs to be evaluated
+     * @param alpha1     the first shape parameter, must be greater than 0
+     * @param alpha2     the second shape parameter, must be greater than 0
+     * @param lnBetaA1A2 logBetaFunction(alpha1, alpha2)
+     */
+    public static double stdBetaInvCDF(double p, double alpha1, double alpha2, double lnBetaA1A2) {
+        double initialX = approximateInvCDF(alpha1, alpha2, p, lnBetaA1A2);
+        return stdBetaInvCDF(p, alpha1, alpha2, lnBetaA1A2, initialX, delta);
+    }
+
+    /**
+     * Computes the CDF of the standard beta distribution, has accuracy to about 10e-9
+     *
+     * @param p           the probability that needs to be evaluated
+     * @param alpha1      the first shape parameter, must be greater than 0
+     * @param alpha2      the second shape parameter, must be greater than 0
+     * @param lnBetaA1A2  the logBetaFunction(alpha1, alpha2)
+     * @param initialX    an initial approximation for the returned value x
+     * @param searchDelta the suggested delta around the initial approximation
+     */
+    public static double stdBetaInvCDF(double p, double alpha1, double alpha2, double lnBetaA1A2, double initialX, double searchDelta) {
+        if ((initialX < 0.0) || (initialX > 1.0)) {
+            throw new IllegalArgumentException("Supplied probability was " + p + " Probability must be (0,1)");
+        }
+        if (searchDelta <= 0) {
+            throw new IllegalArgumentException("The search delta must be > 0");
+        }
+        if (alpha1 <= 0) {
+            throw new IllegalArgumentException("The 1st shape parameter must be > 0");
+        }
+        if (alpha2 <= 0) {
+            throw new IllegalArgumentException("The 2nd shape parameter must be > 0");
+        }
         if (JSLMath.equal(p, 1.0)) {
             return (1.0);
         }
-
         if (JSLMath.equal(p, 0.0)) {
             return (0.0);
         }
-
-        myProb = p;
-
-        // calculate initial approximation
-        double xbeta = approximateCDF(myAlpha1, myAlpha2, p, mylnBetaA1A2);
-//		System.out.println("initial approximation = " + xbeta);
-
-        // setup the search for the root
-        double xL = Math.max(0.0, xbeta - delta);
-        double xU = Math.min(1.0, xbeta + delta);
-        myInterval.setInterval(xL, xU);
-//		System.out.println("Interval before RootFinder.findInterval: " + myInterval);
-        boolean found = RootFinder.findInterval(myBetaRootFunction, myInterval);
-//		System.out.println("Interval after RootFinder.findInterval: " + myInterval);
-        if (found == false) {
-//			System.out.println("RootFinder did not find an interval");
-            myInterval.setInterval(0.0, 1.0);
+        if ((p < 0.0) || (p > 1.0)) {
+            throw new IllegalArgumentException("Supplied probability was " + p + " Probability must be (0,1)");
+        }
+        // set up the search for the root
+        double xL = Math.max(0.0, initialX - searchDelta);
+        double xU = Math.min(1.0, initialX + searchDelta);
+        Interval interval = new Interval(xL, xU);
+        class RootFunction implements FunctionIfc {
+            public double fx(double x) {
+                return stdBetaCDF(x, alpha1, alpha2, lnBetaA1A2) - p;
+            }
+        }
+        RootFunction rootFunction = new RootFunction();
+        boolean found = RootFinder.findInterval(rootFunction, interval);
+        if (!found) {
+            interval.setInterval(0.0, 1.0);
         } else {
-            xL = Math.max(0.0, myInterval.getLowerLimit());
-            xU = Math.min(1.0, myInterval.getUpperLimit());
-            myInterval.setInterval(xL, xU);
+            xL = Math.max(0.0, interval.getLowerLimit());
+            xU = Math.min(1.0, interval.getUpperLimit());
+            interval.setInterval(xL, xU);
         }
-//		System.out.println("Searching in " + myInterval);
-
-        myRootFinder.setInterval(myBetaRootFunction, myInterval);
+        myRootFinder.setInterval(rootFunction, interval);
         myRootFinder.evaluate();
-
         if (!myRootFinder.hasConverged()) {
-            throw new JSLTooManyIterationsException("Unable to invert CDF for Beta: Beta(x," + myAlpha1 + "," + myAlpha2 + ")=" + p);
+            throw new JSLTooManyIterationsException("Unable to invert CDF for Beta: Beta(x," + alpha1 + "," + alpha2 + ")=" + p);
         }
+        return (myRootFinder.getResult());
+    }
 
-        xbeta = myRootFinder.getResult();
+    /**
+     * Computes the CDF of the standard beta distribution, has accuracy to about 10e-9
+     *
+     * @param x      the x value to be evaluated
+     * @param alpha1 the first shape parameter, must be greater than 0
+     * @param alpha2 the second shape parameter, must be greater than 0
+     */
+    public static double stdBetaCDF(double x, double alpha1, double alpha2) {
+        return stdBetaCDF(x, alpha1, alpha2, logBetaFunction(alpha1, alpha2));
+    }
 
-        return (xbeta);
+    /**
+     * Computes the CDF of the standard beta distribution, has accuracy to about 10e-9
+     *
+     * @param x          the x value to be evaluated
+     * @param alpha1     the first shape parameter, must be greater than 0
+     * @param alpha2     the second shape parameter, must be greater than 0
+     * @param lnBetaA1A2 the logBetaFunction(alpha1, alpha2)
+     */
+    public static double stdBetaCDF(double x, double alpha1, double alpha2, double lnBetaA1A2) {
+        if (alpha1 <= 0) {
+            throw new IllegalArgumentException("The 1st shape parameter must be > 0");
+        }
+        if (alpha2 <= 0) {
+            throw new IllegalArgumentException("The 2nd shape parameter must be > 0");
+        }
+        if (x <= 0.0) {
+            return (0.0);
+        }
+        if (x >= 1.0) {
+            return (1.0);
+        }
+        return regularizedIncompleteBetaFunction(x, alpha1, alpha2, lnBetaA1A2);
     }
 
     @Override
@@ -452,16 +503,16 @@ public class Beta extends Distribution implements ContinuousDistributionIfc, Inv
     }
 
     /**
-     * Computes an approximation of the CDF for the Beta distribution Uses part
+     * Computes an approximation of the invCDF for the Beta distribution Uses part
      * of algorithm AS109, Applied Statistics, vol 26, no 1, 1977, pp 111-114
      *
-     * @param pp Alpha 1 parameter
-     * @param qq Alpha 2 parameter
-     * @param a The point to be evaluated
+     * @param pp     Alpha 1 parameter
+     * @param qq     Alpha 2 parameter
+     * @param a      The point to be evaluated
      * @param lnbeta The log of Beta(alpha1,alpha2)
      * @return the approx cdf value
      */
-    public final static double approximateCDF(double pp, double qq, double a, double lnbeta) {
+    private static double approximateInvCDF(double pp, double qq, double a, double lnbeta) {
         double r, y, t, s, h, w, x;
 
         r = Math.sqrt(-Math.log(a * a));
@@ -533,14 +584,6 @@ public class Beta extends Distribution implements ContinuousDistributionIfc, Inv
         myRootFinder.setMaximumIterations(maxIter);
     }
 
-    private class BetaRootFunction implements FunctionIfc {
-
-        @Override
-        public double fx(double x) {
-            return cdf(x) - myProb;
-        }
-    }
-
     @Override
     public final RVariableIfc getRandomVariable(RNStreamIfc rng) {
         return new BetaRV(getAlpha1(), getAlpha2(), rng);
@@ -577,6 +620,11 @@ public class Beta extends Distribution implements ContinuousDistributionIfc, Inv
         }
         System.out.println("------------");
 
+        System.out.println("------------");
+        for (int i = 0; i <= 10; i++) {
+            double p = 0.1 * i;
+            System.out.println("invcdf at " + p + " = " + stdBetaInvCDF(p, 0.6, 3.3));
+        }
         System.out.println("done");
     }
 }

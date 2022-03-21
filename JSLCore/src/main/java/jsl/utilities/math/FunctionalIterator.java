@@ -44,7 +44,7 @@ public abstract class FunctionalIterator extends DBHIterativeProcess {
     /**
      * Returns the result (assuming convergence has been attained).
      *
-     * @return
+     * @return the result (assuming convergence has been attained).
      */
     public double getResult() {
         return result;

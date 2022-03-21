@@ -21,7 +21,7 @@
 package jsl.utilities.distributions;
 
 /** Represents the probability density function for
- *  1-d continous distributions
+ *  1-d continuous distributions
  *
  * @author rossetti
  */

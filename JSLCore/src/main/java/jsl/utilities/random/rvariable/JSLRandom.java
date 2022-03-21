@@ -51,8 +51,6 @@ public class JSLRandom {
 
     public enum AlgoType {Inverse, AcceptanceRejection}
 
-    private static Beta myBeta;
-
     private static RNStreamProviderIfc myStreamProvider = new RNStreamProvider();
 
     private JSLRandom() {
@@ -976,11 +974,7 @@ public class JSLRandom {
      * @return the random value
      */
     public static double rBeta(double alpha1, double alpha2, RNStreamIfc rng) {
-        if (myBeta == null) {
-            myBeta = new Beta(alpha1, alpha2);
-        }
-        myBeta.setParameters(alpha1, alpha2);
-        return myBeta.invCDF(rng.randU01());
+        return Beta.stdBetaInvCDF(rng.randU01(), alpha1, alpha2);
     }
 
     /**
