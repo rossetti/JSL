@@ -24,7 +24,11 @@ import jsl.utilities.random.rng.RNStreamIfc;
  */
 public final class BetaRV extends AbstractRVariable {
 
-    private final Beta myBeta;
+    private final double myAlpha1;
+
+    private final double myAlpha2;
+
+    private final double mylnBetaA1A2;
 
     public BetaRV(double alpha1, double alpha2) {
         this(alpha1, alpha2, JSLRandom.nextRNStream());
@@ -36,7 +40,15 @@ public final class BetaRV extends AbstractRVariable {
 
     public BetaRV(double alpha1, double alpha2, RNStreamIfc rng) {
         super(rng);
-        myBeta = new Beta(alpha1, alpha2);
+        if (alpha1 <= 0) {
+            throw new IllegalArgumentException("The 1st shape parameter must be > 0");
+        }
+        myAlpha1 = alpha1;
+        if (alpha2 <= 0) {
+            throw new IllegalArgumentException("The 2nd shape parameter must be > 0");
+        }
+        myAlpha2 = alpha2;
+        mylnBetaA1A2 = Beta.logBetaFunction(myAlpha1, myAlpha2);
     }
 
     /**
@@ -50,8 +62,8 @@ public final class BetaRV extends AbstractRVariable {
     @Override
     public String toString() {
         return "BetaRV{" +
-                "alpha1=" + myBeta.getAlpha1() +
-                ", alpha2=" + myBeta.getAlpha2() +
+                "alpha1=" + getAlpha1() +
+                ", alpha2=" + getAlpha2() +
                 '}';
     }
 
@@ -59,20 +71,19 @@ public final class BetaRV extends AbstractRVariable {
      * @return the first shape parameter
      */
     public double getAlpha1() {
-        return myBeta.getAlpha1();
+        return myAlpha1;
     }
 
     /**
      * @return the second shape parameter
      */
     public double getAlpha2() {
-        return myBeta.getAlpha2();
+        return myAlpha2;
     }
 
     @Override
     protected double generate() {
-        double v = myBeta.invCDF(myRNStream.randU01());
-        return v;
+        return Beta.stdBetaInvCDF(myRNStream.randU01(), myAlpha1, myAlpha1, mylnBetaA1A2);
     }
 
     /**
