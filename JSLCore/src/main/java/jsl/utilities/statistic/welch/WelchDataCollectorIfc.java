@@ -95,7 +95,7 @@ public interface WelchDataCollectorIfc {
      */
     static double getPositiveBiasTestStatistic(double[] data) {
         Objects.requireNonNull(data,"The data array was null");
-        //TODO need to double check these formulas
+        //find min and max of partial sum series!
         int n = data.length / 2;
         double[] x1 = Arrays.copyOfRange(data, 0, n);
         double[] x2 = Arrays.copyOfRange(data, n + 1, 2 * n);
@@ -105,10 +105,12 @@ public interface WelchDataCollectorIfc {
         s.reset();
         s.collect(x2);
         double a2 = s.getAverage();
-        int mi1 = Statistic.getIndexOfMax(x1);
-        double max1 = Statistic.getMax(x1);
-        int mi2 = Statistic.getIndexOfMax(x2);
-        double max2 = Statistic.getMax(x2);
+        double[] ps1 = getPartialSums(a1, x1);
+        double[] ps2 = getPartialSums(a2, x2);
+        int mi1 = Statistic.getIndexOfMax(ps1);
+        double max1 = Statistic.getMax(ps1);
+        int mi2 = Statistic.getIndexOfMax( ps2);
+        double max2 = Statistic.getMax(ps2);
         double num = mi2 * (n - mi2) * max1 * max1;
         double denom = mi1 * (n - mi1) * max2 * max2;
         if (max2 == 0.0) {
@@ -144,7 +146,7 @@ public interface WelchDataCollectorIfc {
      */
     static double getNegativeBiasTestStatistic(double[] data) {
         Objects.requireNonNull(data,"The data array was null");
-        //TODO need to double check these formulas
+        //find min and max of partial sum series!
         int n = data.length / 2;
         double[] x1 = Arrays.copyOfRange(data, 0, n);
         double[] x2 = Arrays.copyOfRange(data, n + 1, 2 * n);
@@ -154,10 +156,12 @@ public interface WelchDataCollectorIfc {
         s.reset();
         s.collect(x2);
         double a2 = s.getAverage();
-        int mi1 = Statistic.getIndexOfMin(x1);
-        double min1 = Statistic.getMin(x1);
-        int mi2 = Statistic.getIndexOfMin(x2);
-        double min2 = Statistic.getMin(x2);
+        double[] ps1 = getPartialSums(a1, x1);
+        double[] ps2 = getPartialSums(a2, x2);
+        int mi1 = Statistic.getIndexOfMin(ps1);
+        double min1 = Statistic.getMin(ps1);
+        int mi2 = Statistic.getIndexOfMin(ps2);
+        double min2 = Statistic.getMin(ps2);
         double num = mi2 * (n - mi2) * min1 * min1;
         double denom = mi1 * (n - mi1) * min2 * min2;
         if (min2 == 0.0) {

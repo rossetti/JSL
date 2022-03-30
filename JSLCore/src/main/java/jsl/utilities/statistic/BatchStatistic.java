@@ -15,6 +15,9 @@
  */
 package jsl.utilities.statistic;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * This class automates the batching of observations that may be dependent. It
  * computes the batch means of the batches and reports statistics across the
@@ -275,6 +278,48 @@ public class BatchStatistic extends AbstractStatistic {
         return (b);
     }
 
+    /** Takes an array of length, n, and computes k batch means where each batch mean
+     *  is the average of batchSize (b) elements such that b = Math.FloorDiv(n, k).
+     *  If the number of batches, k, does not divide evenly into n, then n - (k*b) observations are not processed
+     *  at the end of the array.
+     *
+     *  The batch means are contained in the returned array.
+     *
+     * @param data the data to batch, must not be null, and must have at least batchSize elements
+     * @param numBatches the number of batches (k), must be less than or equal to n and greater than 0
+     * @return an array of the batch means
+     */
+    public static double[] batchMeans(double[] data, int numBatches){
+        Objects.requireNonNull(data, "The data array was null");
+        if (numBatches <= 0){
+            throw new IllegalArgumentException("The number of batches must be > 0");
+        }
+        if (numBatches > data.length){
+            throw new IllegalArgumentException("The number of batches must be less than data.length");
+        }
+        if (numBatches == data.length){
+            // no need to batch, just return a copy
+            return Arrays.copyOf(data, data.length);
+        }
+        // compute the batch size
+        int batchSize = Math.floorDiv(data.length, numBatches);
+        double[] bm = new double[numBatches];
+        Statistic statistic = new Statistic();
+        int j = 0;
+        for (double datum : data) {
+            statistic.collect(datum);
+            if (statistic.getCount() == batchSize) {
+                bm[j] = statistic.getAverage();
+                j = j + 1;
+                statistic.reset();
+            }
+            if (j == numBatches) {
+                break;
+            }
+        }
+        return bm;
+    }
+
     public final BatchStatistic newInstance() {
         return newInstance(this);
     }
@@ -394,48 +439,21 @@ public class BatchStatistic extends AbstractStatistic {
         }
     }
 
-    /**
-     * Returns a StatisticAccessorIfc which has collected statistics after
-     * re-batching the batch means to the supplied number of batches
+    /** Takes the current batch means and batches them into the specified
+     *  number of batches.  This does not change the current batch means
      *
-     * @param numBatches the desired number of batches, must be &gt; =2
-     * @return A reference to a Statistic
+     * @param numBatches the number of batches, must be greater that zero, and less than or equal to
+     *                   the current number of batches
+     * @return the array of new batch means
      */
-    public final Statistic rebatchToNumberOfBatches(int numBatches) {
-        return rebatchToNumberOfBatches(numBatches, true);
-    }
-
-    /**
-     * Returns a StatisticAccessorIfc which has collected statistics after
-     * re-batching the batch means to the supplied number of batches
-     *
-     * @param numBatches the desired number of batches, must be &gt;=2
-     * @param save if true the returned Statistic has its save data option
-     * turned on
-     * @return A reference to a Statistic
-     */
-    public final Statistic rebatchToNumberOfBatches(int numBatches, boolean save) {
-        if (numBatches <= 1) {
-            throw new IllegalArgumentException("Number of batches must be >= 2");
+    public final double[] reformBatches(int numBatches){
+        if (numBatches <= 0) {
+            throw new IllegalArgumentException("Number of requested batches must be >= 1");
         }
-        //TODO doesn't work
-        int j = 0;
-        Statistic wb = new Statistic();
-        Statistic bms = new Statistic(getName());
-        bms.setSaveOption(save);
-
-        int bs = myNumBatches / numBatches;
-        // loop through all the batches
-        for (int i = 1; i <= myNumBatches; i++) {
-            wb.collect(bm[i]);
-            j++;
-            if (j == bs) {
-                bms.collect(wb.getAverage());
-                wb.reset();
-                j = 0;
-            }
+        if (numBatches > getCount()) {
+            throw new IllegalArgumentException("Number of requested batches must be <= the current number of batches");
         }
-        return (bms);
+        return batchMeans(getBatchMeanArrayCopy(), numBatches);
     }
 
     /**
