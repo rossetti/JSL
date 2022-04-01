@@ -119,8 +119,7 @@ public interface WelchDataCollectorIfc {
         if (denom == 0.0) {
             return Double.NaN;
         }
-        double f = num / denom;
-        return f;
+        return num / denom;
     }
 
     /**
@@ -170,8 +169,7 @@ public interface WelchDataCollectorIfc {
         if (denom == 0.0) {
             return Double.NaN;
         }
-        double f = num / denom;
-        return f;
+        return num / denom;
     }
 
     /**
