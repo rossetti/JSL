@@ -12,7 +12,7 @@ plugins {
 // commented to not make snapshot
 //version = "1.0-SNAPSHOT"
 group = "io.github.rossetti"
-version = "R1.0.10"
+version = "R1.0.11"
 
 repositories {
 //    jcenter()
@@ -59,9 +59,9 @@ tasks.jar {
 // these jars are placed in build/libs by default
 java {
     // comment this out to not make jar file with javadocs during normal build
-//    withJavadocJar()
+    withJavadocJar()
     // comment this out to not make jar file with source during normal build
-//    withSourcesJar()
+    withSourcesJar()
 }
 
 // run the publishing task to generate the signed jars required for maven central
@@ -72,7 +72,7 @@ publishing {
             groupId = "io.github.rossetti"
             artifactId = "JSLCore"
             // update this field when generating new release
-            version = "R1.0.10"
+            version = "R1.0.11"
             from(components["java"])
             versionMapping {
                 usage("java-api") {
