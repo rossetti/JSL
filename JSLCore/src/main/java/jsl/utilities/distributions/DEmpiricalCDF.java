@@ -15,6 +15,7 @@
  */
 package jsl.utilities.distributions;
 
+import jsl.utilities.math.JSLMath;
 import jsl.utilities.random.rng.RNStreamIfc;
 import jsl.utilities.random.rvariable.DEmpiricalRV;
 import jsl.utilities.random.rvariable.GetRVariableIfc;
@@ -228,23 +229,12 @@ public class DEmpiricalCDF extends Distribution implements DiscreteDistributionI
      */
     @Override
     public final double pmf(double x) {
-        ProbPoint p = null;
-        boolean ifExist = false;
-
-        ListIterator<ProbPoint> iter = myProbabilityPoints.listIterator();
-        while (iter.hasNext()) {
-            p = (ProbPoint) iter.next();
-            if (x == p.value) {
-                ifExist = true;
-                break;
+        for(ProbPoint pp: myProbabilityPoints){
+            if(JSLMath.equal(pp.value,x)){
+                return pp.probability;
             }
         }
-
-        if (ifExist == false) {
-            return (Double.NaN);
-        } else {
-            return (p.probability);
-        }
+        return 0.0;
     }
 
     /**
@@ -406,7 +396,10 @@ public class DEmpiricalCDF extends Distribution implements DiscreteDistributionI
         System.out.println("invCDF(0.2) = " + d.invCDF(0.2));
         System.out.println("invCDF(0.983) = " + d.invCDF(0.983));
         System.out.println("invCDF(" + d.cdf(1.0) + ") = " + d.invCDF(d.cdf(1.0)));
-
+        for(int i=1; i<=10; i++){
+            double x = i/2.0;
+            System.out.println("pmf("+x+") = "+d.pmf(x));
+        }
         System.out.println("done");
     }
 }
