@@ -51,7 +51,7 @@ public class ControlVariateDataCollector {
         myResponseCollector.addResponse(response);
     }
 
-    /**  If the RanddomVariable doesn't exist in the model then no control is set up
+    /**  If the RandomVariable doesn't exist in the model then no control is set up
      *
      * @param randomVariableName the name of the RandomVariable to add as a control
      * @param meanValue the mean of the RandomVariable
@@ -118,6 +118,16 @@ public class ControlVariateDataCollector {
             list.add(name);
         }
         return list;
+    }
+
+    /**
+     *
+     * @return gets all the names, first responses, then controls in that order
+     */
+    public final List<String> getAllNames(){
+        List<String> names = getResponseNames();
+        names.addAll(getControlNames());
+        return names;
     }
 
     /**

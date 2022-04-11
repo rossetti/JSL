@@ -1,6 +1,9 @@
 package jsl.utilities;
 
+import jsl.utilities.reporting.JSL;
+
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -262,6 +265,14 @@ public class JSLArrayUtil {
     }
 
     /**
+     * @param array the array to check
+     * @return true if the array as at least one zero element
+     */
+    public static boolean hasZero(int[] array) {
+        return findIndex(0, array) >= 0;
+    }
+
+    /**
      * If the array is empty or null, -1 is returned.
      *
      * @param element the element to search for
@@ -287,6 +298,14 @@ public class JSLArrayUtil {
             }
         }
         return -1;
+    }
+
+    /**
+     * @param array the array to check
+     * @return true if the array as at least one zero element
+     */
+    public static boolean hasZero(double[] array) {
+        return findIndex(0.0, array) >= 0;
     }
 
     /**
@@ -454,6 +473,30 @@ public class JSLArrayUtil {
         }
         return c;
     }
+
+    /**
+     * Divides the arrays element by element. Arrays must have same length and must not be null.
+     *
+     * @param a the first array
+     * @param b the second array, must not have any zero elements
+     * @return the array containing a[i]/b[i]
+     */
+    public static double[] divideElements(double[] a, double[] b) {
+        Objects.requireNonNull(a, "Array a was null");
+        Objects.requireNonNull(b, "Array b was null");
+        if (hasZero(b)) {
+            throw new IllegalArgumentException("The divisor array has at least one element that is 0.0");
+        }
+        if (a.length != b.length) {
+            throw new IllegalArgumentException("The array lengths must match");
+        }
+        double[] c = new double[a.length];
+        for (int i = 0; i < a.length; i++) {
+            c[i] = a[i] / b[i];
+        }
+        return c;
+    }
+
 
     /**
      * Assumes that the array can be ragged. Returns the number of columns
@@ -798,6 +841,26 @@ public class JSLArrayUtil {
     }
 
     /**
+     * Adds the arrays element by element. Arrays must have same length and must not be null.
+     *
+     * @param a the first array
+     * @param b the second array
+     * @return the array containing a[i]-b[i]
+     */
+    public static double[] subtractElements(double[] a, double[] b) {
+        Objects.requireNonNull(a, "Array a was null");
+        Objects.requireNonNull(b, "Array b was null");
+        if (a.length != b.length) {
+            throw new IllegalArgumentException("The array lengths must match");
+        }
+        double[] c = new double[a.length];
+        for (int i = 0; i < a.length; i++) {
+            c[i] = a[i] - b[i];
+        }
+        return c;
+    }
+
+    /**
      * Returns a list of the elements that are of the same type as the target
      * class.
      * Usage: getElements(objects, String.class);
@@ -994,6 +1057,24 @@ public class JSLArrayUtil {
             target[i] = String.valueOf(array[i]);
         }
         return target;
+    }
+
+    /**
+     * @param array the array to convert
+     * @return a comma delimited string of the array, if empty or null, returns the empty string
+     */
+    public static String toCSVString(String[] array) {
+        if (array == null) {
+            return "";
+        }
+        if (array.length == 0) {
+            return "";
+        }
+        StringJoiner joiner = new StringJoiner(", ");
+        for (int i = 0; i < array.length; i++) {
+            joiner.add(array[i]);
+        }
+        return joiner.toString();
     }
 
     /**
@@ -1358,7 +1439,7 @@ public class JSLArrayUtil {
      * 1.0
      * 4.0
      * 2.0
-     * etch
+     * etc.
      *
      * @param pathToFile the path to a file holding the data
      * @return the data as an array
@@ -1376,6 +1457,64 @@ public class JSLArrayUtil {
         }
 
         return new double[0];
+    }
+
+    /**
+     * Writes the data in the array to rows in the file, each row with one data point
+     *
+     * @param array    the array to write, must not be null
+     * @param fileName the name of the file, must not be null, file will appear in JSL.getInstance().getOutDir()
+     */
+    public static void writeToFile(double[] array, String fileName) {
+        Objects.requireNonNull(array, "The array must not be null");
+        Objects.requireNonNull(fileName, "The path to the file must not be null");
+        Path pathToFile = JSL.getInstance().getOutDir().resolve(fileName);
+        writeToFile(array, pathToFile);
+    }
+
+    /**
+     * Writes the data in the array to rows in the file, each row with one data point
+     *
+     * @param array      the array to write, must not be null
+     * @param pathToFile the path to the file, must not be null
+     */
+    public static void writeToFile(double[] array, Path pathToFile) {
+        Objects.requireNonNull(array, "The array must not be null");
+        Objects.requireNonNull(pathToFile, "The path to the file must not be null");
+        PrintWriter out = JSLFileUtil.makePrintWriter(pathToFile);
+        for (double x : array) {
+            out.println(x);
+        }
+    }
+
+    /**
+     * Writes the data in the array to rows in the file, each element in a row is
+     * separated by a comma
+     *
+     * @param array    the array to write, must not be null
+     * @param fileName the name of the file, must not be null, file will appear in JSL.getInstance().getOutDir()
+     */
+    public static void writeToFile(double[][] array, String fileName) {
+        Objects.requireNonNull(array, "The array must not be null");
+        Objects.requireNonNull(fileName, "The path to the file must not be null");
+        Path pathToFile = JSL.getInstance().getOutDir().resolve(fileName);
+        writeToFile(array, pathToFile);
+    }
+
+    /**
+     * Writes the data in the array to rows in the file, each element in a row is
+     * separated by a comma
+     *
+     * @param array      the array to write, must not be null
+     * @param pathToFile the path to the file, must not be null
+     */
+    public static void writeToFile(double[][] array, Path pathToFile) {
+        Objects.requireNonNull(array, "The array must not be null");
+        Objects.requireNonNull(pathToFile, "The path to the file must not be null");
+        PrintWriter out = JSLFileUtil.makePrintWriter(pathToFile);
+        for (double[] doubles : array) {
+            out.println(toCSVString(doubles));
+        }
     }
 
     /**

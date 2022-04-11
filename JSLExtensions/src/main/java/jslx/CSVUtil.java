@@ -5,7 +5,6 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
 import jsl.utilities.JSLArrayUtil;
-import jsl.utilities.reporting.JSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +16,8 @@ import java.nio.file.Path;
 import java.util.*;
 
 /**
- *  A class to facilitate some basic CSV processing without having to worry about underlying csv library.
- *  Helps with reading and writing arrays to csv files. Generally, exceptions are squashed.
+ * A class to facilitate some basic CSV processing without having to worry about underlying csv library.
+ * Helps with reading and writing arrays to csv files. Generally, exceptions are squashed.
  */
 public class CSVUtil {
 
@@ -156,20 +155,43 @@ public class CSVUtil {
         return JSLArrayUtil.transpose2DArray(data);
     }
 
-    /** IOException is squelched with a warning to the logger if there was a problem writing to the file.
+    /**
+     * IOException is squelched with a warning to the logger if there was a problem writing to the file.
      *
-     * @param header the names of the columns as strings
-     * @param array the array to write
+     * @param array      the array to write
+     * @param pathToFile the path to the file
+     */
+    public static void writeArrayToCSVFile(double[][] array, Path pathToFile) {
+        writeArrayToCSVFile(null, array, false, pathToFile);
+    }
+
+    /**
+     * IOException is squelched with a warning to the logger if there was a problem writing to the file.
+     *
+     * @param header     the names of the columns as strings
+     * @param array      the array to write
      * @param pathToFile the path to the file
      */
     public static void writeArrayToCSVFile(List<String> header, double[][] array, Path pathToFile) {
+        writeArrayToCSVFile(header, array, false, pathToFile);
+    }
+
+    /**
+     * IOException is squelched with a warning to the logger if there was a problem writing to the file.
+     *
+     * @param header            the names of the columns as strings
+     * @param array             the array to write
+     * @param applyQuotesToData if true the numeric data will be surrounded by quotes
+     * @param pathToFile        the path to the file
+     */
+    public static void writeArrayToCSVFile(List<String> header, double[][] array, boolean applyQuotesToData, Path pathToFile) {
         // if header is empty or null get size from array and make col names
         Objects.requireNonNull(array, "The array was null");
         Objects.requireNonNull(pathToFile, "The path to the file was null");
         if (!JSLArrayUtil.isRectangular(array)) {
             throw new IllegalArgumentException("The supplied array was not rectangular");
         }
-        if (header == null){
+        if (header == null) {
             header = new ArrayList<>();
         }
         if (header.isEmpty()) {
@@ -182,7 +204,7 @@ public class CSVUtil {
         try (CSVWriter writer = new CSVWriter(new FileWriter(pathToFile.toFile()))) {
             writer.writeNext(header.toArray(new String[0]));
             for (int i = 0; i < array.length; i++) {
-                writer.writeNext(JSLArrayUtil.toString(array[i]));
+                writer.writeNext(JSLArrayUtil.toString(array[i]), applyQuotesToData);
             }
         } catch (IOException e) {
             LOGGER.warn("There was a problem writing an array to csv file {}", pathToFile);
