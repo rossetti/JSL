@@ -1512,6 +1512,18 @@ public class JSLArrayUtil {
         Objects.requireNonNull(array, "The array must not be null");
         Objects.requireNonNull(pathToFile, "The path to the file must not be null");
         PrintWriter out = JSLFileUtil.makePrintWriter(pathToFile);
+        write(array, out);
+    }
+
+    /**  Allows writing directly to a known PrintWriter.  Facilitates writing
+     *  to the file before or after the array is written
+     *
+     * @param array the array to write, must not be null
+     * @param out the PrintWriter to write to, must not be null
+     */
+    public static void write(double[][] array, PrintWriter out){
+        Objects.requireNonNull(array, "The array must not be null");
+        Objects.requireNonNull(out, "The PrintWrite must not be null");
         for (double[] doubles : array) {
             out.println(toCSVString(doubles));
         }
