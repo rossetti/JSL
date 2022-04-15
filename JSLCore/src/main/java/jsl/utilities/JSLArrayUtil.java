@@ -770,6 +770,32 @@ public class JSLArrayUtil {
     }
 
     /**
+     *
+     * @param array the array to fill, must not be null
+     * @param value the supplier of the value, must not be null
+     */
+    public static void fill(double[] array, GetValueIfc value){
+        Objects.requireNonNull(array, "The array was null");
+        Objects.requireNonNull(value, "The value source was null");
+        for (int i = 0; i < array.length; i++) {
+            array[i] = value.getValue();
+        }
+    }
+
+    /**
+     *
+     * @param array the array to fill, must not be null
+     * @param value the supplier of the value, must not be null
+     */
+    public static void fill(double[][] array, GetValueIfc value){
+        Objects.requireNonNull(array, "The array was null");
+        Objects.requireNonNull(value, "The value source was null");
+        for (double[] doubles : array) {
+            fill(doubles, value);
+        }
+    }
+
+    /**
      * The destination array is mutated by this method
      *
      * @param col  the column in the destination to fill
