@@ -122,10 +122,10 @@ public class Lognormal extends Distribution implements ContinuousDistributionIfc
      * @return the 3rd moment
      */
     public final double getMoment3() {
-        double calculatingM = (-(1 / 2) * Math.log((myVar / (myMean * myMean * myMean * myMean)) + 1));
+        double calculatingM = (-(1.0 / 2.0) * Math.log((myVar / (myMean * myMean * myMean * myMean)) + 1.0));
         double calculatingS = Math.log((myVar / (myMean * myMean)) + (myMean * myMean));
 
-        return Math.exp((3 * calculatingM) + (9 * calculatingS / 2));
+        return Math.exp((3.0 * calculatingM) + (9.0 * calculatingS / 2.0));
     }
 
     /**
@@ -133,10 +133,10 @@ public class Lognormal extends Distribution implements ContinuousDistributionIfc
      * @return the 4th moment
      */
     public final double getMoment4() {
-        double calculatingM = (-(1 / 2) * Math.log((myVar / (myMean * myMean * myMean * myMean)) + 1));
+        double calculatingM = (-(1.0 / 2.0) * Math.log((myVar / (myMean * myMean * myMean * myMean)) + 1.0));
         double calculatingS = Math.log((myVar / (myMean * myMean)) + (myMean * myMean));
 
-        return Math.exp((4 * calculatingM) + (8 * calculatingS));
+        return Math.exp((4.0 * calculatingM) + (8.0 * calculatingS));
     }
 
     @Override
