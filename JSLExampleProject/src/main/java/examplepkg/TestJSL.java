@@ -2,6 +2,7 @@ package examplepkg;
 
 
 import jsl.utilities.distributions.Normal;
+import jsl.utilities.random.rvariable.ExponentialRV;
 import jsl.utilities.random.rvariable.NormalRV;
 import jsl.utilities.random.rvariable.RVariableIfc;
 import jsl.utilities.statistic.Statistic;
@@ -14,8 +15,8 @@ public class TestJSL {
 
         System.out.println("Hello, JSL");
 
-        NormalRV rv = new NormalRV();
-
+//        NormalRV rv = new NormalRV();
+        ExponentialRV rv = new ExponentialRV(10.0);
         double[] sample = rv.sample(100);
 
         Statistic s = new Statistic();
@@ -23,7 +24,7 @@ public class TestJSL {
         System.out.println(s);
 
         // use a class from the JSLExtensions
-        example1();
+//        example1();
     }
 
     public static void example1(){

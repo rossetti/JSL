@@ -197,7 +197,7 @@ public class Triangular extends Distribution implements
      * @return the 4th moment
      */
     public final double getMoment4() {
-        return ((1.0 / 135.0) * ((myMin * myMin + myMode * myMode + myMax * myMax - myMin * myMode - myMin * myMax - myMode * myMax) * (myMin * myMin + myMode * myMode + myMax * myMax - myMin * myMode - myMin * myMax - myMode * myMax)) + 4 * ((1 / 270) * (myMin + myMode - (2 * myMax)) * (myMin + myMax - (2 * myMode)) * (myMode + myMax - (2 * myMin)) * ((myMin + myMode + myMax) / 3)) + ((1 / 3) * (myMin * myMin + myMode * myMode + myMax * myMax - myMin * myMode - myMin * myMax - myMode * myMax) * ((myMin + myMode + myMax) / 3) * ((myMin + myMode + myMax) / 3)) + ((myMin + myMode + myMax) / 3) * ((myMin + myMode + myMax) / 3) * ((myMin + myMode + myMax) / 3) * ((myMin + myMode + myMax) / 3));
+        return ((1.0 / 135.0) * ((myMin * myMin + myMode * myMode + myMax * myMax - myMin * myMode - myMin * myMax - myMode * myMax) * (myMin * myMin + myMode * myMode + myMax * myMax - myMin * myMode - myMin * myMax - myMode * myMax)) + 4 * ((1.0 / 270.0) * (myMin + myMode - (2 * myMax)) * (myMin + myMax - (2.0 * myMode)) * (myMode + myMax - (2.0 * myMin)) * ((myMin + myMode + myMax) / 3.0)) + ((1.0 / 3.0) * (myMin * myMin + myMode * myMode + myMax * myMax - myMin * myMode - myMin * myMax - myMode * myMax) * ((myMin + myMode + myMax) / 3.0) * ((myMin + myMode + myMax) / 3.0)) + ((myMin + myMode + myMax) / 3.0) * ((myMin + myMode + myMax) / 3.0) * ((myMin + myMode + myMax) / 3.0) * ((myMin + myMode + myMax) / 3.0));
     }
 
     @Override
