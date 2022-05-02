@@ -2,6 +2,7 @@ package examples.book.chapter4;
 
 import jsl.utilities.random.rvariable.ExponentialRV;
 import jsl.utilities.statistic.BatchStatistic;
+import jsl.utilities.statistic.Statistic;
 
 /**
  * This example illustrates how to create an instance of a
@@ -51,7 +52,7 @@ public class Example5 {
         }
 
         // this rebatches the 40 down to 10
-        //Statistic s = bm.rebatchToNumberOfBatches(10);
-        //System.out.println(s);
+        double[] reformed = bm.reformBatches(10);
+        System.out.println(new Statistic(reformed));
     }
 }
