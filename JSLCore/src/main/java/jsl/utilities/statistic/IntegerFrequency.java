@@ -22,7 +22,10 @@ package jsl.utilities.statistic;
 
 import java.util.*;
 
+import jsl.utilities.JSLArrayUtil;
 import jsl.utilities.distributions.DEmpiricalCDF;
+import jsl.utilities.random.rvariable.JSLRandom;
+import jsl.utilities.reporting.JSL;
 
 /**
  * This class tabulates the frequency associated with
@@ -316,9 +319,10 @@ public class IntegerFrequency {
     }
 
     /**
-     * Returns a n by 2 array of value, frequency
-     * pairs where n = getNummberOfCells()
-     *
+     * Returns 2 by n array of value, frequency
+     * pairs where n = getNumberOfCells()
+     * row 0 holds the values
+     * row 1 holds the frequencies
      * @return the array or an empty array
      */
     public final int[][] getValueFrequencies() {
@@ -326,18 +330,18 @@ public class IntegerFrequency {
             return new int[0][0];
         }
         SortedSet<Cell> cellSet = getCells();
-        int[][] v = new int[myCells.size()][2];
+        int[][] v = new int[2][myCells.size()];
         int i = 0;
         for (Cell c : cellSet) {
-            v[i][0] = c.myValue;
-            v[i][1] = c.myCount;
+            v[0][i] = c.myValue;
+            v[1][i] = c.myCount;
             i++;
         }
         return v;
     }
 
     /**
-     * Returns a 2 by n array of value, proportion pairs
+     * Returns n by 2 array of value, proportion pairs
      * where n = getNumberOfCells()
      * row 0 is the values
      * row 1 is the proportions
@@ -349,7 +353,7 @@ public class IntegerFrequency {
             return new double[0][0];
         }
         SortedSet<Cell> cellSet = getCells();
-        double[][] v = new double[myCells.size()][2];
+        double[][] v = new double[2][myCells.size()];
         int i = 0;
         for (Cell c : cellSet) {
             v[0][i] = c.myValue;
@@ -360,7 +364,7 @@ public class IntegerFrequency {
     }
 
     /**
-     * Returns a 2 by n array of value, cumulative proportion pairs
+     * Returns a n by 2 array of value, cumulative proportion pairs
      * where n = getNumberOfCells()
      * row 0 is the values
      * row 1 is the cumulative proportions
@@ -372,7 +376,7 @@ public class IntegerFrequency {
             return new double[0][0];
         }
         SortedSet<Cell> cellSet = getCells();
-        double[][] v = new double[myCells.size()][2];
+        double[][] v = new double[2][myCells.size()];
         int i = 0;
         double sum = 0.0;
         for (Cell c : cellSet) {
@@ -456,13 +460,13 @@ public class IntegerFrequency {
     /**
      * Returns a copy of the cells in a list
      * ordered by the value of each cell, 0th element
-     * is cell with smallest value, etc
+     * is cell with the smallest value, etc
      *
      * @return the list
      */
     public final List<Cell> getCellList() {
         SortedSet<Cell> cellSet = getCells();
-        List<Cell> list = new ArrayList<Cell>();
+        List<Cell> list = new ArrayList<>();
         for (Cell c : cellSet) {
             list.add(c.newInstance());
         }
@@ -474,8 +478,9 @@ public class IntegerFrequency {
      */
     public DEmpiricalCDF createDEmpiricalCDF() {
         // form the array of parameters
-        double[][] x = getValueCumulativeProportions();
-        return (new DEmpiricalCDF(x[0], x[1]));
+        double[] values = JSLArrayUtil.toDouble(getValues());
+        double[] cdf = JSLRandom.makeCDF(getProportions());
+        return (new DEmpiricalCDF(values, cdf));
     }
 
     /**

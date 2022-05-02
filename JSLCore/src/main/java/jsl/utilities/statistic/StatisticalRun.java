@@ -160,12 +160,12 @@ public class StatisticalRun<T> {
 
     public static void main(String[] args) {
 
-        //int data[] = {0, 0, 1, 1, 0};
-        //int data[] = {1, 1, 1, 1, 1};
-        //int data[] = {0, 0, 1, 1, 1};
-        //int data[] = {1, 0, 1, 1, 1,0};
-        //int data[] = {1};
-        //int data[] = {1, 0};
+//        int data[] = {0, 0, 1, 1, 0};
+//        int data[] = {1, 1, 1, 1, 1};
+//        int data[] = {0, 0, 1, 1, 1};
+//        int data[] = {1, 0, 1, 1, 1,0};
+//        int data[] = {1};
+//        int data[] = {1, 0};
         int data[] = {1, 1};
         List<Integer> test = Arrays.stream(data).boxed().collect(Collectors.toList());
         List<StatisticalRun<Integer>> runs = findRuns(test, Comparator.<Integer>naturalOrder());

@@ -1,6 +1,7 @@
 package jsl.utilities;
 
 import jsl.utilities.reporting.JSL;
+import jsl.utilities.statistic.Statistic;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -348,9 +349,34 @@ public class JSLArrayUtil {
         double max = getMax(array);
         double min = getMin(array);
         double range = max - min;
+        if (range == 0.0){
+            throw new IllegalArgumentException("The array cannot be scaled because the min == max!");
+        }
         double[] x = new double[array.length];
         for (int i = 0; i < array.length; i++) {
             x[i] = (array[i] - min) / range;
+        }
+        return x;
+    }
+
+    /**
+     * Returns a new array that has been scaled so that the values are
+     * the (x - avg)/sd values of the supplied array
+     *
+     * @param array the array to scale, must not be null
+     * @return the scaled array
+     */
+    public static double[] getNormScaledArray(double[] array) {
+        Objects.requireNonNull(array, "The array cannot be null");
+        Statistic s = new Statistic(array);
+        double avg = s.getAverage();
+        double sd = s.getStandardDeviation();
+        if (sd == 0.0){
+            throw new IllegalArgumentException("The array cannot be scaled because std dev == 0.0");
+        }
+        double[] x = new double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            x[i] = (array[i] - avg) / sd;
         }
         return x;
     }
@@ -668,7 +694,7 @@ public class JSLArrayUtil {
         if (!isRectangular(matrix)) {
             throw new IllegalArgumentException("The matrix was not rectangular");
         }
-        double[] column = new double[matrix[0].length]; // Here I assume a rectangular 2D array!
+        double[] column = new double[matrix.length]; // Here I assume a rectangular 2D array!
         for (int i = 0; i < column.length; i++) {
             column[i] = matrix[i][k];
         }
@@ -685,7 +711,7 @@ public class JSLArrayUtil {
         if (!isRectangular(matrix)) {
             throw new IllegalArgumentException("The matrix was not rectangular");
         }
-        int[] column = new int[matrix[0].length]; // Here I assume a rectangular 2D array!
+        int[] column = new int[matrix.length]; // Here I assume a rectangular 2D array!
         for (int i = 0; i < column.length; i++) {
             column[i] = matrix[i][k];
         }
@@ -702,7 +728,7 @@ public class JSLArrayUtil {
         if (!isRectangular(matrix)) {
             throw new IllegalArgumentException("The matrix was not rectangular");
         }
-        Object[] column = new Object[matrix[0].length]; // Here I assume a rectangular 2D array!
+        Object[] column = new Object[matrix.length]; // Here I assume a rectangular 2D array!
         for (int i = 0; i < column.length; i++) {
             column[i] = matrix[i][index];
         }
