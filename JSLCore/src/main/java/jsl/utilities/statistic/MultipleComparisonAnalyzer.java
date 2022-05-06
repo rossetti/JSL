@@ -23,16 +23,10 @@ package jsl.utilities.statistic;
 import java.io.PrintWriter;
 import java.util.*;
 
-import jsl.simulation.JSLTooManyIterationsException;
 import jsl.utilities.GetNameIfc;
 import jsl.utilities.Interval;
 import jsl.utilities.JSLArrayUtil;
-import jsl.utilities.distributions.Gamma;
-import jsl.utilities.distributions.Normal;
-import jsl.utilities.math.FunctionIfc;
 import jsl.utilities.reporting.StatisticReporter;
-import jsl.utilities.rootfinding.BisectionRootFinder;
-import jsl.utilities.rootfinding.RootFinder;
 
 /**
  * Holds data to perform multiple comparisons Performs pairwise comparisons and
@@ -1354,11 +1348,27 @@ public class MultipleComparisonAnalyzer implements GetNameIfc {
 
     private static Rinott rinott = null;
 
-    public static double computeRinott(int numTreatments, int dof, double pStar){
+    /**
+     * Calculates Rinott constants as per Table 2.13 of Bechhofer et al.
+     *
+     * Derived from Fortran code in
+     *
+     * 		Design and Analysis of Experiments for Statistical Selection,
+     * 		Screening, and Multiple Comparisons
+     *
+     * 		Robert E. Bechhofer, Thomas J. Santner, David M. Goldsman
+     *
+     * @param numTreatments the number of treatments in the comparison, must be at least 2
+     * @param pStar the lower bound on probably of correct selection
+     * @param dof the number of degrees of freedom.  If the first stage samples size is n_0, then
+     *            the dof = n_0 - 1, must be 4 or more
+     * @return the computed Rinott constant
+     */
+    public static double rinottConstant(int numTreatments, double pStar, int dof){
         if (rinott == null){
             rinott = new Rinott();
         }
-        return rinott.findRinottConstant(numTreatments, dof, pStar);
+        return rinott.rinottConstant(numTreatments, pStar, dof);
     }
 
     public static void main(String args[]) {

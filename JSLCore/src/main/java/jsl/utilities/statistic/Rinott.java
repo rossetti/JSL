@@ -1,6 +1,5 @@
 package jsl.utilities.statistic;
 
-import jsl.simulation.JSLTooManyIterationsException;
 import jsl.utilities.Interval;
 import jsl.utilities.JSLArrayUtil;
 import jsl.utilities.distributions.Gamma;
@@ -144,7 +143,23 @@ public class Rinott implements FunctionIfc {
         return rinottIntegral(x) - pStar;
     }
 
-    public double findRinottConstant(int numTreatments, int dof, double pStar){
+    /**
+     * Calculates Rinott constants as per Table 2.13 of Bechhofer et al.
+     *
+     * Derived from Fortran code in
+     *
+     * 		Design and Analysis of Experiments for Statistical Selection,
+     * 		Screening, and Multiple Comparisons
+     *
+     * 		Robert E. Bechhofer, Thomas J. Santner, David M. Goldsman
+     *
+     * @param numTreatments the number of treatments in the comparison, must be at least 2
+     * @param pStar the lower bound on probably of correct selection
+     * @param dof the number of degrees of freedom.  If the first stage samples size is n_0, then
+     *            the dof = n_0 - 1, must be 4 or more
+     * @return the computed Rinott constant
+     */
+    public double rinottConstant(int numTreatments, double pStar, int dof){
         setNumTreatments(numTreatments);
         setDegreesOfFreedom(dof);
         setPStar(pStar);
@@ -200,8 +215,8 @@ public class Rinott implements FunctionIfc {
      *
      * @param dof   Degree of freedom
      * @param x     The point of evaluation
-     * @param lngam LNGAM(N) is LN(GAMMA(N/2))
-     * @return The PDF of the Chi^2 distribution with N degrees of freedom for N &lt;= 50, evaluated at C
+     * @param lngam LNGAM(dof) is LN(GAMMA(dof/2))
+     * @return The PDF of the Chi^2 distribution with dof of freedom
      */
     private static double chiSquaredPDF(int dof, double x, double[] lngam) {
         double dof2 = ((double) dof) / 2.0;
@@ -221,10 +236,8 @@ public class Rinott implements FunctionIfc {
         double[] ans = {4.045, 6.057, 6.893, 5.488, 6.878, 8.276, 8.352};
         double[] p = {.975, .975, .975, .9, .95, 0.975, 0.975};
         int[] n = {10, 1000, 10000, 1000, 20000, 800000, 1000000};
-        double x = MultipleComparisonAnalyzer.computeRinott(10, 50, 0.975);
-        System.out.println("rinott = " + x);
         for (int i = 0; i < n.length; ++i) {
-            double result = MultipleComparisonAnalyzer.computeRinott(n[i], 50, p[i]);
+            double result = MultipleComparisonAnalyzer.rinottConstant(n[i], p[i], 50);
             System.out.printf("ans[%d] = %f, result = %f %n", i, ans[i], result);
             assert (result > ans[i] - 0.01 && result < ans[i] + 0.3);
         }
@@ -233,20 +246,18 @@ public class Rinott implements FunctionIfc {
 
         System.out.println();
         Rinott r = new Rinott();
-        double z = r.findRinottConstant(10, 50, 0.975);
-        System.out.println("rinott3= " + z);
         for (int i = 0; i < n.length; ++i) {
-            double result = r.findRinottConstant(n[i], 50, p[i]);
+            double result = r.rinottConstant(n[i], p[i], 50);
             System.out.printf("ans[%d] = %f, result = %f %n", i, ans[i], result);
             assert (result > ans[i] - 0.01 && result < ans[i] + 0.3);
         }
 
-        int[] nu = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 31, 41, 51};
+        int[] nu = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 30, 40, 50};
         int[] t = {2, 3, 4, 5, 6, 7, 8, 9, 10};
         double[][] rc = new double[nu.length][t.length];
         for (int j = 0; j < t.length; j++) {
             for (int i = 0; i < nu.length; i++) {
-                rc[i][j] = r.findRinottConstant(t[j], nu[i], 0.95);
+                rc[i][j] = r.rinottConstant(t[j], 0.9, nu[i]-1);
             }
         }
         System.out.println();
