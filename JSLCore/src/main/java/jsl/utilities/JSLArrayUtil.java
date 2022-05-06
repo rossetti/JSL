@@ -1579,6 +1579,7 @@ public class JSLArrayUtil {
         for (double[] doubles : array) {
             out.println(toCSVString(doubles));
         }
+        out.flush();
     }
 
     /**

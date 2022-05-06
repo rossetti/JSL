@@ -26,12 +26,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import jsl.simulation.JSLTooManyIterationsException;
 import jsl.utilities.GetNameIfc;
 import jsl.utilities.Interval;
 import jsl.utilities.JSLArrayUtil;
 import jsl.utilities.distributions.Gamma;
 import jsl.utilities.distributions.Normal;
+import jsl.utilities.math.FunctionIfc;
 import jsl.utilities.reporting.StatisticReporter;
+import jsl.utilities.rootfinding.BisectionRootFinder;
+import jsl.utilities.rootfinding.RootFinder;
 
 /**
  * Holds data to perform multiple comparisons Performs pairwise comparisons and
@@ -1351,26 +1355,6 @@ public class MultipleComparisonAnalyzer implements GetNameIfc {
         }
     }
 
-    /**
-     * Functions used to calculate Rinott constants
-     *
-     * Derived from Fortran code in
-     *
-     * 		Design and Analysis of Experiments for Statistical Selection,
-     * 		Screening, and Multiple Comparisons
-     *
-     * 		Robert E. Bechhofer, Thomas J. Santner, David M. Goldsman
-     *
-     * 		ISBN: 978-0-471-57427-9
-     * 		Wiley, 1995
-     *
-     * Original Fortran code available on the authors' website
-     * http://www.stat.osu.edu/~tjs/REB-TJS-DMG/describe.html
-     *
-     * Converted to Java by Eric Ni, cn254@cornell.edu
-     *
-     * Revised, May 5, 2022, M. D. Rossetti, rossetti@uark.edu
-     */
 
     /**
      * Standard Normal CDF
@@ -1395,7 +1379,7 @@ public class MultipleComparisonAnalyzer implements GetNameIfc {
     /**
      * Chi-distribution PDF
      *
-     * @param dof     Degree of freedom
+     * @param dof   Degree of freedom
      * @param x     The point of evaluation
      * @param lngam LNGAM(N) is LN(GAMMA(N/2))
      * @return The PDF of the Chi^2 distribution with N degrees of freedom for N &lt;= 50, evaluated at C
@@ -1403,10 +1387,10 @@ public class MultipleComparisonAnalyzer implements GetNameIfc {
     private static double chiSquaredPDF(int dof, double x, double[] lngam) {
         double dof2 = ((double) dof) / 2.0;
         double lng = 0.0;
-        if (dof > LNGAM.length){
+        if (dof > LNGAM.length) {
             lng = Gamma.logGammaFunction(dof2);
         } else {
-            lng = lngam[dof-1];
+            lng = lngam[dof - 1];
         }
         double tmp = -dof2 * Math.log(2d) - lngam[dof - 1] + (dof2 - 1d) * Math.log(x) - x / 2.;
         return Math.exp(tmp);
@@ -1493,14 +1477,14 @@ public class MultipleComparisonAnalyzer implements GetNameIfc {
             LNGAM[2 * i - 2] = Math.log(i - 1.5) + LNGAM[2 * i - 4];
             LNGAM[2 * i - 1] = Math.log(i - 1.0) + LNGAM[2 * i - 3];
         }
-        for(int i=0;i< LNGAM.length; i++){
+        for (int i = 0; i < LNGAM.length; i++) {
             System.out.printf("LNGAM[%d] = %f %n", i, LNGAM[i]);
         }
 
         System.out.println();
 
-        for(int i=0;i< LNGAM.length; i++){
-            LNGAM[i] = Gamma.logGammaFunction((i+1.0)/2.0);
+        for (int i = 0; i < LNGAM.length; i++) {
+            LNGAM[i] = Gamma.logGammaFunction((i + 1.0) / 2.0);
             System.out.printf("LNGAM[%d] = %f %n", i, LNGAM[i]);
         }
     }
@@ -1513,7 +1497,7 @@ public class MultipleComparisonAnalyzer implements GetNameIfc {
      * @param NU    Stage-0 sample size - 1
      * @return The Rinott Constant
      */
-    public static double rinott(long T, double PSTAR, int NU) {
+    public static double rinott(int T, double PSTAR, int NU) {
 //        double LNGAM[] = new double[50];
         NU = Math.min(NU, 50);
 //        double WEX[] = new double [32];
@@ -1557,6 +1541,42 @@ public class MultipleComparisonAnalyzer implements GetNameIfc {
         return H;
     }
 
+    public static double rinott2(int T, double PSTAR, int NU) {
+        NU = Math.min(NU, 50);
+        double H = 4.0;
+        double LOWERH = 0.0;
+        double UPPERH = 20.00;
+        for (int LOOPH = 1; LOOPH <= 50; ++LOOPH) {
+            double ANS = rinottIntegral(T, NU, H);
+            if (Math.abs(ANS - PSTAR) <= 0.000001) {
+                return H;
+            } else if (ANS > PSTAR) {
+                UPPERH = H;
+                H = (LOWERH + UPPERH) / 2.0d;
+            } else {
+                LOWERH = H;
+                H = (LOWERH + UPPERH) / 2.0d;
+            }
+        }
+        return H;
+    }
+
+    private static double rinottIntegral(int numTreatments, int dof, double x) {
+        double ans = 0.0;
+        for (int j = 1; j <= WEX.length; ++j) {
+            double tmp = 0.0;
+            for (int i = 1; i <= WEX.length; ++i) {
+                double z = x / Math.sqrt(dof * (1d / X[i - 1] + 1d / X[j - 1]));
+                double zcdf = Normal.stdNormalCDF(z);
+                double chi2pdf = chiSquaredPDF(dof, X[i - 1], LNGAM);
+                tmp = tmp + WEX[i - 1] * zcdf * chi2pdf;
+            }
+            tmp = Math.pow(tmp, numTreatments - 1);
+            ans = ans + WEX[j - 1] * tmp * chiSquaredPDF(dof, X[j - 1], LNGAM);
+        }
+        return ans;
+    }
+
     public static void main(String args[]) {
 //        LinkedHashMap<String, double[]> data = new LinkedHashMap<>();
 //        double[] d1 = {63.72, 32.24, 40.28, 36.94, 36.29, 56.94, 34.10, 63.36, 49.29, 87.20};
@@ -1587,14 +1607,47 @@ public class MultipleComparisonAnalyzer implements GetNameIfc {
         System.out.println("Running rinott");
         double[] ans = {4.045, 6.057, 6.893, 5.488, 6.878, 8.276, 8.352};
         double[] p = {.975, .975, .975, .9, .95, 0.975, 0.975};
-        long[] n = {10, 1000, 10000, 1000, 20000, 800000, 1000000};
+        int[] n = {10, 1000, 10000, 1000, 20000, 800000, 1000000};
         double x = rinott(10, 0.975, 50);
-        System.out.println("rinott = " + x);
-        int m = n.length;
-        for (int i = 0; i < m; ++i) {
+        System.out.println("rinott1 = " + x);
+        for (int i = 0; i < n.length; ++i) {
             double result = rinott(n[i], p[i], 50);
             System.out.printf("ans[%d] = %f, result = %f %n", i, ans[i], result);
             assert (result > ans[i] - 0.01 && result < ans[i] + 0.3);
         }
+
+        System.out.println();
+
+        double y = rinott2(10, 0.975, 50);
+        System.out.println("rinott2 = " + y);
+        for (int i = 0; i < n.length; ++i) {
+            double result = rinott2(n[i], p[i], 50);
+            System.out.printf("ans[%d] = %f, result = %f %n", i, ans[i], result);
+            assert (result > ans[i] - 0.01 && result < ans[i] + 0.3);
+        }
+
+        System.out.println();
+        Rinott r = new Rinott();
+        double z = r.findRinottConstant(10, 50, 0.975);
+        System.out.println("rinott3= " + z);
+        for (int i = 0; i < n.length; ++i) {
+            double result = r.findRinottConstant(n[i], 50, p[i]);
+            System.out.printf("ans[%d] = %f, result = %f %n", i, ans[i], result);
+            assert (result > ans[i] - 0.01 && result < ans[i] + 0.3);
+        }
+
+        int[] nu = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 31, 41, 51};
+        int[] t = {2, 3, 4, 5, 6, 7, 8, 9, 10};
+        double[][] rc = new double[nu.length][t.length];
+        for (int j = 0; j < t.length; j++) {
+            for (int i = 0; i < nu.length; i++) {
+                rc[i][j] = r.findRinottConstant(t[j], nu[i], 0.95);
+//                rc[i][j] = rinott2(t[j], 0.95, nu[i]);
+            }
+        }
+        System.out.println();
+        System.out.println();
+
+        JSLArrayUtil.write(rc, new PrintWriter(System.out));
     }
 }
