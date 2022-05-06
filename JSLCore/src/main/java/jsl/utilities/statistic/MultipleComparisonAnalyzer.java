@@ -21,10 +21,7 @@
 package jsl.utilities.statistic;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import jsl.simulation.JSLTooManyIterationsException;
 import jsl.utilities.GetNameIfc;
@@ -1355,299 +1352,38 @@ public class MultipleComparisonAnalyzer implements GetNameIfc {
         }
     }
 
+    private static Rinott rinott = null;
 
-    /**
-     * Standard Normal CDF
-     *
-     * @param x The point of evaluation
-     * @return The cumulative normal distribution function (CNDF)
-     * for a standard normal: N(0,1) evaluated at x.
-     */
-    private static double cumZCDF(double x) {
-        int neg = (x < 0d) ? 1 : 0;
-        if (neg == 1)
-            x *= -1d;
-
-        double k = (1d / (1d + 0.2316419 * x));
-        double y = ((((1.330274429 * k - 1.821255978) * k + 1.781477937) *
-                k - 0.356563782) * k + 0.319381530) * k;
-        y = 1.0 - 0.3989422803 * Math.exp(-0.5 * x * x) * y;
-
-        return (1 - neg) * y + neg * (1d - y);
-    }
-
-    /**
-     * Chi-distribution PDF
-     *
-     * @param dof   Degree of freedom
-     * @param x     The point of evaluation
-     * @param lngam LNGAM(N) is LN(GAMMA(N/2))
-     * @return The PDF of the Chi^2 distribution with N degrees of freedom for N &lt;= 50, evaluated at C
-     */
-    private static double chiSquaredPDF(int dof, double x, double[] lngam) {
-        double dof2 = ((double) dof) / 2.0;
-        double lng = 0.0;
-        if (dof > LNGAM.length) {
-            lng = Gamma.logGammaFunction(dof2);
-        } else {
-            lng = lngam[dof - 1];
+    public static double computeRinott(int numTreatments, int dof, double pStar){
+        if (rinott == null){
+            rinott = new Rinott();
         }
-        double tmp = -dof2 * Math.log(2d) - lngam[dof - 1] + (dof2 - 1d) * Math.log(x) - x / 2.;
-        return Math.exp(tmp);
-    }
-
-    static private final double[] X = {.44489365833267018419E-1,
-            .23452610951961853745,
-            .57688462930188642649,
-            .10724487538178176330E1,
-            .17224087764446454411E1,
-            .25283367064257948811E1,
-            .34922132730219944896E1,
-            .46164567697497673878E1,
-            .59039585041742439466E1,
-            .73581267331862411132E1,
-            .89829409242125961034E1,
-            .10783018632539972068E2,
-            .12763697986742725115E2,
-            .14931139755522557320E2,
-            .17292454336715314789E2,
-            .19855860940336054740E2,
-            .22630889013196774489E2,
-            .25628636022459247767E2,
-            .28862101816323474744E2,
-            .32346629153964737003E2,
-            .36100494805751973804E2,
-            .40145719771539441536E2,
-            .44509207995754937976E2,
-            .49224394987308639177E2,
-            .54333721333396907333E2,
-            .59892509162134018196E2,
-            .65975377287935052797E2,
-            .72687628090662708639E2,
-            .80187446977913523067E2,
-            .88735340417892398689E2,
-            .98829542868283972559E2,
-            .11175139809793769521E3};
-
-    static private final double[] LNGAM = new double[50];
-    static private final double[] WEX = new double[32];
-
-    static {
-        final double[] W = {.10921834195238497114,
-                .21044310793881323294,
-                .23521322966984800539,
-                .19590333597288104341,
-                .12998378628607176061,
-                .70578623865717441560E-1,
-                .31760912509175070306E-1,
-                .11918214834838557057E-1,
-                .37388162946115247897E-2,
-                .98080330661495513223E-3,
-                .21486491880136418802E-3,
-                .39203419679879472043E-4,
-                .59345416128686328784E-5,
-                .74164045786675522191E-6,
-                .76045678791207814811E-7,
-                .63506022266258067424E-8,
-                .42813829710409288788E-9,
-                .23058994918913360793E-10,
-                .97993792887270940633E-12,
-                .32378016577292664623E-13,
-                .81718234434207194332E-15,
-                .15421338333938233722E-16,
-                .21197922901636186120E-18,
-                .20544296737880454267E-20,
-                .13469825866373951558E-22,
-                .56612941303973593711E-25,
-                .14185605454630369059E-27,
-                .19133754944542243094E-30,
-                .11922487600982223565E-33,
-                .26715112192401369860E-37,
-                .13386169421062562827E-41,
-                .45105361938989742322E-47
-        };
-        for (int i = 1; i <= 32; ++i) {
-            WEX[i - 1] = W[i - 1] * Math.exp(X[i - 1]);
-//            System.out.printf("wex[%d] = %f %n", (i-1), WEX[i-1]);
-        }
-//        System.out.println();
-        LNGAM[0] = 0.5723649429;
-        LNGAM[1] = 0.0;
-        for (int i = 2; i <= 25; ++i) {
-            LNGAM[2 * i - 2] = Math.log(i - 1.5) + LNGAM[2 * i - 4];
-            LNGAM[2 * i - 1] = Math.log(i - 1.0) + LNGAM[2 * i - 3];
-        }
-        for (int i = 0; i < LNGAM.length; i++) {
-            System.out.printf("LNGAM[%d] = %f %n", i, LNGAM[i]);
-        }
-
-        System.out.println();
-
-        for (int i = 0; i < LNGAM.length; i++) {
-            LNGAM[i] = Gamma.logGammaFunction((i + 1.0) / 2.0);
-            System.out.printf("LNGAM[%d] = %f %n", i, LNGAM[i]);
-        }
-    }
-
-    /**
-     * Computes the Rinott Constant
-     *
-     * @param T     Number of systems
-     * @param PSTAR 1 - alpha, i.e. Power of the test. Usually set to 0.95
-     * @param NU    Stage-0 sample size - 1
-     * @return The Rinott Constant
-     */
-    public static double rinott(int T, double PSTAR, int NU) {
-//        double LNGAM[] = new double[50];
-        NU = Math.min(NU, 50);
-//        double WEX[] = new double [32];
-
-//j
-        double DUMMY = 1.0;//TODO does not appear to do anything
-
-//        if (true) return Double.NaN;
-        //TODO this looks like bisection search
-        double H = 4.0;
-        double LOWERH = 0.0;
-        double UPPERH = 20.00;
-        double ANS = 0.0, TMP = 0.0;
-        for (int LOOPH = 1; LOOPH <= 50; ++LOOPH) {
-            ANS = 0.0;
-            for (int j = 1; j <= 32; ++j) {
-                TMP = 0.0;
-                for (int i = 1; i <= 32; ++i) {
-                    double z = H / Math.sqrt(NU * (1d / X[i - 1] + 1d / X[j - 1]) / DUMMY);
-                    double zcdf = Normal.stdNormalCDF(z);
-                    TMP = TMP + WEX[i - 1]
-                            * zcdf
-                            * chiSquaredPDF(NU, DUMMY * X[i - 1], LNGAM) * DUMMY;
-//                    TMP = TMP + WEX[i - 1]
-//                            * cumZCDF(z)
-//                            * chiSquaredPDF(NU, DUMMY * X[i - 1], LNGAM) * DUMMY;
-                }
-                TMP = Math.pow(TMP, T - 1);
-                ANS = ANS + WEX[j - 1] * TMP * chiSquaredPDF(NU, DUMMY * X[j - 1], LNGAM) * DUMMY;
-            }
-            if (Math.abs(ANS - PSTAR) <= 0.000001) {
-                return H;
-            } else if (ANS > PSTAR) {
-                UPPERH = H;
-                H = (LOWERH + UPPERH) / 2.0d;
-            } else {
-                LOWERH = H;
-                H = (LOWERH + UPPERH) / 2.0d;
-            }
-        }
-        return H;
-    }
-
-    public static double rinott2(int T, double PSTAR, int NU) {
-        NU = Math.min(NU, 50);
-        double H = 4.0;
-        double LOWERH = 0.0;
-        double UPPERH = 20.00;
-        for (int LOOPH = 1; LOOPH <= 50; ++LOOPH) {
-            double ANS = rinottIntegral(T, NU, H);
-            if (Math.abs(ANS - PSTAR) <= 0.000001) {
-                return H;
-            } else if (ANS > PSTAR) {
-                UPPERH = H;
-                H = (LOWERH + UPPERH) / 2.0d;
-            } else {
-                LOWERH = H;
-                H = (LOWERH + UPPERH) / 2.0d;
-            }
-        }
-        return H;
-    }
-
-    private static double rinottIntegral(int numTreatments, int dof, double x) {
-        double ans = 0.0;
-        for (int j = 1; j <= WEX.length; ++j) {
-            double tmp = 0.0;
-            for (int i = 1; i <= WEX.length; ++i) {
-                double z = x / Math.sqrt(dof * (1d / X[i - 1] + 1d / X[j - 1]));
-                double zcdf = Normal.stdNormalCDF(z);
-                double chi2pdf = chiSquaredPDF(dof, X[i - 1], LNGAM);
-                tmp = tmp + WEX[i - 1] * zcdf * chi2pdf;
-            }
-            tmp = Math.pow(tmp, numTreatments - 1);
-            ans = ans + WEX[j - 1] * tmp * chiSquaredPDF(dof, X[j - 1], LNGAM);
-        }
-        return ans;
+        return rinott.findRinottConstant(numTreatments, dof, pStar);
     }
 
     public static void main(String args[]) {
-//        LinkedHashMap<String, double[]> data = new LinkedHashMap<>();
-//        double[] d1 = {63.72, 32.24, 40.28, 36.94, 36.29, 56.94, 34.10, 63.36, 49.29, 87.20};
-//        double[] d2 = {63.06, 31.78, 40.32, 37.71, 36.79, 57.93, 33.39, 62.92, 47.67, 80.79};
-//        double[] d3 = {57.74, 29.65, 36.52, 35.71, 33.81, 51.54, 31.39, 57.24, 42.63, 67.27};
-//        double[] d4 = {62.63, 31.56, 39.87, 37.35, 36.65, 57.15, 33.30, 62.21, 47.46, 79.60};
-//        data.put("One", d1);
-//        data.put("Two", d2);
-//        data.put("Three", d3);
-//        data.put("Four", d4);
-//
-//        MultipleComparisonAnalyzer mca = new MultipleComparisonAnalyzer(data);
-//
-//        PrintWriter out = new PrintWriter(System.out, true);
-//        mca.writeDataAsCSVFile(out);
-//        out.println();
-//
-//        System.out.println(mca);
-//
-//        System.out.println("num data sets: " + mca.getNumberDatasets());
-//        System.out.println(Arrays.toString(mca.getDataNames()));
+        LinkedHashMap<String, double[]> data = new LinkedHashMap<>();
+        double[] d1 = {63.72, 32.24, 40.28, 36.94, 36.29, 56.94, 34.10, 63.36, 49.29, 87.20};
+        double[] d2 = {63.06, 31.78, 40.32, 37.71, 36.79, 57.93, 33.39, 62.92, 47.67, 80.79};
+        double[] d3 = {57.74, 29.65, 36.52, 35.71, 33.81, 51.54, 31.39, 57.24, 42.63, 67.27};
+        double[] d4 = {62.63, 31.56, 39.87, 37.35, 36.65, 57.15, 33.30, 62.21, 47.46, 79.60};
+        data.put("One", d1);
+        data.put("Two", d2);
+        data.put("Three", d3);
+        data.put("Four", d4);
 
-        testRinott();
+        MultipleComparisonAnalyzer mca = new MultipleComparisonAnalyzer(data);
+
+        PrintWriter out = new PrintWriter(System.out, true);
+        mca.writeDataAsCSVFile(out);
+        out.println();
+
+        System.out.println(mca);
+
+        System.out.println("num data sets: " + mca.getNumberDatasets());
+        System.out.println(Arrays.toString(mca.getDataNames()));
+
     }
 
-    static public void testRinott() {
 
-        System.out.println("Running rinott");
-        double[] ans = {4.045, 6.057, 6.893, 5.488, 6.878, 8.276, 8.352};
-        double[] p = {.975, .975, .975, .9, .95, 0.975, 0.975};
-        int[] n = {10, 1000, 10000, 1000, 20000, 800000, 1000000};
-        double x = rinott(10, 0.975, 50);
-        System.out.println("rinott1 = " + x);
-        for (int i = 0; i < n.length; ++i) {
-            double result = rinott(n[i], p[i], 50);
-            System.out.printf("ans[%d] = %f, result = %f %n", i, ans[i], result);
-            assert (result > ans[i] - 0.01 && result < ans[i] + 0.3);
-        }
-
-        System.out.println();
-
-        double y = rinott2(10, 0.975, 50);
-        System.out.println("rinott2 = " + y);
-        for (int i = 0; i < n.length; ++i) {
-            double result = rinott2(n[i], p[i], 50);
-            System.out.printf("ans[%d] = %f, result = %f %n", i, ans[i], result);
-            assert (result > ans[i] - 0.01 && result < ans[i] + 0.3);
-        }
-
-        System.out.println();
-        Rinott r = new Rinott();
-        double z = r.findRinottConstant(10, 50, 0.975);
-        System.out.println("rinott3= " + z);
-        for (int i = 0; i < n.length; ++i) {
-            double result = r.findRinottConstant(n[i], 50, p[i]);
-            System.out.printf("ans[%d] = %f, result = %f %n", i, ans[i], result);
-            assert (result > ans[i] - 0.01 && result < ans[i] + 0.3);
-        }
-
-        int[] nu = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 31, 41, 51};
-        int[] t = {2, 3, 4, 5, 6, 7, 8, 9, 10};
-        double[][] rc = new double[nu.length][t.length];
-        for (int j = 0; j < t.length; j++) {
-            for (int i = 0; i < nu.length; i++) {
-                rc[i][j] = r.findRinottConstant(t[j], nu[i], 0.95);
-//                rc[i][j] = rinott2(t[j], 0.95, nu[i]);
-            }
-        }
-        System.out.println();
-        System.out.println();
-
-        JSLArrayUtil.write(rc, new PrintWriter(System.out));
-    }
 }

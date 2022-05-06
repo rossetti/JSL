@@ -2,12 +2,15 @@ package jsl.utilities.statistic;
 
 import jsl.simulation.JSLTooManyIterationsException;
 import jsl.utilities.Interval;
+import jsl.utilities.JSLArrayUtil;
 import jsl.utilities.distributions.Gamma;
 import jsl.utilities.distributions.Normal;
 import jsl.utilities.math.FunctionIfc;
 import jsl.utilities.reporting.JSL;
 import jsl.utilities.rootfinding.BisectionRootFinder;
 import jsl.utilities.rootfinding.RootFinder;
+
+import java.io.PrintWriter;
 
 /**
  * Functions used to calculate Rinott constants
@@ -210,5 +213,45 @@ public class Rinott implements FunctionIfc {
         }
         double tmp = -dof2 * Math.log(2d) - lng + (dof2 - 1d) * Math.log(x) - x / 2.;
         return Math.exp(tmp);
+    }
+
+    public static void main(String args[]) {
+
+        System.out.println("Running rinott");
+        double[] ans = {4.045, 6.057, 6.893, 5.488, 6.878, 8.276, 8.352};
+        double[] p = {.975, .975, .975, .9, .95, 0.975, 0.975};
+        int[] n = {10, 1000, 10000, 1000, 20000, 800000, 1000000};
+        double x = MultipleComparisonAnalyzer.computeRinott(10, 50, 0.975);
+        System.out.println("rinott = " + x);
+        for (int i = 0; i < n.length; ++i) {
+            double result = MultipleComparisonAnalyzer.computeRinott(n[i], 50, p[i]);
+            System.out.printf("ans[%d] = %f, result = %f %n", i, ans[i], result);
+            assert (result > ans[i] - 0.01 && result < ans[i] + 0.3);
+        }
+
+        System.out.println();
+
+        System.out.println();
+        Rinott r = new Rinott();
+        double z = r.findRinottConstant(10, 50, 0.975);
+        System.out.println("rinott3= " + z);
+        for (int i = 0; i < n.length; ++i) {
+            double result = r.findRinottConstant(n[i], 50, p[i]);
+            System.out.printf("ans[%d] = %f, result = %f %n", i, ans[i], result);
+            assert (result > ans[i] - 0.01 && result < ans[i] + 0.3);
+        }
+
+        int[] nu = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 31, 41, 51};
+        int[] t = {2, 3, 4, 5, 6, 7, 8, 9, 10};
+        double[][] rc = new double[nu.length][t.length];
+        for (int j = 0; j < t.length; j++) {
+            for (int i = 0; i < nu.length; i++) {
+                rc[i][j] = r.findRinottConstant(t[j], nu[i], 0.95);
+            }
+        }
+        System.out.println();
+        System.out.println();
+
+        JSLArrayUtil.write(rc, new PrintWriter(System.out));
     }
 }
