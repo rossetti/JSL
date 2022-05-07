@@ -6,6 +6,7 @@ import jsl.utilities.statistic.Statistic;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -1134,6 +1135,15 @@ public class JSLArrayUtil {
      * @return a comma delimited string of the array, if empty or null, returns the empty string
      */
     public static String toCSVString(double[] array) {
+        return toCSVString(array, null);
+    }
+
+    /**
+     * @param format a format to apply to the values of the array when writing the strings
+     * @param array the array to convert
+     * @return a comma delimited string of the array, if empty or null, returns the empty string
+     */
+    public static String toCSVString(double[] array, DecimalFormat format) {
         if (array == null) {
             return "";
         }
@@ -1142,7 +1152,11 @@ public class JSLArrayUtil {
         }
         StringJoiner joiner = new StringJoiner(", ");
         for (int i = 0; i < array.length; i++) {
-            joiner.add(Double.toString(array[i]));
+            if (format == null){
+                joiner.add(Double.toString(array[i]));
+            } else {
+                joiner.add(format.format(array[i]));
+            }
         }
         return joiner.toString();
     }
@@ -1518,10 +1532,21 @@ public class JSLArrayUtil {
      * @param fileName the name of the file, must not be null, file will appear in JSL.getInstance().getOutDir()
      */
     public static void writeToFile(double[] array, String fileName) {
+        writeToFile(array, null, fileName);
+    }
+
+    /**
+     * Writes the data in the array to rows in the file, each row with one data point
+     *
+     * @param df the format to write the array values, may be null
+     * @param array    the array to write, must not be null
+     * @param fileName the name of the file, must not be null, file will appear in JSL.getInstance().getOutDir()
+     */
+    public static void writeToFile(double[] array, DecimalFormat df, String fileName) {
         Objects.requireNonNull(array, "The array must not be null");
         Objects.requireNonNull(fileName, "The path to the file must not be null");
         Path pathToFile = JSL.getInstance().getOutDir().resolve(fileName);
-        writeToFile(array, pathToFile);
+        writeToFile(array, df, pathToFile);
     }
 
     /**
@@ -1531,12 +1556,28 @@ public class JSLArrayUtil {
      * @param pathToFile the path to the file, must not be null
      */
     public static void writeToFile(double[] array, Path pathToFile) {
+        writeToFile(array, null, pathToFile);
+    }
+
+    /**
+     * Writes the data in the array to rows in the file, each row with one data point
+     *
+     * @param df the format to write the array values, may be null
+     * @param array      the array to write, must not be null
+     * @param pathToFile the path to the file, must not be null
+     */
+    public static void writeToFile(double[] array, DecimalFormat df, Path pathToFile) {
         Objects.requireNonNull(array, "The array must not be null");
         Objects.requireNonNull(pathToFile, "The path to the file must not be null");
         PrintWriter out = JSLFileUtil.makePrintWriter(pathToFile);
         for (double x : array) {
-            out.println(x);
+            if (df == null){
+                out.println(x);
+            } else{
+                out.println(df.format(x));
+            }
         }
+        out.flush();
     }
 
     /**
@@ -1547,37 +1588,68 @@ public class JSLArrayUtil {
      * @param fileName the name of the file, must not be null, file will appear in JSL.getInstance().getOutDir()
      */
     public static void writeToFile(double[][] array, String fileName) {
-        Objects.requireNonNull(array, "The array must not be null");
-        Objects.requireNonNull(fileName, "The path to the file must not be null");
-        Path pathToFile = JSL.getInstance().getOutDir().resolve(fileName);
-        writeToFile(array, pathToFile);
+        writeToFile(array, null, fileName);
     }
 
     /**
      * Writes the data in the array to rows in the file, each element in a row is
      * separated by a comma
      *
+     * @param df the format to write the array values, may be null
+     * @param array    the array to write, must not be null
+     * @param fileName the name of the file, must not be null, file will appear in JSL.getInstance().getOutDir()
+     */
+    public static void writeToFile(double[][] array, DecimalFormat df, String fileName) {
+        Objects.requireNonNull(array, "The array must not be null");
+        Objects.requireNonNull(fileName, "The path to the file must not be null");
+        Path pathToFile = JSL.getInstance().getOutDir().resolve(fileName);
+        writeToFile(array, df, pathToFile);
+    }
+
+    /**
+     * Writes the data in the array to rows in the file, each element in a row is
+     * separated by a comma
      * @param array      the array to write, must not be null
      * @param pathToFile the path to the file, must not be null
      */
     public static void writeToFile(double[][] array, Path pathToFile) {
+        writeToFile(array, null, pathToFile);
+    }
+
+    /**
+     * Writes the data in the array to rows in the file, each element in a row is
+     * separated by a comma
+     * @param df the format to write the array values, may be null
+     * @param array      the array to write, must not be null
+     * @param pathToFile the path to the file, must not be null
+     */
+    public static void writeToFile(double[][] array, DecimalFormat df, Path pathToFile) {
         Objects.requireNonNull(array, "The array must not be null");
         Objects.requireNonNull(pathToFile, "The path to the file must not be null");
         PrintWriter out = JSLFileUtil.makePrintWriter(pathToFile);
-        write(array, out);
+        write(array, df, out);
     }
 
     /**  Allows writing directly to a known PrintWriter.  Facilitates writing
      *  to the file before or after the array is written
-     *
      * @param array the array to write, must not be null
      * @param out the PrintWriter to write to, must not be null
      */
     public static void write(double[][] array, PrintWriter out){
+        write(array, null, out);
+    }
+
+    /**  Allows writing directly to a known PrintWriter.  Facilitates writing
+     *  to the file before or after the array is written
+     * @param df the format to write the array values, may be null
+     * @param array the array to write, must not be null
+     * @param out the PrintWriter to write to, must not be null
+     */
+    public static void write(double[][] array, DecimalFormat df, PrintWriter out){
         Objects.requireNonNull(array, "The array must not be null");
         Objects.requireNonNull(out, "The PrintWrite must not be null");
         for (double[] doubles : array) {
-            out.println(toCSVString(doubles));
+            out.println(toCSVString(doubles, df));
         }
         out.flush();
     }

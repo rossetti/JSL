@@ -10,6 +10,7 @@ import jsl.utilities.rootfinding.BisectionRootFinder;
 import jsl.utilities.rootfinding.RootFinder;
 
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 
 /**
  * Functions used to calculate Rinott constants
@@ -27,13 +28,11 @@ import java.io.PrintWriter;
  * Original Fortran code available on the authors' website
  * http://www.stat.osu.edu/~tjs/REB-TJS-DMG/describe.html
  *
- * Converted to Java by Eric Ni, cn254@cornell.edu
- *
  * Revised, May 5, 2022, M. D. Rossetti, rossetti@uark.edu
  */
-public class Rinott implements FunctionIfc {
+public class Rinott {
 
-    static private final double[] X = {.44489365833267018419E-1,
+    private final double[] X = {.44489365833267018419E-1,
             .23452610951961853745,
             .57688462930188642649,
             .10724487538178176330E1,
@@ -66,10 +65,30 @@ public class Rinott implements FunctionIfc {
             .98829542868283972559E2,
             .11175139809793769521E3};
 
-    static private final double[] LNGAM = new double[50];
-    static private final double[] WEX = new double[32];
+    private final double[] LNGAM = new double[50];
+    private final double[] WEX = new double[32];
 
-    static {
+    private final RootFinder myRootFinder = new BisectionRootFinder();
+    private final Interval myInterval = new Interval(0.0, 20.0);
+
+    private double pStar = 0.975;
+    private int dof = 50;
+    private int numTreatments = 10;
+
+    public Rinott() {
+        setupWEXArray();
+        setupLogGammaArray();
+        myRootFinder.setMaximumIterations(200);
+        myRootFinder.setInterval(new SearchFunction(), myInterval);
+    }
+
+    private void setupLogGammaArray(){
+        for (int i = 0; i < LNGAM.length; i++) {
+            LNGAM[i] = Gamma.logGammaFunction((i + 1.0) / 2.0);
+        }
+    }
+
+    private void setupWEXArray(){
         final double[] W = {.10921834195238497114,
                 .21044310793881323294,
                 .23521322966984800539,
@@ -105,42 +124,15 @@ public class Rinott implements FunctionIfc {
         };
         for (int i = 1; i <= 32; ++i) {
             WEX[i - 1] = W[i - 1] * Math.exp(X[i - 1]);
-//            System.out.printf("wex[%d] = %f %n", (i-1), WEX[i-1]);
-        }
-//        System.out.println();
-//        LNGAM[0] = 0.5723649429;
-//        LNGAM[1] = 0.0;
-//        for (int i = 2; i <= 25; ++i) {
-//            LNGAM[2 * i - 2] = Math.log(i - 1.5) + LNGAM[2 * i - 4];
-//            LNGAM[2 * i - 1] = Math.log(i - 1.0) + LNGAM[2 * i - 3];
-//        }
-//        for (int i = 0; i < LNGAM.length; i++) {
-//            System.out.printf("LNGAM[%d] = %f %n", i, LNGAM[i]);
-//        }
-//
-//        System.out.println();
-
-        for (int i = 0; i < LNGAM.length; i++) {
-            LNGAM[i] = Gamma.logGammaFunction((i + 1.0) / 2.0);
-//            System.out.printf("LNGAM[%d] = %f %n", i, LNGAM[i]);
         }
     }
 
-    private final RootFinder myRootFinder = new BisectionRootFinder();
-    private final Interval myInterval = new Interval(0.0, 20.0);
+    private class SearchFunction implements FunctionIfc {
 
-    private double pStar = 0.975;
-    private int dof = 50;
-    private int numTreatments = 10;
-
-    public Rinott() {
-        myRootFinder.setMaximumIterations(200);
-        myRootFinder.setInterval(this, myInterval);
-    }
-
-    @Override
-    public double fx(double x) {
-        return rinottIntegral(x) - pStar;
+        @Override
+        public double fx(double x) {
+            return rinottIntegral(x) - pStar;
+        }
     }
 
     /**
@@ -173,6 +165,10 @@ public class Rinott implements FunctionIfc {
         return (myRootFinder.getResult());
     }
 
+    /**
+     *
+     * @param p the minimum desired probability of correct selection
+     */
     public void setPStar(double p) {
         if ((p <= 0.0) || (p >= 1.0)) {
             throw new IllegalArgumentException("P star in Rinott must be (0,1)");
@@ -180,6 +176,10 @@ public class Rinott implements FunctionIfc {
         pStar = p;
     }
 
+    /**
+     *
+     * @param dof the degrees of freedom, must be greater than or equal to 4
+     */
     public void setDegreesOfFreedom(int dof) {
         if (dof < 4) {
             throw new IllegalArgumentException("Degrees of freedom in Rinott must be >=5");
@@ -187,6 +187,10 @@ public class Rinott implements FunctionIfc {
         this.dof = dof;
     }
 
+    /**
+     *
+     * @param n the number of treatments to compare, must be greater than or equal to 2
+     */
     public void setNumTreatments(int n) {
         if (n <= 1) {
             throw new IllegalArgumentException("Number of treatments in Rinott must be >=2");
@@ -194,6 +198,11 @@ public class Rinott implements FunctionIfc {
         numTreatments = n;
     }
 
+    /**
+     *
+     * @param x the value for evaluation
+     * @return the value of the rinott integral. See page 61 of Bechhofer et al
+     */
     public double rinottIntegral(double x) {
         double ans = 0.0;
         for (int j = 1; j <= WEX.length; ++j) {
@@ -201,11 +210,11 @@ public class Rinott implements FunctionIfc {
             for (int i = 1; i <= WEX.length; ++i) {
                 double z = x / Math.sqrt(dof * (1d / X[i - 1] + 1d / X[j - 1]));
                 double zcdf = Normal.stdNormalCDF(z);
-                double chi2pdf = chiSquaredPDF(dof, X[i - 1], LNGAM);
+                double chi2pdf = chiSquaredPDF(dof, X[i - 1]);
                 tmp = tmp + WEX[i - 1] * zcdf * chi2pdf;
             }
             tmp = Math.pow(tmp, numTreatments - 1);
-            ans = ans + WEX[j - 1] * tmp * chiSquaredPDF(dof, X[j - 1], LNGAM);
+            ans = ans + WEX[j - 1] * tmp * chiSquaredPDF(dof, X[j - 1]);
         }
         return ans;
     }
@@ -215,22 +224,21 @@ public class Rinott implements FunctionIfc {
      *
      * @param dof   Degree of freedom
      * @param x     The point of evaluation
-     * @param lngam LNGAM(dof) is LN(GAMMA(dof/2))
      * @return The PDF of the Chi^2 distribution with dof of freedom
      */
-    private static double chiSquaredPDF(int dof, double x, double[] lngam) {
+    private double chiSquaredPDF(int dof, double x) {
         double dof2 = ((double) dof) / 2.0;
         double lng = 0.0;
         if (dof > LNGAM.length) {
             lng = Gamma.logGammaFunction(dof2);
         } else {
-            lng = lngam[dof - 1];
+            lng = LNGAM[dof - 1];
         }
         double tmp = -dof2 * Math.log(2d) - lng + (dof2 - 1d) * Math.log(x) - x / 2.;
         return Math.exp(tmp);
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
 
         System.out.println("Running rinott");
         double[] ans = {4.045, 6.057, 6.893, 5.488, 6.878, 8.276, 8.352};
@@ -263,6 +271,7 @@ public class Rinott implements FunctionIfc {
         System.out.println();
         System.out.println();
 
-        JSLArrayUtil.write(rc, new PrintWriter(System.out));
+        DecimalFormat df = new DecimalFormat("#.###");
+        JSLArrayUtil.write(rc, df, new PrintWriter(System.out));
     }
 }
