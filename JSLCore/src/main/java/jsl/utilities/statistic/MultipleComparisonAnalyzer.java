@@ -26,6 +26,7 @@ import java.util.*;
 import jsl.utilities.GetNameIfc;
 import jsl.utilities.Interval;
 import jsl.utilities.JSLArrayUtil;
+import jsl.utilities.distributions.Tukey;
 import jsl.utilities.reporting.StatisticReporter;
 
 /**
@@ -1369,6 +1370,16 @@ public class MultipleComparisonAnalyzer implements GetNameIfc {
             rinott = new Rinott();
         }
         return rinott.rinottConstant(numTreatments, pStar, dof);
+    }
+
+    /**
+     * @param p      the probability, typically a confidence level (1-alpha), must be in (0,1)
+     * @param nMeans the number of columns or treatments (means), must be greater than or equal to 2.0
+     * @param dof     the degrees of freedom, must be greater than or equal to 1.0
+     * @return the quantile of the Tukey distribution
+     */
+    public static double qtukey(double p, double nMeans, double dof){
+        return Tukey.invCDF(p, nMeans, dof);
     }
 
     public static void main(String args[]) {
