@@ -59,7 +59,7 @@ public class Interval {
 
     /** A new instance with the same interval settings.
      * 
-     * @return 
+     * @return  A new instance with the same interval settings.
      */
     public final Interval newInstance(){
         return new Interval(this.getLowerLimit(), this.getUpperLimit());
@@ -88,7 +88,7 @@ public class Interval {
     
     /** The width of the interval
      * 
-     * @return 
+     * @return  The width of the interval
      */
     public final double getWidth(){
         return myUpper - myLower;
@@ -96,7 +96,7 @@ public class Interval {
     
     /** Half of the width of the interval
      * 
-     * @return 
+     * @return  Half of the width of the interval
      */
     public final double getHalfWidth(){
         return getWidth()/2.0;
@@ -114,7 +114,7 @@ public class Interval {
     /** Checks if the supplied interval is contained within
      *  this interval
      * 
-     * @param interval
+     * @param interval the interval to check
      * @return true only if both lower and upper limits of supplied interval 
      *  are within this interval
      */
@@ -123,5 +123,27 @@ public class Interval {
             return false;
         }
         return contains(interval.getLowerLimit()) && contains(interval.getUpperLimit());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Interval interval = (Interval) o;
+
+        if (Double.compare(interval.myLower, myLower) != 0) return false;
+        return Double.compare(interval.myUpper, myUpper) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(myLower);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(myUpper);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 }
