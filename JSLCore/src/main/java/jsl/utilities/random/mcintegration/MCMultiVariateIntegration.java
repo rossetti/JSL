@@ -1,21 +1,22 @@
 package jsl.utilities.random.mcintegration;
 
 import jsl.utilities.distributions.Normal;
-import jsl.utilities.math.FunctionIfc;
-import jsl.utilities.random.rvariable.RVariableIfc;
+import jsl.utilities.random.mcmc.FunctionMVIfc;
+import jsl.utilities.random.rvariable.MVIndependentRV;
+import jsl.utilities.random.rvariable.MVRVariableIfc;
 import jsl.utilities.random.rvariable.UniformRV;
 import jsl.utilities.statistic.Statistic;
 
 import java.util.Objects;
 
 /**
- * Provides for the integration of a 1-D function via Monte-Carlo sampling.
+ * Provides for the integration of a multi-dimensional function via Monte-Carlo sampling.
  * The user is responsible for providing a function that when evaluated at the
  * sample from the provided sampler will evaluate to the desired integral over
- * the range of support of the supplied sampler.
+ * the range of possible values of the sampler.
  * <p>
- * The sampler must have the range of support as the desired integration and the function's domain (inputs)
- * must be consistent with the range (output) of the sampler.
+ * The sampler must have the same range as the desired integral and the function's domain (inputs) must be consistent
+ * with the range (output) of the sampler.
  * <p>
  * As an example, suppose we want the evaluation of the integral of g(x) over the range from a to b.
  * If the user selects the sampler as U(a,b) then the function to supply for the integration is NOT g(x).
@@ -46,18 +47,18 @@ import java.util.Objects;
  *
  * Be aware that small desired absolute error may result in large execution times.
  */
-public class MC1DIntegration extends MCIntegration {
+public class MCMultiVariateIntegration extends MCIntegration {
 
-    protected final FunctionIfc myFunction;
-    protected final RVariableIfc mySampler;
-    protected RVariableIfc myAntitheticSampler;
+    protected final FunctionMVIfc myFunction; //TODO generalize to check domain/range
+    protected final MVRVariableIfc mySampler; //TODO generalize to check domain/range
+    protected MVRVariableIfc myAntitheticSampler;
 
     /**
      *
      * @param function the representation of h(x), must not be null
      * @param sampler  the sampler over the interval, must not be null
      */
-    public MC1DIntegration(FunctionIfc function, RVariableIfc sampler) {
+    public MCMultiVariateIntegration(FunctionMVIfc function, MVRVariableIfc sampler) {
         this(function, sampler, true);
     }
 
@@ -67,9 +68,9 @@ public class MC1DIntegration extends MCIntegration {
      * @param sampler  the sampler over the interval, must not be null
      * @param antitheticOptionOn  true represents use of antithetic sampling
      */
-    public MC1DIntegration(FunctionIfc function, RVariableIfc sampler, boolean antitheticOptionOn) {
-        Objects.requireNonNull(sampler, "The RVariableIfc was null!");
-        Objects.requireNonNull(function, "The FunctionIfc was null!");
+    public MCMultiVariateIntegration(FunctionMVIfc function, MVRVariableIfc sampler, boolean antitheticOptionOn) {
+        Objects.requireNonNull(sampler, "The MVRVariableIfc was null!");
+        Objects.requireNonNull(function, "The FunctionMVIfc was null!");
         this.myFunction = function;
         this.mySampler = sampler;
         if (antitheticOptionOn) {
@@ -110,17 +111,19 @@ public class MC1DIntegration extends MCIntegration {
 
     public static void main(String[] args) {
 
-        class SinFunc implements FunctionIfc {
+        class TestFunc implements FunctionMVIfc {
 
-            public double fx(double x) {
-
-                return (Math.PI*Math.sin(x));
+            public double fx(double[] x) {
+                return (4.0*x[0]*x[0]*x[1] + x[1]*x[1]);
             }
 
         }
 
-        SinFunc f = new SinFunc();
-        MC1DIntegration mc = new MC1DIntegration(f, new UniformRV(0.0, Math.PI));
+        TestFunc f = new TestFunc();
+        MVIndependentRV sampler = new MVIndependentRV(2, new UniformRV(0.0, 1.0));
+        MCMultiVariateIntegration mc = new MCMultiVariateIntegration(f, sampler);
+        mc.setConfidenceLevel(0.99);
+        mc.setDesiredAbsError(0.01);
 
         mc.runInitialSample();
         System.out.println(mc);
