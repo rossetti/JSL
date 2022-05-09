@@ -2,6 +2,10 @@ package jsl.utilities.random.mcintegration;
 
 import jsl.utilities.statistic.Statistic;
 
+/**
+ *  Provides an interface for algorithms that perform Monte-Carlo Integration
+ *  See the abstract base class MCIntegration for further information.
+ */
 public interface MCIntegrationIfc {
     /**
      * @param level the desired confidence level
@@ -61,5 +65,4 @@ public interface MCIntegrationIfc {
 
     void setResetStreamOption(boolean resetStreamOptionOn);
 
-    boolean isAntitheticOptionOn();
 }
