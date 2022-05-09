@@ -10,7 +10,7 @@ import jsl.utilities.statistic.Statistic;
  * the range of possible values of the sampler.
  * <p>
  * The sampler must have the same range as the desired integral and the function's domain (inputs) must be consistent
- * with the range (output) of the sampler.
+ * with the range (output) of the sampler. There is no checking if the user does not supply appropriate functions or samplers.
  * <p>
  * As an example, suppose we want the evaluation of the integral of g(x) over the range from a to b.
  * If the user selects the sampler as U(a,b) then the function to supply for the integration is NOT g(x).
