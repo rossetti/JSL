@@ -2,14 +2,19 @@ package jsl.utilities.random.mcintegration;
 
 import jsl.utilities.Interval;
 import jsl.utilities.distributions.Normal;
+import jsl.utilities.random.mcmc.FunctionMVIfc;
+import jsl.utilities.random.rvariable.MVIndependentRV;
+import jsl.utilities.random.rvariable.MVRVariableIfc;
 import jsl.utilities.random.rvariable.RVariableIfc;
 import jsl.utilities.random.rvariable.UniformRV;
 import jsl.utilities.statistic.Statistic;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
- * Provides for the integration of a 1-D function via Monte-Carlo sampling.
+ * Provides for the integration of a multi-dimensional function via Monte-Carlo sampling.
  * The user is responsible for providing a function that when evaluated at the
  * sample from the provided sampler will evaluate to the desired integral over
  * the specified interval.
@@ -47,46 +52,52 @@ import java.util.Objects;
  *
  * Be aware that small desired absolute error may result in large execution times.
  */
-public class MC1DIntegration {
+public class MCIntegration {
 
     private int initialSampleSize = 100;
     private int maxSampleSize = 100000;
     private double desiredAbsError = 0.0001;
     private boolean resetStreamOptionOn = false;
     private final Statistic statistic = new Statistic();
-    private final Interval myInterval;
-    private final MC1DFunctionIfc myFunction;
-    private final MC1DRVariableIfc mySampler;
-    private RVariableIfc myAntitheticSampler;
+    private final List<Interval> myIntervals;
+    private final FunctionMVIfc myFunction; //TODO generalize to check domain/range
+    private final MVRVariableIfc mySampler; //TODO generalize to check domain/range
+    private MVRVariableIfc myAntitheticSampler;
 
     /**
      *
-     * @param interval the interval for the integration, must not be null
+     * @param intervals the intervals for the integration, must not be null
      * @param function the representation of h(x), must not be null
      * @param sampler  the sampler over the interval, must not be null
      */
-    public MC1DIntegration(Interval interval, MC1DFunctionIfc function, MC1DRVariableIfc sampler) {
-        this(interval, function, sampler, true);
+    public MCIntegration(List<Interval> intervals, FunctionMVIfc function, MVRVariableIfc sampler) {
+        this(intervals, function, sampler, true);
     }
 
     /**
      *
-     * @param interval the interval for the integration, must not be null
+     * @param intervals the intervals for the integration, must not be null
      * @param function the representation of h(x), must not be null
      * @param sampler  the sampler over the interval, must not be null
      * @param antitheticOptionOn  true represents use of antithetic sampling
      */
-    public MC1DIntegration(Interval interval, MC1DFunctionIfc function, MC1DRVariableIfc sampler, boolean antitheticOptionOn) {
-        Objects.requireNonNull(interval, "The interval was null!");
+    public MCIntegration(List<Interval> intervals, FunctionMVIfc function, MVRVariableIfc sampler, boolean antitheticOptionOn) {
+        Objects.requireNonNull(intervals, "The interval was null!");
         Objects.requireNonNull(sampler, "The MC1DRVariableIfc was null!");
         Objects.requireNonNull(function, "The MC1DFunctionIfc was null!");
-        if (!interval.equals(sampler.getRange())) {
-            throw new IllegalArgumentException("The sampler does not have the same range as the integration interval!");
+        myIntervals = new ArrayList<>();
+        for(Interval i: intervals){
+            if (i == null){
+                throw new IllegalArgumentException("The list of intervals had a null member!");
+            }
+            myIntervals.add(i);
         }
-        if (!sampler.getRange().equals(function.getDomain())) {
-            throw new IllegalArgumentException("The sampler's range does not match the domain of the function being integrated!");
-        }
-        this.myInterval = interval;
+//        if (!interval.equals(sampler.getRange())) {
+//            throw new IllegalArgumentException("The sampler does not have the same range as the integration interval!");
+//        }
+//        if (!sampler.getRange().equals(function.getDomain())) {
+//            throw new IllegalArgumentException("The sampler's range does not match the domain of the function being integrated!");
+//        }
         this.myFunction = function;
         this.mySampler = sampler;
         if (antitheticOptionOn) {
@@ -270,7 +281,13 @@ public class MC1DIntegration {
         sb.append(System.lineSeparator());
         sb.append("reset Stream OptionOn = ").append(resetStreamOptionOn);
         sb.append(System.lineSeparator());
-        sb.append("Integration Interval = ").append(myInterval);
+        sb.append("Integration Intervals = ");
+        sb.append(System.lineSeparator());
+        int k = 1;
+        for(Interval i: myIntervals){
+            sb.append("interval " + i + " : ");
+            sb.append(i).append(System.lineSeparator());
+        }
         sb.append(System.lineSeparator());
         sb.append("Was absolute error criterion met? = ");
         sb.append(checkRelativeError());
@@ -286,24 +303,26 @@ public class MC1DIntegration {
 
     public static void main(String[] args) {
         double a = 0.0;
-        double b = Math.PI;
+        double b = 1.0;
 
-        class SinFunc implements MC1DFunctionIfc {
+        class TestFunc implements FunctionMVIfc {
 
-            public double fx(double x) {
-
-                return (Math.PI*Math.sin(x));
+            public double fx(double[] x) {
+                return (4.0*x[0]*x[0]*x[1] + x[1]*x[1]);
             }
 
-            @Override
-            public Interval getDomain() {
-                return new Interval(0.0, Math.PI);
-            }
         }
 
-        SinFunc f = new SinFunc();
-        Interval interval = new Interval(0.0, Math.PI);
-        MC1DIntegration mc = new MC1DIntegration(interval, f, new UniformRV(0.0, Math.PI));
+        TestFunc f = new TestFunc();
+        Interval xInterval = new Interval(a, b);
+        Interval yInterval = new Interval(a, b);
+        List<Interval> intervalList = new ArrayList<>();
+        intervalList.add(xInterval);
+        intervalList.add(yInterval);
+        MVIndependentRV sampler = new MVIndependentRV(2, new UniformRV(0.0, 1.0));
+        MCIntegration mc = new MCIntegration(intervalList, f, sampler);
+        mc.setConfidenceLevel(0.99);
+        mc.setDesiredAbsError(0.01);
 
         mc.runInitialSample();
         System.out.println(mc);

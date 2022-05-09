@@ -155,7 +155,7 @@ public class CrudeMCIntegral {
 
         SinFunc f = new SinFunc();
         CrudeMCIntegral mc = new CrudeMCIntegral(a, b, f);
-        mc.runAll(100);
+        mc.runAll(20050);
         System.out.println(mc);
 
         mc.runAll(100, false);

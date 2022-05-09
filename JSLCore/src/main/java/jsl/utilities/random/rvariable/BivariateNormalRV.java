@@ -176,4 +176,9 @@ public class BivariateNormalRV extends AbstractMVRVariable {
     public final MVRVariableIfc newInstance(RNStreamIfc rng) {
         return new BivariateNormalRV(myMu1, myVar1, myMu2, myVar2, myRho, rng);
     }
+
+    @Override
+    public MVRVariableIfc newAntitheticInstance() {
+        return new BivariateNormalRV(myMu1, myVar1, myMu2, myVar2, myRho, myRNG.newAntitheticInstance());
+    }
 }

@@ -718,7 +718,7 @@ public class Statistic extends AbstractStatistic {
         sb.append("Last value collected ");
         sb.append(getLastValue());
         sb.append(System.lineSeparator());
-        sb.append(System.lineSeparator());
+//        sb.append(System.lineSeparator());
         sb.append("Kurtosis ");
         sb.append(getKurtosis());
         sb.append(System.lineSeparator());

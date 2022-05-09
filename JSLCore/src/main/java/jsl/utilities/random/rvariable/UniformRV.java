@@ -16,12 +16,14 @@
 
 package jsl.utilities.random.rvariable;
 
+import jsl.utilities.Interval;
+import jsl.utilities.random.mcintegration.MC1DRVariableIfc;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
  * Continuous uniform(min, max) random variable
  */
-public final class UniformRV extends AbstractRVariable {
+public final class UniformRV extends AbstractRVariable implements MC1DRVariableIfc {
 
     private final double min;
     private final double max;
@@ -85,6 +87,11 @@ public final class UniformRV extends AbstractRVariable {
     protected double generate() {
         double v = JSLRandom.rUniform(min, max, myRNStream);
         return v;
+    }
+
+    @Override
+    public Interval getRange() {
+        return new Interval(min, max);
     }
 
     /**

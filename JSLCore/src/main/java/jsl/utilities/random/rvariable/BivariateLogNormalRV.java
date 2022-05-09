@@ -124,7 +124,6 @@ public class BivariateLogNormalRV extends AbstractMVRVariable {
         myBVN = new BivariateNormalRV(mean1, var1, mean2, var2, rho, rng);
     }
 
-
     /**
      * Gets the first mean
      *
@@ -194,5 +193,10 @@ public class BivariateLogNormalRV extends AbstractMVRVariable {
     @Override
     public MVRVariableIfc newInstance(RNStreamIfc rng) {
         return new BivariateLogNormalRV(myMu1, myVar1, myMu2, myVar2, myRho, rng);
+    }
+
+    @Override
+    public MVRVariableIfc newAntitheticInstance() {
+        return new BivariateLogNormalRV(myMu1, myVar1, myMu2, myVar2, myRho, myRNG.newAntitheticInstance());
     }
 }

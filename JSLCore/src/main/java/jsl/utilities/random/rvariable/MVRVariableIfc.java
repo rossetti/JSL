@@ -40,4 +40,8 @@ public interface MVRVariableIfc extends RNStreamControlIfc,
         return newInstance(JSLRandom.nextRNStream());
     }
 
+    /**
+     * @return a new instance with same parameter value, but that has antithetic variates
+     */
+    MVRVariableIfc newAntitheticInstance();
 }
