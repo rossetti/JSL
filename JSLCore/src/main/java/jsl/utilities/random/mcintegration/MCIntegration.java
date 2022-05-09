@@ -17,11 +17,10 @@ import java.util.Objects;
  * Provides for the integration of a multi-dimensional function via Monte-Carlo sampling.
  * The user is responsible for providing a function that when evaluated at the
  * sample from the provided sampler will evaluate to the desired integral over
- * the specified interval.
+ * the range of possible values of the sampler.
  * <p>
- * The sampler must have the same range as the specified
- * interval and the function's domain (inputs) must be consistent with the range (output)
- * of the sampler.
+ * The sampler must have the same range as the desired integral and the function's domain (inputs) must be consistent
+ * with the range (output) of the sampler.
  * <p>
  * As an example, suppose we want the evaluation of the integral of g(x) over the range from a to b.
  * If the user selects the sampler as U(a,b) then the function to supply for the integration is NOT g(x).
@@ -59,45 +58,28 @@ public class MCIntegration {
     private double desiredAbsError = 0.0001;
     private boolean resetStreamOptionOn = false;
     private final Statistic statistic = new Statistic();
-    private final List<Interval> myIntervals;
     private final FunctionMVIfc myFunction; //TODO generalize to check domain/range
     private final MVRVariableIfc mySampler; //TODO generalize to check domain/range
     private MVRVariableIfc myAntitheticSampler;
 
     /**
      *
-     * @param intervals the intervals for the integration, must not be null
      * @param function the representation of h(x), must not be null
      * @param sampler  the sampler over the interval, must not be null
      */
-    public MCIntegration(List<Interval> intervals, FunctionMVIfc function, MVRVariableIfc sampler) {
-        this(intervals, function, sampler, true);
+    public MCIntegration(FunctionMVIfc function, MVRVariableIfc sampler) {
+        this(function, sampler, true);
     }
 
     /**
      *
-     * @param intervals the intervals for the integration, must not be null
      * @param function the representation of h(x), must not be null
      * @param sampler  the sampler over the interval, must not be null
      * @param antitheticOptionOn  true represents use of antithetic sampling
      */
-    public MCIntegration(List<Interval> intervals, FunctionMVIfc function, MVRVariableIfc sampler, boolean antitheticOptionOn) {
-        Objects.requireNonNull(intervals, "The interval was null!");
+    public MCIntegration(FunctionMVIfc function, MVRVariableIfc sampler, boolean antitheticOptionOn) {
         Objects.requireNonNull(sampler, "The MC1DRVariableIfc was null!");
         Objects.requireNonNull(function, "The MC1DFunctionIfc was null!");
-        myIntervals = new ArrayList<>();
-        for(Interval i: intervals){
-            if (i == null){
-                throw new IllegalArgumentException("The list of intervals had a null member!");
-            }
-            myIntervals.add(i);
-        }
-//        if (!interval.equals(sampler.getRange())) {
-//            throw new IllegalArgumentException("The sampler does not have the same range as the integration interval!");
-//        }
-//        if (!sampler.getRange().equals(function.getDomain())) {
-//            throw new IllegalArgumentException("The sampler's range does not match the domain of the function being integrated!");
-//        }
         this.myFunction = function;
         this.mySampler = sampler;
         if (antitheticOptionOn) {
@@ -283,11 +265,6 @@ public class MCIntegration {
         sb.append(System.lineSeparator());
         sb.append("Integration Intervals = ");
         sb.append(System.lineSeparator());
-        int k = 1;
-        for(Interval i: myIntervals){
-            sb.append("interval " + i + " : ");
-            sb.append(i).append(System.lineSeparator());
-        }
         sb.append(System.lineSeparator());
         sb.append("Was absolute error criterion met? = ");
         sb.append(checkRelativeError());
@@ -302,8 +279,6 @@ public class MCIntegration {
     }
 
     public static void main(String[] args) {
-        double a = 0.0;
-        double b = 1.0;
 
         class TestFunc implements FunctionMVIfc {
 
@@ -314,13 +289,8 @@ public class MCIntegration {
         }
 
         TestFunc f = new TestFunc();
-        Interval xInterval = new Interval(a, b);
-        Interval yInterval = new Interval(a, b);
-        List<Interval> intervalList = new ArrayList<>();
-        intervalList.add(xInterval);
-        intervalList.add(yInterval);
         MVIndependentRV sampler = new MVIndependentRV(2, new UniformRV(0.0, 1.0));
-        MCIntegration mc = new MCIntegration(intervalList, f, sampler);
+        MCIntegration mc = new MCIntegration(f, sampler);
         mc.setConfidenceLevel(0.99);
         mc.setDesiredAbsError(0.01);
 
