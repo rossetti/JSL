@@ -2,6 +2,7 @@ package jsl.utilities.random.mcintegration;
 
 import jsl.utilities.Interval;
 import jsl.utilities.distributions.Normal;
+import jsl.utilities.math.FunctionIfc;
 import jsl.utilities.random.rvariable.RVariableIfc;
 import jsl.utilities.random.rvariable.UniformRV;
 import jsl.utilities.statistic.Statistic;
@@ -12,11 +13,10 @@ import java.util.Objects;
  * Provides for the integration of a 1-D function via Monte-Carlo sampling.
  * The user is responsible for providing a function that when evaluated at the
  * sample from the provided sampler will evaluate to the desired integral over
- * the specified interval.
+ * the range of support of the supplied sampler.
  * <p>
- * The sampler must have the same range as the specified
- * interval and the function's domain (inputs) must be consistent with the range (output)
- * of the sampler.
+ * The sampler must have the range of support as the desired integration and the function's domain (inputs)
+ * must be consistent with the range (output) of the sampler.
  * <p>
  * As an example, suppose we want the evaluation of the integral of g(x) over the range from a to b.
  * If the user selects the sampler as U(a,b) then the function to supply for the integration is NOT g(x).
@@ -54,39 +54,28 @@ public class MC1DIntegration {
     private double desiredAbsError = 0.0001;
     private boolean resetStreamOptionOn = false;
     private final Statistic statistic = new Statistic();
-    private final Interval myInterval;
-    private final MC1DFunctionIfc myFunction;
-    private final MC1DRVariableIfc mySampler;
+    private final FunctionIfc myFunction;
+    private final RVariableIfc mySampler;
     private RVariableIfc myAntitheticSampler;
 
     /**
      *
-     * @param interval the interval for the integration, must not be null
      * @param function the representation of h(x), must not be null
      * @param sampler  the sampler over the interval, must not be null
      */
-    public MC1DIntegration(Interval interval, MC1DFunctionIfc function, MC1DRVariableIfc sampler) {
-        this(interval, function, sampler, true);
+    public MC1DIntegration(FunctionIfc function, RVariableIfc sampler) {
+        this(function, sampler, true);
     }
 
     /**
      *
-     * @param interval the interval for the integration, must not be null
      * @param function the representation of h(x), must not be null
      * @param sampler  the sampler over the interval, must not be null
      * @param antitheticOptionOn  true represents use of antithetic sampling
      */
-    public MC1DIntegration(Interval interval, MC1DFunctionIfc function, MC1DRVariableIfc sampler, boolean antitheticOptionOn) {
-        Objects.requireNonNull(interval, "The interval was null!");
-        Objects.requireNonNull(sampler, "The MC1DRVariableIfc was null!");
-        Objects.requireNonNull(function, "The MC1DFunctionIfc was null!");
-        if (!interval.equals(sampler.getRange())) {
-            throw new IllegalArgumentException("The sampler does not have the same range as the integration interval!");
-        }
-        if (!sampler.getRange().equals(function.getDomain())) {
-            throw new IllegalArgumentException("The sampler's range does not match the domain of the function being integrated!");
-        }
-        this.myInterval = interval;
+    public MC1DIntegration(FunctionIfc function, RVariableIfc sampler, boolean antitheticOptionOn) {
+        Objects.requireNonNull(sampler, "The RVariableIfc was null!");
+        Objects.requireNonNull(function, "The FunctionIfc was null!");
         this.myFunction = function;
         this.mySampler = sampler;
         if (antitheticOptionOn) {
@@ -270,9 +259,7 @@ public class MC1DIntegration {
         sb.append(System.lineSeparator());
         sb.append("reset Stream OptionOn = ").append(resetStreamOptionOn);
         sb.append(System.lineSeparator());
-        sb.append("Integration Interval = ").append(myInterval);
-        sb.append(System.lineSeparator());
-        sb.append("Was absolute error criterion met? = ");
+        sb.append("Absolute error criterion check? = ");
         sb.append(checkRelativeError());
         sb.append(System.lineSeparator());
         sb.append("Estimated sample size needed to meet criteria = ");
@@ -285,25 +272,18 @@ public class MC1DIntegration {
     }
 
     public static void main(String[] args) {
-        double a = 0.0;
-        double b = Math.PI;
 
-        class SinFunc implements MC1DFunctionIfc {
+        class SinFunc implements FunctionIfc {
 
             public double fx(double x) {
 
                 return (Math.PI*Math.sin(x));
             }
 
-            @Override
-            public Interval getDomain() {
-                return new Interval(0.0, Math.PI);
-            }
         }
 
         SinFunc f = new SinFunc();
-        Interval interval = new Interval(0.0, Math.PI);
-        MC1DIntegration mc = new MC1DIntegration(interval, f, new UniformRV(0.0, Math.PI));
+        MC1DIntegration mc = new MC1DIntegration(f, new UniformRV(0.0, Math.PI));
 
         mc.runInitialSample();
         System.out.println(mc);
