@@ -34,6 +34,15 @@ public interface RandU01Ifc extends GetAntitheticValueIfc, DoubleSupplier {
      */
     double getPrevU01();
 
+    /** Returns the antithetic value of the last U(0,1) drawn.
+     *  This facilitates antithetic sampling methods.
+     *
+     * @return  returns 1.0 - getPrevU01()
+     */
+    default double getAntitheticValue() {
+        return 1.0 - getPrevU01();
+    }
+
     /**
      *
      * @return the generated random number using randU01()

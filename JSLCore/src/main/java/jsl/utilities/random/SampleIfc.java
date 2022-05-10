@@ -27,7 +27,7 @@ public interface SampleIfc {
      * Generates a random generate of the give size
      *
      * @param sampleSize the amount to fill
-     * @return A array holding the generate
+     * @return A array holding the generated values
      */
     default double[] sample(int sampleSize) {
         double[] x = new double[sampleSize];
