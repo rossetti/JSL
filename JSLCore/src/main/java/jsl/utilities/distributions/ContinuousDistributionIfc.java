@@ -21,10 +21,12 @@
 
 package jsl.utilities.distributions;
 
-/** Represents a continous probability distribution function
+import jsl.utilities.random.rvariable.GetRVariableIfc;
+
+/** Represents a continuous probability distribution function
  *
  * @author rossetti
  */
-public interface ContinuousDistributionIfc extends CDFIfc, PDFIfc, DomainIfc {
+public interface ContinuousDistributionIfc extends CDFIfc, PDFIfc, GetRVariableIfc {
 
 }

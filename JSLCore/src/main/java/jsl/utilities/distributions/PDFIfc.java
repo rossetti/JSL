@@ -25,7 +25,7 @@ package jsl.utilities.distributions;
  *
  * @author rossetti
  */
-public interface PDFIfc {
+public interface PDFIfc extends DomainIfc {
 
     /** Returns the f(x) where f represents the probability
      * density function for the distribution.  Note this is not
