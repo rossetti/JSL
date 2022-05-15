@@ -650,6 +650,27 @@ public class JSLArrayUtil {
     }
 
     /**
+     *
+     * @param array the array to check
+     * @return true if the number of rows equals the number of columns
+     */
+    public static boolean isSquare(double[][] array){
+        Objects.requireNonNull(array, "The array was null");
+        if (array.length == 0) {
+            return false; // no rows can't be rectangular
+        }
+        // must be rectangular and nc = nr
+        if (isRectangular(array)){
+            int nc = array[0].length; // number of columns in first row, all rows must have this
+            int nr = array.length;
+            return nc == nr;
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
      * An array is rectangular if all rows have the same number of elements (columns).
      *
      * @param array the array to check
