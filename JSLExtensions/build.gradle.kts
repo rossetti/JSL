@@ -39,17 +39,17 @@ dependencies {
     // this permits changes to the JSLCore to be immediately reflected in JSLExtensions
 	api(project(":JSLCore"))
 
-    api(group = "com.opencsv", name = "opencsv", version = "5.5.2")
+    api(group = "com.opencsv", name = "opencsv", version = "5.6")
 
     api(group = "org.apache.commons", name = "commons-math3", version = "3.6.1")
 
 //    api(group = "commons-io", name = "commons-io", version = "2.11.0")
 
     // https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-core
-    api(group = "tech.tablesaw", name = "tablesaw-core", version =  "0.42.0")
+    api(group = "tech.tablesaw", name = "tablesaw-core", version =  "0.43.1")
 
     // https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-jsplot
-    api(group = "tech.tablesaw", name = "tablesaw-jsplot", version = "0.42.0")
+    api(group = "tech.tablesaw", name = "tablesaw-jsplot", version = "0.43.1")
 
     // https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-excel
     // no documentation available
@@ -67,7 +67,7 @@ dependencies {
 //    api(group = "com.d3xsystems", name = "d3x-morpheus-db", version = "1.0.31")
 //    api(group = "com.d3xsystems", name = "d3x-morpheus-excel", version = "1.0.31")
 
-    api(group = "com.google.guava", name = "guava", version = "31.0.1-jre")
+    api(group = "com.google.guava", name = "guava", version = "31.1-jre")
 
     // https://db.apache.org/derby/releases/release-10.15.1.3.cgi#New+Features
     implementation(group = "org.apache.derby", name = "derby", version = "10.15.2.0")
@@ -75,20 +75,20 @@ dependencies {
     implementation(group = "org.apache.derby", name = "derbyclient", version = "10.15.2.0")
     implementation(group = "org.apache.derby", name = "derbytools", version = "10.15.2.0")
 
-    implementation(group = "org.postgresql", name = "postgresql", version = "42.3.1")
+    implementation(group = "org.postgresql", name = "postgresql", version = "42.3.5")
     
     implementation(group = "org.xerial", name = "sqlite-jdbc", version = "3.36.0.3")
 
     implementation(group = "com.zaxxer", name = "HikariCP", version = "5.0.1")
 
     // https://mvnrepository.com/artifact/org.jooq/jooq
-    api(group = "org.jooq", name = "jooq", version = "3.16.1")
+    api(group = "org.jooq", name = "jooq", version = "3.16.6")
     // https://mvnrepository.com/artifact/org.jooq/jooq-meta
-    api(group = "org.jooq", name = "jooq-meta", version = "3.16.1")
+    api(group = "org.jooq", name = "jooq-meta", version = "3.16.6")
     // https://mvnrepository.com/artifact/org.jooq/jooq-codegen
-    api(group = "org.jooq", name = "jooq-codegen", version = "3.16.1")
+    api(group = "org.jooq", name = "jooq-codegen", version = "3.16.6")
     // this is to use jooq code generation from script
-    runtimeOnly(group = "org.jooq", name = "jooq-meta-extensions", version = "3.16.1")
+    runtimeOnly(group = "org.jooq", name = "jooq-meta-extensions", version = "3.16.6")
 
     // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
 //    api(group = "javax.xml.bind", name = "jaxb-api", version = "2.3.1")
@@ -102,9 +102,9 @@ dependencies {
 
     //TODO work to update version of POI or consider using https://github.com/dhatim/fastexcel/ instead
     // https://mvnrepository.com/artifact/org.apache.poi/poi
-    api(group = "org.apache.poi", name = "poi", version = "5.2.0")
+    api(group = "org.apache.poi", name = "poi", version = "5.2.2")
     // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
-    api(group = "org.apache.poi", name = "poi-ooxml", version = "5.2.0")
+    api(group = "org.apache.poi", name = "poi-ooxml", version = "5.2.2")
 
     // include local jar files found in libs folder in the compile
     implementation(fileTree(baseDir = "libs"))
