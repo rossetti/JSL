@@ -74,6 +74,10 @@ public class Tukey {
             double result = cdf(x[i], nMeans, df);
             System.out.printf("nMeans = %f \t df =%f \t x = %f \t result = %f %n", nMeans, df, x[i], result);
         }
+
+        // matches Table 8.1 of Goldsman and Nelson chapter 8, table 8.1
+        double q = invCDF(0.95, 4, 20);
+        System.out.printf("p = %f \t df = %f \t k =%f \t result = %f %n", 0.95, 20.0, 4.0, q);
     }
 
     private static double qTukeyEPS = 0.0001;
