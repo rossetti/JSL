@@ -11,6 +11,8 @@ import jsl.utilities.random.rng.RNStreamIfc;
 import jsl.utilities.random.rvariable.JSLRandom;
 import jsl.utilities.random.rvariable.MVIndependentRV;
 import jsl.utilities.random.rvariable.UniformRV;
+import jsl.utilities.rootfinding.BisectionRootFinder;
+import jsl.utilities.rootfinding.StochasticApproximationRootFinder;
 import jsl.utilities.statistic.Statistic;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.linear.CholeskyDecomposition;
@@ -245,7 +247,60 @@ public class CentralMVTDistribution {
         return sum;
     }
 
+    private double qmvt(double level, Interval startingInterval){
+        Objects.requireNonNull(startingInterval, "The starting interval was null");
+        if ((level <= 0.0) || (level >= 1.0)) {
+            throw new IllegalArgumentException("Confidence Level must be (0,1)");
+        }
+        // set integration limits
+        double ll = startingInterval.getLowerLimit();
+        double ul = startingInterval.getUpperLimit();
+        setLowerLimits(Double.NEGATIVE_INFINITY);
+        setLowerLimits(-4.0);
+        setUpperLimits(4);
+        RootFunction rf = new RootFunction(level);
+//        BisectionRootFinder finder = new BisectionRootFinder(rf, ll, ul);
+        StochasticApproximationRootFinder finder = new StochasticApproximationRootFinder(rf, ll, ul);
+        finder.setInitialPoint((ll+ul)/2.0);
+        finder.setDesiredPrecision(0.001);
+        finder.setMaxIterations(10000);
+//        finder.evaluate();
+//        double result = finder.getResult();
+        finder.run();
+        double result = finder.getRoot();
+        System.out.println(finder);
+        return result;
+    }
+
+    private void setLowerLimits(double value){
+        Arrays.fill(a, value);
+    }
+
+    private void setUpperLimits(double value){
+        Arrays.fill(b, value);
+    }
+
+    private class RootFunction implements FunctionIfc{
+        double confidLevel = 0.95;
+
+        public RootFunction(double confidLevel) {
+            this.confidLevel = confidLevel;
+        }
+
+        @Override
+        public double fx(double x) {
+            setUpperLimits(x);
+            double cdfofx = integrator.evaluate();
+            return cdfofx - confidLevel;
+        }
+    }
+
     public static void main(String[] args) {
+        testCDF();
+        testQuantile();
+    }
+
+    static public void testCDF(){
         double[][] cov = {
                 {1.0, 1.0, 1.0, 1.0, 1.0},
                 {1.0, 2.0, 2.0, 2.0, 2.0},
@@ -268,9 +323,59 @@ public class CentralMVTDistribution {
         System.out.println(d);
         System.out.println();
         double v = d.cdf(intervals);
+        System.out.println("Answer should be = 0.447862");
         System.out.println("v = " + v);
         System.out.println();
         System.out.println(d.getCDFCalculationStatistics());
+    }
+
+    static public void testQuantile(){
+        double[][] cov = {
+                {1.0, 0.5, 0.5},
+                {0.5, 1.0, 0.5},
+                {0.5, 0.5, 1.0},
+        };
+
+        CentralMVTDistribution d = new CentralMVTDistribution(20.0, cov);
+        d.setMaxSampleSize(1000000);
+        Interval i1 = new Interval(Double.NEGATIVE_INFINITY, 2.19);
+        Interval i2 = new Interval(Double.NEGATIVE_INFINITY, 2.19);
+        Interval i3 = new Interval(Double.NEGATIVE_INFINITY, 2.19);
+        List<Interval> intervals = new ArrayList<>();
+        intervals.add(i1);
+        intervals.add(i2);
+        intervals.add(i3);
+        System.out.println(d);
+        System.out.println();
+        double v = d.cdf(intervals);
+        System.out.println("Integral should evaluate to 0.95");
+        System.out.println("v = " + v);
+        System.out.println();
+        System.out.println(d.getCDFCalculationStatistics());
+
+        d = new CentralMVTDistribution(2.0, cov);
+        d.setMaxSampleSize(1000000);
+        i1 = new Interval(Double.NEGATIVE_INFINITY, 4.34);
+        i2 = new Interval(Double.NEGATIVE_INFINITY, 4.34);
+        i3 = new Interval(Double.NEGATIVE_INFINITY, 4.34);
+        List<Interval> intervals2 = new ArrayList<>();
+        intervals2.add(i1);
+        intervals2.add(i2);
+        intervals2.add(i3);
+        System.out.println(d);
+        System.out.println();
+       v = d.cdf(intervals2);
+        System.out.println("Integral should evaluate to 0.95");
+        System.out.println("v = " + v);
+        System.out.println();
+        System.out.println(d.getCDFCalculationStatistics());
+
+        System.out.println();
+
+        //TODO does not work
+//        double result = d.qmvt(0.95, new Interval(2.0, 2.5));
+//        System.out.println();
+//        System.out.println("Result = " + result);
 
     }
 

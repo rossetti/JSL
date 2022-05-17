@@ -273,8 +273,11 @@ public abstract class IPRootFinder extends IterativeProcess<RootFinderStep> {
         double fL = f.fx(xLower);
         double fU = f.fx(xUpper);
 
-        if (fL * fU > 0.0)
-            throw new IllegalArgumentException("There is no root in the provided interval");
+        if (fL * fU > 0.0){
+            String s = String.format("There was no root in the interval [%f, %f] %n with function values [%f, %f]",
+                    xLower, xUpper, fL, fU);
+            throw new IllegalArgumentException(s);
+        }
 
         if (myInterval == null)
             myInterval = new Interval(xLower, xUpper);
@@ -301,7 +304,7 @@ public abstract class IPRootFinder extends IterativeProcess<RootFinderStep> {
      */
     public void setInitialPoint(double initialPt) {
         if (!myInterval.contains(initialPt))
-            throw new IllegalArgumentException("The intial point is not in the interval");
+            throw new IllegalArgumentException("The initial point is not in the interval");
         myInitialPt = initialPt;
     }
 
