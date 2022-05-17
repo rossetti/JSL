@@ -4,6 +4,12 @@ import jsl.utilities.Interval;
 import jsl.utilities.JSLArrayUtil;
 import jsl.utilities.distributions.Gamma;
 import jsl.utilities.distributions.Normal;
+import jsl.utilities.math.FunctionIfc;
+import jsl.utilities.random.mcintegration.MCMultiVariateIntegration;
+import jsl.utilities.random.mcmc.FunctionMVIfc;
+import jsl.utilities.random.rng.RNStreamIfc;
+import jsl.utilities.random.rvariable.JSLRandom;
+import jsl.utilities.random.rvariable.MVIndependentRV;
 import jsl.utilities.random.rvariable.UniformRV;
 import jsl.utilities.statistic.Statistic;
 import org.apache.commons.math3.distribution.NormalDistribution;
@@ -14,6 +20,7 @@ import org.apache.commons.math3.primes.Primes;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,20 +29,28 @@ public class CentralMVTDistribution {
     private final double[][] covariances;
     private final double dof;
     private final double[][] cfL;
-    private int maxM = 100000;
-    private int maxN = 20;
     private final int nDim;
-    private final UniformRV uniformRV;
-    private final Statistic statistic;
-    private final double[] q;
-    private final double[] d;
-    private final double[] e;
-    private final double[] f;
-    private final double[] y;
-    private final double[] w;
-    private final NormalDistribution nd = new NormalDistribution();
+    private final MCMultiVariateIntegration integrator;
+    private final double[] a;
+    private final double[] b;
 
+    /**
+     *
+     * @param dof  the degrees of freedom, must be greater than zero
+     * @param covariances the variance-covariance matrix, must not be null, must be square and positive definite
+     */
     public CentralMVTDistribution(double dof, double[][] covariances) {
+        this(dof, covariances, JSLRandom.nextRNStream());
+    }
+
+    /**
+     *
+     * @param dof  the degrees of freedom, must be greater than zero
+     * @param covariances the variance-covariance matrix, must not be null, must be square and positive definite
+     * @param stream the stream for the sampler
+     */
+    public CentralMVTDistribution(double dof, double[][] covariances, RNStreamIfc stream) {
+        Objects.requireNonNull(covariances, "The supplied stream for the sampler was null");
         Objects.requireNonNull(covariances, "The covariance array was null");
         if (dof <= 0.0) {
             throw new IllegalArgumentException("The degrees of freedom must be > 0");
@@ -52,33 +67,103 @@ public class CentralMVTDistribution {
         CholeskyDecomposition cd = new CholeskyDecomposition(cv);
         RealMatrix lm = cd.getL();
         cfL = lm.getData();
-        q = new double[nDim];
-        for (int i = 0; i < nDim; i++) {
-            q[i] = Math.sqrt(Primes.nextPrime(i + 2)); // uses Apache Math Commons
-        }
         // end use of Apache Commons
         this.covariances = JSLArrayUtil.copy2DArray(covariances);
         this.dof = dof;
-        uniformRV = new UniformRV();
-        statistic = new Statistic("MVT Statistic");
-        d = new double[nDim];
-        e = new double[nDim];
-        f = new double[nDim];
-        y = new double[nDim];
-        w = new double[nDim];
-        PrintWriter pw = new PrintWriter(System.out);
-        System.out.println("Covariances");
-        JSLArrayUtil.write(covariances, pw);
-        System.out.println();
-        System.out.println("L");
-        JSLArrayUtil.write(cfL, pw);
-        System.out.println();
+        a = new double[nDim];
+        b = new double[nDim];
+        for (int i = 0; i < nDim; i++) {
+            a[i] = Double.NEGATIVE_INFINITY;
+            b[i] = Double.POSITIVE_INFINITY;
+        }
+        MVIndependentRV sampler = new MVIndependentRV(nDim, new UniformRV(0.0, 1.0, stream));
+        GenzFunc genzFunc = new GenzFunc();
+        integrator = new MCMultiVariateIntegration(genzFunc, sampler);
+        integrator.setConfidenceLevel(0.99);
+        integrator.setDesiredAbsError(0.0001);
+        integrator.setMaxSampleSize(100000);
     }
 
+    public void setConfidenceLevel(double level) {
+        integrator.setConfidenceLevel(level);
+    }
+
+    public int getInitialSampleSize() {
+        return integrator.getInitialSampleSize();
+    }
+
+    public void setInitialSampleSize(int initialSampleSize) {
+        integrator.setInitialSampleSize(initialSampleSize);
+    }
+
+    public long getMaxSampleSize() {
+        return integrator.getMaxSampleSize();
+    }
+
+    public void setMaxSampleSize(int maxSampleSize) {
+        integrator.setMaxSampleSize(maxSampleSize);
+    }
+
+    public double getDesiredAbsError() {
+        return integrator.getDesiredAbsError();
+    }
+
+    public void setDesiredAbsError(double desiredAbsError) {
+        integrator.setDesiredAbsError(desiredAbsError);
+    }
+
+    public boolean isResetStreamOptionOn() {
+        return integrator.isResetStreamOptionOn();
+    }
+
+    public void setResetStreamOption(boolean resetStreamOptionOn) {
+        integrator.setResetStreamOption(resetStreamOptionOn);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CentralMVTDistribution");
+        sb.append(System.lineSeparator());
+        sb.append("dof = ").append(dof);
+        sb.append(System.lineSeparator());
+        sb.append("nDim = ").append(nDim);
+        sb.append(System.lineSeparator());
+        sb.append("covariances = ");
+        sb.append(System.lineSeparator());
+        for (int i = 0; i < covariances.length; i++) {
+            sb.append("[");
+            sb.append(JSLArrayUtil.toCSVString(covariances[i]));
+            sb.append("]");
+            sb.append(System.lineSeparator());
+        }
+        sb.append("cfL = ");
+        sb.append(System.lineSeparator());
+        for (int i = 0; i < cfL.length; i++) {
+            sb.append("[");
+            sb.append(JSLArrayUtil.toCSVString(cfL[i]));
+            sb.append("]");
+            sb.append(System.lineSeparator());
+        }
+        sb.append(System.lineSeparator());
+        return sb.toString();
+    }
+
+    /**
+     *
+     * @return the dimension of the MVT distribution
+     */
     public int getDimension() {
         return nDim;
     }
 
+    /** Uses the Genz transform function for Monte-carlo evaluation of the integral.
+     *  Accuracy depends on the sampling.  Should be to about 2 decimal places with default settings.
+     *
+     * Refer to equation (3) of this paper <a href="https://informs-sim.org/wsc15papers/032.pdf</a>
+     *
+     * @param integrands the integrands for the computation, must not be null
+     * @return the estimated value
+     */
     public double cdf(List<Interval> integrands) {
         Objects.requireNonNull(integrands, "The integrands list was null");
         if (integrands.size() != nDim) {
@@ -89,79 +174,54 @@ public class CentralMVTDistribution {
                 throw new IllegalArgumentException("A supplied integrand was null!");
             }
         }
-        double[] a = new double[nDim];
-        double[] b = new double[nDim];
+        // set up lower (a) and upper (b) integration limits
         for (int i = 0; i < nDim; i++) {
             a[i] = integrands.get(i).getLowerLimit();
             b[i] = integrands.get(i).getUpperLimit();
         }
-        return pmvt(a, b);
+        return integrator.evaluate();
     }
 
-    private double pmvt(double[] a, double[] b) {
-        statistic.reset();
-        double[] u = new double[nDim];
-        for (int i = 1; i <= maxM; i++) {
-            uniformRV.sample(u);
-//            double result = functionEval(a, b, u);
-            double result = genzFunction(a, b, u);
-//            double result = 1.0;
-            statistic.collect(result);
+    /**
+     *
+     * @return the statistical results of the CDF calculation
+     */
+    final public Statistic getCDFCalculationStatistics() {
+        return integrator.getStatistic();
+    }
+
+    /**
+     *
+     * @return  the results of the CDF integration as a string
+     */
+    final public String getCDFIntegrationResults(){
+        return integrator.toString();
+    }
+
+    private class GenzFunc implements FunctionMVIfc {
+
+        public double fx(double[] u) {
+            return genzFunction(u);
         }
-        return statistic.getAverage();
+
     }
 
-    public Statistic getStatistic(){
-        return statistic.newInstance();
-    }
-
-    private double stdNormalCDF(double z) {
-//        return nd.cumulativeProbability(z);
-        return Normal.stdNormalCDF(z);
-        //       return Normal.stdNormalCDFAbramovitzAndStegun(z);
-    }
-
-    private double transformFunction(double[] ap, double[] bp, double[] x) {
-        d[0] = stdNormalCDF(ap[0] / cfL[0][0]);
-        e[0] = stdNormalCDF(bp[0] / cfL[0][0]);
-        f[0] = e[0] - d[0];
-//        System.out.printf("cfL[0][0] = %f \t ap[0] = %f \t d[0] = %f \t bp[0] = %f \t  e[0] = %f \t f[0] = %f %n",
-//                cfL[0][0], ap[0], d[0], bp[0], e[0], f[0]);
-        for (int m = 1; m < nDim; m++) {
-            double p = d[m - 1] + x[m - 1] * (e[m - 1] - d[m - 1]);
-            y[m - 1] = Normal.stdNormalInvCDF(p);
-//            if (p == 0.0){
-//                y[m-1] = -8.0;
-//            } else if (p == 1.0) {
-//                y[m-1] = 8.0;
-//            } else {
-//                y[m - 1] = Normal.stdNormalInvCDF(p);
-//            }
-            double mu = sumProdLandY(m, m - 1, y);
-//            System.out.printf("p = %f \t y[%d] = %f \t ap[%d] = %f \t cfl[%d][%d] = %f \t mu = %f %n", p, (m - 1), y[m - 1], m, ap[m], m, m, cfL[m][m], mu);
-            double za = (ap[m] - mu) / cfL[m][m];
-            double zb = (bp[m] - mu) / cfL[m][m];
-            d[m] = stdNormalCDF(za);
-            e[m] = stdNormalCDF(zb);
-            f[m] = (e[m] - d[m]) * f[m - 1];
-//            System.out.printf("f[%d] = %f %n", m, f[m]);
-        }
-//        System.out.println();
-        return f[nDim - 1];
-    }
-
-    public double genzFunction(double[] a, double[] b, double[] u) {
-        Objects.requireNonNull(a, "The lower limit array was null");
-        Objects.requireNonNull(b, "The upper limit array was null");
+    /**
+     *
+     * @param u a vector of U(0,1) random variates
+     * @return the evaluation of the Genz transformed function at the point u
+     */
+    private double genzFunction(double[] u) {
         Objects.requireNonNull(u, "The U(0,1) array was null");
         double[] z = new double[nDim];
-        // generate r
         double r2 = Gamma.invChiSquareDistribution(u[nDim - 1], dof);
+        // generate r from a chi-distribution
         double r = Math.sqrt(r2);
         double sqrtDof = Math.sqrt(dof);
         double c = r / sqrtDof;
         double ap = c * a[0] / cfL[0][0];
         double bp = c * b[0] / cfL[0][0];
+        //no need to check for infinities in a[] and b[] because stdNormalCDF handles them correctly
         double d = Normal.stdNormalCDF(ap);
         double e = Normal.stdNormalCDF(bp);
         double f = e - d;
@@ -185,52 +245,6 @@ public class CentralMVTDistribution {
         return sum;
     }
 
-    private double[] generateW(int j, double[] u) {
-        //w holds the transforms until completed
-        System.arraycopy(q, 0, w, 0, q.length);// start with fresh q
-        JSLArrayUtil.multiplyConstant(w, j); //j*q
-        JSLArrayUtil.addElements(w, u);// j*q + u
-        // get fractional part
-        JSLArrayUtil.remainder(w, 1.0);// {j*q+u}
-        // now multiply by 2
-        JSLArrayUtil.multiplyConstant(w, 2.0);//2{j*q+u}
-        // now subtract the ones
-        JSLArrayUtil.subtractConstant(w, 1.0);//2{j*q+u} - 1
-        JSLArrayUtil.abs(w); //|2{j*q+u} - 1|
-        return w;
-    }
-
-    private double functionEval(double[] a, double[] b, double[] u) {
-        // must deal with 0 array indexing
-        double sqrtDof = Math.sqrt(dof);
-        Statistic stat = new Statistic();
-        double[] ap = new double[nDim];
-        double[] bp = new double[nDim];
-        for (int j = 1; j <= maxN; j++) { // j starts at 1 in the algorithm
-            double[] w = generateW(j, u);
-            // w is set up now, compute s for further transform
-            double s = Gamma.invChiSquareDistribution(w[nDim - 1], dof);
-//            System.out.println("s = " + s);
-            s = Math.sqrt(s);
-            System.arraycopy(a, 0, ap, 0, a.length);
-            System.arraycopy(b, 0, bp, 0, b.length);
-            double c = s / sqrtDof;
-            JSLArrayUtil.multiplyConstant(ap, c);
-            JSLArrayUtil.multiplyConstant(bp, c);
-            double feval = transformFunction(ap, bp, w);
-            stat.collect(feval);
-        }
-        return stat.getAverage();
-    }
-
-    private double phiSum(int m, double[] c, double[] y) {
-        double sum = 0.0;
-        for (int n = 0; n < m; n++) {
-            sum = sum + cfL[m][n] * y[n];
-        }
-        return (c[m] - sum) / cfL[m][m];
-    }
-
     public static void main(String[] args) {
         double[][] cov = {
                 {1.0, 1.0, 1.0, 1.0, 1.0},
@@ -250,20 +264,14 @@ public class CentralMVTDistribution {
         intervals.add(i3);
         intervals.add(i4);
         intervals.add(i5);
-//        intervals.add(i5);
-//        intervals.add(i4);
-//        intervals.add(i3);
-//        intervals.add(i2);
-//        intervals.add(i1);
         CentralMVTDistribution d = new CentralMVTDistribution(8.0, cov);
+        System.out.println(d);
+        System.out.println();
         double v = d.cdf(intervals);
         System.out.println("v = " + v);
         System.out.println();
-        System.out.println(d.getStatistic());
+        System.out.println(d.getCDFCalculationStatistics());
 
-//        double p = Normal.stdNormalCDF(7.99999);
-//        System.out.println("v = " + p);
-//        JSLMath.printParameters(System.out);
     }
 
     // R test
