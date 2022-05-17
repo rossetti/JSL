@@ -22,8 +22,8 @@ public class CentralMVTDistribution {
     private final double[][] covariances;
     private final double dof;
     private final double[][] cfL;
-    private int maxM = 12;
-    private int maxN = 10;
+    private int maxM = 100000;
+    private int maxN = 20;
     private final int nDim;
     private final UniformRV uniformRV;
     private final Statistic statistic;
@@ -111,6 +111,10 @@ public class CentralMVTDistribution {
         return statistic.getAverage();
     }
 
+    public Statistic getStatistic(){
+        return statistic.newInstance();
+    }
+
     private double stdNormalCDF(double z) {
 //        return nd.cumulativeProbability(z);
         return Normal.stdNormalCDF(z);
@@ -121,8 +125,8 @@ public class CentralMVTDistribution {
         d[0] = stdNormalCDF(ap[0] / cfL[0][0]);
         e[0] = stdNormalCDF(bp[0] / cfL[0][0]);
         f[0] = e[0] - d[0];
-        System.out.printf("cfL[0][0] = %f \t ap[0] = %f \t d[0] = %f \t bp[0] = %f \t  e[0] = %f \t f[0] = %f %n",
-                cfL[0][0], ap[0], d[0], bp[0], e[0], f[0]);
+//        System.out.printf("cfL[0][0] = %f \t ap[0] = %f \t d[0] = %f \t bp[0] = %f \t  e[0] = %f \t f[0] = %f %n",
+//                cfL[0][0], ap[0], d[0], bp[0], e[0], f[0]);
         for (int m = 1; m < nDim; m++) {
             double p = d[m - 1] + x[m - 1] * (e[m - 1] - d[m - 1]);
             y[m - 1] = Normal.stdNormalInvCDF(p);
@@ -134,15 +138,15 @@ public class CentralMVTDistribution {
 //                y[m - 1] = Normal.stdNormalInvCDF(p);
 //            }
             double mu = sumProdLandY(m, m - 1, y);
-            System.out.printf("p = %f \t y[%d] = %f \t ap[%d] = %f \t cfl[%d][%d] = %f \t mu = %f %n", p, (m - 1), y[m - 1], m, ap[m], m, m, cfL[m][m], mu);
+//            System.out.printf("p = %f \t y[%d] = %f \t ap[%d] = %f \t cfl[%d][%d] = %f \t mu = %f %n", p, (m - 1), y[m - 1], m, ap[m], m, m, cfL[m][m], mu);
             double za = (ap[m] - mu) / cfL[m][m];
             double zb = (bp[m] - mu) / cfL[m][m];
             d[m] = stdNormalCDF(za);
             e[m] = stdNormalCDF(zb);
             f[m] = (e[m] - d[m]) * f[m - 1];
-            System.out.printf("f[%d] = %f %n", m, f[m]);
+//            System.out.printf("f[%d] = %f %n", m, f[m]);
         }
-        System.out.println();
+//        System.out.println();
         return f[nDim - 1];
     }
 
@@ -152,7 +156,8 @@ public class CentralMVTDistribution {
         Objects.requireNonNull(u, "The U(0,1) array was null");
         double[] z = new double[nDim];
         // generate r
-        double r = Gamma.invChiSquareDistribution(u[nDim - 1], dof);
+        double r2 = Gamma.invChiSquareDistribution(u[nDim - 1], dof);
+        double r = Math.sqrt(r2);
         double sqrtDof = Math.sqrt(dof);
         double c = r / sqrtDof;
         double ap = c * a[0] / cfL[0][0];
@@ -205,7 +210,8 @@ public class CentralMVTDistribution {
             double[] w = generateW(j, u);
             // w is set up now, compute s for further transform
             double s = Gamma.invChiSquareDistribution(w[nDim - 1], dof);
-            System.out.println("s = " + s);
+//            System.out.println("s = " + s);
+            s = Math.sqrt(s);
             System.arraycopy(a, 0, ap, 0, a.length);
             System.arraycopy(b, 0, bp, 0, b.length);
             double c = s / sqrtDof;
@@ -239,19 +245,21 @@ public class CentralMVTDistribution {
         Interval i4 = new Interval(-2.0, 3.0);
         Interval i5 = new Interval(-1.0, 2.0);
         List<Interval> intervals = new ArrayList<>();
-//        intervals.add(i1);
-//        intervals.add(i2);
-//        intervals.add(i3);
-//        intervals.add(i4);
-//        intervals.add(i5);
-        intervals.add(i5);
-        intervals.add(i4);
-        intervals.add(i3);
-        intervals.add(i2);
         intervals.add(i1);
+        intervals.add(i2);
+        intervals.add(i3);
+        intervals.add(i4);
+        intervals.add(i5);
+//        intervals.add(i5);
+//        intervals.add(i4);
+//        intervals.add(i3);
+//        intervals.add(i2);
+//        intervals.add(i1);
         CentralMVTDistribution d = new CentralMVTDistribution(8.0, cov);
         double v = d.cdf(intervals);
         System.out.println("v = " + v);
+        System.out.println();
+        System.out.println(d.getStatistic());
 
 //        double p = Normal.stdNormalCDF(7.99999);
 //        System.out.println("v = " + p);
