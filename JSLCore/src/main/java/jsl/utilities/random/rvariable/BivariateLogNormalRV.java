@@ -17,6 +17,8 @@ package jsl.utilities.random.rvariable;
 
 import jsl.utilities.random.rng.RNStreamIfc;
 
+import java.util.Objects;
+
 /**
  * Allows for the generation of bi-variate lognormal
  * random variables
@@ -170,12 +172,19 @@ public class BivariateLogNormalRV extends AbstractMVRVariable {
     }
 
     @Override
-    public double[] sample() {
-        double[] x = myBVN.sample();
-        // transform them to bi-variate lognormal
-        x[0] = Math.exp(x[0]);
-        x[1] = Math.exp(x[1]);
-        return x;
+    public int getDimension() {
+        return 2;
+    }
+
+    @Override
+    public void sample(double[] array) {
+        Objects.requireNonNull(array, "The supplied array was null");
+        if (array.length != getDimension()){
+            throw new IllegalArgumentException("The size of the array to fill does not match the sampling dimension!");
+        }
+        myBVN.sample(array);
+        array[0] = Math.exp(array[0]);
+        array[1] = Math.exp(array[1]);
     }
 
     @Override

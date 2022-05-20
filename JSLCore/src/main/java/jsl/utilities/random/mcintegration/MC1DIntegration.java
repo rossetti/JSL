@@ -1,24 +1,23 @@
 package jsl.utilities.random.mcintegration;
 
-import jsl.utilities.distributions.Normal;
 import jsl.utilities.math.FunctionIfc;
 import jsl.utilities.random.rvariable.RVariableIfc;
 import jsl.utilities.random.rvariable.UniformRV;
-import jsl.utilities.statistic.Statistic;
 
 import java.util.Objects;
 
 /**
  * Provides for the integration of a 1-D function via Monte-Carlo sampling.
- * See the detailed discussion for the class MCIntegration.
+ * See the detailed discussion for the class MCExperiment.
  *
  * The evaluation will automatically utilize
  * antithetic sampling to reduce the variance of the estimates unless the user specifies not to do so. In the case of
- * using antithetic sampling, the sample size refers to the number of independent antithetic pairs observed. Thus, this
- * will require two function evaluations at each observation. The user can consider the implication of the cost of
+ * using antithetic sampling, the micro replication sample size refers to the number of independent antithetic pairs observed. Thus, this
+ * will require two function evaluations for each micro replication. The user can consider the implication of the cost of
  * function evaluation versus the variance reduction obtained.
+ * The default confidence level has been set to 99 percent.
  */
-public class MC1DIntegration extends MCIntegration {
+public class MC1DIntegration extends MCExperiment {
 
     protected final FunctionIfc myFunction;
     protected final RVariableIfc mySampler;
@@ -51,28 +50,25 @@ public class MC1DIntegration extends MCIntegration {
     }
 
     @Override
-    protected double sample(int n) {
+    public double runSimulation(){
         if (resetStreamOptionOn) {
             mySampler.resetStartStream();
             if(isAntitheticOptionOn()){
                 myAntitheticSampler.resetStartStream();
             }
         }
-        double y;
-        for (int i = 1; i <= n; i++) {
-            if (isAntitheticOptionOn()) {
-                double y1 = myFunction.fx(mySampler.sample());
-                double y2 = myFunction.fx(myAntitheticSampler.sample());
-                y = (y1 + y2) / 2.0;
-            } else {
-                y = myFunction.fx(mySampler.sample());
-            }
-            statistic.collect(y);
-            if (checkStoppingCriteria()) {
-                return statistic.getCount();
-            }
+        return super.runSimulation();
+    }
+
+    @Override
+    protected double replication(int r) {
+        if (isAntitheticOptionOn()) {
+            double y1 = myFunction.fx(mySampler.sample());
+            double y2 = myFunction.fx(myAntitheticSampler.sample());
+            return (y1 + y2) / 2.0;
+        } else {
+            return myFunction.fx(mySampler.sample());
         }
-        return statistic.getCount();
     }
 
     /**
@@ -100,7 +96,7 @@ public class MC1DIntegration extends MCIntegration {
         mc.runInitialSample();
         System.out.println(mc);
         System.out.println();
-        mc.evaluate();
+        mc.runSimulation();
         System.out.println(mc);
 
     }

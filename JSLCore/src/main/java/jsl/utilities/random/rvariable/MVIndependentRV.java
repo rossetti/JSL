@@ -39,8 +39,17 @@ public class MVIndependentRV implements MVRVariableIfc {
     }
 
     @Override
-    public double[] sample() {
-        return myRV.sample(myDimension);
+    public int getDimension() {
+        return myDimension;
+    }
+
+    @Override
+    public void sample(double[] array) {
+        Objects.requireNonNull(array, "The supplied array was null");
+        if (array.length != getDimension()){
+            throw new IllegalArgumentException("The size of the array to fill does not match the sampling dimension!");
+        }
+        myRV.sample(array);
     }
 
     @Override

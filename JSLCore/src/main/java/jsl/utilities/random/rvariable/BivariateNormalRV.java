@@ -18,6 +18,8 @@ package jsl.utilities.random.rvariable;
 import jsl.utilities.distributions.Normal;
 import jsl.utilities.random.rng.RNStreamIfc;
 
+import java.util.Objects;
+
 /**
  * Allows for the generation of bi-variate normal
  * random variables
@@ -149,15 +151,22 @@ public class BivariateNormalRV extends AbstractMVRVariable {
     }
 
     @Override
-    public final double[] sample() {
-        double[] x = new double[2];
+    public int getDimension() {
+        return 2;
+    }
+
+    @Override
+    public final void sample(double[] array){
+        Objects.requireNonNull(array, "The supplied array was null");
+        if (array.length != getDimension()){
+            throw new IllegalArgumentException("The size of the array to fill does not match the sampling dimension!");
+        }
         double z0 = Normal.stdNormalInvCDF(myRNG.randU01());
         double z1 = Normal.stdNormalInvCDF(myRNG.randU01());
         double s1 = Math.sqrt(myVar1);
         double s2 = Math.sqrt(myVar2);
-        x[0] = myMu1 + s1 * z0;
-        x[1] = myMu2 + s2 * (myRho * z0 + Math.sqrt(1.0 - myRho * myRho) * z1);
-        return x;
+        array[0] = myMu1 + s1 * z0;
+        array[1] = myMu2 + s2 * (myRho * z0 + Math.sqrt(1.0 - myRho * myRho) * z1);
     }
 
     @Override

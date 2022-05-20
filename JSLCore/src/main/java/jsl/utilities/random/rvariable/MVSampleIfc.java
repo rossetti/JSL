@@ -18,6 +18,7 @@ package jsl.utilities.random.rvariable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *  An interface for getting multi-variable samples, each sample has many values
@@ -27,12 +28,30 @@ public interface MVSampleIfc {
 
     /**
      *
-     * @return generates an array of random values
+     * @return the expected size of the array from sample()
      */
-    double[] sample();
+    int getDimension();
 
     /**
-     * Generates a list holding the randomly generated arrays of the given size
+     *
+     * @return generates an array of random values of size getDimension()
+     */
+    default double[] sample(){
+        double[] array = new double[getDimension()];
+        sample(array);
+        return(array);
+    }
+
+    /** Fills the supplied array with a sample of values. This method
+     *  avoids the creation of a new array.  The size of the array
+     *  must match getDimension()
+     *
+     * @param array the array to fill with the sample
+     */
+    void sample(double[] array);
+
+    /**
+     * Generates a list holding the randomly generated arrays of size getDimension()
      *
      * @param sampleSize the amount to fill
      * @return A list holding the generated arrays
@@ -46,7 +65,7 @@ public interface MVSampleIfc {
     }
 
     /**
-     * Fills the supplied list of arrays with a randomly generated samples
+     * Fills the supplied list of arrays with randomly generated samples
      *
      * @param values the list to fill
      */

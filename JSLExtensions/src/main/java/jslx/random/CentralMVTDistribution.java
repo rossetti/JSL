@@ -33,8 +33,8 @@ public class CentralMVTDistribution {
     private final double dof;
     private final double[][] cfL;
     private final int nDim;
-//    private final MCMultiVariateIntegration integrator;
-    private final QMCMultiVariateIntegration integrator;
+    private final MCMultiVariateIntegration integrator;
+//    private final QMCMultiVariateIntegration integrator;
     private final double[] a;
     private final double[] b;
 
@@ -80,10 +80,10 @@ public class CentralMVTDistribution {
             a[i] = Double.NEGATIVE_INFINITY;
             b[i] = Double.POSITIVE_INFINITY;
         }
-//        MVIndependentRV sampler = new MVIndependentRV(nDim, new UniformRV(0.0, 1.0, stream));
+        MVIndependentRV sampler = new MVIndependentRV(nDim, new UniformRV(0.0, 1.0, stream));
         GenzFunc genzFunc = new GenzFunc();
-//        integrator = new MCMultiVariateIntegration(genzFunc, sampler);
-        integrator = new QMCMultiVariateIntegration(nDim, genzFunc);
+        integrator = new MCMultiVariateIntegration(genzFunc, sampler);
+//        integrator = new QMCMultiVariateIntegration(nDim, genzFunc);
         integrator.setConfidenceLevel(0.99);
         integrator.setDesiredAbsError(0.00001);
         integrator.setInitialSampleSize(10);
@@ -185,7 +185,7 @@ public class CentralMVTDistribution {
             a[i] = integrands.get(i).getLowerLimit();
             b[i] = integrands.get(i).getUpperLimit();
         }
-        return integrator.evaluate();
+        return integrator.runSimulation();
     }
 
     /**
@@ -295,7 +295,7 @@ public class CentralMVTDistribution {
         public double fx(double x) {
 //            setLowerLimits(Double.NEGATIVE_INFINITY);
             setUpperLimits(x);
-            double cdfofx = integrator.evaluate();
+            double cdfofx = integrator.runSimulation();
             return cdfofx - confidLevel;
         }
     }
@@ -306,8 +306,8 @@ public class CentralMVTDistribution {
 
     public static void main(String[] args) {
 //        testCDF();
-//        testQuantile();
-        enumerateQuantiles();
+        testQuantile();
+//        enumerateQuantiles();
     }
 
     static public void testCDF(){
@@ -394,7 +394,7 @@ public class CentralMVTDistribution {
         public double fx(double x) {
             setLowerLimits(Double.NEGATIVE_INFINITY);
             setUpperLimits(x);
-            return integrator.evaluate();
+            return integrator.runSimulation();
         }
     }
 

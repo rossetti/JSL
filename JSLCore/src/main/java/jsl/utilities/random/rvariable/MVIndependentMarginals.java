@@ -56,14 +56,21 @@ public class MVIndependentMarginals implements MVRVariableIfc{
     }
 
     @Override
-    public double[] sample() {
-        double[] values = new double[myRVs.size()];
+    public int getDimension() {
+        return myRVs.size();
+    }
+
+    @Override
+    public void sample(double[] array) {
+        Objects.requireNonNull(array, "The supplied array was null");
+        if (array.length != getDimension()){
+            throw new IllegalArgumentException("The size of the array to fill does not match the sampling dimension!");
+        }
         int i = 0;
         for (RVariableIfc rv: myRVs) {
-            values[i] = rv.sample();
+            array[i] = rv.sample();
             i++;
         }
-        return values;
     }
 
     @Override

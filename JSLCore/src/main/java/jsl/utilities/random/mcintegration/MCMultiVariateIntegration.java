@@ -1,11 +1,9 @@
 package jsl.utilities.random.mcintegration;
 
-import jsl.utilities.distributions.Normal;
 import jsl.utilities.random.mcmc.FunctionMVIfc;
 import jsl.utilities.random.rvariable.MVIndependentRV;
 import jsl.utilities.random.rvariable.MVRVariableIfc;
 import jsl.utilities.random.rvariable.UniformRV;
-import jsl.utilities.statistic.Statistic;
 
 import java.util.Objects;
 
@@ -20,7 +18,7 @@ import java.util.Objects;
  * will require two function evaluations at each observation. The user can consider the implication of the cost of
  * function evaluation versus the variance reduction obtained.
  */
-public class MCMultiVariateIntegration extends MCIntegration {
+public class MCMultiVariateIntegration extends MCExperiment {
 
     protected final FunctionMVIfc myFunction; //TODO generalize to check domain/range
     protected final MVRVariableIfc mySampler; //TODO generalize to check domain/range
@@ -53,28 +51,25 @@ public class MCMultiVariateIntegration extends MCIntegration {
     }
 
     @Override
-    protected double sample(int n) {
+    public double runSimulation(){
         if (resetStreamOptionOn) {
             mySampler.resetStartStream();
             if(isAntitheticOptionOn()){
                 myAntitheticSampler.resetStartStream();
             }
         }
-        double y;
-        for (int i = 1; i <= n; i++) {
-            if (isAntitheticOptionOn()) {
-                double y1 = myFunction.fx(mySampler.sample());
-                double y2 = myFunction.fx(myAntitheticSampler.sample());
-                y = (y1 + y2) / 2.0;
-            } else {
-                y = myFunction.fx(mySampler.sample());
-            }
-            statistic.collect(y);
-            if (checkStoppingCriteria()) {
-                return statistic.getCount();
-            }
+        return super.runSimulation();
+    }
+
+    @Override
+    protected double replication(int r) {
+        if (isAntitheticOptionOn()) {
+            double y1 = myFunction.fx(mySampler.sample());
+            double y2 = myFunction.fx(myAntitheticSampler.sample());
+            return (y1 + y2) / 2.0;
+        } else {
+            return myFunction.fx(mySampler.sample());
         }
-        return statistic.getCount();
     }
 
     /**
@@ -99,12 +94,12 @@ public class MCMultiVariateIntegration extends MCIntegration {
         MVIndependentRV sampler = new MVIndependentRV(2, new UniformRV(0.0, 1.0));
         MCMultiVariateIntegration mc = new MCMultiVariateIntegration(f, sampler);
         mc.setConfidenceLevel(0.99);
-        mc.setDesiredAbsError(0.01);
+        mc.setDesiredAbsError(0.001);
 
         mc.runInitialSample();
         System.out.println(mc);
         System.out.println();
-        mc.evaluate();
+        mc.runSimulation();
         System.out.println(mc);
 
     }
