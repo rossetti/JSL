@@ -276,7 +276,7 @@ public class CentralMVTDistribution {
     }
 
     public class RootFunction implements FunctionIfc{
-        double confidLevel = 0.95;
+        private double confidLevel = 0.95;
 
         public RootFunction(double confidLevel) {
             this.confidLevel = confidLevel;
@@ -292,6 +292,19 @@ public class CentralMVTDistribution {
 
     public RootFunction getRootFunction(double level){
         return new RootFunction(level);
+    }
+
+    public class QuantileFunction implements FunctionIfc{
+        @Override
+        public double fx(double x) {
+            setLowerLimits(Double.NEGATIVE_INFINITY);
+            setUpperLimits(x);
+            return integrator.runSimulation();
+        }
+    }
+
+    public QuantileFunction getQuantileFunction(){
+        return new QuantileFunction();
     }
 
     public static void main(String[] args) {
@@ -377,19 +390,6 @@ public class CentralMVTDistribution {
 //        System.out.println();
 //        System.out.println(d.getCDFCalculationStatistics());
 
-    }
-
-    public class QuantileFunction implements FunctionIfc{
-        @Override
-        public double fx(double x) {
-            setLowerLimits(Double.NEGATIVE_INFINITY);
-            setUpperLimits(x);
-            return integrator.runSimulation();
-        }
-    }
-
-    public QuantileFunction getQuantileFunction(){
-        return new QuantileFunction();
     }
 
     public static void enumerateQuantiles(){
