@@ -108,7 +108,7 @@ dependencies {
 
     // May 18, 2022 added dependency to SSJ to utilize quasi-monte carlo functionality
     // still deciding to allow api or just implementation
-    api(group ="ca.umontreal.iro.simul", name = "ssj", version = "3.3.1")
+//    api(group ="ca.umontreal.iro.simul", name = "ssj", version = "3.3.1")
 
     // include local jar files found in libs folder in the compile
     implementation(fileTree(baseDir = "libs"))
