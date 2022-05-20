@@ -34,8 +34,6 @@ public class CentralMVTDistribution {
     private final double[][] cfL;
     private final int nDim;
     private final MCMultiVariateIntegration integrator;
-//    private final QMCMultiVariateIntegration integrator;
-//    private final QMCMultiVariateIntegration integrator;
     private final double[] a;
     private final double[] b;
 
@@ -84,13 +82,6 @@ public class CentralMVTDistribution {
         MVIndependentRV sampler = new MVIndependentRV(nDim, new UniformRV(0.0, 1.0, stream));
         GenzFunc genzFunc = new GenzFunc();
         integrator = new MCMultiVariateIntegration(genzFunc, sampler);
-//        integrator = new QMCMultiVariateIntegrationSSJ(nDim, genzFunc);
-//        integrator = new QMCMultiVariateIntegration(nDim, genzFunc);
-        integrator.setConfidenceLevel(0.99);
-        integrator.setDesiredAbsError(0.00001);
-        integrator.setInitialSampleSize(10);
-        integrator.setMaxSampleSize(100);
-        integrator.setMicroRepSampleSize(100000);
     }
 
     public void setConfidenceLevel(double level) {
@@ -255,6 +246,7 @@ public class CentralMVTDistribution {
     }
 
     private double qmvt(double level, Interval startingInterval){
+        //TODO doesn't really work. Not enought precision in integral calculation
         Objects.requireNonNull(startingInterval, "The starting interval was null");
         if ((level <= 0.0) || (level >= 1.0)) {
             throw new IllegalArgumentException("Confidence Level must be (0,1)");
@@ -266,16 +258,12 @@ public class CentralMVTDistribution {
         setLowerLimits(-4.0);
         setUpperLimits(4);
         RootFunction rf = new RootFunction(level);
-//        BisectionRootFinder finder = new BisectionRootFinder(rf, ll, ul);
-        StochasticApproximationRootFinder finder = new StochasticApproximationRootFinder(rf, ll, ul);
+        BisectionRootFinder finder = new BisectionRootFinder(rf, ll, ul);
         finder.setInitialPoint((ll+ul)/2.0);
         finder.setDesiredPrecision(0.01);
-//        finder.setMaxIterations(10000);
-//        finder.evaluate();
-//        double result = finder.getResult();
-        finder.run();
-        double result = finder.getRoot();
-        System.out.println(finder);
+//        finder.setMaximumIterations(200);
+        finder.evaluate();
+        double result = finder.getResult();
         return result;
     }
 
@@ -296,7 +284,6 @@ public class CentralMVTDistribution {
 
         @Override
         public double fx(double x) {
-//            setLowerLimits(Double.NEGATIVE_INFINITY);
             setUpperLimits(x);
             double cdfofx = integrator.runSimulation();
             return cdfofx - confidLevel;
