@@ -35,6 +35,7 @@ public class CentralMVTDistribution {
     private final int nDim;
     private final MCMultiVariateIntegration integrator;
 //    private final QMCMultiVariateIntegration integrator;
+//    private final QMCMultiVariateIntegration integrator;
     private final double[] a;
     private final double[] b;
 
@@ -83,11 +84,13 @@ public class CentralMVTDistribution {
         MVIndependentRV sampler = new MVIndependentRV(nDim, new UniformRV(0.0, 1.0, stream));
         GenzFunc genzFunc = new GenzFunc();
         integrator = new MCMultiVariateIntegration(genzFunc, sampler);
+//        integrator = new QMCMultiVariateIntegrationSSJ(nDim, genzFunc);
 //        integrator = new QMCMultiVariateIntegration(nDim, genzFunc);
         integrator.setConfidenceLevel(0.99);
         integrator.setDesiredAbsError(0.00001);
         integrator.setInitialSampleSize(10);
         integrator.setMaxSampleSize(100);
+        integrator.setMicroRepSampleSize(100000);
     }
 
     public void setConfidenceLevel(double level) {
@@ -305,8 +308,8 @@ public class CentralMVTDistribution {
     }
 
     public static void main(String[] args) {
-//        testCDF();
-        testQuantile();
+        testCDF();
+//        testQuantile();
 //        enumerateQuantiles();
     }
 
