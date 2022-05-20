@@ -85,6 +85,7 @@ public abstract class MCIntegration implements MCIntegrationIfc {
 
     @Override
     public double evaluate() {
+        statistic.reset();
         double numNeeded = runInitialSample();
         int n = (int) Math.min(numNeeded, maxSampleSize);
         sample(n);

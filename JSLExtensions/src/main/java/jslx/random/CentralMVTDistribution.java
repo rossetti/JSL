@@ -12,6 +12,7 @@ import jsl.utilities.random.rvariable.JSLRandom;
 import jsl.utilities.random.rvariable.MVIndependentRV;
 import jsl.utilities.random.rvariable.UniformRV;
 import jsl.utilities.rootfinding.BisectionRootFinder;
+import jsl.utilities.rootfinding.GridEnumerator;
 import jsl.utilities.rootfinding.StochasticApproximationRootFinder;
 import jsl.utilities.statistic.Statistic;
 import org.apache.commons.math3.distribution.NormalDistribution;
@@ -32,7 +33,8 @@ public class CentralMVTDistribution {
     private final double dof;
     private final double[][] cfL;
     private final int nDim;
-    private final MCMultiVariateIntegration integrator;
+//    private final MCMultiVariateIntegration integrator;
+    private final QMCMultiVariateIntegration integrator;
     private final double[] a;
     private final double[] b;
 
@@ -78,12 +80,14 @@ public class CentralMVTDistribution {
             a[i] = Double.NEGATIVE_INFINITY;
             b[i] = Double.POSITIVE_INFINITY;
         }
-        MVIndependentRV sampler = new MVIndependentRV(nDim, new UniformRV(0.0, 1.0, stream));
+//        MVIndependentRV sampler = new MVIndependentRV(nDim, new UniformRV(0.0, 1.0, stream));
         GenzFunc genzFunc = new GenzFunc();
-        integrator = new MCMultiVariateIntegration(genzFunc, sampler);
+//        integrator = new MCMultiVariateIntegration(genzFunc, sampler);
+        integrator = new QMCMultiVariateIntegration(nDim, genzFunc);
         integrator.setConfidenceLevel(0.99);
-        integrator.setDesiredAbsError(0.0001);
-        integrator.setMaxSampleSize(100000);
+        integrator.setDesiredAbsError(0.00001);
+        integrator.setInitialSampleSize(10);
+        integrator.setMaxSampleSize(100);
     }
 
     public void setConfidenceLevel(double level) {
@@ -262,8 +266,8 @@ public class CentralMVTDistribution {
 //        BisectionRootFinder finder = new BisectionRootFinder(rf, ll, ul);
         StochasticApproximationRootFinder finder = new StochasticApproximationRootFinder(rf, ll, ul);
         finder.setInitialPoint((ll+ul)/2.0);
-        finder.setDesiredPrecision(0.001);
-        finder.setMaxIterations(10000);
+        finder.setDesiredPrecision(0.01);
+//        finder.setMaxIterations(10000);
 //        finder.evaluate();
 //        double result = finder.getResult();
         finder.run();
@@ -280,7 +284,7 @@ public class CentralMVTDistribution {
         Arrays.fill(b, value);
     }
 
-    private class RootFunction implements FunctionIfc{
+    public class RootFunction implements FunctionIfc{
         double confidLevel = 0.95;
 
         public RootFunction(double confidLevel) {
@@ -289,15 +293,21 @@ public class CentralMVTDistribution {
 
         @Override
         public double fx(double x) {
+//            setLowerLimits(Double.NEGATIVE_INFINITY);
             setUpperLimits(x);
             double cdfofx = integrator.evaluate();
             return cdfofx - confidLevel;
         }
     }
 
+    public RootFunction getRootFunction(double level){
+        return new RootFunction(level);
+    }
+
     public static void main(String[] args) {
-        testCDF();
-        testQuantile();
+//        testCDF();
+//        testQuantile();
+        enumerateQuantiles();
     }
 
     static public void testCDF(){
@@ -337,7 +347,7 @@ public class CentralMVTDistribution {
         };
 
         CentralMVTDistribution d = new CentralMVTDistribution(20.0, cov);
-        d.setMaxSampleSize(1000000);
+//        d.setMaxSampleSize(1000000);
         Interval i1 = new Interval(Double.NEGATIVE_INFINITY, 2.19);
         Interval i2 = new Interval(Double.NEGATIVE_INFINITY, 2.19);
         Interval i3 = new Interval(Double.NEGATIVE_INFINITY, 2.19);
@@ -352,30 +362,64 @@ public class CentralMVTDistribution {
         System.out.println("v = " + v);
         System.out.println();
         System.out.println(d.getCDFCalculationStatistics());
-
-        d = new CentralMVTDistribution(2.0, cov);
-        d.setMaxSampleSize(1000000);
-        i1 = new Interval(Double.NEGATIVE_INFINITY, 4.34);
-        i2 = new Interval(Double.NEGATIVE_INFINITY, 4.34);
-        i3 = new Interval(Double.NEGATIVE_INFINITY, 4.34);
-        List<Interval> intervals2 = new ArrayList<>();
-        intervals2.add(i1);
-        intervals2.add(i2);
-        intervals2.add(i3);
-        System.out.println(d);
-        System.out.println();
-       v = d.cdf(intervals2);
-        System.out.println("Integral should evaluate to 0.95");
-        System.out.println("v = " + v);
-        System.out.println();
-        System.out.println(d.getCDFCalculationStatistics());
-
         System.out.println();
 
         //TODO does not work
-//        double result = d.qmvt(0.95, new Interval(2.0, 2.5));
+        double result = d.qmvt(0.95, new Interval(2.15, 2.2));
+        System.out.println();
+        System.out.println("Result = " + result);
+
+
+//        d = new CentralMVTDistribution(2.0, cov);
+////        d.setMaxSampleSize(1000000);
+//        i1 = new Interval(Double.NEGATIVE_INFINITY, 4.34);
+//        i2 = new Interval(Double.NEGATIVE_INFINITY, 4.34);
+//        i3 = new Interval(Double.NEGATIVE_INFINITY, 4.34);
+//        List<Interval> intervals2 = new ArrayList<>();
+//        intervals2.add(i1);
+//        intervals2.add(i2);
+//        intervals2.add(i3);
+//        System.out.println(d);
 //        System.out.println();
-//        System.out.println("Result = " + result);
+//       v = d.cdf(intervals2);
+//        System.out.println("Integral should evaluate to 0.95");
+//        System.out.println("v = " + v);
+//        System.out.println();
+//        System.out.println(d.getCDFCalculationStatistics());
+
+    }
+
+    public class QuantileFunction implements FunctionIfc{
+        @Override
+        public double fx(double x) {
+            setLowerLimits(Double.NEGATIVE_INFINITY);
+            setUpperLimits(x);
+            return integrator.evaluate();
+        }
+    }
+
+    public QuantileFunction getQuantileFunction(){
+        return new QuantileFunction();
+    }
+
+    public static void enumerateQuantiles(){
+        double[][] cov = {
+                {1.0, 0.5, 0.5},
+                {0.5, 1.0, 0.5},
+                {0.5, 0.5, 1.0},
+        };
+
+        CentralMVTDistribution d = new CentralMVTDistribution(20.0, cov);
+        GridEnumerator grid = new GridEnumerator(d.getQuantileFunction());
+        grid.evaluate(2.1, 0.01, 20);
+        System.out.println(grid);
+
+        System.out.println();
+        System.out.println("Sorted evaluations");
+        List<GridEnumerator.Evaluation> list = grid.getSortedEvaluations();
+        for(GridEnumerator.Evaluation e: list){
+            System.out.println(e);
+        }
 
     }
 
