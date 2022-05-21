@@ -1571,7 +1571,7 @@ public class MultipleComparisonAnalyzer implements GetNameIfc {
      *  This is table look up for values of Table B.3 from Bechhofer, Santner, and Goldsman (1995)
      *  "Design and Analysis of Experiments for Statistical Selection, Screening, and Multiple
      *  Comparisons"
-     *  
+     *
      * @param level must be 0.90, 0.95, or 0.99
      * @param dof the degrees of freedom, must be [1,60]
      * @param nDim the number of dimensions of the distribution, must be [1,10]
@@ -1593,7 +1593,7 @@ public class MultipleComparisonAnalyzer implements GetNameIfc {
      *
      * @param dof the degrees of freedom, must be [1,60]
      * @param nDim the number of dimensions of the distribution, must be [1,10]
-     * @return the 90 percent quantile of the multi-variate t distribution
+     * @return the 90 percent quantile of the multi-variate t distribution with common correlation of 0.5.
      */
     public static double mvtQuantile90(int dof, int nDim){
         if ((dof < 1) || (dof > 60)) {
@@ -1609,7 +1609,7 @@ public class MultipleComparisonAnalyzer implements GetNameIfc {
      *
      * @param dof the degrees of freedom, must be [1,60]
      * @param nDim the number of dimensions of the distribution, must be [1,10]
-     * @return the 95 percent quantile of the multi-variate t distribution
+     * @return the 95 percent quantile of the multi-variate t distribution with common correlation of 0.5.
      */
     public static double mvtQuantile95(int dof, int nDim){
         if ((dof < 1) || (dof > 60)) {
@@ -1625,7 +1625,7 @@ public class MultipleComparisonAnalyzer implements GetNameIfc {
      *
      * @param dof the degrees of freedom, must be [1,60]
      * @param nDim the number of dimensions of the distribution, must be [1,10]
-     * @return the 99 percent quantile of the multi-variate t distribution
+     * @return the 99 percent quantile of the multi-variate t distribution with common correlation of 0.5.
      */
     public static double mvtQuantile99(int dof, int nDim){
         if ((dof < 1) || (dof > 60)) {
