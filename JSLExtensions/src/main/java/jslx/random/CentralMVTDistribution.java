@@ -13,15 +13,12 @@ import jsl.utilities.random.rvariable.MVIndependentRV;
 import jsl.utilities.random.rvariable.UniformRV;
 import jsl.utilities.rootfinding.BisectionRootFinder;
 import jsl.utilities.rootfinding.GridEnumerator;
-import jsl.utilities.rootfinding.StochasticApproximationRootFinder;
+import jsl.utilities.statistic.MultipleComparisonAnalyzer;
 import jsl.utilities.statistic.Statistic;
-import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.linear.CholeskyDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.primes.Primes;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,8 +35,7 @@ public class CentralMVTDistribution {
     private final double[] b;
 
     /**
-     *
-     * @param dof  the degrees of freedom, must be greater than zero
+     * @param dof         the degrees of freedom, must be greater than zero
      * @param covariances the variance-covariance matrix, must not be null, must be square and positive definite
      */
     public CentralMVTDistribution(double dof, double[][] covariances) {
@@ -47,10 +43,9 @@ public class CentralMVTDistribution {
     }
 
     /**
-     *
-     * @param dof  the degrees of freedom, must be greater than zero
+     * @param dof         the degrees of freedom, must be greater than zero
      * @param covariances the variance-covariance matrix, must not be null, must be square and positive definite
-     * @param stream the stream for the sampler
+     * @param stream      the stream for the sampler
      */
     public CentralMVTDistribution(double dof, double[][] covariances, RNStreamIfc stream) {
         Objects.requireNonNull(covariances, "The supplied stream for the sampler was null");
@@ -149,16 +144,16 @@ public class CentralMVTDistribution {
     }
 
     /**
-     *
      * @return the dimension of the MVT distribution
      */
     public int getDimension() {
         return nDim;
     }
 
-    /** Uses the Genz transform function for Monte-carlo evaluation of the integral.
-     *  Accuracy depends on the sampling.  Should be to about 2 decimal places with default settings.
-     *
+    /**
+     * Uses the Genz transform function for Monte-carlo evaluation of the integral.
+     * Accuracy depends on the sampling.  Should be to about 2 decimal places with default settings.
+     * <p>
      * Refer to equation (3) of this paper <a href="https://informs-sim.org/wsc15papers/032.pdf</a>
      *
      * @param integrands the integrands for the computation, must not be null
@@ -183,7 +178,6 @@ public class CentralMVTDistribution {
     }
 
     /**
-     *
      * @return the statistical results of the CDF calculation
      */
     final public Statistic getCDFCalculationStatistics() {
@@ -191,10 +185,9 @@ public class CentralMVTDistribution {
     }
 
     /**
-     *
-     * @return  the results of the CDF integration as a string
+     * @return the results of the CDF integration as a string
      */
-    final public String getCDFIntegrationResults(){
+    final public String getCDFIntegrationResults() {
         return integrator.toString();
     }
 
@@ -207,7 +200,6 @@ public class CentralMVTDistribution {
     }
 
     /**
-     *
      * @param u a vector of U(0,1) random variates
      * @return the evaluation of the Genz transformed function at the point u
      */
@@ -245,7 +237,7 @@ public class CentralMVTDistribution {
         return sum;
     }
 
-    private double qmvt(double level, Interval startingInterval){
+    private double qmvt(double level, Interval startingInterval) {
         //TODO doesn't really work. Not enought precision in integral calculation
         Objects.requireNonNull(startingInterval, "The starting interval was null");
         if ((level <= 0.0) || (level >= 1.0)) {
@@ -259,7 +251,7 @@ public class CentralMVTDistribution {
         setUpperLimits(4);
         RootFunction rf = new RootFunction(level);
         BisectionRootFinder finder = new BisectionRootFinder(rf, ll, ul);
-        finder.setInitialPoint((ll+ul)/2.0);
+        finder.setInitialPoint((ll + ul) / 2.0);
         finder.setDesiredPrecision(0.01);
 //        finder.setMaximumIterations(200);
         finder.evaluate();
@@ -267,15 +259,15 @@ public class CentralMVTDistribution {
         return result;
     }
 
-    private void setLowerLimits(double value){
+    private void setLowerLimits(double value) {
         Arrays.fill(a, value);
     }
 
-    private void setUpperLimits(double value){
+    private void setUpperLimits(double value) {
         Arrays.fill(b, value);
     }
 
-    public class RootFunction implements FunctionIfc{
+    public class RootFunction implements FunctionIfc {
         private double confidLevel = 0.95;
 
         public RootFunction(double confidLevel) {
@@ -290,11 +282,11 @@ public class CentralMVTDistribution {
         }
     }
 
-    public RootFunction getRootFunction(double level){
+    public RootFunction getRootFunction(double level) {
         return new RootFunction(level);
     }
 
-    public class QuantileFunction implements FunctionIfc{
+    public class QuantileFunction implements FunctionIfc {
         @Override
         public double fx(double x) {
             setLowerLimits(Double.NEGATIVE_INFINITY);
@@ -303,7 +295,7 @@ public class CentralMVTDistribution {
         }
     }
 
-    public QuantileFunction getQuantileFunction(){
+    public QuantileFunction getQuantileFunction() {
         return new QuantileFunction();
     }
 
@@ -313,7 +305,7 @@ public class CentralMVTDistribution {
 //        enumerateQuantiles();
     }
 
-    static public void testCDF(){
+    static public void testCDF() {
         double[][] cov = {
                 {1.0, 1.0, 1.0, 1.0, 1.0},
                 {1.0, 2.0, 2.0, 2.0, 2.0},
@@ -342,7 +334,7 @@ public class CentralMVTDistribution {
         System.out.println(d.getCDFCalculationStatistics());
     }
 
-    static public void testQuantile(){
+    static public void testQuantile() {
         double[][] cov = {
                 {1.0, 0.5, 0.5},
                 {0.5, 1.0, 0.5},
@@ -392,7 +384,7 @@ public class CentralMVTDistribution {
 
     }
 
-    public static void enumerateQuantiles(){
+    public static void enumerateQuantiles() {
         double[][] cov = {
                 {1.0, 0.5, 0.5},
                 {0.5, 1.0, 0.5},
@@ -407,7 +399,7 @@ public class CentralMVTDistribution {
         System.out.println();
         System.out.println("Sorted evaluations");
         List<GridEnumerator.Evaluation> list = grid.getSortedEvaluations();
-        for(GridEnumerator.Evaluation e: list){
+        for (GridEnumerator.Evaluation e : list) {
             System.out.println(e);
         }
 
