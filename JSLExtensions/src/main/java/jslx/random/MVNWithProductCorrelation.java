@@ -17,6 +17,8 @@ import java.util.Objects;
  *  Creates a multi-variate normal CDF that has a product structure.
  *  ALGORITHM AS 251.1  APPL.STATIST. (1989), VOL.38, NO.3
  *
+ *  Computed CDF values are to about 10E-7 accuracy.
+ *
  *  FOR A MULTIVARIATE NORMAL VECTOR WITH CORRELATION STRUCTURE
  *  DEFINED BY RHO(I,J) = Lambda(I) * Lambda(J)
  *  @see <a href="https://www.jstor.org/stable/2347754">AS 251</a>

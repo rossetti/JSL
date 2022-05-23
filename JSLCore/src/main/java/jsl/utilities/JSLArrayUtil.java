@@ -433,14 +433,58 @@ public class JSLArrayUtil {
     }
 
     /**
+     * @param a the double[nRow][nCol] array, must not be null, must be rectangular with nRow rows
+     * @param b the double[nRows] array, must not be null, must have nRow elements
+     * @return post multiplies a by b, a result with nRow elements representing the dot product of
+     * b with each row of a.
+     */
+    public static double[] postProduct(double[][] a, double[] b) {
+        Objects.requireNonNull(a, "The first array was null");
+        Objects.requireNonNull(b, "The second array was null");
+        if (!isRectangular(a)) {
+            throw new IllegalArgumentException("The double[][] array was not rectangular");
+        }
+        if (a.length != b.length) {
+            throw new IllegalArgumentException("The double[][] array is not multiplication compatible with the double[]");
+        }
+        if (b.length == 0) {
+            throw new IllegalArgumentException("The arrays were empty!");
+        }
+        double[] result = new double[b.length];
+        for (int i = 0; i < a.length; i++) {
+            result[i] = dotProduct(a[i], b);
+        }
+        return result;
+    }
+
+    /**
+     * @param a the first array, must not be null
+     * @param b the second array, must not be null
+     * @return the summed product of the two arrays
+     */
+    public static double dotProduct(double[] a, double[] b) {
+        Objects.requireNonNull(a, "The first array was null");
+        Objects.requireNonNull(b, "The second array was null");
+        if (a.length != b.length) {
+            throw new IllegalArgumentException("The length of the arrays was not equal");
+        }
+        if (a.length == 0) {
+            throw new IllegalArgumentException("The arrays were empty!");
+        }
+        double sum = 0.0;
+        for (int i = 0; i < a.length; i++) {
+            sum = sum + a[i] * b[i];
+        }
+        return sum;
+    }
+
+    /**
      * @param a the array to add the constant to
      * @param c the constant to add to each element
-     * @return the transformed array
+     * @return the transformed array, the array a is changed
      */
     public static double[] addConstant(double[] a, double c) {
-        if (a == null) {
-            throw new IllegalArgumentException("The array was null.");
-        }
+        Objects.requireNonNull(a, "The first array was null");
         for (int i = 0; i < a.length; i++) {
             a[i] = a[i] + c;
         }
@@ -450,7 +494,7 @@ public class JSLArrayUtil {
     /**
      * @param a the array to add the constant to
      * @param c the constant to subtract from each element
-     * @return the transformed array
+     * @return the transformed array, the array a is changed
      */
     public static double[] subtractConstant(double[] a, double c) {
         return addConstant(a, -c);
@@ -459,7 +503,7 @@ public class JSLArrayUtil {
     /**
      * @param a the array to multiply the constant by
      * @param c the constant to multiply against each element
-     * @return the transformed array
+     * @return the transformed array, the array a is changed
      */
     public static double[] multiplyConstant(double[] a, double c) {
         if (a == null) {
@@ -474,7 +518,7 @@ public class JSLArrayUtil {
     /**
      * @param a the array to divide the constant by
      * @param c the constant to divide each element, cannot be zero
-     * @return the transformed array
+     * @return the transformed array, the array a is changed
      */
     public static double[] divideConstant(double[] a, double c) {
         if (c == 0.0) {
@@ -650,17 +694,31 @@ public class JSLArrayUtil {
     }
 
     /**
-     *
+     * @param array the square array, must not be null
+     * @return the diagonal elements of the array as an array
+     */
+    public static double[] getDiagonal(double[][] array) {
+        if (!isSquare(array)) {
+            throw new IllegalArgumentException("The diagonal cannot be extracted because the array is not square");
+        }
+        double[] diagonal = new double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            diagonal[i] = array[i][i];
+        }
+        return diagonal;
+    }
+
+    /**
      * @param array the array to check
      * @return true if the number of rows equals the number of columns
      */
-    public static boolean isSquare(double[][] array){
+    public static boolean isSquare(double[][] array) {
         Objects.requireNonNull(array, "The array was null");
         if (array.length == 0) {
-            return false; // no rows can't be rectangular
+            return false; // no rows can't be square
         }
         // must be rectangular and nc = nr
-        if (isRectangular(array)){
+        if (isRectangular(array)) {
             int nc = array[0].length; // number of columns in first row, all rows must have this
             int nr = array.length;
             return nc == nr;
@@ -1842,6 +1900,26 @@ public class JSLArrayUtil {
     }
 
     /**
+     * Examines each element, a_i starting at 0, and determines if any
+     * element is less than or equal to 0.0.
+     *
+     * @param array the array to check, must not be null
+     * @return true if all are strictly positive
+     */
+    public static boolean isStrictlyPositive(double[] array) {
+        Objects.requireNonNull(array, "The array was null");
+        if (array.length == 0) {
+            return false;
+        }
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] <= 0.0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Examines each element, a_i starting at 0, and determines if all
      * the elements are strictly increasing a_0 lt a_1 lt a_2, etc.
      *
@@ -2002,15 +2080,16 @@ public class JSLArrayUtil {
         }
     }
 
-    /** Checks if any element of the array is equal to Double.NaN
+    /**
+     * Checks if any element of the array is equal to Double.NaN
      *
      * @param array the array to check, must not be null
      * @return true if any element of array is NaN
      */
-    public static boolean checkForNaN(double[] array){
+    public static boolean checkForNaN(double[] array) {
         Objects.requireNonNull(array, "The array was null");
-        for (double x: array) {
-            if(Double.isNaN(x)){
+        for (double x : array) {
+            if (Double.isNaN(x)) {
                 return true;
             }
         }
@@ -2018,16 +2097,15 @@ public class JSLArrayUtil {
     }
 
     /**
-     *
-     * @param array the array to process
+     * @param array    the array to process
      * @param interval the interval
      * @return an array containing the array values that are contained in the interval
      */
-    public static double[] getDataInInterval(double[] array, Interval interval){
+    public static double[] getDataInInterval(double[] array, Interval interval) {
         Objects.requireNonNull(array, "The array was null");
         Objects.requireNonNull(interval, "The interval was null");
         ArraySaver saver = new ArraySaver();
-        for(double x: array){
+        for (double x : array) {
             if (interval.contains(x)) {
                 saver.save(x);
             }

@@ -52,6 +52,28 @@ abstract public class MVCDF {
         return cdf(limits[0], limits[1]);
     }
 
+    /** Computes the CDF over the rectangular region
+     *
+     * @param lower (common) lower limit
+     * @param upper (common) upper limit
+     * @return the computed probability
+     */
+    public final double cdf(double lower, double upper){
+        setIntegrationLimits(lower, upper);
+        return computeCDF();
+    }
+
+    /** The probability from -infinity to the upper limit, with
+     *  the upper limit being the same for all dimensions
+     *
+     * @param upperLimit the (common) upper limit
+     * @return the computed probability
+     */
+    public final double cdf(double upperLimit){
+        setIntegrationLimits(Double.NEGATIVE_INFINITY, upperLimit);
+        return computeCDF();
+    }
+
     /**
      * Evaluation of the integral. Accuracy should be about 7 decimal places
      *
@@ -111,7 +133,7 @@ abstract public class MVCDF {
      * @param lower the lower limits
      * @param upper the upper limits
      */
-    protected final void setLimits(double lower, double upper){
+    protected final void setIntegrationLimits(double lower, double upper){
         if (lower >= upper){
             String s = String.format("The lower limit = %f was greater than or equal to the upper limit %f %n", lower, upper);
             throw new IllegalArgumentException(s);
