@@ -5,6 +5,7 @@ import jsl.utilities.JSLArrayUtil;
 import jsl.utilities.distributions.Gamma;
 import jsl.utilities.distributions.Normal;
 import jsl.utilities.math.FunctionIfc;
+import jsl.utilities.random.mcintegration.MCMultiVariateIntegration;
 import jsl.utilities.random.mcmc.FunctionMVIfc;
 import jsl.utilities.random.rng.RNStreamIfc;
 import jsl.utilities.random.rvariable.JSLRandom;
@@ -16,6 +17,7 @@ import jsl.utilities.statistic.Statistic;
 import org.apache.commons.math3.linear.CholeskyDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import umontreal.ssj.probdist.ChiDist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,9 +30,9 @@ public class CentralMVTDistribution {
     private final double dof;
     private final double[][] cfL;
     private final int nDim;
-//    private final MCMultiVariateIntegration integrator;
+    private final MCMultiVariateIntegration integrator;
 //    private final QMCMultiVariateIntegration integrator;
-    private final QMCMultiVariateIntegrationSSJ integrator;
+//    private final QMCMultiVariateIntegrationSSJ integrator;
     private final double[] a;
     private final double[] b;
 
@@ -76,10 +78,10 @@ public class CentralMVTDistribution {
             a[i] = Double.NEGATIVE_INFINITY;
             b[i] = Double.POSITIVE_INFINITY;
         }
-//        MVIndependentRV sampler = new MVIndependentRV(nDim, new UniformRV(0.0, 1.0, stream));
+        MVIndependentRV sampler = new MVIndependentRV(nDim, new UniformRV(0.0, 1.0, stream));
         GenzFunc genzFunc = new GenzFunc();
-//        integrator = new MCMultiVariateIntegration(genzFunc, sampler);
-        integrator = new QMCMultiVariateIntegrationSSJ(nDim, genzFunc);
+        integrator = new MCMultiVariateIntegration(genzFunc, sampler);
+//        integrator = new QMCMultiVariateIntegrationSSJ(nDim, genzFunc);
 //        integrator = new QMCMultiVariateIntegration(nDim, genzFunc);
         integrator.setConfidenceLevel(0.99);
         integrator.setDesiredAbsError(0.00001);
@@ -221,6 +223,7 @@ public class CentralMVTDistribution {
         double r2 = Gamma.invChiSquareDistribution(u[nDim - 1], dof);
         // generate r from a chi-distribution
         double r = Math.sqrt(r2);
+//        double r = ChiDist.inverseF((int)dof, u[nDim -1]);
         double sqrtDof = Math.sqrt(dof);
         double c = r / sqrtDof;
         double ap = c * a[0] / cfL[0][0];
@@ -303,8 +306,8 @@ public class CentralMVTDistribution {
     }
 
     public static void main(String[] args) {
-        testCDF();
-//        testQuantile();
+//        testCDF();
+        testQuantile();
 //        enumerateQuantiles();
     }
 
@@ -346,9 +349,9 @@ public class CentralMVTDistribution {
 
         CentralMVTDistribution d = new CentralMVTDistribution(20.0, cov);
 //        d.setMaxSampleSize(1000000);
-        Interval i1 = new Interval(Double.NEGATIVE_INFINITY, 2.19);
-        Interval i2 = new Interval(Double.NEGATIVE_INFINITY, 2.19);
-        Interval i3 = new Interval(Double.NEGATIVE_INFINITY, 2.19);
+        Interval i1 = new Interval(Double.NEGATIVE_INFINITY, 2.192113);
+        Interval i2 = new Interval(Double.NEGATIVE_INFINITY, 2.192113);
+        Interval i3 = new Interval(Double.NEGATIVE_INFINITY, 2.192113);
         List<Interval> intervals = new ArrayList<>();
         intervals.add(i1);
         intervals.add(i2);
