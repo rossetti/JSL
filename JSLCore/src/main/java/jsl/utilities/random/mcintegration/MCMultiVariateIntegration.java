@@ -8,9 +8,26 @@ import jsl.utilities.random.rvariable.UniformRV;
 import java.util.Objects;
 
 /**
- * Provides for the integration of a multi-variate function via Monte-Carlo sampling.
+ * Provides for the integration of a multi-dimensional function via Monte-Carlo sampling.
+ * The user is responsible for providing a function that when evaluated at the
+ * sample from the provided sampler will evaluate to the desired integral over
+ * the range of possible values of the sampler.
+ * <p>
+ * The sampler must have the same range as the desired integral and the function's domain (inputs) must be consistent
+ * with the range (output) of the sampler. There is no checking if the user does not supply appropriate functions or samplers.
+ * <p>
+ * As an example, suppose we want the evaluation of the integral of g(x) over the range from a to b.
+ * If the user selects the sampler as U(a,b) then the function to supply for the integration is NOT g(x).
+ * The function should be h(x) = (b-a)*g(x).
+ * <p>
+ * In general, if the sampler has pdf, w(x), over the range a to b. Then, the function to supply for integration
+ * is h(x) = g(x)/w(x). Again, the user is responsible for providing a sampler that provides values over the interval
+ * of integration.  And, the user is responsible for providing the appropriate function, h(x), that will result
+ * in their desired integral.  This flexibility allows the user to specify h(x) in a factorization that supports an
+ * importance sampling distribution as the sampler.
  *
- * See the detailed discussion for the class MCIntegration.
+ * See the detailed discussion for the class MCExperiment.
+ * @see MCExperiment
  *
  * The evaluation will automatically utilize
  * antithetic sampling to reduce the variance of the estimates unless the user specifies not to do so. In the case of
@@ -94,10 +111,10 @@ public class MCMultiVariateIntegration extends MCExperiment {
         MVIndependentRV sampler = new MVIndependentRV(2, new UniformRV(0.0, 1.0));
         MCMultiVariateIntegration mc = new MCMultiVariateIntegration(f, sampler);
         mc.setConfidenceLevel(0.99);
-        mc.setDesiredAbsError(0.001);
+        mc.setDesiredHWErrorBound(0.001);
 
-        mc.runInitialSample();
-        System.out.println(mc);
+//        mc.runInitialSample();
+//        System.out.println(mc);
         System.out.println();
         mc.runSimulation();
         System.out.println(mc);

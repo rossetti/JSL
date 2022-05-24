@@ -93,7 +93,7 @@ public class MC1DIntegration extends MCExperiment {
         SinFunc f = new SinFunc();
         MC1DIntegration mc = new MC1DIntegration(f, new UniformRV(0.0, Math.PI));
 
-        mc.runInitialSample();
+//        mc.runInitialSample();
         System.out.println(mc);
         System.out.println();
         mc.runSimulation();

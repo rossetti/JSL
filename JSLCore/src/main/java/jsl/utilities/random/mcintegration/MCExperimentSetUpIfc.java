@@ -29,12 +29,12 @@ public interface MCExperimentSetUpIfc {
     /**
      * @return the desired half-width bound for the experiment
      */
-    double getDesiredAbsError();
+    double getDesiredHWErrorBound();
 
     /**
-     * @param desiredAbsError the desired half-width error bound for the experiment
+     * @param desiredHWErrorBound the desired half-width error bound for the experiment
      */
-    void setDesiredAbsError(double desiredAbsError);
+    void setDesiredHWErrorBound(double desiredHWErrorBound);
 
     /**
      * @return true if the reset stream option is on

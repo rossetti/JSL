@@ -4,24 +4,8 @@ import jsl.utilities.distributions.Normal;
 import jsl.utilities.statistic.Statistic;
 
 /**
- * Provides for the integration of a multi-dimensional function via Monte-Carlo sampling.
- * The user is responsible for providing a function that when evaluated at the
- * sample from the provided sampler will evaluate to the desired integral over
- * the range of possible values of the sampler.
- * <p>
- * The sampler must have the same range as the desired integral and the function's domain (inputs) must be consistent
- * with the range (output) of the sampler. There is no checking if the user does not supply appropriate functions or samplers.
- * <p>
- * As an example, suppose we want the evaluation of the integral of g(x) over the range from a to b.
- * If the user selects the sampler as U(a,b) then the function to supply for the integration is NOT g(x).
- * The function should be h(x) = (b-a)*g(x).
- * <p>
- * In general, if the sampler has pdf, w(x), over the range a to b. Then, the function to supply for integration
- * is h(x) = g(x)/w(x). Again, the user is responsible for providing a sampler that provides values over the interval
- * of integration.  And, the user is responsible for providing the appropriate function, h(x), that will result
- * in their desired integral.  This flexibility allows the user to specify h(x) in a factorization that supports an
- * importance sampling distribution as the sampler.
- * <p>
+ * Provides for the running of a monte-carlo experiment.
+ *
  * The simulation is performed in two loops: an outer loop called the macro replications and an inner loop called the micro replications.
  * The user specifies a desired (half-width) error bound, an initial sample size (k), and a maximum sample size limit (M) for
  * the macro replications.  The initial sample size is used to generate a pilot sample from which an estimate of the number of
@@ -68,9 +52,9 @@ public abstract class MCExperiment implements MCExperimentIfc {
     protected final Statistic replicationStatistics = new Statistic();
     protected int initialSampleSize = 10;
     protected int maxMacroRepSampleSize = 100;
-    protected double desiredAbsError = 0.0001;
+    protected double desiredHWErrorBound = 0.0001;
     protected boolean resetStreamOptionOn = false;
-    protected int microRepSampleSize = 10000;
+    protected int microRepSampleSize = 1000;
 
     @Override
     public int getMicroRepSampleSize() {
@@ -95,7 +79,7 @@ public abstract class MCExperiment implements MCExperimentIfc {
         if (macroReplicationStatistics.getCount() < 2.0) {
             return false;
         }
-        return macroReplicationStatistics.getHalfWidth() <= getDesiredAbsError();
+        return macroReplicationStatistics.getHalfWidth() <= getDesiredHWErrorBound();
     }
 
     @Override
@@ -103,7 +87,7 @@ public abstract class MCExperiment implements MCExperimentIfc {
         if (macroReplicationStatistics.getCount() < 2.0) {
             return Double.NaN;
         }
-        long sampleSize = macroReplicationStatistics.estimateSampleSize(getDesiredAbsError());
+        long sampleSize = macroReplicationStatistics.estimateSampleSize(getDesiredHWErrorBound());
         return (double) sampleSize;
     }
 
@@ -128,14 +112,27 @@ public abstract class MCExperiment implements MCExperimentIfc {
     public double runSimulation() {
         macroReplicationStatistics.reset();
         double numNeeded = runInitialSample();
-        int m = (int) Math.min(numNeeded, maxMacroRepSampleSize);
+        int k = maxMacroRepSampleSize - initialSampleSize;
+        int m = (int) Math.min(numNeeded, k);
         // error criterion may have been met by initial sample,
         // in which case m = 0 and no further micro-replications will be run
         beforeMacroReplications();
+        boolean converged = false;
         for (int i = 1; i <= m; i++) {
             macroReplicationStatistics.collect(runMicroReplications());
             if (checkStoppingCriteria()) {
-                return macroReplicationStatistics.getAverage();
+                converged = true;
+                break;
+            }
+        }
+        if (!converged){
+            // ran the estimated m, but did not meet the criteria, continue running up to max
+            for (int i = 1; i <= (k - m); i++) {
+                macroReplicationStatistics.collect(runMicroReplications());
+                if (checkStoppingCriteria()) {
+                    converged = true;
+                    break;
+                }
             }
         }
         afterMacroReplications();
@@ -172,6 +169,7 @@ public abstract class MCExperiment implements MCExperimentIfc {
         }
         // ran through entire initial sample, estimate requirement
         double m = estimateSampleSize();
+        // m is the estimated total needed assuming no sampling has been done
         // it could be possible that m is estimated less than the initial sample size
         // handle that case with max
         return Math.max(0, m - initialSampleSize);
@@ -240,16 +238,16 @@ public abstract class MCExperiment implements MCExperimentIfc {
     }
 
     @Override
-    public double getDesiredAbsError() {
-        return desiredAbsError;
+    public double getDesiredHWErrorBound() {
+        return desiredHWErrorBound;
     }
 
     @Override
-    public void setDesiredAbsError(double desiredAbsError) {
-        if (desiredAbsError <= 0.0) {
+    public void setDesiredHWErrorBound(double desiredHWErrorBound) {
+        if (desiredHWErrorBound <= 0.0) {
             throw new IllegalArgumentException("The desired relative precision must be > 0.0");
         }
-        this.desiredAbsError = desiredAbsError;
+        this.desiredHWErrorBound = desiredHWErrorBound;
     }
 
     @Override
@@ -270,17 +268,47 @@ public abstract class MCExperiment implements MCExperimentIfc {
         sb.append(System.lineSeparator());
         sb.append("max Sample Size = ").append(maxMacroRepSampleSize);
         sb.append(System.lineSeparator());
-        sb.append("desired Abs Error = ").append(desiredAbsError);
-        sb.append(System.lineSeparator());
         sb.append("reset Stream OptionOn = ").append(resetStreamOptionOn);
-        sb.append(System.lineSeparator());
-        sb.append("Absolute error criterion check? = ");
-        sb.append(checkStoppingCriteria());
         sb.append(System.lineSeparator());
         sb.append("Estimated sample size needed to meet criteria = ");
         sb.append(estimateSampleSize());
         sb.append(System.lineSeparator());
+        sb.append("desired half-width error bound = ").append(desiredHWErrorBound);
+        sb.append(System.lineSeparator());
+        double hw = macroReplicationStatistics.getHalfWidth();
+        sb.append("actual half-width = ").append(hw);
+        sb.append(System.lineSeparator());
+        sb.append("error gap (hw - bound) = ").append(hw - desiredHWErrorBound);
+        sb.append(System.lineSeparator());
+        sb.append("-----------------------------------------------------------");
+        sb.append(System.lineSeparator());
+        boolean converged = checkStoppingCriteria();
+        if (!converged){
+            sb.append("The half-width criteria was not met!");
+            sb.append(System.lineSeparator());
+            sb.append("The user should consider one of the following:");
+            sb.append(System.lineSeparator());
+            sb.append("1. increase the desired error bound using setDesiredHWErrorBound()");
+            sb.append(System.lineSeparator());
+            sb.append("2. increase the number of macro replications using setMaxSampleSize()");
+            sb.append(System.lineSeparator());
+            sb.append("2. increase the number of micro replications using setMicroRepSampleSize()");
+        } else {
+            sb.append("The half-width criteria was met!");
+        }
+        sb.append(System.lineSeparator());
+        sb.append("-----------------------------------------------------------");
+        sb.append(System.lineSeparator());
         sb.append("**** Sampling results ****");
+        sb.append(System.lineSeparator());
+        sb.append("Number of macro replications executed = ");
+        sb.append(macroReplicationStatistics.getCount());
+        sb.append(System.lineSeparator());
+        sb.append("Number of micro replications per macro replication = ");
+        sb.append(microRepSampleSize);
+        sb.append(System.lineSeparator());
+        sb.append("Total number of observations = ");
+        sb.append(macroReplicationStatistics.getCount()*microRepSampleSize);
         sb.append(System.lineSeparator());
         sb.append(macroReplicationStatistics);
         return sb.toString();
