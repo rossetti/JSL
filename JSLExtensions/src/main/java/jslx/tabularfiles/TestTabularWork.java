@@ -88,8 +88,8 @@ public class TestTabularWork {
         System.out.println();
 
         // You can grab various columns as arrays
-        Double[] numericColumn = tif.getNumericColumn(0, 10, true);
-        for (Double v : numericColumn) {
+        double[] numericColumn = tif.getNumericColumn(0, 10, true);
+        for (double v : numericColumn) {
             System.out.println(v);
         }
 

@@ -1,6 +1,7 @@
 package jslx.tabularfiles;
 
 import com.opencsv.CSVWriter;
+import jsl.utilities.JSLArrayUtil;
 import jslx.dbutilities.dbutil.DatabaseFactory;
 import jslx.dbutilities.dbutil.DatabaseIfc;
 import org.jooq.*;
@@ -10,19 +11,18 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.function.Consumer;
 
 /**
- *  An abstraction for reading rows of tabular data. Columns of the tabular
- *  data can be of numeric or text.  Using this sub-class of TabularFile
- *  users can read rows of data.  The user is responsible for iterating rows with
- *  data of the appropriate type for the column and reading the row into their program.
- *
- *  Use the static methods of TabularFile to create and define the columns of the file.
- *  Use the methods of this class to read rows.
+ * An abstraction for reading rows of tabular data. Columns of the tabular
+ * data can be of numeric or text.  Using this sub-class of TabularFile
+ * users can read rows of data.  The user is responsible for iterating rows with
+ * data of the appropriate type for the column and reading the row into their program.
+ * <p>
+ * Use the static methods of TabularFile to create and define the columns of the file.
+ * Use the methods of this class to read rows.
  *
  * @see jslx.tabularfiles.TabularFile
  * @see jslx.tabularfiles.TestTabularWork  For example code
@@ -46,7 +46,6 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
     private final Table<Record> myDataTable; // DSL element for the data table
 
     /**
-     *
      * @param pathToFile the path to a valid file that was written using TabularOutputFile
      */
     public TabularInputFile(Path pathToFile) {
@@ -67,10 +66,10 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         myRowId = DSL.field("rowid", Long.class);
     }
 
-    private List<Field> setupFields(){
+    private List<Field> setupFields() {
         List<Field> fields = new ArrayList<>();
-        for(Map.Entry<String, DataType> ct: myColumnTypes.entrySet()){
-            if (ct.getValue() == DataType.NUMERIC){
+        for (Map.Entry<String, DataType> ct : myColumnTypes.entrySet()) {
+            if (ct.getValue() == DataType.NUMERIC) {
                 Field<Double> field = DSL.field(ct.getKey(), Double.class);
                 fields.add(field);
             } else {
@@ -128,7 +127,6 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
     }
 
     /**
-     *
      * @return the current row buffer size
      */
     public final int getRowBufferSize() {
@@ -136,11 +134,10 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
     }
 
     /**
-     *
      * @param rowBufferSize must be at least 1, bigger implies more memory.
      */
     public void setRowBufferSize(int rowBufferSize) {
-        if (rowBufferSize <= 0){
+        if (rowBufferSize <= 0) {
             myRowBufferSize = DEFAULT_ROW_BUFFER_SIZE;
         } else {
             myRowBufferSize = rowBufferSize;
@@ -303,8 +300,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         }
         DSLContext create = myDb.getDSLContext();
         Condition condition = myRowId.between(minRowNum, maxRowNum);
-        Result<Record> records = create.select(myFields).from(myDataTable).where(condition).fetch();
-        return records;
+        return create.select(myFields).from(myDataTable).where(condition).fetch();
     }
 
 //    /**
@@ -382,13 +378,13 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
 //    }
 
     /**
-     *  A class to make iterating of JOOQ records buffered and easier.
-     *  Grabs and returns batches of records until no records are left
-     *  //TODO consider added a more generic version of this class to dbutil package
-     *  //TODO see also jooq cursors
-     *  // use in work related to importing a tabular file into a general database
+     * A class to make iterating of JOOQ records buffered and easier.
+     * Grabs and returns batches of records until no records are left
      */
     protected class BufferedRecordsIterator implements Iterator<Result<Record>> {
+        //TODO consider adding a more generic version of this class to dbutil package
+        //TODO see also jooq cursors
+        // use in work related to importing a tabular file into a general database
         private long myCurrentRowNum;
         private long myRemainingNumRows;
         private final int myBufferSize;
@@ -405,7 +401,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
             if (startingRowNum <= 0) {
                 throw new IllegalArgumentException("The row number must be > 0");
             }
-            if (bufferSize <= 0){
+            if (bufferSize <= 0) {
                 throw new IllegalArgumentException("The buffer size must be > 0");
             }
             myBufferSize = bufferSize - 1;
@@ -422,7 +418,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         @Override
         public final Result<Record> next() {
             // user asked for records, check if there are any remaining rows to put in the buffer, if not return null
-            if (myRemainingNumRows <= 0){
+            if (myRemainingNumRows <= 0) {
                 return null;
             }
             // there must be rows to return, figure out how many to return
@@ -484,7 +480,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param maxRows the total number of rows to extract starting at row 1
      * @return a map of all of the data keyed by column name
      */
-    public final LinkedHashMap<String, Double[]> getNumericColumns(int maxRows) {
+    public final LinkedHashMap<String, double[]> getNumericColumns(int maxRows) {
         return getNumericColumns(maxRows, false);
     }
 
@@ -493,11 +489,11 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param removeMissing if true, then missing (NaN values) are removed
      * @return a map of all of the data keyed by column name
      */
-    public final LinkedHashMap<String, Double[]> getNumericColumns(int maxRows, boolean removeMissing) {
-        LinkedHashMap<String, Double[]> map = new LinkedHashMap<>();
+    public final LinkedHashMap<String, double[]> getNumericColumns(int maxRows, boolean removeMissing) {
+        LinkedHashMap<String, double[]> map = new LinkedHashMap<>();
         List<String> names = getNumericColumnNames();
         for (String name : names) {
-            Double[] values = getNumericColumn(name, maxRows, removeMissing);
+            double[] values = getNumericColumn(name, maxRows, removeMissing);
             map.put(name, values);
         }
         return map;
@@ -533,7 +529,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param maxRows the total number of rows to extract starting at row 1
      * @return the array of values, including any missing values marked as null
      */
-    public final Double[] getNumericColumn(int colNum, int maxRows) {
+    public final double[] getNumericColumn(int colNum, int maxRows) {
         return getNumericColumn(colNum, maxRows, false);
     }
 
@@ -544,7 +540,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param maxRows    the total number of rows to extract starting at row 1
      * @return the array of values, including any missing values marked as null
      */
-    public final Double[] getNumericColumn(String columnName, int maxRows) {
+    public final double[] getNumericColumn(String columnName, int maxRows) {
         Objects.requireNonNull(columnName, "The name of the column cannot be null");
         return getNumericColumn(getColumn(columnName), maxRows, false);
     }
@@ -557,7 +553,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param removeMissing if true, then missing (NaN values) are removed
      * @return the array of values
      */
-    public final Double[] getNumericColumn(String columnName, int maxRows, boolean removeMissing) {
+    public final double[] getNumericColumn(String columnName, int maxRows, boolean removeMissing) {
         Objects.requireNonNull(columnName, "The name of the column cannot be null");
         return getNumericColumn(getColumn(columnName), maxRows, removeMissing);
     }
@@ -570,7 +566,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      * @param removeMissing if true, then missing (NaN values) are removed
      * @return the array of values
      */
-    public final Double[] getNumericColumn(int colNum, int maxRows, boolean removeMissing) {
+    public final double[] getNumericColumn(int colNum, int maxRows, boolean removeMissing) {
         if (colNum < 0) {
             throw new IllegalArgumentException("The column number must be >= 0");
         }
@@ -588,11 +584,11 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         @SuppressWarnings("unchecked")
         // returns Field, instead of Field<Double>, but it must be a double by construction
         Field<Double> theField = myFields.get(colNum);
-        if (removeMissing){
+        if (removeMissing) {
             c = c.and(theField.isNotNull());
         }
         Double[] doubles = dsl.select(theField).from(myDataTable).where(c).fetchArray(theField, Double.class);
-        return doubles;
+        return JSLArrayUtil.toPrimitive(doubles);
     }
 
     /**
@@ -657,47 +653,50 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         @SuppressWarnings("unchecked")
         // returns Field, instead of Field<String>, but it must be a String by construction
         Field<String> theField = myFields.get(colNum);
-        if (removeMissing){
+        if (removeMissing) {
             c = c.and(theField.isNotNull());
         }
         String[] texts = dsl.select(theField).from(myDataTable).where(c).fetchArray(theField, String.class);
         return texts;
     }
 
-    /** A very simple write to CSV. If you need something more complex, then
-     *  iterate the rows yourself. This CSV does not apply quote characters to any elements.
+    /**
+     * A very simple write to CSV. If you need something more complex, then
+     * iterate the rows yourself. This CSV does not apply quote characters to any elements.
      *
      * @param out the file to write to the data to, the writer is NOT closed
      */
     public final void writeAsCSV(PrintWriter out, boolean header) {
         CSVWriter writer = new CSVWriter(out);
-        if (header){
-            writer.writeNext(getColumnNames().toArray(new String[0]),false);
+        if (header) {
+            writer.writeNext(getColumnNames().toArray(new String[0]), false);
         }
-        for(RowGetterIfc row: this){
-            writer.writeNext(row.asStringArray(),false);
+        for (RowGetterIfc row : this) {
+            writer.writeNext(row.asStringArray(), false);
         }
         writer.flushQuietly();
     }
 
     /**
-     *  Writes all of the rows.
-     *  This is not optimized for large files and may have memory and performance issues.
+     * Writes all of the rows.
+     * This is not optimized for large files and may have memory and performance issues.
      */
-    public final void writeAsText(PrintWriter out){
+    public final void writeAsText(PrintWriter out) {
         writeAsText(1, out);
     }
 
-    /** Writes from the given row to the end of the file.
+    /**
+     * Writes from the given row to the end of the file.
      * This is not optimized for large files and may have memory and performance issues.
      *
      * @param minRow the row to start the printing
      */
-    public final void writeAsText(long minRow, PrintWriter out){
+    public final void writeAsText(long minRow, PrintWriter out) {
         writeAsText(minRow, getTotalNumberRows(), out);
     }
 
-    /** This is not optimized for large files and may have memory and performance issues.
+    /**
+     * This is not optimized for large files and may have memory and performance issues.
      *
      * @param minRow the row to start the printing
      * @param maxRow the row to end the printing
@@ -708,22 +707,25 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
     }
 
     /**
-     *  Prints all of the rows.
-     *  This is not optimized for large files and may have memory and performance issues.
+     * Prints all of the rows.
+     * This is not optimized for large files and may have memory and performance issues.
      */
-    public final void printAsText(){
+    public final void printAsText() {
         printAsText(1);
     }
 
-    /** Prints from the given row to the end of the file
+    /**
+     * Prints from the given row to the end of the file
      * This is not optimized for large files and may have memory and performance issues.
+     *
      * @param minRow the row to start the printing
      */
-    public final void printAsText(long minRow){
+    public final void printAsText(long minRow) {
         printAsText(minRow, getTotalNumberRows());
     }
 
-    /** This is not optimized for large files and may have memory and performance issues.
+    /**
+     * This is not optimized for large files and may have memory and performance issues.
      *
      * @param minRow the row to start the printing
      * @param maxRow the row to end the printing
@@ -733,9 +735,10 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         records.format(System.out);
     }
 
-    /** This is not optimized for large files and may have memory and performance issues.
+    /**
+     * This is not optimized for large files and may have memory and performance issues.
      *
-     * @param wbName the name of the workbook, must not be null
+     * @param wbName      the name of the workbook, must not be null
      * @param wbDirectory the path to the directory to contain the workbook, must not be null
      * @throws IOException if something goes wrong with the writing
      */
@@ -745,14 +748,15 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
         myDb.writeDbToExcelWorkbook(names, wbName, wbDirectory);
     }
 
-    /** Transforms the file into an SQLite database file
+    /**
+     * Transforms the file into an SQLite database file
      *
      * @return a reference to the database
      * @throws IOException if something goes wrong
      */
     public final DatabaseIfc asDatabase() throws IOException {
         Path parent = myPath.getParent();
-        Path dbFile = parent.resolve(myPath.getFileName().toString()+".sqlite");
+        Path dbFile = parent.resolve(myPath.getFileName().toString() + ".sqlite");
         Files.copy(myPath, dbFile, StandardCopyOption.REPLACE_EXISTING);
         return DatabaseFactory.getSQLiteDatabase(dbFile);
     }
