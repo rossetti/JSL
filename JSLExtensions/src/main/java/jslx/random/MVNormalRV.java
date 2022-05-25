@@ -12,10 +12,13 @@ import org.apache.commons.math3.linear.RealMatrix;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * Generations multi-dimensional normal random variates
+ */
 public class MVNormalRV implements MVRVariableIfc {
 
     protected final double[][] covariances;
-    protected final double[][] cfL;
+    protected final double[][] cfL;// Cholesky decomposition array
     protected final int nDim;
     protected final double[] means;
     protected final NormalRV normalRV;
@@ -36,20 +39,11 @@ public class MVNormalRV implements MVRVariableIfc {
     public MVNormalRV(double[] means, double[][] covariances, RNStreamIfc stream) {
         Objects.requireNonNull(means, "The supplied array of mean values was null");
         Objects.requireNonNull(stream, "The supplied stream for the sampler was null");
-        Objects.requireNonNull(covariances, "The covariance array was null");
-        if (!JSLArrayUtil.isSquare(covariances)) {
-            throw new IllegalArgumentException("The covariance array was not square");
-        }
-        if (covariances.length <= 1) {
-            throw new IllegalArgumentException("The covariance array dimension must be >= 2");
+        if (!isValidCovariance(covariances)) {
+            throw new IllegalArgumentException("The covariance array was not valid");
         }
         nDim = covariances.length;
-        // use of Apache Commons
-        RealMatrix cv = MatrixUtils.createRealMatrix(covariances);
-        CholeskyDecomposition cd = new CholeskyDecomposition(cv);
-        RealMatrix lm = cd.getL();
-        cfL = lm.getData();
-        // end use of Apache Commons
+        cfL = choleskyDecomposition(covariances);
         this.covariances = JSLArrayUtil.copy2DArray(covariances);
         this.means = Arrays.copyOf(means, means.length);
         normalRV = new NormalRV(0.0, 1.0, stream);
@@ -118,6 +112,38 @@ public class MVNormalRV implements MVRVariableIfc {
         return normalRV.getAntitheticOption();
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("MVNormalRV");
+        sb.append(System.lineSeparator());
+        sb.append("nDim = ").append(nDim);
+        sb.append(System.lineSeparator());
+        sb.append("means = ");
+        sb.append(System.lineSeparator());
+        sb.append("[");
+        sb.append(JSLArrayUtil.toCSVString(means));
+        sb.append("]");
+        sb.append(System.lineSeparator());
+        sb.append("covariances = ");
+        sb.append(System.lineSeparator());
+        for (int i = 0; i < covariances.length; i++) {
+            sb.append("[");
+            sb.append(JSLArrayUtil.toCSVString(covariances[i]));
+            sb.append("]");
+            sb.append(System.lineSeparator());
+        }
+        sb.append("Cholesky decomposition = ");
+        sb.append(System.lineSeparator());
+        for (int i = 0; i < cfL.length; i++) {
+            sb.append("[");
+            sb.append(JSLArrayUtil.toCSVString(cfL[i]));
+            sb.append("]");
+            sb.append(System.lineSeparator());
+        }
+        sb.append(System.lineSeparator());
+        return sb.toString();
+    }
+
     /**
      * @param means       the means for the distribution
      * @param stdDevs     an array holding the standard deviations
@@ -152,10 +178,10 @@ public class MVNormalRV implements MVRVariableIfc {
         if (correlation.length != stdDevs.length) {
             throw new IllegalArgumentException("The correlation array dimension does not match the std deviations length");
         }
-        if (!isValidCorrelation(correlation)){
+        if (!isValidCorrelation(correlation)) {
             throw new IllegalArgumentException("Not a valid correlation array");
         }
-        if (!JSLArrayUtil.isStrictlyPositive(stdDevs)){
+        if (!JSLArrayUtil.isStrictlyPositive(stdDevs)) {
             throw new IllegalArgumentException("Not a valid std dev array");
         }
         RealMatrix s1 = MatrixUtils.createRealDiagonalMatrix(stdDevs);
@@ -171,15 +197,18 @@ public class MVNormalRV implements MVRVariableIfc {
      */
     public static boolean isValidCorrelation(double[][] correlation) {
         Objects.requireNonNull(correlation, "The correlation array was null");
-        if (!JSLArrayUtil.isSquare(correlation)) {
+        if (correlation.length <= 1) {
             return false;
         }
-        if (correlation.length <= 1) {
+        if (!JSLArrayUtil.isSquare(correlation)) {
             return false;
         }
         for (int i = 0; i < correlation.length; i++) {
             for (int j = 0; j < correlation.length; j++) {
                 if ((correlation[i][j] < -1.0) || (correlation[i][j] > 1.0)) {
+                    return false;
+                }
+                if (correlation[i][j] != correlation[j][i]) {
                     return false;
                 }
             }
@@ -191,7 +220,7 @@ public class MVNormalRV implements MVRVariableIfc {
      * @param covariances the covariances matrix to check, must not be null
      * @return true if elements are valid covariance values
      */
-    public static boolean isValidCovariance(double[][] covariances){
+    public static boolean isValidCovariance(double[][] covariances) {
         Objects.requireNonNull(covariances, "The covariance array was null");
         if (!JSLArrayUtil.isSquare(covariances)) {
             return false;
@@ -200,8 +229,15 @@ public class MVNormalRV implements MVRVariableIfc {
             return false;
         }
         double[] diagonal = JSLArrayUtil.getDiagonal(covariances);
-        if (!JSLArrayUtil.isStrictlyPositive(diagonal)){
+        if (!JSLArrayUtil.isStrictlyPositive(diagonal)) {
             return false;
+        }
+        for (int i = 0; i < covariances.length; i++) {
+            for (int j = 0; j < covariances.length; j++) {
+                if (covariances[i][j] != covariances[j][i]) {
+                    return false;
+                }
+            }
         }
         return true;
     }
@@ -211,19 +247,33 @@ public class MVNormalRV implements MVRVariableIfc {
      * @return an array holding the correlations associated with the covariance matrix
      */
     public static double[][] convertToCorrelation(double[][] covariances) {
-        Objects.requireNonNull(covariances, "The covariance array was null");
-        if (!JSLArrayUtil.isSquare(covariances)) {
-            throw new IllegalArgumentException("The covariance array was not square");
-        }
-        if (covariances.length <= 1) {
-            throw new IllegalArgumentException("The covariance array dimension must be >= 2");
+        if (!isValidCovariance(covariances)) {
+            throw new IllegalArgumentException("The covariance array was not valid");
         }
         double[] s = JSLArrayUtil.getDiagonal(covariances); // variances extracted
         JSLArrayUtil.apply(s, Math::sqrt); // take square root to get standard deviations
+        for (double x : s) { // invert the array values
+            x = 1.0 / x;
+        }
         RealMatrix d = MatrixUtils.createRealDiagonalMatrix(s);
         RealMatrix cov = MatrixUtils.createRealMatrix(covariances);
         RealMatrix result = d.multiply(cov).multiply(d);
         return result.getData();
+    }
+
+    /**
+     * @param covariances a valid variance-covariance matrix
+     * @return the Cholesky decomposition of the supplied matrix
+     */
+    public static double[][] choleskyDecomposition(double[][] covariances) {
+        if (!isValidCovariance(covariances)) {
+            throw new IllegalArgumentException("The covariance array was not valid");
+        }
+        // use of Apache Commons
+        RealMatrix cv = MatrixUtils.createRealMatrix(covariances);
+        CholeskyDecomposition cd = new CholeskyDecomposition(cv);
+        RealMatrix lm = cd.getL();
+        return lm.getData();
     }
 
     public static void main(String[] args) {

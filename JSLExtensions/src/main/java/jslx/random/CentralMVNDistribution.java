@@ -12,9 +12,6 @@ import jsl.utilities.random.rvariable.JSLRandom;
 import jsl.utilities.random.rvariable.MVIndependentRV;
 import jsl.utilities.random.rvariable.UniformRV;
 import jsl.utilities.statistic.Statistic;
-import org.apache.commons.math3.linear.CholeskyDecomposition;
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,12 +49,7 @@ public class CentralMVNDistribution extends MVCDF {
             throw new IllegalArgumentException("The covariance array is not a valid covariance matrix");
         }
         nDim = covariances.length;
-        // use of Apache Commons
-        RealMatrix cv = MatrixUtils.createRealMatrix(covariances);
-        CholeskyDecomposition cd = new CholeskyDecomposition(cv);
-        RealMatrix lm = cd.getL();
-        cfL = lm.getData();
-        // end use of Apache Commons
+        cfL = MVNormalRV.choleskyDecomposition(covariances);
         this.covariances = JSLArrayUtil.copy2DArray(covariances);
         sampler = new MVIndependentRV(nDim, new UniformRV(0.0, 1.0, stream));
         GenzFunc genzFunc = new GenzFunc();
@@ -77,7 +69,6 @@ public class CentralMVNDistribution extends MVCDF {
     public String toString() {
         final StringBuilder sb = new StringBuilder("CentralMVNDistribution");
         sb.append(System.lineSeparator());
-        sb.append(System.lineSeparator());
         sb.append("nDim = ").append(nDim);
         sb.append(System.lineSeparator());
         sb.append("covariances = ");
@@ -88,7 +79,7 @@ public class CentralMVNDistribution extends MVCDF {
             sb.append("]");
             sb.append(System.lineSeparator());
         }
-        sb.append("cfL = ");
+        sb.append("Cholesky decomposition = ");
         sb.append(System.lineSeparator());
         for (int i = 0; i < cfL.length; i++) {
             sb.append("[");
