@@ -479,6 +479,96 @@ public class JSLArrayUtil {
     }
 
     /**
+     * The arrays must be rectangular and n columns of first must
+     * be same and n rows for second
+     *
+     * @param first  the first array, must not be null
+     * @param second the second array, must not be null
+     * @return true if arrays can be multiplied
+     */
+    public static boolean isMultiplyCompatible(double[][] first, double[][] second) {
+        Objects.requireNonNull(first, "The first array was null");
+        Objects.requireNonNull(second, "The second array was null");
+        if (!isRectangular(first)) {
+            return false;
+        }
+        if (!isRectangular(second)) {
+            return false;
+        }
+        int nColsFirst = getNumColumns(first);
+        int nRowsSecond = getNumRows(second);
+        return nColsFirst == nRowsSecond;
+    }
+
+    /**
+     * @param first  the first array, must not be null, must be rectangular
+     * @param second the second array, must not be null, must be rectangular
+     * @return true if arrays have the same elements
+     */
+    public static boolean isEqual(double[][] first, double[][] second) {
+        Objects.requireNonNull(first, "The first array was null");
+        Objects.requireNonNull(second, "The second array was null");
+        if (!isRectangular(first)) {
+            throw new IllegalArgumentException("The first array was not rectangular");
+        }
+        if (!isRectangular(second)) {
+            throw new IllegalArgumentException("The second array was not rectangular");
+        }
+        int nColsFirst = getNumColumns(first);
+        int nRowsFirst = getNumRows(first);
+        int nColsSecond = getNumColumns(second);
+        int nRowsSecond = getNumRows(second);
+        if (nRowsFirst != nRowsSecond) {
+            return false;
+        }
+        if (nColsFirst != nColsSecond) {
+            return false;
+        }
+        for (int i = 0; i < nRowsFirst; i++) {
+            for (int j = 0; j < nColsFirst; j++) {
+                if (first[i][j] != second[i][j])
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * The arrays must be rectangular with the number of rows of the first
+     * array equal to the number of columns of the second array.
+     *
+     * @param first  the first array, must not be null
+     * @param second the second array, must not be null
+     * @return the product of the arrays
+     */
+    public static double[][] multiply(double[][] first, double[][] second) {
+        Objects.requireNonNull(first, "The first array was null");
+        Objects.requireNonNull(second, "The second array was null");
+        if (!isRectangular(first)) {
+            throw new IllegalArgumentException("The first array was not rectangular");
+        }
+        if (!isRectangular(second)) {
+            throw new IllegalArgumentException("The second array was not rectangular");
+        }
+        int nColsFirst = getNumColumns(first);
+        int nRowsSecond = getNumRows(second);
+        if (nColsFirst != nRowsSecond) {
+            throw new IllegalArgumentException("The arrays are not multiplication compatible");
+        }
+        int nr = getNumRows(first);
+        int nc = getNumColumns(second);
+        double[][] result = new double[nr][nc];
+        for (int i = 0; i < nr; i++) {
+            for (int j = 0; j < nc; j++) {
+                for (int k = 0; k < nRowsSecond; k++) {
+                    result[i][j] = result[i][j] + first[i][k] * second[k][j];
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * @param a the array to add the constant to
      * @param c the constant to add to each element
      * @return the transformed array, the array a is changed
@@ -726,6 +816,28 @@ public class JSLArrayUtil {
             return false;
         }
 
+    }
+
+    /**
+     * @param array a 2-D rectangular array, must not be null
+     * @return the number of rows in the array
+     */
+    public static int getNumRows(double[][] array) {
+        if (!isRectangular(array)) {
+            throw new IllegalArgumentException("The array was not rectangular");
+        }
+        return array.length;
+    }
+
+    /**
+     * @param array a 2-D rectangular array, must not be null
+     * @return the number of columns in the array
+     */
+    public static int getNumColumns(double[][] array) {
+        if (!isRectangular(array)) {
+            throw new IllegalArgumentException("The array was not rectangular");
+        }
+        return array[0].length;
     }
 
     /**

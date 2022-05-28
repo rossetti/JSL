@@ -29,6 +29,11 @@ public class JSLFileUtil {
     public static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
+     *  System.out as a PrintWriter
+     */
+    public static final PrintWriter SOUT = new PrintWriter(System.out);
+
+    /**
      * Returns the directory that the program was launched from on the OS
      * as a string. This call may throw a SecurityException if the system information
      * is not accessible. Uses System property "user.dir"
