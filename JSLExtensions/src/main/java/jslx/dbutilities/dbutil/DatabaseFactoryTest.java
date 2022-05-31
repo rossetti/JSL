@@ -3,6 +3,7 @@ package jslx.dbutilities.dbutil;
 import jsl.utilities.reporting.JSL;
 import jslx.dbutilities.JSLDatabase;
 import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import javax.sql.DataSource;

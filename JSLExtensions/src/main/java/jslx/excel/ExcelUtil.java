@@ -181,7 +181,9 @@ public class ExcelUtil {
             pathToWorkbook = currentDir.resolve(db.getLabel() + ".xlsx");
         }
         LOG.info("Writing database {} to Excel workbook file {}.", db.getLabel(), pathToWorkbook);
-
+//TODO seems to cause this message to print
+//        ERROR StatusLogger Log4j2 could not find a logging implementation.
+//        Please add log4j-core to the classpath. Using SimpleLogger to log to the console...
         // XSSFWorkbook workbook = new XSSFWorkbook();
         // using SXSSFWorkbook to speed up processing
         // https://poi.apache.org/components/spreadsheet/how-to.html#sxssf

@@ -19,6 +19,7 @@ package jslx.dbutilities.dbutil;
 import jslx.excel.ExcelUtil;
 import jsl.utilities.reporting.JSL;
 import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.codegen.GenerationTool;
 
 import org.jooq.meta.jaxb.Property;

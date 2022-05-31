@@ -5,6 +5,7 @@ import jsl.utilities.JSLArrayUtil;
 import jslx.dbutilities.dbutil.DatabaseFactory;
 import jslx.dbutilities.dbutil.DatabaseIfc;
 import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import java.io.IOException;
