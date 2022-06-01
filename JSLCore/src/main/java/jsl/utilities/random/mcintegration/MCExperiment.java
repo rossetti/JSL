@@ -310,7 +310,11 @@ public abstract class MCExperiment implements MCExperimentIfc {
         sb.append("Total number of observations = ");
         sb.append(macroReplicationStatistics.getCount()*microRepSampleSize);
         sb.append(System.lineSeparator());
-        sb.append(macroReplicationStatistics);
+        if (macroReplicationStatistics.getCount() == 0.0){
+            sb.append("**** There were no macro replications executed for results.");
+        } else {
+            sb.append(macroReplicationStatistics);
+        }
         return sb.toString();
     }
 }

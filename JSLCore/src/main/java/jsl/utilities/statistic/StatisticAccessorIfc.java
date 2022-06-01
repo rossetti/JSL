@@ -173,7 +173,7 @@ public interface StatisticAccessorIfc extends GetCSVStatisticIfc {
      */
     default Interval getConfidenceInterval(double level) {
         if (getCount() < 1.0) {
-            return new Interval(Double.NaN, Double.NaN);
+            return new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
         }
         double hw = getHalfWidth(level);
         double avg = getAverage();
