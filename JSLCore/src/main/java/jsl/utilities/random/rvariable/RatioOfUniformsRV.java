@@ -58,6 +58,6 @@ public class RatioOfUniformsRV extends AbstractRVariable {
 
     @Override
     public RVariableIfc newInstance(RNStreamIfc rng) {
-        return new RatioOfUniformsRV(uCDF.getMaximum(), vCDF.getMinimum(), vCDF.getMaximum(), pdf, myRNStream);
+        return new RatioOfUniformsRV(uCDF.getMaximum(), vCDF.getMinimum(), vCDF.getMaximum(), pdf, rng);
     }
 }
