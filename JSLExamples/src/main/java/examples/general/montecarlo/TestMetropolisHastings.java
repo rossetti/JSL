@@ -23,6 +23,7 @@ import jsl.utilities.distributions.Normal;
 import jsl.utilities.random.mcmc.MetropolisHastings1D;
 import jsl.utilities.random.mcmc.ProposalFunction1DIfc;
 import jsl.utilities.random.rvariable.NormalRV;
+import jsl.utilities.reporting.JSL;
 
 import java.io.PrintWriter;
 
@@ -67,7 +68,7 @@ public class TestMetropolisHastings {
 
     public static class WriteOut implements ObserverIfc{
 
-        PrintWriter printWriter = JSLFileUtil.makePrintWriter("MHOut.txt");
+        PrintWriter printWriter = JSL.getInstance().makePrintWriter("MHOut.txt");
 
         @Override
         public void update(Object theObserved, Object arg) {
