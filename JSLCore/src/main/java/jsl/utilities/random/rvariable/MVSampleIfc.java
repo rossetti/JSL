@@ -21,30 +21,29 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- *  An interface for getting multi-variable samples, each sample has many values
- *  held in an array
+ * An interface for getting multi-variable samples, each sample has many values
+ * held in an array
  */
 public interface MVSampleIfc {
 
     /**
-     *
      * @return the expected size of the array from sample()
      */
     int getDimension();
 
     /**
-     *
      * @return generates an array of random values of size getDimension()
      */
-    default double[] sample(){
+    default double[] sample() {
         double[] array = new double[getDimension()];
         sample(array);
-        return(array);
+        return (array);
     }
 
-    /** Fills the supplied array with a sample of values. This method
-     *  avoids the creation of a new array.  The size of the array
-     *  must match getDimension()
+    /**
+     * Fills the supplied array with a sample of values. This method
+     * avoids the creation of a new array.  The size of the array
+     * must match getDimension()
      *
      * @param array the array to fill with the sample
      */
@@ -65,16 +64,16 @@ public interface MVSampleIfc {
     }
 
     /**
-     * Fills the supplied list of arrays with randomly generated samples
+     * Fills the supplied array of arrays with randomly generated samples
      *
-     * @param values the list to fill
+     * @param values the arrays to fill
      */
-    default void sample(List<double[]> values) {
+    default void sample(double[][] values) {
         if (values == null) {
             throw new IllegalArgumentException("The supplied list was null");
         }
-        for (int i = 0; i < values.size(); i++) {
-            values.add(sample());
+        for (int i = 0; i < values.length; i++) {
+            values[i] = sample();
         }
     }
 }
