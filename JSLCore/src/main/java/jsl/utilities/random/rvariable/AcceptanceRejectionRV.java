@@ -6,6 +6,12 @@ import jsl.utilities.random.rng.RNStreamIfc;
 
 import java.util.Objects;
 
+/**
+ *  Implements the acceptance/rejection algorithm for uni-variate distributions.
+ *  The user must supply a continuous distribution that acts as the proposal distribution
+ *  and the PDF of the distribution from which random variates will be generated.
+ *  The two distributions must be domain compatible.
+ */
 public class AcceptanceRejectionRV extends AbstractRVariable {
 
     private final ContinuousDistributionIfc distribution;
