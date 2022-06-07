@@ -24,6 +24,7 @@ package jsl.utilities.reporting;
 import java.text.DecimalFormat;
 import java.util.*;
 
+import jsl.utilities.JSLArrayUtil;
 import jsl.utilities.statistic.Statistic;
 import jsl.utilities.statistic.StatisticAccessorIfc;
 
@@ -334,6 +335,26 @@ public class StatisticReporter {
         }
         formatter.format("%s %n", myHline);
         return sb;
+    }
+
+    public List<String> getSummaryReportHeader(){
+        List<String> list = new ArrayList<>();
+        list.add("Name");
+        list.add("Count");
+        list.add("Average");
+        list.add("Std. Dev.");
+        return list;
+    }
+
+    public List<String> getSummaryReportRow(Statistic statistic, DecimalFormat df){
+        Objects.requireNonNull(statistic, "The statistic was null");
+        List<String> list = new ArrayList<>();
+        list.add(statistic.getName());
+        double[] data = {statistic.getCount(),
+                statistic.getAverage(),
+                statistic.getStandardDeviation()};
+        list.addAll(Arrays.asList(JSLArrayUtil.toString(data, df)));
+        return list;
     }
 
     /**

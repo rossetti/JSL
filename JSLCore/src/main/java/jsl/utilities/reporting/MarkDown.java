@@ -11,6 +11,9 @@ import java.util.*;
  */
 public class MarkDown {
 
+    public static final DecimalFormat D2FORMAT = new DecimalFormat("0.##");
+    public static final DecimalFormat D3FORMAT = new DecimalFormat("0.###");
+
     enum ColFmt {
         LEFT(":---"),
         CENTER(":---:"),
@@ -186,12 +189,109 @@ public class MarkDown {
         return sb.toString();
     }
 
-    public static String tableRow(double[] array){
-        return tableRow(array, null);
+    public static String tableRow(double[] array) {
+        return tableRow(null, array, D3FORMAT);
     }
 
-    public static String tableRow(double[] array, DecimalFormat df){
-        return tableRow(Arrays.asList(JSLArrayUtil.toString(array, df )));
+    public static String tableRow(String rowLabel, double[] array) {
+        return tableRow(rowLabel, array, D3FORMAT);
+    }
+
+    public static String tableRow(String rowLabel, double[] array, DecimalFormat df) {
+        if (rowLabel == null) {
+            return tableRow(Arrays.asList(JSLArrayUtil.toString(array, df)));
+        } else {
+            String[] data = JSLArrayUtil.toString(array, df);
+            List<String> list = new ArrayList<>();
+            list.add(rowLabel);
+            list.addAll(Arrays.asList(data));
+            return tableRow(list);
+        }
+    }
+
+    public static class Table {
+
+        private final StringBuilder sbTable = new StringBuilder();
+        private final int numCols;
+
+        public Table(List<String> colHeaders) {
+            this(colHeaders, allSame(colHeaders.size(), ColFmt.LEFT));
+        }
+
+        public Table(List<String> colHeaders, ColFmt format) {
+            this(colHeaders, allSame(colHeaders.size(), format));
+        }
+
+        public Table(List<String> colHeaders, List<ColFmt> formats) {
+            Objects.requireNonNull(colHeaders, "The column headers list was null");
+            Objects.requireNonNull(formats, "The column formats list was null");
+            if (colHeaders.isEmpty()) {
+                throw new IllegalArgumentException("The column headers list was empty");
+            }
+            if (formats.isEmpty()) {
+                throw new IllegalArgumentException("The column formats list was empty");
+            }
+            if (colHeaders.size() != formats.size()) {
+                throw new IllegalArgumentException("The size of the header and format lists do not match");
+            }
+            numCols = colHeaders.size();
+            sbTable.append(tableHeader(colHeaders, formats));
+            sbTable.append(System.lineSeparator());
+        }
+
+        public Table addRow(double[] data) {
+            return addRow(null, data, D3FORMAT);
+        }
+
+        public Table addRow(String rowLabel, double[] data, DecimalFormat df) {
+            Objects.requireNonNull(data, "The data for the row was null");
+            if (rowLabel == null) {
+                if (data.length != numCols) {
+                    throw new IllegalArgumentException("The size of the array does not match the number of columns");
+                }
+            } else {
+                if (data.length != (numCols - 1)) {
+                    throw new IllegalArgumentException("The size of the array does not match the number of columns");
+                }
+            }
+
+            sbTable.append(tableRow(rowLabel, data, df));
+            sbTable.append(System.lineSeparator());
+            return this;
+        }
+
+        public void addRows(double[][] data) {
+            addRows(data, D3FORMAT);
+        }
+
+        public void addRows(double[][] data, DecimalFormat df) {
+            Objects.requireNonNull(data, "The data for the row was null");
+            if (data.length == 0) {
+                return;
+            }
+            for (double[] array : data) {
+                addRow(null, array, df);
+            }
+        }
+
+        public void addRows(List<double[]> rows) {
+            addRows(rows, D3FORMAT);
+        }
+
+        public void addRows(List<double[]> rows, DecimalFormat df) {
+            Objects.requireNonNull(rows, "The data for the row was null");
+            if (rows.isEmpty()) {
+                return;
+            }
+            for (double[] array : rows) {
+                addRow(null, array, df);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return sbTable.toString();
+        }
     }
 
     public static void main(String[] args) {
@@ -205,9 +305,13 @@ public class MarkDown {
         System.out.println(h);
 
         NormalRV n = new NormalRV();
-        double[] z1 = n.sample(3);
-        double[] z2 = n.sample(3);
-        System.out.println(tableRow(z1));
-        System.out.println(tableRow(z2));
+        Table t = new Table(header);
+
+        for (int i = 1; i <= 10; i++) {
+            t.addRow(n.sample(3));
+        }
+
+        System.out.println(t);
+
     }
 }
