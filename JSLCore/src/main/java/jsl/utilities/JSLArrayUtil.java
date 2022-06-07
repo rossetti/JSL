@@ -1290,6 +1290,18 @@ public class JSLArrayUtil {
      * @return the array of strings representing the values of the doubles
      */
     public static String[] toString(double[] array) {
+        return toString(array, null);
+    }
+
+    /**
+     * Convert the array of double to an array of strings with each element the
+     * corresponding value
+     *
+     * @param array the array of doubles
+     * @param df a format to apply for each element
+     * @return the array of strings representing the values of the doubles
+     */
+    public static String[] toString(double[] array, DecimalFormat df) {
         if (array == null) {
             return new String[0];
         }
@@ -1298,7 +1310,11 @@ public class JSLArrayUtil {
         }
         String[] target = new String[array.length];
         for (int i = 0; i < array.length; i++) {
-            target[i] = String.valueOf(array[i]);
+            if (df == null){
+                target[i] = String.valueOf(array[i]);
+            } else {
+                target[i] = df.format(array[i]);
+            }
         }
         return target;
     }
