@@ -61,14 +61,13 @@ public class StatisticReporter {
     private String myReportTitle = null;
 
     /**
-     *  Creates a Statistic Reporter with no statistics
+     * Creates a Statistic Reporter with no statistics
      */
-    public StatisticReporter(){
+    public StatisticReporter() {
         this(new ArrayList<>());
     }
 
     /**
-     *
      * @param listOfStats a list containing the StatisticAccessorIfc instances
      */
     public StatisticReporter(List<StatisticAccessorIfc> listOfStats) {
@@ -83,33 +82,32 @@ public class StatisticReporter {
 
     }
 
-    /** Creates and adds a statistic with no name to the reporter
+    /**
+     * Creates and adds a statistic with no name to the reporter
      *
      * @return the created statistic
      */
-    public final Statistic addStatistic(){
+    public final Statistic addStatistic() {
         String name = null;
         return addStatistic(name);
     }
 
     /**
-     *
      * @param name the name of the statistic to add to the reporter
      * @return the created statistic
      */
-    public final Statistic addStatistic(String name){
+    public final Statistic addStatistic(String name) {
         Statistic s = new Statistic(name);
         addStatistic(s);
         return s;
     }
 
     /**
-     *
      * @param statistic the statistic to add, must not be null
      */
-    public final void addStatistic(StatisticAccessorIfc statistic){
+    public final void addStatistic(StatisticAccessorIfc statistic) {
         Objects.requireNonNull(statistic, "The supplied statistic was null.");
-        if (myStats.contains(statistic)){
+        if (myStats.contains(statistic)) {
             return;
         }
         myStats.add(statistic);
@@ -156,7 +154,6 @@ public class StatisticReporter {
     /**
      * Changes the number of spaces for printing the names
      *
-     *
      * @param n must be between 10 and 99
      */
     public final void setNameFieldSize(int n) {
@@ -173,7 +170,6 @@ public class StatisticReporter {
     /**
      * Changes the number of decimal places in the average reporting.
      *
-     *
      * @param n must be between 0 and 9
      */
     public final void setDecimalPlaces(int n) {
@@ -188,7 +184,6 @@ public class StatisticReporter {
     }
 
     /**
-     *
      * @param flag true means labeling is on report
      */
     public final void setReportLabelFlag(boolean flag) {
@@ -256,7 +251,7 @@ public class StatisticReporter {
     /**
      * The summary statistics are presented with half-widths
      *
-     * @param title optional title of the report
+     * @param title     optional title of the report
      * @param confLevel confidence level for the half-widths
      * @return a StringBuilder holding the report
      */
@@ -337,7 +332,39 @@ public class StatisticReporter {
         return sb;
     }
 
-    public List<String> getSummaryReportHeader(){
+    public StringBuilder getSummaryReportAsMarkDown() {
+        return getSummaryReportAsMarkDown(null, null);
+    }
+
+    public StringBuilder getSummaryReportAsMarkDown(String title) {
+        return getSummaryReportAsMarkDown(title, null);
+    }
+
+    public StringBuilder getSummaryReportAsMarkDown(String title, DecimalFormat df) {
+        StringBuilder sb = new StringBuilder();
+        Formatter formatter = new Formatter(sb);
+        if (getReportLabelFlag()) {
+            if (myReportTitle != null) {
+                formatter.format("%s %n", myReportTitle);
+            }
+            formatter.format("Statistical Summary Report%n");
+        }
+        if (getTimeDateFlag()) {
+            formatter.format("%tc%n%n", Calendar.getInstance().getTimeInMillis());
+        }
+        if (title != null) {
+            formatter.format("%s %n", title);
+        }
+        MarkDown.Table t = new MarkDown.Table(getSummaryReportHeader(), MarkDown.ColFmt.CENTER);
+        for (StatisticAccessorIfc stat : myStats) {
+            t.addRow(getSummaryReportRow(stat, df));
+        }
+        sb.append(t);
+        sb.append(System.lineSeparator());
+        return sb;
+    }
+
+    public List<String> getSummaryReportHeader() {
         List<String> list = new ArrayList<>();
         list.add("Name");
         list.add("Count");
@@ -346,13 +373,77 @@ public class StatisticReporter {
         return list;
     }
 
-    public List<String> getSummaryReportRow(Statistic statistic, DecimalFormat df){
+    public List<String> getSummaryReportRow(StatisticAccessorIfc statistic) {
+        return getSummaryReportRow(statistic, null);
+    }
+
+    public List<String> getSummaryReportRow(StatisticAccessorIfc statistic, DecimalFormat df) {
         Objects.requireNonNull(statistic, "The statistic was null");
         List<String> list = new ArrayList<>();
         list.add(statistic.getName());
         double[] data = {statistic.getCount(),
                 statistic.getAverage(),
                 statistic.getStandardDeviation()};
+        list.addAll(Arrays.asList(JSLArrayUtil.toString(data, df)));
+        return list;
+    }
+
+    public StringBuilder getHalfWidthSummaryReportAsMarkDown() {
+        return getHalfWidthSummaryReportAsMarkDown(null, 0.95, null);
+    }
+
+    public StringBuilder getHalfWidthSummaryReportAsMarkDown(String title) {
+        return getHalfWidthSummaryReportAsMarkDown(title, 0.95, null);
+    }
+
+    public StringBuilder getHalfWidthSummaryReportAsMarkDown(String title, double level, DecimalFormat df) {
+        StringBuilder sb = new StringBuilder();
+        Formatter formatter = new Formatter(sb);
+        if (getReportLabelFlag()) {
+            if (myReportTitle != null) {
+                formatter.format("%s %n", myReportTitle);
+            }
+            formatter.format("Statistical Summary Report%n");
+        }
+        if (getTimeDateFlag()) {
+            formatter.format("%tc%n%n", Calendar.getInstance().getTimeInMillis());
+        }
+        if (title != null) {
+            formatter.format("%s %n", title);
+        }
+        MarkDown.Table t = new MarkDown.Table(getHalfWidthSummaryReportHeader(), MarkDown.ColFmt.CENTER);
+        for (StatisticAccessorIfc stat : myStats) {
+            t.addRow(getHalfWidthSummaryReportRow(stat, level, df));
+        }
+        sb.append(t);
+        sb.append(System.lineSeparator());
+        return sb;
+    }
+
+    public List<String> getHalfWidthSummaryReportHeader() {
+        List<String> list = new ArrayList<>();
+        list.add("Name");
+        list.add("Count");
+        list.add("Average");
+        list.add("Half-Width");
+        return list;
+    }
+
+    public List<String> getHalfWidthSummaryReportRow(StatisticAccessorIfc statistic) {
+        return getHalfWidthSummaryReportRow(statistic, 0.95, null);
+    }
+
+    public List<String> getHalfWidthSummaryReportRow(StatisticAccessorIfc statistic, DecimalFormat df) {
+        return getHalfWidthSummaryReportRow(statistic, 0.95, df);
+    }
+
+    public List<String> getHalfWidthSummaryReportRow(StatisticAccessorIfc statistic, double level, DecimalFormat df) {
+        Objects.requireNonNull(statistic, "The statistic was null");
+        List<String> list = new ArrayList<>();
+        list.add(statistic.getName());
+        double[] data = {statistic.getCount(),
+                statistic.getAverage(),
+                statistic.getHalfWidth(level)};
         list.addAll(Arrays.asList(JSLArrayUtil.toString(data, df)));
         return list;
     }
@@ -488,12 +579,12 @@ public class StatisticReporter {
      * Note: If the name has any special LaTeX characters the resulting tabular
      * may not compile.
      *
-     * @param maxRows maximum number of rows in each tabular
+     * @param maxRows   maximum number of rows in each tabular
      * @param confLevel the confidence level for the half-width calculation
      * @return a List of StringBuilders
      */
-    public List<StringBuilder> getHalfWidthSummaryReportAsLaTeXTabular(int maxRows, 
-            double confLevel) {
+    public List<StringBuilder> getHalfWidthSummaryReportAsLaTeXTabular(int maxRows,
+                                                                       double confLevel) {
         List<StringBuilder> builders = new ArrayList<>();
         if (!myStats.isEmpty()) {
             String hline = "\\hline";
@@ -574,12 +665,12 @@ public class StatisticReporter {
     /**
      * List of StringBuilder representing LaTeX tables
      *
-     * @param maxRows the max number of rows
+     * @param maxRows   the max number of rows
      * @param confLevel the confidence level
      * @return the tables as StringBuilders
      */
-    public final List<StringBuilder> getHalfWidthSummaryReportAsLaTeXTables(int maxRows, 
-            double confLevel) {
+    public final List<StringBuilder> getHalfWidthSummaryReportAsLaTeXTables(int maxRows,
+                                                                            double confLevel) {
         List<StringBuilder> list = getHalfWidthSummaryReportAsLaTeXTabular(maxRows, confLevel);
         String hline = "\\hline";
         String caption = "\\caption{Half-Width Summary Report} \n";

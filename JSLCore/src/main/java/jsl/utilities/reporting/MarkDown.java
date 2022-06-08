@@ -239,6 +239,16 @@ public class MarkDown {
             sbTable.append(System.lineSeparator());
         }
 
+        public Table addRow(List<String> elements) {
+            Objects.requireNonNull(elements, "The data for the row was null");
+            if (elements.size() != numCols) {
+                throw new IllegalArgumentException("The size of the array does not match the number of columns");
+            }
+            sbTable.append(tableRow(elements));
+            sbTable.append(System.lineSeparator());
+            return this;
+        }
+
         public Table addRow(double[] data) {
             return addRow(null, data, D3FORMAT);
         }

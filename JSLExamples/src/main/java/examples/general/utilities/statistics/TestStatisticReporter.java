@@ -23,10 +23,12 @@ package examples.general.utilities.statistics;
 
 import jsl.utilities.random.rvariable.NormalRV;
 import jsl.utilities.random.rvariable.RVariableIfc;
+import jsl.utilities.reporting.JSL;
 import jsl.utilities.reporting.StatisticReporter;
 import jsl.utilities.statistic.Statistic;
 import jsl.utilities.statistic.StatisticAccessorIfc;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +59,11 @@ public class TestStatisticReporter {
         System.out.println(r.findSizeOfLongestName());
         System.out.println(r.getSummaryReportAsLaTeXTabular(5));
         System.out.println(r.getCSVStatistics());
+
+        PrintWriter out = JSL.getInstance().makePrintWriter("Report.md");
+        out.print(r.getHalfWidthSummaryReportAsMarkDown());
+        out.flush();
+
 //        StringBuilder sb = r.myRowFormat;
 //        for (int i=0; i< sb.length(); i++){
 //            System.out.println("i = " + i + " char = " + sb.charAt(i));
