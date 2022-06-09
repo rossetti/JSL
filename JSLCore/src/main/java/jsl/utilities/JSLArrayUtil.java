@@ -1040,6 +1040,21 @@ public class JSLArrayUtil {
      * @param array the input array
      * @return the sum of the squares of the elements of the array
      */
+    public static double getSum(double[] array) {
+        Objects.requireNonNull(array, "The array was null");
+        double sum = 0.0;
+        for (double v : array) {
+            sum = sum + v;
+        }
+        return sum;
+    }
+
+    /**
+     * The array must not be null
+     *
+     * @param array the input array
+     * @return the sum of the squares of the elements of the array
+     */
     public static double getSumSquares(double[] array) {
         Objects.requireNonNull(array, "The array was null");
         double sum = 0.0;
@@ -1062,6 +1077,16 @@ public class JSLArrayUtil {
             sum = sum + Math.sqrt(v);
         }
         return sum;
+    }
+
+    /**
+     * calculate the euclidean norm of a vector
+     *
+     * @param x - double[] vector
+     * @return the euclidean norm of the input vector
+     */
+    public static double euclideanNorm(double[] x) {
+        return Math.sqrt(getSumSquares(x));
     }
 
     /**
@@ -1298,7 +1323,7 @@ public class JSLArrayUtil {
      * corresponding value
      *
      * @param array the array of doubles
-     * @param df a format to apply for each element
+     * @param df    a format to apply for each element
      * @return the array of strings representing the values of the doubles
      */
     public static String[] toString(double[] array, DecimalFormat df) {
@@ -1310,7 +1335,7 @@ public class JSLArrayUtil {
         }
         String[] target = new String[array.length];
         for (int i = 0; i < array.length; i++) {
-            if (df == null){
+            if (df == null) {
                 target[i] = String.valueOf(array[i]);
             } else {
                 target[i] = df.format(array[i]);
@@ -2240,4 +2265,150 @@ public class JSLArrayUtil {
         }
         return saver.getSavedData();
     }
+
+    // contributed by Andrew Gibson
+
+    /**
+     * contributed by Andrew Gibson
+     * simple way to create a n-element vector of the same value (x)
+     *
+     * @param x - scalar input value
+     * @param n - number of replications
+     * @return - 1D array of length n filled with values x
+     */
+    public static double[] replicate(double x, int n) {
+        if (n < 0) throw new IllegalArgumentException("n cannot be negative");
+        double[] res = new double[n];
+        Arrays.fill(res, x);
+        return res;
+    }
+
+    /**
+     * contributed by Andrew Gibson
+     * round the 1D array x  to a multiple of granularity (double[])
+     * note that 0 or null granularity values are interpreted as "no rounding"
+     *
+     * @param x           - the input
+     * @param granularity - the granularity to which to round x
+     * @return - 1 1D array of elements i s.t. x[i] is rounded to granularity[i]
+     */
+    public static double[] mround(double[] x, double[] granularity) {
+        if (granularity == null) {
+            return x;
+        } else {
+            if (x.length != granularity.length)
+                throw new IllegalArgumentException("x array and granularity array have different lengths");
+            double[] res = new double[x.length];
+            for (int i = 0; i < x.length; i++) {
+                res[i] = mround(x[i], granularity[i]);
+            }
+            return res;
+        }
+    }
+
+    /**
+     * contributed by Andrew Gibson
+     * round a scalar double to a multiple of granularity
+     * note that 0 or null granularity values are interpreted as "no rounding"
+     *
+     * @param x           - input
+     * @param granularity a scalar Double
+     * @return x rounded to granularity
+     */
+    public static double mround(double x, double granularity) {
+        // interpret 0 and null  granularity as "no rounding"
+        if (Double.compare(granularity, 0) < 1) {
+            return x;
+        } else {
+            /*
+             Math.round converts to a Long internally and where granularity is tiny compared
+             to x, x/granularity could cause an overlow and instability in the calculation
+              e.g. Math.round(1E50 / (1E-50))*1E-50 = 99.223372036854776E-32 !!
+
+             the biggest Long is Math.pow(2^63) - 1
+             We certainly don't want to overlflow that but 2^63 - 1 has 19 significant figures
+             (more than a double can represent 2^53 - 1)
+             we want (x/prec) < (2^63 - 1) to avoid overflow
+              - work with 2^50 , any rounding beyond that is pointless)
+              - note that Math.log uses base 10 AND
+                  - log(x, base = 2) = log(x, base = 10)/ log(2, base = 10)
+                  - which lets us derive the formula below
+             */
+            if ((Math.log(x) - Math.log(granularity)) > (50 * Math.log(2))) {
+                // not worth rounding to such a small degree or risking overflow
+                // in conversion to Long
+                return x;
+            } else {
+                // go ahead and round it !
+                return Math.round(x / granularity) * granularity;
+            }
+        }
+    }
+
+    /**
+     * contributed by Andrew Gibson
+     * round a 1D array x to a multiple of a scalar granularity value
+     * note that 0 or null granularity values are interpreted as "no rounding"
+     *
+     * @param x           - input[]
+     * @param granularity - Double
+     * @return - 1D array the same size as x
+     */
+    public static double[] mround(double[] x, double granularity) {
+        double[] gr = new double[x.length];
+        Arrays.fill(gr, granularity);
+        return (mround(x, gr));
+    }
+
+    /**
+     * contributed by Andrew Gibson
+     * calculate the number of decimal places needed to
+     * give AT LEAST sf digits to all values
+     *
+     * @param values - double array
+     * @param sf     - number of significant figures
+     * @return the number of decimal places
+     */
+    public static int sigFigDecimals(double[] values, int sf) {
+        double[] p = new double[values.length];
+        for (int i = 0; i < values.length; i++) {
+            p[i] = sigFigDecimals(values[i], sf);
+        }
+        if (p.length > 0) {
+            return (int) getMax(p);
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * contributed by Andrew Gibson
+     * calculate the number of decimal places needed to
+     * give sf digits
+     *
+     * @param value - double value
+     * @param sf    -
+     * @return the number of decimal places
+     */
+    public static int sigFigDecimals(double value, int sf) {
+        // handle 0 (which requires no sigfigs) and for
+        // which log(0) is -Inf
+        if (Double.compare(value, 0) == 0) return 0;
+        int p = (int) Math.floor(Math.log10(Math.abs(value)));
+        p = Math.max(0, sf - p - 1);
+        return p;
+    }
+
+    /**
+     * contributed by Andrew Gibson
+     *
+     * @param value - double value
+     * @param sf    -
+     * @return the value formatted as a String
+     */
+    public static String sigFigFormat(double value, int sf) {
+        int p = sigFigDecimals(value, sf);
+        return String.format("%,." + p + "f", value);
+    }
+
 }
