@@ -22,7 +22,7 @@ import java.util.*;
 /**
  * The StatisticAccessIfc class presents a read-only view of a Statistic
  */
-public interface StatisticAccessorIfc extends MeanEstimatorIfc, GetCSVStatisticIfc {
+public interface StatisticAccessorIfc extends SummaryStatisticsIfc, GetCSVStatisticIfc {
 
     /**
      * Gets the name of the Statistic
