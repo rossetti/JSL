@@ -6,7 +6,7 @@ package jsl.utilities.statistic;
  * with some other estimator of the mean of the population to produce a new estimate.
  * This interface does not assume how the new estimate is generated. Only, rather,
  * it assumes that a new estimate can be produced.
- * 
+ *
  */
 public interface MeanEstimateIfc extends EstimatorIfc {
 
