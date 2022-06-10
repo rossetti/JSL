@@ -22,7 +22,7 @@ import java.util.*;
 /**
  * The StatisticAccessIfc class presents a read-only view of a Statistic
  */
-public interface StatisticAccessorIfc extends GetCSVStatisticIfc {
+public interface StatisticAccessorIfc extends MeanEstimatorIfc, GetCSVStatisticIfc {
 
     /**
      * Gets the name of the Statistic
@@ -32,26 +32,11 @@ public interface StatisticAccessorIfc extends GetCSVStatisticIfc {
     String getName();
 
     /**
-     * Gets the count of the number of the observations.
-     *
-     * @return A double representing the count
-     */
-    double getCount();
-
-    /**
      * Gets the sum of the observations.
      *
      * @return A double representing the unweighted sum
      */
     double getSum();
-
-    /**
-     * Gets the unweighted average of the observations.
-     *
-     * @return A double representing the average or Double.NaN if no
-     * observations.
-     */
-    double getAverage();
 
     /**
      * Gets the sum of squares of the deviations from the average This is the
@@ -61,25 +46,6 @@ public interface StatisticAccessorIfc extends GetCSVStatisticIfc {
      * the average
      */
     double getDeviationSumOfSquares();
-
-    /**
-     * Gets the sample variance of the observations.
-     *
-     * @return A double representing the generate variance or Double.NaN if 1 or
-     * less observations.
-     */
-    double getVariance();
-
-    /**
-     * Gets the sample standard deviation of the observations. Simply
-     * the square root of getVariance()
-     *
-     * @return A double representing the generate standard deviation or Double.NaN
-     * if 1 or less observations.
-     */
-    default double getStandardDeviation() {
-        return (Math.sqrt(getVariance()));
-    }
 
     /**
      * Gets the minimum of the observations.
