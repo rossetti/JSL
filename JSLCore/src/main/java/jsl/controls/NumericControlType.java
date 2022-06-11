@@ -20,17 +20,17 @@ public abstract class NumericControlType<T extends Number> extends ControlType<T
         myDomain = domain(lowerBound, upperBound);
     }
 
-    public void setAll(
-            Consumer<T> setter,
-            String elementName,
-            String setterName,
-            String comment,
-            Double lowerBound,
-            Double upperBound) {
-        setAll(setter, elementName, setterName, comment);
-        // set the function domain
-        myDomain = domain(lowerBound, upperBound);
-    }
+//    public void setAll(
+//            Consumer<T> setter,
+//            String elementName,
+//            String setterName,
+//            String comment,
+//            Double lowerBound,
+//            Double upperBound) {
+//        setAll(setter, elementName, setterName, comment);
+//        // set the function domain
+//        myDomain = domain(lowerBound, upperBound);
+//    }
 
     // require sub-classes to provide a (bounded) domain method
     abstract NumericDomain<T> domain(Double lowerBound, Double upperBound);
