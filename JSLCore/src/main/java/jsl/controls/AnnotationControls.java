@@ -288,7 +288,7 @@ public class AnnotationControls {
         }
         return setterName;
     }
-    
+
     /**
      * check whether the method is a valid single parameter consumer
      *
