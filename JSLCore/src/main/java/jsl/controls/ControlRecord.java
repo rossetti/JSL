@@ -1,12 +1,12 @@
 package jsl.controls;
 
-public class ControlDetailsRecord {
+public class ControlRecord {
     String key;
     Object value;
     String domain;
     String comment;
 
-    public ControlDetailsRecord(ControlType<?> c) {
+    public ControlRecord(ControlType<?> c) {
         this.key = c.getKey();
         this.value = c.getLastValue();
         this.domain = c.getDomainAsString();

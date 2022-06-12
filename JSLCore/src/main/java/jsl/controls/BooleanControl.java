@@ -15,7 +15,7 @@ import java.lang.annotation.*;
  * name and comment elements defined
  */
 @Documented                             // flag inclusion in documentation
-@Inherited                              // flag that it is inherited by sub-classes
+@Inherited                              // flag that it is inherited by subclasses
 @Target({ElementType.METHOD})           // targets methods ONLY
 @Retention(RetentionPolicy.RUNTIME)     // available at run-time
 public @interface BooleanControl {

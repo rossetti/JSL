@@ -10,8 +10,8 @@ import java.util.function.Consumer;
  */
 public abstract class ControlType<T> {
     protected Consumer<T> setter;
-    private String elementName;
-    private String setterName;
+    private final String elementName;
+    private final String setterName;
     protected String comment = "";
     protected T lastValue = null;
 
@@ -24,27 +24,6 @@ public abstract class ControlType<T> {
         this.setterName = setterName;
         this.comment = comment;
     }
-
-    //TODO why is this needed?
-//    public void setAll(
-//            // the all important setter
-//            Consumer<T> setter,
-//            //identifiers
-//            String elementName,
-//            String setterName,
-//            // other
-//            String comment) {
-//
-//        // basic validation
-//        Objects.requireNonNull(setter, "setter cannot be null");
-//        Objects.requireNonNull(setter, "elementName cannot be null");
-//        Objects.requireNonNull(setter, "setterName cannot be null");
-//
-//        this.setter = setter;
-//        this.elementName = elementName;
-//        this.setterName = setterName;
-//        this.comment = comment;
-//    }
 
     /**
      * require a method that takes an Object, sensibly casts and
@@ -119,8 +98,8 @@ public abstract class ControlType<T> {
      *
      * @return the annotation control map
      */
-    public final ControlDetailsRecord getControlRecord() {
-        return new ControlDetailsRecord(this);
+    public final ControlRecord getControlRecord() {
+        return new ControlRecord(this);
     }
 
     public final String getComment() {
