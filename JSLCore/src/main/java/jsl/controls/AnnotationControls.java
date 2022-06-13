@@ -35,6 +35,14 @@ public class AnnotationControls {
     }
 
     /**
+     *
+     * @return the control keys as an unmodifiable set of strings
+     */
+    public Set<String> getControlKeys(){
+        return Collections.unmodifiableSet(myControls.keySet());
+    }
+
+    /**
      * Store to ensure the key and
      * the key (from the control) match
      *
