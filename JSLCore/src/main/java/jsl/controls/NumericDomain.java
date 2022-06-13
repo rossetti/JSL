@@ -1,5 +1,7 @@
 package jsl.controls;
 
+//TODO since there are a finite number of domains consider implementing as an enum
+
 /**
  * Classes to define (optionally bounded) numeric domains by numeric type
  * <p>
@@ -27,7 +29,7 @@ public abstract class NumericDomain<T extends Number> {
         setMaxValue(maxValue);
     }
 
-    // sub-classes must provide domain min//max for this data type
+    // subclasses must provide domain min//max for this data type
     // rather than check the types and have a big switch statement to cast
     // appropriately require these methods from sub-classes
 
@@ -51,7 +53,7 @@ public abstract class NumericDomain<T extends Number> {
      * casts the number to the specified type
      *
      * @param v the number to cast
-     * @return the type casted to
+     * @return the type cast to
      */
     protected abstract T cast(Number v);
 

@@ -3,7 +3,6 @@ package jsl.controls;
 import java.lang.annotation.*;
 
 /**
- * *******************************************************************
  * NumericControlType setter annotations are used to flag single parameter setter methods
  * (numeric, String or boolean) as potential Controls
  * <p>
@@ -16,7 +15,7 @@ import java.lang.annotation.*;
  */
 
 @Documented                             // flag inclusion in documentation
-@Inherited                              // flag that it is inherited by sub-classes
+@Inherited                              // flag that it is inherited by subclasses
 @Target({ElementType.METHOD})           // targets methods ONLY
 @Retention(RetentionPolicy.RUNTIME)     // available at run-time
 public @interface NumericControl {

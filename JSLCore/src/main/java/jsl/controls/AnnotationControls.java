@@ -6,6 +6,7 @@ import jsl.utilities.GetNameIfc;
 import jsl.utilities.reporting.JSL;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -184,49 +185,43 @@ public class AnnotationControls {
         return type == String.class;
     }
 
+    //TODO since the building of a numeric control depends only on these objects
+    // GetNameIfc obj, Method method, NumericControl annotation
+    // the ControlType constructor should just have these as a arguments.
+
     /**
      * Build a new NumericControlType
      *
      * @param obj    the object to process
      * @param method the method to process
-     * @param setter the stter to process
+     * @param annotation the annotation to process
      * @return the built ControlType
      */
-    private static ControlType<?> numericControlBuilder(GetNameIfc obj, Method method, NumericControl setter) {
+    private static ControlType<?> numericControlBuilder(GetNameIfc obj, Method method, NumericControl annotation) {
         // local vars
         Class<?> pType = method.getParameterTypes()[0];
-        String nm = setterName(method.getName(), setter.name());
+        String nm = setterName(method.getName(), annotation.name());
 
         // create the right subclass of ControlType
         if (pType.equals(Double.class) || pType.equals(double.class)) {
-            //TODO I don't understand how to fix this unchecked cast warning/error so I am suppressing it
-            // it the cast error should not happen based on the checks
-            // I think that it would be better to have the checks and cast in the getConsumer() method
-            // or have multiple getConsumer() methods and use the correct one based on checking logic
-            @SuppressWarnings({"unchecked"})
-            Consumer<Double> consumer = (Consumer<Double>) getConsumer(obj, method);
-            return new DoubleControlType(consumer, obj.getName(), nm,
-                    setter.comment(), setter.lowerBound(), setter.upperBound());
+            ControlSetter<Double> setter = new ControlSetter<>(obj, method);
+            return new DoubleControlType(setter, obj.getName(), nm,
+                    annotation.comment(), annotation.lowerBound(), annotation.upperBound());
         } else if (pType.equals(Float.class) || pType.equals(float.class)) {
-            @SuppressWarnings({"unchecked"})
-            Consumer<Float> consumer = (Consumer<Float>) getConsumer(obj, method);
-            return new FloatControlType(consumer, obj.getName(), nm, setter.comment(), setter.lowerBound(), setter.upperBound());
+            ControlSetter<Float> setter = new ControlSetter<>(obj, method);
+            return new FloatControlType(setter, obj.getName(), nm, annotation.comment(), annotation.lowerBound(), annotation.upperBound());
         } else if (pType.equals(Long.class) || pType.equals(long.class)) {
-            @SuppressWarnings({"unchecked"})
-            Consumer<Long> consumer = (Consumer<Long>) getConsumer(obj, method);
-            return new LongControlType(consumer, obj.getName(), nm, setter.comment(), setter.lowerBound(), setter.upperBound());
+            ControlSetter<Long> setter = new ControlSetter<>(obj, method);
+            return new LongControlType(setter, obj.getName(), nm, annotation.comment(), annotation.lowerBound(), annotation.upperBound());
         } else if (pType.equals(Integer.class) || pType.equals(int.class)) {
-            @SuppressWarnings({"unchecked"})
-            Consumer<Integer> consumer = (Consumer<Integer>) getConsumer(obj, method);
-            return new IntegerControlType(consumer, obj.getName(), nm, setter.comment(), setter.lowerBound(), setter.upperBound());
+            ControlSetter<Integer> setter = new ControlSetter<>(obj, method);
+            return new IntegerControlType(setter, obj.getName(), nm, annotation.comment(), annotation.lowerBound(), annotation.upperBound());
         } else if (pType.equals(Short.class) || pType.equals(short.class)) {
-            @SuppressWarnings({"unchecked"})
-            Consumer<Short> consumer = (Consumer<Short>) getConsumer(obj, method);
-            return new ShortControlType(consumer, obj.getName(), nm, setter.comment(), setter.lowerBound(), setter.upperBound());
+            ControlSetter<Short> setter = new ControlSetter<>(obj, method);
+            return new ShortControlType(setter, obj.getName(), nm, annotation.comment(), annotation.lowerBound(), annotation.upperBound());
         } else if (pType.equals(Byte.class) || pType.equals(byte.class)) {
-            @SuppressWarnings({"unchecked"})
-            Consumer<Byte> consumer = (Consumer<Byte>) getConsumer(obj, method);
-            return new ByteControlType(consumer, obj.getName(), nm, setter.comment(), setter.lowerBound(), setter.upperBound());
+            ControlSetter<Byte> setter = new ControlSetter<>(obj, method);
+            return new ByteControlType(setter, obj.getName(), nm, annotation.comment(), annotation.lowerBound(), annotation.upperBound());
         } else {
             // if we only ever create "valid" controls, we will NEVER get here
             throw new IllegalArgumentException("trying to create an unknown control type: " + pType.getSimpleName());
@@ -238,14 +233,13 @@ public class AnnotationControls {
      *
      * @param obj    the object to process
      * @param method the method to process
-     * @param setter the setter to process
+     * @param annotation the annotation to process
      * @return the built ControlType
      */
-    private static ControlType<?> booleanControlBuilder(GetNameIfc obj, Method method, BooleanControl setter) {
-        @SuppressWarnings({"unchecked"})
-        Consumer<Boolean> consumer = (Consumer<Boolean>) getConsumer(obj, method);
-        return new BooleanControlType(consumer,
-                obj.getName(), setterName(method.getName(), setter.name()), setter.comment());
+    private static ControlType<?> booleanControlBuilder(GetNameIfc obj, Method method, BooleanControl annotation) {
+        ControlSetter<Boolean> setter = new ControlSetter<>(obj, method);
+        return new BooleanControlType(setter,
+                obj.getName(), setterName(method.getName(), annotation.name()), annotation.comment());
     }
 
     /**
@@ -272,6 +266,30 @@ public class AnnotationControls {
         return csmr;
     }
 
+    //TODO I don't think that this has to be a Consumer
+    // in fact, I think that this should be directly part of the ControlType
+    // because this accept() method is just called in its setValue() method
+    private static class ControlSetter<T> implements Consumer<T>{
+        private final GetNameIfc obj;
+        private final Method method;
+        public ControlSetter(GetNameIfc obj, Method method){
+            this.obj = obj;
+            this.method = method;
+        }
+        @Override
+        public void accept(T aDouble) {
+            try {
+                method.invoke(obj, aDouble);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
+
     /**
      * alias (or derive) a setter name from method and annotation names
      *
@@ -284,10 +302,10 @@ public class AnnotationControls {
         if (setterName.equals("")) {
             setterName = methodName;
             if (setterName.startsWith("set")) {
-                setterName = setterName.substring(3, setterName.length());
+                setterName = setterName.substring(3);
             }
             setterName = setterName.substring(0, 1).toLowerCase()
-                    + setterName.substring(1, setterName.length());
+                    + setterName.substring(1);
         }
         return setterName;
     }
