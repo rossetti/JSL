@@ -1,13 +1,97 @@
 package jsl.controls;
 
 import jsl.utilities.GetNameIfc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Control<T> {
+
+    public enum NumericControlTypes {
+
+        DOUBLE(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY),
+        INTEGER(Integer.MIN_VALUE, Integer.MAX_VALUE),
+        LONG(Long.MIN_VALUE, Long.MAX_VALUE),
+        FLOAT(Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY),
+        SHORT(Short.MIN_VALUE, Short.MAX_VALUE),
+        BYTE(Byte.MIN_VALUE, Byte.MAX_VALUE),
+        BOOL(0.0, 1.0);
+
+        public final double lowerLimit;
+        public final double upperLimit;
+
+        NumericControlTypes(double lowerLimit, double upperLimit) {
+            this.lowerLimit = lowerLimit;
+            this.upperLimit = upperLimit;
+        }
+
+        public boolean contains(double value) {
+            return ((lowerLimit <= value) && (value <= upperLimit));
+        }
+
+        public boolean contains(Double value) {
+            return ((lowerLimit <= value) && (value <= upperLimit));
+        }
+
+        public boolean contains(int value) {
+            return ((lowerLimit <= value) && (value <= upperLimit));
+        }
+
+        public boolean contains(Integer value) {
+            return ((lowerLimit <= value.doubleValue()) && (value.doubleValue() <= upperLimit));
+        }
+
+        public boolean contains(long value) {
+            return ((lowerLimit <= value) && (value <= upperLimit));
+        }
+
+        public boolean contains(Long value) {
+            return ((lowerLimit <= value.doubleValue()) && (value.doubleValue() <= upperLimit));
+        }
+
+        public boolean contains(short value) {
+            return ((lowerLimit <= value) && (value <= upperLimit));
+        }
+
+        public boolean contains(Short value) {
+            return ((lowerLimit <= value.doubleValue()) && (value.doubleValue() <= upperLimit));
+        }
+
+        public boolean contains(byte value) {
+            return ((lowerLimit <= value) && (value <= upperLimit));
+        }
+
+        public boolean contains(Byte value) {
+            return ((lowerLimit <= value.doubleValue()) && (value.doubleValue() <= upperLimit));
+        }
+
+        public boolean contains(boolean value) {
+            double v;
+            if (value) {
+                v = 1.0;
+            } else {
+                v = 0.0;
+            }
+            return ((lowerLimit <= v) && (v <= upperLimit));
+        }
+
+    }
+
+    /**
+     * for logging
+     */
+    public static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+//    private static final Class<?>[] annotationTypes = {NumericControl.class, BooleanControl.class};
+
     protected final GetNameIfc element;
 
     protected final Method method;
@@ -16,27 +100,57 @@ public class Control<T> {
 
     protected String setterName;
 
-    public Control(GetNameIfc element, Method method, Annotation annotation) {
-        Objects.requireNonNull(element, "The invoking object cannot be null");
+    public Control(GetNameIfc element, Method method) {
+        Objects.requireNonNull(element, "The invoking model element cannot be null");
         Objects.requireNonNull(method, "The method cannot be null");
-        Objects.requireNonNull(annotation, "The annotation cannot be null");
-        if (!isValidControlAnnotation(annotation)){
-            throw new IllegalArgumentException("The supplied annotation is not a control annotation!");
-        }
         this.element = element;
         this.method = method;
-        processAnnotation(annotation);
+        processAnnotation();
     }
 
-    protected void processAnnotation(Annotation annotation){
+    protected void processAnnotation() {
+        Annotation annotation = getControlAnnotation();
+        LOGGER.info("Processing control annotation: {} for method: {} on class {}",
+                annotation.annotationType(), method.getName(), element.getName());
         //TODO the purpose of this method is to extract the relevant information
         // from the annotation to set up the control, subclasses of Control can
         // override this method to setup specific capabilities
-        if (annotation instanceof NumericControl){
+        if (annotation instanceof NumericControl) {
             processNumericAnnotation((NumericControl) annotation);
         } else if (annotation instanceof BooleanControl) {
             processBooleanAnnotation((BooleanControl) annotation);
         }
+    }
+
+    /**
+     * Returns the control annotation for a method.
+     * If no control annotations exist or if more than 1 exists, then
+     * IllegalArgumentExceptions are thrown
+     *
+     * @return the annotation
+     */
+    protected Annotation getControlAnnotation() {
+        //TODO it would be nice to loop through possible control annotations rather than
+        // check for each type
+        List<Annotation> annotations = new ArrayList<>();
+        Annotation ann;
+        ann = method.getAnnotation(NumericControl.class);
+        if (ann != null) annotations.add(ann);
+        ann = method.getAnnotation(BooleanControl.class);
+        if (ann != null) annotations.add(ann);
+        // end TODO
+        if (annotations.size() == 0) {
+            LOGGER.error("Method {} for class {} does not have any control annotations",
+                    method.getName(), method.getDeclaringClass().getName());
+            throw new IllegalArgumentException("There was no control annotation on the supplied method");
+        }
+        if (annotations.size() > 1) {
+            LOGGER.error("Method {} for class {} was specified as a control, but but had more than one control annotation",
+                    method.getName(), method.getDeclaringClass().getName());
+            throw new IllegalArgumentException("More than 1 control annotation on a method");
+        }
+        // must have 1 control annotation
+        return annotations.get(0);
     }
 
     protected void processBooleanAnnotation(BooleanControl annotation) {
@@ -50,18 +164,39 @@ public class Control<T> {
     }
 
     /**
+     * check whether the method is a valid single parameter consumer
      *
+     * @param method the method
+     * @return true if valid single parameter consumer
+     */
+    public static boolean isValidControlMethod(Method method) {
+        if (method.getParameterCount() != 1) {
+            LOGGER.warn("Method {} for class {} was specified as a control, but is not a single parameter method",
+                    method.getName(), method.getDeclaringClass().getName());
+            return false;
+        }
+        if (!Modifier.isPublic(method.getModifiers())) {
+            LOGGER.warn("Method {} for class {} was specified as a control, but is not a public method",
+                    method.getName(), method.getDeclaringClass().getName());
+            return false;
+        }
+        LOGGER.info("{} for class {}is a valid single parameter control method",
+                method.getName(), method.getDeclaringClass().getName());
+        return true;
+    }
+
+    /**
      * @param annotation the annotation to check
      * @return true if the annotation is a valid control annotation
      */
-    public static boolean isValidControlAnnotation(Annotation annotation){
+    public static boolean isValidControlAnnotation(Annotation annotation) {
         //TODO can add other annotation types to this method
-        if (annotation == null){
+        if (annotation == null) {
             return false;
         }
-        if (annotation instanceof NumericControl){
+        if (annotation instanceof NumericControl) {
             return true;
-        } else if (annotation instanceof BooleanControl){
+        } else if (annotation instanceof BooleanControl) {
             return true;
         } else {
             return false;
@@ -70,11 +205,11 @@ public class Control<T> {
 
     //TODO will there be a need for one of these methods for every control type?
     // bummer, could also have a bunch of isNumericControl(Annotation) type methods
-    public static NumericControl castTo(Annotation annotation){
-        if (annotation == null){
+    public static NumericControl castTo(Annotation annotation) {
+        if (annotation == null) {
             return null;
         }
-        if (annotation instanceof NumericControl){
+        if (annotation instanceof NumericControl) {
             return (NumericControl) annotation;
         } else {
             return null;
@@ -84,7 +219,7 @@ public class Control<T> {
     /**
      * Derive a setter name from method and annotation names
      *
-     * @param methodName the method name
+     * @param methodName     the method name
      * @param annotationName the name from the control annotation
      * @return the string name
      */
@@ -101,7 +236,7 @@ public class Control<T> {
         return annotationName;
     }
 
-    public void setValue(T value){
+    public void setValue(T value) {
         try {
             method.invoke(element, value);
         } catch (IllegalAccessException | InvocationTargetException e) {
