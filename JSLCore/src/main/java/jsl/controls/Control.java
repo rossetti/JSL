@@ -8,16 +8,45 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 public class Control<T> {
-    private final GetNameIfc obj;
-    private final Method method;
+    protected final GetNameIfc element;
 
-    public Control(GetNameIfc obj, Method method, Annotation annotation) {
-        Objects.requireNonNull(obj, "The invoking object cannot be null");
+    protected final Method method;
+
+    protected String comment = "";
+
+    protected String setterName;
+
+    public Control(GetNameIfc element, Method method, Annotation annotation) {
+        Objects.requireNonNull(element, "The invoking object cannot be null");
         Objects.requireNonNull(method, "The method cannot be null");
         Objects.requireNonNull(annotation, "The annotation cannot be null");
-        this.obj = obj;
+        if (!isValidControlAnnotation(annotation)){
+            throw new IllegalArgumentException("The supplied annotation is not a control annotation!");
+        }
+        this.element = element;
         this.method = method;
+        processAnnotation(annotation);
+    }
 
+    protected void processAnnotation(Annotation annotation){
+        //TODO the purpose of this method is to extract the relevant information
+        // from the annotation to set up the control, subclasses of Control can
+        // override this method to setup specific capabilities
+        if (annotation instanceof NumericControl){
+            processNumericAnnotation((NumericControl) annotation);
+        } else if (annotation instanceof BooleanControl) {
+            processBooleanAnnotation((BooleanControl) annotation);
+        }
+    }
+
+    protected void processBooleanAnnotation(BooleanControl annotation) {
+        comment = annotation.comment();
+        setterName = makeSetterName(method.getName(), annotation.name());
+    }
+
+    protected void processNumericAnnotation(NumericControl annotation) {
+        comment = annotation.comment();
+        setterName = makeSetterName(method.getName(), annotation.name());
     }
 
     /**
@@ -52,9 +81,29 @@ public class Control<T> {
         }
     }
 
+    /**
+     * Derive a setter name from method and annotation names
+     *
+     * @param methodName the method name
+     * @param annotationName the name from the control annotation
+     * @return the string name
+     */
+    public static String makeSetterName(String methodName, String annotationName) {
+        if (annotationName == null) annotationName = "";
+        if (annotationName.equals("")) {
+            annotationName = methodName;
+            if (annotationName.startsWith("set")) {
+                annotationName = annotationName.substring(3);
+            }
+            annotationName = annotationName.substring(0, 1).toLowerCase()
+                    + annotationName.substring(1);
+        }
+        return annotationName;
+    }
+
     public void setValue(T value){
         try {
-            method.invoke(obj, value);
+            method.invoke(element, value);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
