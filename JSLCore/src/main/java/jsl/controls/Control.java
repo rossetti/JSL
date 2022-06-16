@@ -9,89 +9,37 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Control<T> {
 
-    public enum NumericControlTypes {
+    /**
+     * Defines the set of valid control types
+     */
+    public enum ValidTypes {
+        DOUBLE, INTEGER, LONG, FLOAT, SHORT, BYTE, BOOLEAN;
 
-        DOUBLE(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY),
-        INTEGER(Integer.MIN_VALUE, Integer.MAX_VALUE),
-        LONG(Long.MIN_VALUE, Long.MAX_VALUE),
-        FLOAT(Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY),
-        SHORT(Short.MIN_VALUE, Short.MAX_VALUE),
-        BYTE(Byte.MIN_VALUE, Byte.MAX_VALUE),
-        BOOL(0.0, 1.0);
+        public static final EnumSet<ValidTypes> typeSet = EnumSet.of(ValidTypes.DOUBLE, ValidTypes.INTEGER,
+                ValidTypes.LONG, ValidTypes.FLOAT, ValidTypes.SHORT, ValidTypes.BYTE, ValidTypes.BOOLEAN);
 
-        public final double lowerLimit;
-        public final double upperLimit;
+        public static final EnumMap<ValidTypes, Class<?>> typeMap = new EnumMap<>(ValidTypes.class);
 
-        NumericControlTypes(double lowerLimit, double upperLimit) {
-            this.lowerLimit = lowerLimit;
-            this.upperLimit = upperLimit;
+        static {
+            typeMap.put(ValidTypes.DOUBLE, Double.class);
+            typeMap.put(ValidTypes.INTEGER, Integer.class);
+            typeMap.put(ValidTypes.LONG, Long.class);
+            typeMap.put(ValidTypes.FLOAT, Float.class);
+            typeMap.put(ValidTypes.SHORT, Short.class);
+            typeMap.put(ValidTypes.BYTE, Byte.class);
+            typeMap.put(ValidTypes.BOOLEAN, Boolean.class);
         }
-
-        public boolean contains(double value) {
-            return ((lowerLimit <= value) && (value <= upperLimit));
-        }
-
-        public boolean contains(Double value) {
-            return ((lowerLimit <= value) && (value <= upperLimit));
-        }
-
-        public boolean contains(int value) {
-            return ((lowerLimit <= value) && (value <= upperLimit));
-        }
-
-        public boolean contains(Integer value) {
-            return ((lowerLimit <= value.doubleValue()) && (value.doubleValue() <= upperLimit));
-        }
-
-        public boolean contains(long value) {
-            return ((lowerLimit <= value) && (value <= upperLimit));
-        }
-
-        public boolean contains(Long value) {
-            return ((lowerLimit <= value.doubleValue()) && (value.doubleValue() <= upperLimit));
-        }
-
-        public boolean contains(short value) {
-            return ((lowerLimit <= value) && (value <= upperLimit));
-        }
-
-        public boolean contains(Short value) {
-            return ((lowerLimit <= value.doubleValue()) && (value.doubleValue() <= upperLimit));
-        }
-
-        public boolean contains(byte value) {
-            return ((lowerLimit <= value) && (value <= upperLimit));
-        }
-
-        public boolean contains(Byte value) {
-            return ((lowerLimit <= value.doubleValue()) && (value.doubleValue() <= upperLimit));
-        }
-
-        public boolean contains(boolean value) {
-            double v;
-            if (value) {
-                v = 1.0;
-            } else {
-                v = 0.0;
-            }
-            return ((lowerLimit <= v) && (v <= upperLimit));
-        }
-
     }
 
     /**
      * for logging
      */
     public static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
-//    private static final Class<?>[] annotationTypes = {NumericControl.class, BooleanControl.class};
-
+    
     protected final GetNameIfc element;
 
     protected final Method method;
@@ -103,16 +51,15 @@ public class Control<T> {
     protected T lastValue = null;
 
     /**
-     *  Need to know the generic class type at run-time. This is the easiest way
+     * Need to know the generic class type at run-time. This is the easiest way
      */
     private final Class<T> type;
 
     /**
-     *
-     * @param type  this is the type of T, e.g. if T is Double, then use Double.class. This allows
-     *              the generic type to be easily determined at run-time, must not be null
+     * @param type    this is the type of T, e.g. if T is Double, then use Double.class. This allows
+     *                the generic type to be easily determined at run-time, must not be null
      * @param element the element that has the method to control, must not be null
-     * @param method the method that will be used by the control, must not be null
+     * @param method  the method that will be used by the control, must not be null
      */
     public Control(Class<T> type, GetNameIfc element, Method method) {
         Objects.requireNonNull(type, "The supplied class type cannot be null");
@@ -124,8 +71,8 @@ public class Control<T> {
         processAnnotation();
     }
 
-    /** Use this method to determine the generic type at run-time
-     *
+    /**
+     * Use this method to determine the generic type at run-time
      *
      * @return the type
      */

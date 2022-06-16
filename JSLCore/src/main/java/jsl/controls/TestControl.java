@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)     // available at run-time
 public @interface TestControl {
 
-    Control.NumericControlTypes type() default Control.NumericControlTypes.DOUBLE;
+    Control.ValidTypes type() default Control.ValidTypes.DOUBLE;
 
     String name() default "";
 
