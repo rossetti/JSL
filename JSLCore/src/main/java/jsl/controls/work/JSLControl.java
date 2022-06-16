@@ -1,4 +1,4 @@
-package jsl.controls;
+package jsl.controls.work;
 
 import java.lang.annotation.*;
 
@@ -18,7 +18,7 @@ import java.lang.annotation.*;
 @Inherited                              // flag that it is inherited by subclasses
 @Target({ElementType.METHOD})           // targets methods ONLY
 @Retention(RetentionPolicy.RUNTIME)     // available at run-time
-public @interface TestControl {
+public @interface JSLControl {
 
     Control.ValidTypes type() default Control.ValidTypes.DOUBLE;
 
