@@ -102,12 +102,35 @@ public class Control<T> {
 
     protected T lastValue = null;
 
-    public Control(GetNameIfc element, Method method) {
+    /**
+     *  Need to know the generic class type at run-time. This is the easiest way
+     */
+    private final Class<T> type;
+
+    /**
+     *
+     * @param type  this is the type of T, e.g. if T is Double, then use Double.class. This allows
+     *              the generic type to be easily determined at run-time, must not be null
+     * @param element the element that has the method to control, must not be null
+     * @param method the method that will be used by the control, must not be null
+     */
+    public Control(Class<T> type, GetNameIfc element, Method method) {
+        Objects.requireNonNull(type, "The supplied class type cannot be null");
         Objects.requireNonNull(element, "The invoking model element cannot be null");
         Objects.requireNonNull(method, "The method cannot be null");
+        this.type = type;
         this.element = element;
         this.method = method;
         processAnnotation();
+    }
+
+    /** Use this method to determine the generic type at run-time
+     *
+     *
+     * @return the type
+     */
+    public final Class<T> getType() {
+        return this.type;
     }
 
     protected void processAnnotation() {
