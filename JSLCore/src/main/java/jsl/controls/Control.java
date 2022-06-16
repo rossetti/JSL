@@ -100,6 +100,8 @@ public class Control<T> {
 
     protected String setterName;
 
+    protected T lastValue = null;
+
     public Control(GetNameIfc element, Method method) {
         Objects.requireNonNull(element, "The invoking model element cannot be null");
         Objects.requireNonNull(method, "The method cannot be null");
@@ -140,7 +142,7 @@ public class Control<T> {
         if (ann != null) annotations.add(ann);
         // end TODO
         if (annotations.size() == 0) {
-            LOGGER.error("Method {} for class {} does not have any control annotations",
+            LOGGER.error("Method {} for class {} was specified as a control, but does not have any control annotations",
                     method.getName(), method.getDeclaringClass().getName());
             throw new IllegalArgumentException("There was no control annotation on the supplied method");
         }
@@ -164,10 +166,10 @@ public class Control<T> {
     }
 
     /**
-     * check whether the method is a valid single parameter consumer
+     * check whether the method is a valid single parameter method
      *
      * @param method the method
-     * @return true if valid single parameter consumer
+     * @return true if valid single parameter method
      */
     public static boolean isValidControlMethod(Method method) {
         if (method.getParameterCount() != 1) {
@@ -180,7 +182,7 @@ public class Control<T> {
                     method.getName(), method.getDeclaringClass().getName());
             return false;
         }
-        LOGGER.info("{} for class {}is a valid single parameter control method",
+        LOGGER.info("{} for class {} is a valid single parameter control method",
                 method.getName(), method.getDeclaringClass().getName());
         return true;
     }
@@ -239,8 +241,20 @@ public class Control<T> {
     public void setValue(T value) {
         try {
             method.invoke(element, value);
+            // record the value last set
+            // rather than try to read it from a getter on demand
+            lastValue = value;
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * return the value most recently assigned
+     *
+     * @return the value most recently assigned
+     */
+    public final T getLastValue() {
+        return lastValue;
     }
 }
