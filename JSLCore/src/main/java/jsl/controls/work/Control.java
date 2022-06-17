@@ -1,6 +1,5 @@
 package jsl.controls.work;
 
-import jsl.controls.NumericControl;
 import jsl.utilities.GetNameIfc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,11 +49,10 @@ public class Control<T> {
     }
 
     /**
-     *
      * @param clazz the class to check
      * @return true if the class is a Number
      */
-    public static boolean isNumeric(Class<?> clazz){
+    public static boolean isNumeric(Class<?> clazz) {
         return Number.class.isAssignableFrom(clazz);
     }
 
@@ -98,7 +96,7 @@ public class Control<T> {
                     method.getName(), method.getDeclaringClass().getName());
             throw new IllegalArgumentException("There was no control annotation on the supplied method");
         }
-        if (!classTypesToValidTypesMap.containsKey(type)){
+        if (!classTypesToValidTypesMap.containsKey(type)) {
             LOGGER.error("Type {} for the control is not a valid control type", type.getName());
             throw new IllegalArgumentException("Invalid control type!");
         }
@@ -111,7 +109,7 @@ public class Control<T> {
         jslControl = getControlAnnotation(method);
         // okay, method parameter type is same as control type
         // need to check if annotation has the correct type
-        if (!type.isInstance(validTypesToClassMap.get(jslControl.type()))){
+        if (!type.isInstance(validTypesToClassMap.get(jslControl.type()))) {
             LOGGER.error("Annotation Type {} is not compatible with the control type {}",
                     jslControl.type(), type.getName());
             throw new IllegalArgumentException("Annotation type does not match control type!");
@@ -175,11 +173,10 @@ public class Control<T> {
     }
 
     /**
-     *
      * @param method the method to examine
      * @return null if no JSLControl annotation was provided for the method
      */
-    public static JSLControl getControlAnnotation(Method method){
+    public static JSLControl getControlAnnotation(Method method) {
         Objects.requireNonNull(method, "The method cannot be null");
         Annotation ann = method.getAnnotation(JSLControl.class);
         return castToJSLControl(ann);
@@ -232,11 +229,18 @@ public class Control<T> {
      * @param annotation the annotation to check
      * @return true if the annotation is a valid control annotation
      */
-    public static boolean isValidControlAnnotation(Annotation annotation) {
+    public static boolean isJSLControlAnnotation(Annotation annotation) {
         if (annotation == null) {
             return false;
         }
         return annotation instanceof JSLControl;
+    }
+
+    public static boolean isValidJSLControl(JSLControl annotation){
+        // check if
+        
+
+        return false;
     }
 
     /**
@@ -247,7 +251,7 @@ public class Control<T> {
         if (annotation == null) {
             return null;
         }
-        if (annotation instanceof NumericControl) {
+        if (annotation instanceof JSLControl) {
             return (JSLControl) annotation;
         } else {
             return null;
@@ -274,7 +278,38 @@ public class Control<T> {
         return annotationName;
     }
 
-    public void setValue(T value) {
+    /** Ensures that the supplied double is within the bounds
+     *  associated with the control annotation
+     *
+     * @param value the value to limit
+     * @return the value
+     */
+    public double limitToRange(double value){
+        double v = value;
+        if (value <= getLowerBound()){
+            v = getLowerBound();
+        } else if (value >= getUpperBound()){
+            v = getUpperBound();
+        }
+
+        return value;
+    }
+
+    public void setValue(double value){
+        // the incoming value comes in as a double and must be converted to
+        // the appropriate type
+        // first ensure within the specified range
+        double v = value;
+        if (value <= getLowerBound()){
+            v = getLowerBound();
+        } else if (value >= getUpperBound()){
+            v = getUpperBound();
+        }
+        // convert to the type of the control and make the assignment
+
+        // finally make the assignment
+    }
+    protected void assignValue(T value) {
         try {
             //TODO need to work on checking valid set for number types
             method.invoke(element, value);
@@ -293,5 +328,122 @@ public class Control<T> {
      */
     public final T getLastValue() {
         return lastValue;
+    }
+
+    /** Converts a double to a byte. If the double is outside
+     *  the natural range, then the value is set to the minimum or
+     *  maximum of the range. If within the range, the value
+     *  is rounded to the nearest value. For example, 4.9999 is
+     *  rounded to 5.0.
+     *
+     * @param value the value to convert
+     * @return the converted value
+     */
+    public static Byte toByteValue(Double value) {
+        if (value >= Byte.MAX_VALUE) {
+            LOGGER.info("{} was limited to {} in toByteValue()", value, Byte.MAX_VALUE);
+            return Byte.MAX_VALUE;
+        } else if (value <= Byte.MIN_VALUE) {
+            LOGGER.info("{} was limited to {} in toByteValue()", value, Byte.MIN_VALUE);
+            return Byte.MIN_VALUE;
+        } else {
+            // in the range of byte, convert to the nearest byte
+            return (byte) Math.round(value);
+        }
+    }
+
+    /** Converts a double to a long. If the double is outside
+     *  the natural range, then the value is set to the minimum or
+     *  maximum of the range. If within the range, the value
+     *  is rounded to the nearest value. For example, 4.9999 is
+     *  rounded to 5.0.
+     *
+     * @param value the value to convert
+     * @return the converted value
+     */
+    public static Long toLongValue(Double value) {
+        if (value >= Long.MAX_VALUE) {
+            LOGGER.info("{} was limited to {} in toLongValue()", value, Long.MAX_VALUE);
+            return Long.MAX_VALUE;
+        } else if (value <= Long.MIN_VALUE) {
+            LOGGER.info("{} was limited to {} in toLongValue()", value, Long.MIN_VALUE);
+            return Long.MIN_VALUE;
+        } else {
+            // in the range of long, convert to the nearest long
+            return Math.round(value);
+        }
+    }
+
+    /** Converts a double to an int. If the double is outside
+     *  the natural range, then the value is set to the minimum or
+     *  maximum of the range. If within the range, the value
+     *  is rounded to the nearest value. For example, 4.9999 is
+     *  rounded to 5.0.
+     *
+     * @param value the value to convert
+     * @return the converted value
+     */
+    public static Integer toIntValue(Double value) {
+        if (value >= Integer.MAX_VALUE) {
+            LOGGER.info("{} was limited to {} in toIntValue()", value, Integer.MAX_VALUE);
+            return Integer.MAX_VALUE;
+        } else if (value <= Integer.MIN_VALUE) {
+            LOGGER.info("{} was limited to {} in toIntValue()", value, Integer.MIN_VALUE);
+            return Integer.MIN_VALUE;
+        } else {
+            // in the range of int, convert to the nearest int
+            return (int) Math.round(value);
+        }
+    }
+
+    /** Converts a double to a short. If the double is outside
+     *  the natural range, then the value is set to the minimum or
+     *  maximum of the range. If within the range, the value
+     *  is rounded to the nearest value. For example, 4.9999 is
+     *  rounded to 5.0.
+     *
+     * @param value the value to convert
+     * @return the converted value
+     */
+    public static Short toShortValue(Double value) {
+        if (value >= Short.MAX_VALUE) {
+            LOGGER.info("{} was limited to {} in toShortValue()", value, Short.MAX_VALUE);
+            return Short.MAX_VALUE;
+        } else if (value <= Short.MIN_VALUE) {
+            LOGGER.info("{} was limited to {} in toShortValue()", value, Short.MIN_VALUE);
+            return Short.MIN_VALUE;
+        } else {
+            // in the range of int, convert to the nearest int
+            return (short) Math.round(value);
+        }
+    }
+
+    /** Converts a double to a boolean. 1.0 is true, any number
+     * other than 1.0 is false.
+     *
+     * @param value the value to convert
+     * @return the converted value
+     */
+    public static Boolean toBooleanValue(Double value) {
+        if (value == 1.0){
+            return true;
+        } else {
+            if (value != 0.0){
+                LOGGER.info("{} was converted to {} in toBooleanValue()", value, false);
+            }
+            return false;
+        }
+    }
+
+    /** Converts a double to a float. Standard loss of precision
+     *  as noted by the Java Language Specification will occur
+     *  as per Double.floatValue()
+     *
+     * @param value the value to convert
+     * @return the converted value
+     */
+    public static Float toFloatValue(Double value) {
+        // standard loss of precision is expected
+        return value.floatValue();
     }
 }
