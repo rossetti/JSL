@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)     // available at run-time
 public @interface JSLControl {
 
-    Control.ValidTypes type() default Control.ValidTypes.DOUBLE;
+    Control.Type type() default Control.Type.DOUBLE;
 
     String name() default "";
 

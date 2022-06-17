@@ -11,49 +11,41 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-import static jsl.controls.work.Control.ValidTypes.classTypesToValidTypesMap;
-import static jsl.controls.work.Control.ValidTypes.validTypesToClassMap;
+import static jsl.controls.work.Control.Type.classTypesToValidTypesMap;
+import static jsl.controls.work.Control.Type.validTypesToClassMap;
 
 public class Control<T> {
 
     /**
      * Defines the set of valid control types
      */
-    public enum ValidTypes {
+    public enum Type {
         DOUBLE, INTEGER, LONG, FLOAT, SHORT, BYTE, BOOLEAN;
 
-        public static final EnumSet<ValidTypes> typeSet = EnumSet.of(ValidTypes.DOUBLE, ValidTypes.INTEGER,
-                ValidTypes.LONG, ValidTypes.FLOAT, ValidTypes.SHORT, ValidTypes.BYTE, ValidTypes.BOOLEAN);
+        public static final EnumSet<Type> typeSet = EnumSet.of(Type.DOUBLE, Type.INTEGER,
+                Type.LONG, Type.FLOAT, Type.SHORT, Type.BYTE, Type.BOOLEAN);
 
-        public static final EnumMap<ValidTypes, Class<?>> validTypesToClassMap = new EnumMap<>(ValidTypes.class);
+        public static final EnumMap<Type, Class<?>> validTypesToClassMap = new EnumMap<>(Type.class);
 
-        public static final Map<Class<?>, ValidTypes> classTypesToValidTypesMap = new HashMap<>();
+        public static final Map<Class<?>, Type> classTypesToValidTypesMap = new HashMap<>();
 
         static {
-            validTypesToClassMap.put(ValidTypes.DOUBLE, Double.class);
-            validTypesToClassMap.put(ValidTypes.INTEGER, Integer.class);
-            validTypesToClassMap.put(ValidTypes.LONG, Long.class);
-            validTypesToClassMap.put(ValidTypes.FLOAT, Float.class);
-            validTypesToClassMap.put(ValidTypes.SHORT, Short.class);
-            validTypesToClassMap.put(ValidTypes.BYTE, Byte.class);
-            validTypesToClassMap.put(ValidTypes.BOOLEAN, Boolean.class);
+            validTypesToClassMap.put(Type.DOUBLE, Double.class);
+            validTypesToClassMap.put(Type.INTEGER, Integer.class);
+            validTypesToClassMap.put(Type.LONG, Long.class);
+            validTypesToClassMap.put(Type.FLOAT, Float.class);
+            validTypesToClassMap.put(Type.SHORT, Short.class);
+            validTypesToClassMap.put(Type.BYTE, Byte.class);
+            validTypesToClassMap.put(Type.BOOLEAN, Boolean.class);
 
-            classTypesToValidTypesMap.put(Double.class, ValidTypes.DOUBLE);
-            classTypesToValidTypesMap.put(Integer.class, ValidTypes.INTEGER);
-            classTypesToValidTypesMap.put(Long.class, ValidTypes.LONG);
-            classTypesToValidTypesMap.put(Float.class, ValidTypes.FLOAT);
-            classTypesToValidTypesMap.put(Short.class, ValidTypes.SHORT);
-            classTypesToValidTypesMap.put(Byte.class, ValidTypes.BYTE);
-            classTypesToValidTypesMap.put(Boolean.class, ValidTypes.BOOLEAN);
+            classTypesToValidTypesMap.put(Double.class, Type.DOUBLE);
+            classTypesToValidTypesMap.put(Integer.class, Type.INTEGER);
+            classTypesToValidTypesMap.put(Long.class, Type.LONG);
+            classTypesToValidTypesMap.put(Float.class, Type.FLOAT);
+            classTypesToValidTypesMap.put(Short.class, Type.SHORT);
+            classTypesToValidTypesMap.put(Byte.class, Type.BYTE);
+            classTypesToValidTypesMap.put(Boolean.class, Type.BOOLEAN);
         }
-    }
-
-    /**
-     * @param clazz the class to check
-     * @return true if the class is a Number
-     */
-    public static boolean isNumeric(Class<?> clazz) {
-        return Number.class.isAssignableFrom(clazz);
     }
 
     /**
@@ -118,10 +110,11 @@ public class Control<T> {
         this.element = element;
         this.method = method;
         setterName = makeSetterName(method.getName(), jslControl.name());
-        processAnnotation();
+        LOGGER.info("Constructed control type: {} for method: {} on class {}",
+                jslControl.annotationType(), method.getName(), element.getName());
     }
 
-    public ValidTypes getAnnotationType() {
+    public Type getAnnotationType() {
         return jslControl.type();
     }
 
@@ -130,11 +123,11 @@ public class Control<T> {
     }
 
     public double getLowerBound() {
-        return jslControl.lowerBound();
+        return coerceValue(jslControl.type(), jslControl.lowerBound());
     }
 
     public double getUpperBound() {
-        return jslControl.upperBound();
+        return coerceValue(jslControl.type(), jslControl.upperBound());
     }
 
     public String getComment() {
@@ -162,14 +155,107 @@ public class Control<T> {
         return this.type;
     }
 
-    protected void processAnnotation() {
-        //TODO the purpose of this method is to extract the relevant information
-        // from the annotation to set up the control, subclasses of Control can
-        // override this method to setup specific capabilities
-        LOGGER.info("Processing control annotation: {} for method: {} on class {}",
-                jslControl.annotationType(), method.getName(), element.getName());
-        ValidTypes t = jslControl.type();
 
+    /** Takes a double value and translates it to a valid value for the type of control.
+     *  This may involve a conversion to numeric types that have narrower numeric
+     *  representations as per the Java Language specification.
+     *  <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.3">...</a>
+     *  The conversion varies from standard java by rounding up integral values. For example,
+     *  4.99999 will be rounded to 5.0 rather than the standard truncation to 4.0.
+     *  If the double value is outside the range of the numeric type, then it is coerced to the
+     *  smallest or largest permissible value for the numeric type.  If the double value is
+     *  outside of upper and lower limits as specified by the control annotation, then the value
+     *  is coerced to the nearest limit. This method will call assignValue(T) with the appropriate
+     *  type for the control.  If the control type is Boolean, a 1.0 is coerced to true and any double not
+     *  equal to 1.0 is coerced to false.
+     *
+     * @param value the value to set
+     */
+    public void setValue(double value) {
+        // the incoming value comes in as a double and must be converted to range of type
+        double x = coerceValue(jslControl.type(), value);
+        // coerced value is within domain for the control type
+        // now ensure value is within limits for control
+        x = limitToRange(x);
+        // x is now valid for type and limited to control range and can be converted to appropriate type
+        // before assigning it
+        T v = coerce(x);
+        // finally make the assignment
+        assignValue(v);
+    }
+
+    /** Subclasses may need ot override this method if attempting to handle addition valid
+     *  control type.
+     *
+     * @param value the value to coerce to the type of the control
+     * @return the coerced value
+     */
+    protected T coerce(double value) {
+        // These should all be safe casts
+        switch (getAnnotationType()) {
+            case DOUBLE:
+                return type.cast(value);
+            case INTEGER:
+                return type.cast(toIntValue(value));
+            case LONG:
+                return type.cast(toLongValue(value));
+            case FLOAT:
+                return type.cast(toFloatValue(value));
+            case SHORT:
+                return type.cast(toShortValue(value));
+            case BYTE:
+                return type.cast(toByteValue(value));
+            case BOOLEAN:
+                return type.cast(toBooleanValue(value));
+            default:
+                LOGGER.error("The value {} could not be coerced to type {}. No available control type match!", value, type);
+                throw new IllegalStateException("Unable to coerce value to type of control. See logs for details");
+        }
+    }
+
+    /** Allows the direct assignment of a value of type T to the control, and thus
+     *  to the element that was annotated by the control. This allows for the possibility of
+     *  non-numeric types to be added in the future.  Use setValue(double) for any numeric types
+     *  as well as boolean values.
+     *
+     * @param value the value to assign
+     */
+    public void assignValue(T value) {
+        try {
+            //TODO need to work on checking valid set for number types
+            method.invoke(element, value);
+            // record the value last set
+            // rather than try to read it from a getter on demand
+            lastValue = value;
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Ensures that the supplied double is within the bounds
+     * associated with the control annotation. This method does
+     * not change the state of the control.
+     *
+     * @param value the value to limit
+     * @return the limited value for future use
+     */
+    public double limitToRange(double value) {
+        if (value <= getLowerBound()) {
+            return getLowerBound();
+        } else if (value >= getUpperBound()) {
+            return getUpperBound();
+        }
+        return value;
+    }
+
+    /**
+     * return the value most recently assigned
+     *
+     * @return the value most recently assigned
+     */
+    public final T getLastValue() {
+        return lastValue;
     }
 
     /**
@@ -236,13 +322,6 @@ public class Control<T> {
         return annotation instanceof JSLControl;
     }
 
-    public static boolean isValidJSLControl(JSLControl annotation){
-        // check if
-        
-
-        return false;
-    }
-
     /**
      * @param annotation the annotation to cast
      * @return null or the annotation as a JSLControl
@@ -278,68 +357,49 @@ public class Control<T> {
         return annotationName;
     }
 
-    /** Ensures that the supplied double is within the bounds
-     *  associated with the control annotation
-     *
-     * @param value the value to limit
-     * @return the value
+    /**
+     * @param type  the control type
+     * @param value a double value
+     * @return the value coerced to be appropriate for the type, or Double.NaN
      */
-    public double limitToRange(double value){
-        double v = value;
-        if (value <= getLowerBound()){
-            v = getLowerBound();
-        } else if (value >= getUpperBound()){
-            v = getUpperBound();
-        }
-
-        return value;
-    }
-
-    public void setValue(double value){
-        // the incoming value comes in as a double and must be converted to
-        // the appropriate type
-        // first ensure within the specified range
-        double v = value;
-        if (value <= getLowerBound()){
-            v = getLowerBound();
-        } else if (value >= getUpperBound()){
-            v = getUpperBound();
-        }
-        // convert to the type of the control and make the assignment
-
-        // finally make the assignment
-    }
-    protected void assignValue(T value) {
-        try {
-            //TODO need to work on checking valid set for number types
-            method.invoke(element, value);
-            // record the value last set
-            // rather than try to read it from a getter on demand
-            lastValue = value;
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+    public static double coerceValue(Type type, double value) {
+        Objects.requireNonNull(type, "The supplied type was null");
+        switch (type) {
+            case DOUBLE:
+                return value;
+            case INTEGER:
+                return toIntValue(value);
+            case LONG:
+                return toLongValue(value);
+            case FLOAT:
+                return toFloatValue(value);
+            case SHORT:
+                return toShortValue(value);
+            case BYTE:
+                return toByteValue(value);
+            case BOOLEAN:
+                if (toBooleanValue(value)) {
+                    return 1.0;
+                } else {
+                    return 0.0;
+                }
+            default:
+                LOGGER.warn("The value {} could not be coerced to a double and was set to Double.NaN. No available control type match!", value);
+                return Double.NaN;
         }
     }
 
     /**
-     * return the value most recently assigned
-     *
-     * @return the value most recently assigned
-     */
-    public final T getLastValue() {
-        return lastValue;
-    }
-
-    /** Converts a double to a byte. If the double is outside
-     *  the natural range, then the value is set to the minimum or
-     *  maximum of the range. If within the range, the value
-     *  is rounded to the nearest value. For example, 4.9999 is
-     *  rounded to 5.0.
+     * Converts a double to a byte. If the double is outside
+     * the natural range, then the value is set to the minimum or
+     * maximum of the range. If within the range, the value
+     * is rounded to the nearest value. For example, 4.9999 is
+     * rounded to 5.0.
      *
      * @param value the value to convert
      * @return the converted value
      */
-    public static Byte toByteValue(Double value) {
+    public static Byte toByteValue(double value) {
         if (value >= Byte.MAX_VALUE) {
             LOGGER.info("{} was limited to {} in toByteValue()", value, Byte.MAX_VALUE);
             return Byte.MAX_VALUE;
@@ -352,16 +412,17 @@ public class Control<T> {
         }
     }
 
-    /** Converts a double to a long. If the double is outside
-     *  the natural range, then the value is set to the minimum or
-     *  maximum of the range. If within the range, the value
-     *  is rounded to the nearest value. For example, 4.9999 is
-     *  rounded to 5.0.
+    /**
+     * Converts a double to a long. If the double is outside
+     * the natural range, then the value is set to the minimum or
+     * maximum of the range. If within the range, the value
+     * is rounded to the nearest value. For example, 4.9999 is
+     * rounded to 5.0.
      *
      * @param value the value to convert
      * @return the converted value
      */
-    public static Long toLongValue(Double value) {
+    public static Long toLongValue(double value) {
         if (value >= Long.MAX_VALUE) {
             LOGGER.info("{} was limited to {} in toLongValue()", value, Long.MAX_VALUE);
             return Long.MAX_VALUE;
@@ -374,16 +435,17 @@ public class Control<T> {
         }
     }
 
-    /** Converts a double to an int. If the double is outside
-     *  the natural range, then the value is set to the minimum or
-     *  maximum of the range. If within the range, the value
-     *  is rounded to the nearest value. For example, 4.9999 is
-     *  rounded to 5.0.
+    /**
+     * Converts a double to an int. If the double is outside
+     * the natural range, then the value is set to the minimum or
+     * maximum of the range. If within the range, the value
+     * is rounded to the nearest value. For example, 4.9999 is
+     * rounded to 5.0.
      *
      * @param value the value to convert
      * @return the converted value
      */
-    public static Integer toIntValue(Double value) {
+    public static Integer toIntValue(double value) {
         if (value >= Integer.MAX_VALUE) {
             LOGGER.info("{} was limited to {} in toIntValue()", value, Integer.MAX_VALUE);
             return Integer.MAX_VALUE;
@@ -396,16 +458,17 @@ public class Control<T> {
         }
     }
 
-    /** Converts a double to a short. If the double is outside
-     *  the natural range, then the value is set to the minimum or
-     *  maximum of the range. If within the range, the value
-     *  is rounded to the nearest value. For example, 4.9999 is
-     *  rounded to 5.0.
+    /**
+     * Converts a double to a short. If the double is outside
+     * the natural range, then the value is set to the minimum or
+     * maximum of the range. If within the range, the value
+     * is rounded to the nearest value. For example, 4.9999 is
+     * rounded to 5.0.
      *
      * @param value the value to convert
      * @return the converted value
      */
-    public static Short toShortValue(Double value) {
+    public static Short toShortValue(double value) {
         if (value >= Short.MAX_VALUE) {
             LOGGER.info("{} was limited to {} in toShortValue()", value, Short.MAX_VALUE);
             return Short.MAX_VALUE;
@@ -418,32 +481,34 @@ public class Control<T> {
         }
     }
 
-    /** Converts a double to a boolean. 1.0 is true, any number
+    /**
+     * Converts a double to a boolean. 1.0 is true, any number
      * other than 1.0 is false.
      *
      * @param value the value to convert
      * @return the converted value
      */
-    public static Boolean toBooleanValue(Double value) {
-        if (value == 1.0){
+    public static Boolean toBooleanValue(double value) {
+        if (value == 1.0) {
             return true;
         } else {
-            if (value != 0.0){
+            if (value != 0.0) {
                 LOGGER.info("{} was converted to {} in toBooleanValue()", value, false);
             }
             return false;
         }
     }
 
-    /** Converts a double to a float. Standard loss of precision
-     *  as noted by the Java Language Specification will occur
-     *  as per Double.floatValue()
+    /**
+     * Converts a double to a float. Standard loss of precision
+     * as noted by the Java Language Specification will occur
+     * as per Double.floatValue()
      *
      * @param value the value to convert
      * @return the converted value
      */
-    public static Float toFloatValue(Double value) {
+    public static Float toFloatValue(double value) {
         // standard loss of precision is expected
-        return value.floatValue();
+        return Double.valueOf(value).floatValue();
     }
 }
