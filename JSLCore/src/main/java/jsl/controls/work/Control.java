@@ -11,40 +11,39 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-import static jsl.controls.work.Control.Type.classTypesToValidTypesMap;
-import static jsl.controls.work.Control.Type.validTypesToClassMap;
+import static jsl.controls.work.Control.ControlType.*;
 
 public class Control<T> {
 
     /**
      * Defines the set of valid control types
      */
-    public enum Type {
+    public enum ControlType {
         DOUBLE, INTEGER, LONG, FLOAT, SHORT, BYTE, BOOLEAN;
 
-        public static final EnumSet<Type> typeSet = EnumSet.of(Type.DOUBLE, Type.INTEGER,
-                Type.LONG, Type.FLOAT, Type.SHORT, Type.BYTE, Type.BOOLEAN);
+        public static final EnumSet<ControlType> CONTROL_TYPE_SET = EnumSet.of(ControlType.DOUBLE, ControlType.INTEGER,
+                ControlType.LONG, ControlType.FLOAT, ControlType.SHORT, ControlType.BYTE, ControlType.BOOLEAN);
 
-        public static final EnumMap<Type, Class<?>> validTypesToClassMap = new EnumMap<>(Type.class);
+        public static final EnumMap<ControlType, Class<?>> validTypesToClassMap = new EnumMap<>(ControlType.class);
 
-        public static final Map<Class<?>, Type> classTypesToValidTypesMap = new HashMap<>();
+        public static final Map<Class<?>, ControlType> classTypesToValidTypesMap = new HashMap<>();
 
         static {
-            validTypesToClassMap.put(Type.DOUBLE, Double.class);
-            validTypesToClassMap.put(Type.INTEGER, Integer.class);
-            validTypesToClassMap.put(Type.LONG, Long.class);
-            validTypesToClassMap.put(Type.FLOAT, Float.class);
-            validTypesToClassMap.put(Type.SHORT, Short.class);
-            validTypesToClassMap.put(Type.BYTE, Byte.class);
-            validTypesToClassMap.put(Type.BOOLEAN, Boolean.class);
+            validTypesToClassMap.put(ControlType.DOUBLE, Double.class);
+            validTypesToClassMap.put(ControlType.INTEGER, Integer.class);
+            validTypesToClassMap.put(ControlType.LONG, Long.class);
+            validTypesToClassMap.put(ControlType.FLOAT, Float.class);
+            validTypesToClassMap.put(ControlType.SHORT, Short.class);
+            validTypesToClassMap.put(ControlType.BYTE, Byte.class);
+            validTypesToClassMap.put(ControlType.BOOLEAN, Boolean.class);
 
-            classTypesToValidTypesMap.put(Double.class, Type.DOUBLE);
-            classTypesToValidTypesMap.put(Integer.class, Type.INTEGER);
-            classTypesToValidTypesMap.put(Long.class, Type.LONG);
-            classTypesToValidTypesMap.put(Float.class, Type.FLOAT);
-            classTypesToValidTypesMap.put(Short.class, Type.SHORT);
-            classTypesToValidTypesMap.put(Byte.class, Type.BYTE);
-            classTypesToValidTypesMap.put(Boolean.class, Type.BOOLEAN);
+            classTypesToValidTypesMap.put(Double.class, ControlType.DOUBLE);
+            classTypesToValidTypesMap.put(Integer.class, ControlType.INTEGER);
+            classTypesToValidTypesMap.put(Long.class, ControlType.LONG);
+            classTypesToValidTypesMap.put(Float.class, ControlType.FLOAT);
+            classTypesToValidTypesMap.put(Short.class, ControlType.SHORT);
+            classTypesToValidTypesMap.put(Byte.class, ControlType.BYTE);
+            classTypesToValidTypesMap.put(Boolean.class, ControlType.BOOLEAN);
         }
     }
 
@@ -114,7 +113,7 @@ public class Control<T> {
                 jslControl.annotationType(), method.getName(), element.getName());
     }
 
-    public Type getAnnotationType() {
+    public ControlType getAnnotationType() {
         return jslControl.type();
     }
 
@@ -185,7 +184,7 @@ public class Control<T> {
     }
 
     /** Subclasses may need ot override this method if attempting to handle addition valid
-     *  control type.
+     *  control types.
      *
      * @param value the value to coerce to the type of the control
      * @return the coerced value
@@ -209,7 +208,7 @@ public class Control<T> {
                 return type.cast(toBooleanValue(value));
             default:
                 LOGGER.error("The value {} could not be coerced to type {}. No available control type match!", value, type);
-                throw new IllegalStateException("Unable to coerce value to type of control. See logs for details");
+               throw new IllegalStateException("Unable to coerce value to type of control. See logs for details");
         }
     }
 
@@ -256,6 +255,87 @@ public class Control<T> {
      */
     public final T getLastValue() {
         return lastValue;
+    }
+
+    /** Checks if the type of control can be converted to a double
+     *
+     * @return true if control can be converted to a double
+     */
+    public boolean isDoubleCompatible(){
+        switch (getAnnotationType() ) {
+            case DOUBLE:
+            case INTEGER:
+            case LONG:
+            case FLOAT:
+            case SHORT:
+            case BYTE:
+            case BOOLEAN:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /** Gets the last value of the control as a double. Use isDoubleCompatible() for
+     *  save call
+     *
+     * @return   the last value of the control converted to a double
+     */
+    public Double getLastValueAsDouble(){
+        switch (getAnnotationType() ) {
+            case DOUBLE:
+            case INTEGER:
+            case LONG:
+            case FLOAT:
+            case SHORT:
+            case BYTE:
+                return (Double) getLastValue();
+            case BOOLEAN:
+                boolean b = (boolean) getLastValue();
+                if (b){
+                    return 1.0;
+                } else return 0.0;
+            default:
+                LOGGER.error("Attempted to transform control type {} for method {} of element {} to double",
+                        type, method, element);
+                throw new IllegalStateException("Attempted to transform invalid control type to double");
+        }
+    }
+
+    /**
+     * class to define (and populate) a more detailed control record.
+     *
+     * @return the annotation control map
+     */
+    public final ControlRecord getControlRecord() {
+        return new ControlRecord(this);
+    }
+
+    //TODO consider static <T> Control<T> create(Class<T> clazz, ...
+    public static Control<?> create(ControlType controlType, GetNameIfc element, Method method) {
+        Objects.requireNonNull(controlType, "The supplied class type cannot be null");
+        Objects.requireNonNull(element, "The invoking model element cannot be null");
+        Objects.requireNonNull(method, "The method cannot be null");
+        switch (controlType) {
+            case DOUBLE:
+                return new Control<Double>(Double.class, element, method);
+            case INTEGER:
+                return new Control<Integer>(Integer.class, element, method);
+            case LONG:
+                return new Control<Long>(Long.class, element, method);
+            case FLOAT:
+                return new Control<Float>(Float.class, element, method);
+            case SHORT:
+                return new Control<Short>(Short.class, element, method);
+            case BYTE:
+                return new Control<Byte>(Byte.class, element, method);
+            case BOOLEAN:
+                return new Control<Boolean>(Boolean.class, element, method);
+            default:
+                LOGGER.error("Attempted to create a non-existing control type {} for method {} of element {}",
+                        controlType, method, element);
+                throw new IllegalStateException("Attempted to create a non-existing control type");
+        }
     }
 
     /**
@@ -358,13 +438,13 @@ public class Control<T> {
     }
 
     /**
-     * @param type  the control type
+     * @param controlType  the control type
      * @param value a double value
      * @return the value coerced to be appropriate for the type, or Double.NaN
      */
-    public static double coerceValue(Type type, double value) {
-        Objects.requireNonNull(type, "The supplied type was null");
-        switch (type) {
+    public static double coerceValue(ControlType controlType, double value) {
+        Objects.requireNonNull(controlType, "The supplied type was null");
+        switch (controlType) {
             case DOUBLE:
                 return value;
             case INTEGER:
