@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -103,15 +104,19 @@ public class Control<T> {
             throw new IllegalArgumentException("Invalid control type!");
         }
         Class<?> pType = method.getParameterTypes()[0];
-        if (!pType.isInstance(type)) {
-            LOGGER.error("Method {} for class {} was specified as a control, but its parameter type is not compatible with the control type {}",
-                    method.getName(), method.getDeclaringClass().getName(), type.getName());
-            throw new IllegalArgumentException("Method parameter type is not compatible with the control type!");
+        pType = wrap(pType);
+        if (!pType.isAssignableFrom(type)) {
+            LOGGER.error("Method {} for class {} was specified as a control, but its parameter type {} " +
+                            "is not compatible with the control type {}",
+                    method.getName(), method.getDeclaringClass().getName(), pType, type.getName());
+            String msg = "Method parameter type " + pType + " is not compatible with the control type "
+                    + type.getName() + "!\n";
+            throw new IllegalArgumentException(msg);
         }
         jslControl = getControlAnnotation(method);
         // okay, method parameter type is same as control type
         // need to check if annotation has the correct type
-        if (!type.isInstance(jslControl.type().asClass())) {
+        if (!type.isAssignableFrom(jslControl.type().asClass())) {
             LOGGER.error("Annotation Type {} is not compatible with the control type {}",
                     jslControl.type(), type.getName());
             throw new IllegalArgumentException("Annotation type does not match control type!");
@@ -334,32 +339,29 @@ public class Control<T> {
         return new ControlRecord(this);
     }
 
-    //TODO consider static <T> Control<T> create(Class<T> clazz, ...
-    public static Control<?> create(ControlType controlType, GetNameIfc element, Method method) {
-        Objects.requireNonNull(controlType, "The supplied class type cannot be null");
-        Objects.requireNonNull(element, "The invoking model element cannot be null");
-        Objects.requireNonNull(method, "The method cannot be null");
-        return new Control<>(controlType.asClass(), element, method);
-//        switch (controlType) {
-//            case DOUBLE:
-//                return new Control<Double>(Double.class, element, method);
-//            case INTEGER:
-//                return new Control<Integer>(Integer.class, element, method);
-//            case LONG:
-//                return new Control<Long>(Long.class, element, method);
-//            case FLOAT:
-//                return new Control<Float>(Float.class, element, method);
-//            case SHORT:
-//                return new Control<Short>(Short.class, element, method);
-//            case BYTE:
-//                return new Control<Byte>(Byte.class, element, method);
-//            case BOOLEAN:
-//                return new Control<Boolean>(Boolean.class, element, method);
-//            default:
-//                LOGGER.error("Attempted to create a non-existing control type {} for method {} of element {}",
-//                        controlType, method, element);
-//                throw new IllegalStateException("Attempted to create a non-existing control type");
-//        }
+
+    /**
+     *  Wrap a class if it is a primitive.
+     *  <a href="https://stackoverflow.com/questions/1704634/simple-way-to-get-wrapper-class-type-in-java">...</a>
+     * @param c the class to wrap
+     * @return the wrapped class or the class itself
+     * @param <T> the type of the method
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T> wrap(Class<T> c) {
+        return (Class<T>) MethodType.methodType(c).wrap().returnType();
+    }
+
+    /**
+     *  Unwrap a class if it is a primitive.
+     *  <a href="https://stackoverflow.com/questions/1704634/simple-way-to-get-wrapper-class-type-in-java">...</a>
+     * @param c the class to wrap
+     * @return the wrapped class or the class itself
+     * @param <T> the type of the method
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T> unwrap(Class<T> c) {
+        return (Class<T>) MethodType.methodType(c).unwrap().returnType();
     }
 
     /**
@@ -586,8 +588,8 @@ public class Control<T> {
     }
 
     /**
-     * Converts a double to a boolean. 1.0 is true, any number
-     * other than 1.0 is false.
+     * Converts a double to a boolean. 1.0 is true. Double.NEGATIVE_INFINITY is mapped to false,
+     * Double.POSITIVE_INFINITY is mapped to true, any other double values other are mapped to false.
      *
      * @param value the value to convert
      * @return the converted value
@@ -596,8 +598,15 @@ public class Control<T> {
         if (value == 1.0) {
             return true;
         } else {
-            if (value != 0.0) {
+            if (value == Double.NEGATIVE_INFINITY){
                 LOGGER.info("{} was converted to {} in toBooleanValue()", value, false);
+                return false;
+            } else if (value == Double.POSITIVE_INFINITY){
+                LOGGER.info("{} was converted to {} in toBooleanValue()", value, true);
+                return true;
+            } else if (value != 0.0) {
+                LOGGER.info("{} was converted to {} in toBooleanValue()", value, false);
+                return false;
             }
             return false;
         }
