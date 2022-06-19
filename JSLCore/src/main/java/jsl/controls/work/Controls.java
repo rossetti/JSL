@@ -201,7 +201,7 @@ public class Controls {
         for (Method method : methods) {
             if (Control.hasControlAnnotation(method)){
                 JSLControl jslControl = Control.getControlAnnotation(method);
-                controls.store(Control.create(jslControl.type(), modelElement, method));
+                controls.store(new Control<>(jslControl.type().asClass(), modelElement, method));
             }
         }
         return controls;

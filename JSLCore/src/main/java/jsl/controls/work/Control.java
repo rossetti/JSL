@@ -19,23 +19,34 @@ public class Control<T> {
      * Defines the set of valid control types
      */
     public enum ControlType {
-        DOUBLE, INTEGER, LONG, FLOAT, SHORT, BYTE, BOOLEAN;
+        DOUBLE(Double.class), INTEGER(Integer.class), LONG(Long.class),
+        FLOAT(Float.class), SHORT(Short.class), BYTE(Byte.class), BOOLEAN(Boolean.class);
+
+        private final Class<?> clazz;
+
+        ControlType(Class<?> clazz){
+            this.clazz = clazz;
+        }
+
+        public Class<?> asClass(){
+            return clazz;
+        }
 
         public static final EnumSet<ControlType> CONTROL_TYPE_SET = EnumSet.of(ControlType.DOUBLE, ControlType.INTEGER,
                 ControlType.LONG, ControlType.FLOAT, ControlType.SHORT, ControlType.BYTE, ControlType.BOOLEAN);
 
-        public static final EnumMap<ControlType, Class<?>> validTypesToClassMap = new EnumMap<>(ControlType.class);
+//        public static final EnumMap<ControlType, Class<?>> validTypesToClassMap = new EnumMap<>(ControlType.class);
 
         public static final Map<Class<?>, ControlType> classTypesToValidTypesMap = new HashMap<>();
 
         static {
-            validTypesToClassMap.put(ControlType.DOUBLE, Double.class);
-            validTypesToClassMap.put(ControlType.INTEGER, Integer.class);
-            validTypesToClassMap.put(ControlType.LONG, Long.class);
-            validTypesToClassMap.put(ControlType.FLOAT, Float.class);
-            validTypesToClassMap.put(ControlType.SHORT, Short.class);
-            validTypesToClassMap.put(ControlType.BYTE, Byte.class);
-            validTypesToClassMap.put(ControlType.BOOLEAN, Boolean.class);
+//            validTypesToClassMap.put(ControlType.DOUBLE, Double.class);
+//            validTypesToClassMap.put(ControlType.INTEGER, Integer.class);
+//            validTypesToClassMap.put(ControlType.LONG, Long.class);
+//            validTypesToClassMap.put(ControlType.FLOAT, Float.class);
+//            validTypesToClassMap.put(ControlType.SHORT, Short.class);
+//            validTypesToClassMap.put(ControlType.BYTE, Byte.class);
+//            validTypesToClassMap.put(ControlType.BOOLEAN, Boolean.class);
 
             classTypesToValidTypesMap.put(Double.class, ControlType.DOUBLE);
             classTypesToValidTypesMap.put(Integer.class, ControlType.INTEGER);
@@ -100,7 +111,7 @@ public class Control<T> {
         jslControl = getControlAnnotation(method);
         // okay, method parameter type is same as control type
         // need to check if annotation has the correct type
-        if (!type.isInstance(validTypesToClassMap.get(jslControl.type()))) {
+        if (!type.isInstance(jslControl.type().asClass())) {
             LOGGER.error("Annotation Type {} is not compatible with the control type {}",
                     jslControl.type(), type.getName());
             throw new IllegalArgumentException("Annotation type does not match control type!");
@@ -109,8 +120,8 @@ public class Control<T> {
         this.element = element;
         this.method = method;
         setterName = makeSetterName(method.getName(), jslControl.name());
-        LOGGER.info("Constructed control type: {} for method: {} on class {}",
-                jslControl.annotationType(), method.getName(), element.getName());
+        LOGGER.info("Constructed control : {} for method: {} on class {}",
+                this, method.getName(), element.getName());
     }
 
     public ControlType getAnnotationType() {
@@ -171,7 +182,7 @@ public class Control<T> {
      * @param value the value to set
      */
     public void setValue(double value) {
-        // the incoming value comes in as a double and must be converted to range of type
+        // the incoming value comes in as a double and must be converted to the range of the control type
         double x = coerceValue(jslControl.type(), value);
         // coerced value is within domain for the control type
         // now ensure value is within limits for control
@@ -183,7 +194,7 @@ public class Control<T> {
         assignValue(v);
     }
 
-    /** Subclasses may need ot override this method if attempting to handle addition valid
+    /** Subclasses may need ot override this method if attempting to handle additional valid
      *  control types.
      *
      * @param value the value to coerce to the type of the control
@@ -221,7 +232,6 @@ public class Control<T> {
      */
     public void assignValue(T value) {
         try {
-            //TODO need to work on checking valid set for number types
             method.invoke(element, value);
             // record the value last set
             // rather than try to read it from a getter on demand
@@ -302,6 +312,19 @@ public class Control<T> {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        str.append("[key = ").append(getKey());
+        str.append(", control type = ").append(getAnnotationType());
+        str.append(", value = ").append(getLastValue() == null ? "[null]" : getLastValue() );
+        str.append(", lower bound = ").append(getLowerBound());
+        str.append(", upper bound = ").append(getUpperBound());
+        str.append(", comment = ").append(getComment() == null ? "[null]" : getComment());
+        str.append("]");
+        return str.toString();
+    }
+
     /**
      * class to define (and populate) a more detailed control record.
      *
@@ -316,26 +339,27 @@ public class Control<T> {
         Objects.requireNonNull(controlType, "The supplied class type cannot be null");
         Objects.requireNonNull(element, "The invoking model element cannot be null");
         Objects.requireNonNull(method, "The method cannot be null");
-        switch (controlType) {
-            case DOUBLE:
-                return new Control<Double>(Double.class, element, method);
-            case INTEGER:
-                return new Control<Integer>(Integer.class, element, method);
-            case LONG:
-                return new Control<Long>(Long.class, element, method);
-            case FLOAT:
-                return new Control<Float>(Float.class, element, method);
-            case SHORT:
-                return new Control<Short>(Short.class, element, method);
-            case BYTE:
-                return new Control<Byte>(Byte.class, element, method);
-            case BOOLEAN:
-                return new Control<Boolean>(Boolean.class, element, method);
-            default:
-                LOGGER.error("Attempted to create a non-existing control type {} for method {} of element {}",
-                        controlType, method, element);
-                throw new IllegalStateException("Attempted to create a non-existing control type");
-        }
+        return new Control<>(controlType.asClass(), element, method);
+//        switch (controlType) {
+//            case DOUBLE:
+//                return new Control<Double>(Double.class, element, method);
+//            case INTEGER:
+//                return new Control<Integer>(Integer.class, element, method);
+//            case LONG:
+//                return new Control<Long>(Long.class, element, method);
+//            case FLOAT:
+//                return new Control<Float>(Float.class, element, method);
+//            case SHORT:
+//                return new Control<Short>(Short.class, element, method);
+//            case BYTE:
+//                return new Control<Byte>(Byte.class, element, method);
+//            case BOOLEAN:
+//                return new Control<Boolean>(Boolean.class, element, method);
+//            default:
+//                LOGGER.error("Attempted to create a non-existing control type {} for method {} of element {}",
+//                        controlType, method, element);
+//                throw new IllegalStateException("Attempted to create a non-existing control type");
+//        }
     }
 
     /**
