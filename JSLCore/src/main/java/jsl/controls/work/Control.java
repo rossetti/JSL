@@ -104,6 +104,13 @@ public class Control<T> {
             throw new IllegalArgumentException("Invalid control type!");
         }
         Class<?> pType = method.getParameterTypes()[0];
+        // type could be a primitive, which means it will not be assignable from any of the wrapper
+        // classes. Thus, it must be wrapped if it is a primitive to its wrapper class to be tested
+        if (pType.isPrimitive()){
+            LOGGER.info("Method {} for class {} was specified as a control, but with primitive type {} " +
+                            "and was wrapped for matching to control type {}",
+                    method.getName(), method.getDeclaringClass().getName(), pType, type.getName());
+        }
         pType = wrap(pType);
         if (!pType.isAssignableFrom(type)) {
             LOGGER.error("Method {} for class {} was specified as a control, but its parameter type {} " +
