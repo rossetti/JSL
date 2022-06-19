@@ -596,6 +596,7 @@ public class Control<T> {
      */
     public static Boolean toBooleanValue(double value) {
         if (value == 1.0) {
+            LOGGER.info("{} was converted to {} in toBooleanValue()", value, true);
             return true;
         } else {
             if (value == Double.NEGATIVE_INFINITY){
