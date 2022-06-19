@@ -1,16 +1,10 @@
 package jsl.controls.testing;
 
-import jsl.controls.BooleanControl;
-import jsl.controls.NumericControl;
+import jsl.controls.ControlType;
+import jsl.controls.JSLControl;
 import jsl.simulation.Model;
 import jsl.simulation.ModelElement;
 import jsl.simulation.Simulation;
-import jsl.utilities.random.RandomIfc;
-import jsl.utilities.random.rvariable.BernoulliRV;
-import jsl.utilities.random.rvariable.NormalRV;
-import jsl.utilities.random.rvariable.UniformRV;
-
-import static java.lang.Math.pow;
 
 /**
  * "Van" class with various vehicle attributes to Test annotationControl
@@ -29,16 +23,17 @@ public class Van extends ModelElement {
         super(parent);
     }
 
-    @BooleanControl
+    @JSLControl(
+            type = ControlType.BOOLEAN
+    )
     public void setStickShift(Boolean stickShift) {
         this.stickShift = stickShift;
     }
 
     // numeric control setter with bounds, an alias and a comment
-    @NumericControl(
-            name = "numberOfSeats",
-            lowerBound = 1,upperBound = 18,
-            comment = "0 seats == autonomous driving ?"
+    @JSLControl(
+            type = ControlType.INTEGER,
+            name = "numberOfSeats", lowerBound = 1, upperBound = 18, comment = "0 seats == autonomous driving ?"
     )
     public void setNumSeats(Integer n) {
         numSeats = (n==null) ? numSeats:n;
@@ -49,7 +44,11 @@ public class Van extends ModelElement {
     }
 
     // numeric control setter with bounds
-    @NumericControl(lowerBound = 3,upperBound = 8)
+    @JSLControl(
+            type = ControlType.SHORT,
+            lowerBound = 3,
+            upperBound = 8
+    )
     public void setNumWheels(short wheels) {
         this.wheels = wheels;
     }
@@ -59,7 +58,7 @@ public class Van extends ModelElement {
     }
 
     // numeric control setter with all defaults
-    @NumericControl()
+    @JSLControl(type = ControlType.DOUBLE)
     public void setPrice(double price) {
         this.price = price;
     }

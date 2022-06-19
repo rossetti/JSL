@@ -2,7 +2,6 @@ package jsl.controls;
 
 import java.lang.annotation.*;
 
-
 /**
  * NumericControlType setter annotations are used to flag single parameter setter methods
  * (numeric, String or boolean) as potential Controls
@@ -11,15 +10,29 @@ import java.lang.annotation.*;
  * class (including annotations) so the different annotations defined here
  * are essentially unrelated.
  * <p>
- * The BooleanControl is the simplest setter with only
- * name and comment elements defined
+ * The NumericControlType includes the name a possible comment
+ * AND upper and lower bounds with defaults at +/- infinity
  */
+
 @Documented                             // flag inclusion in documentation
 @Inherited                              // flag that it is inherited by subclasses
 @Target({ElementType.METHOD})           // targets methods ONLY
 @Retention(RetentionPolicy.RUNTIME)     // available at run-time
-public @interface BooleanControl {
+public @interface JSLControl {
+
+    ControlType type();
+
     String name() default "";
+
+    double lowerBound() default Double.NEGATIVE_INFINITY;
+
+    double upperBound() default Double.POSITIVE_INFINITY;
 
     String comment() default "";
 }
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-package jsl.controls.work.testing;
+package jsl.controls.testing;
 
 public class CheckStuff {
 

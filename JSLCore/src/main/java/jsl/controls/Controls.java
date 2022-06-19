@@ -1,4 +1,4 @@
-package jsl.controls.work;
+package jsl.controls;
 
 import jsl.simulation.Model;
 import jsl.simulation.ModelElement;
@@ -73,10 +73,10 @@ public class Controls {
      */
     public <T> List<Control<T>> getControls(Class<Control<T>> clazz){
         Objects.requireNonNull(clazz, "The supplied class type was null");
-        if (!Control.ControlType.classTypesToValidTypesMap.containsKey(clazz)){
+        if (!ControlType.classTypesToValidTypesMap.containsKey(clazz)){
             return new ArrayList<>();
         }
-        Control.ControlType type = Control.ControlType.classTypesToValidTypesMap.get(clazz);
+        ControlType type = ControlType.classTypesToValidTypesMap.get(clazz);
         List<Control<T>> list = new ArrayList<>();
         for (Map.Entry<String, Control<?>> entry : myControls.entrySet()) {
             if (entry.getValue().getAnnotationType() == type){
@@ -116,8 +116,8 @@ public class Controls {
      *
      * @return the set of possible control types held
      */
-    public Set<Control.ControlType> getControlTypes(){
-        Set<Control.ControlType> set = new HashSet<>();
+    public Set<ControlType> getControlTypes(){
+        Set<ControlType> set = new HashSet<>();
         for (Map.Entry<String, Control<?>> entry : myControls.entrySet()) {
             set.add(entry.getValue().getAnnotationType());
         }

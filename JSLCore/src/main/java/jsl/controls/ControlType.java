@@ -1,109 +1,48 @@
 package jsl.controls;
 
-
-import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * ABSTRACT Class to hold a reference to and interact with a setter of an object
- * The generic  T is the class type of the setter parameter.
+ * Defines the set of valid control types
  */
-public abstract class ControlType<T> {
-    protected Consumer<T> setter;
-    private final String elementName;
-    private final String setterName;
-    protected String comment = "";
-    protected T lastValue = null;
+public enum ControlType {
+    DOUBLE(Double.class), INTEGER(Integer.class), LONG(Long.class),
+    FLOAT(Float.class), SHORT(Short.class), BYTE(Byte.class), BOOLEAN(Boolean.class);
 
-    public ControlType(Consumer<T> setter, String elementName, String setterName, String comment) {
-        Objects.requireNonNull(setter, "setter cannot be null");
-        Objects.requireNonNull(setter, "elementName cannot be null");
-        Objects.requireNonNull(setter, "setterName cannot be null");
-        this.setter = setter;
-        this.elementName = elementName;
-        this.setterName = setterName;
-        this.comment = comment;
+    private final Class<?> clazz;
+
+    ControlType(Class<?> clazz) {
+        this.clazz = clazz;
     }
 
-    /**
-     * require a method that takes an Object, sensibly casts and
-     * assigns to the control
-     *
-     * @param v the object to use for setting
-     */
-    public final void setValue(Object v) {
-        // cast and assign the control value
-        T r = castValue(v);
-        setter.accept(r);
-        // record the value last set
-        // rather than try to read it from a getter on demand
-        this.lastValue = r;
+    public Class<?> asClass() {
+        return clazz;
     }
 
-    /**
-     * return the value most recently assigned
-     *
-     * @return the value most recently assigned
-     */
-    public final T getLastValue() {
-        return lastValue;
-    }
+    public static final EnumSet<ControlType> CONTROL_TYPE_SET = EnumSet.of(ControlType.DOUBLE, ControlType.INTEGER,
+            ControlType.LONG, ControlType.FLOAT, ControlType.SHORT, ControlType.BYTE, ControlType.BOOLEAN);
 
+//        public static final EnumMap<ControlType, Class<?>> validTypesToClassMap = new EnumMap<>(ControlType.class);
 
-    // require an explicit mapping of lastValue to Double
-    public abstract Double getLastDoubleValue();
+    public static final Map<Class<?>, ControlType> classTypesToValidTypesMap = new HashMap<>();
 
-    /**
-     * returns the class of value type T without issues from Type erasure
-     */
-    public final Class<?> getValueClass() {
-        return getLastValue().getClass();
-    }
+    static {
+//            validTypesToClassMap.put(ControlType.DOUBLE, Double.class);
+//            validTypesToClassMap.put(ControlType.INTEGER, Integer.class);
+//            validTypesToClassMap.put(ControlType.LONG, Long.class);
+//            validTypesToClassMap.put(ControlType.FLOAT, Float.class);
+//            validTypesToClassMap.put(ControlType.SHORT, Short.class);
+//            validTypesToClassMap.put(ControlType.BYTE, Byte.class);
+//            validTypesToClassMap.put(ControlType.BOOLEAN, Boolean.class);
 
-    /**
-     * require a method from subclasses to cast from Object to T
-     *
-     * @param v the value to cast from
-     * @return the value to cast to
-     */
-    protected abstract T castValue(Object v);
-
-    /**
-     * require a method to tell us if the new value is within
-     * the relevant domain
-     *
-     * @param v the object to check if contained
-     * @return true if contained
-     */
-    protected abstract boolean contains(Object v);
-
-
-    // require a method to return a String representation of the domain
-    public abstract String getDomainAsString();
-
-    /**
-     * generate a compound key of element name and setter name delimited by '.'
-     * (escape any periods in the component parts to ensure it stays unique)
-     *
-     * @return the key
-     */
-    public final String getKey() {
-        String en = this.elementName.replace(".", "\\.");
-        String sn = this.setterName.replace(".", "\\.");
-        return en + "." + sn;
-    }
-
-    /**
-     * class to define (and populate) a more detailed control record.
-     *
-     * @return the annotation control map
-     */
-    public final ControlRecord getControlRecord() {
-        return new ControlRecord(this);
-    }
-
-    public final String getComment() {
-        return comment;
+        classTypesToValidTypesMap.put(Double.class, ControlType.DOUBLE);
+        classTypesToValidTypesMap.put(Integer.class, ControlType.INTEGER);
+        classTypesToValidTypesMap.put(Long.class, ControlType.LONG);
+        classTypesToValidTypesMap.put(Float.class, ControlType.FLOAT);
+        classTypesToValidTypesMap.put(Short.class, ControlType.SHORT);
+        classTypesToValidTypesMap.put(Byte.class, ControlType.BYTE);
+        classTypesToValidTypesMap.put(Boolean.class, ControlType.BOOLEAN);
     }
 }
-

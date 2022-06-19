@@ -1,6 +1,7 @@
 package jsl.controls.testing;
 
-import jsl.controls.NumericControl;
+import jsl.controls.ControlType;
+import jsl.controls.JSLControl;
 import jsl.simulation.ModelElement;
 
 public abstract class TestAbstract
@@ -14,7 +15,8 @@ public abstract class TestAbstract
         super(parent);
     }
 
-    @NumericControl(
+    @JSLControl(
+            type = ControlType.INTEGER,
             name = "AbstractInt",
             comment = "Control defined at TestAbstract level" +
                     ", no lower or upper bounds defined; " +
