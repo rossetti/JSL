@@ -328,7 +328,7 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
      * @param expName the name of the experiment
      * @param numReps the number of replications
      * @param runLength the length of the simulation replication
-     * @param warmUp the length of the warm up period
+     * @param warmUp the length of the warmup period
      */
     public final void run(String expName, int numReps, double runLength, double warmUp){
         setExperimentName(expName);

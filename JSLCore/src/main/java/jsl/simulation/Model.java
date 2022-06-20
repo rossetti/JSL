@@ -76,7 +76,7 @@ public class Model extends ModelElement {
      * A Map that holds all the model elements in the order in which they are
      * created
      */
-    private Map<String, ModelElement> myModelElementMap;
+    private final Map<String, ModelElement> myModelElementMap;
 
     /**
      * Indicates whether or not the model should automatically remove any
