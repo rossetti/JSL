@@ -17,7 +17,8 @@ public class SimulationTimer {
 
     private final SimObserver myObserver;
 
-    /** Automatically starts the time collection, w/o calling startTiming()
+    /**
+     * Automatically starts the time collection, w/o calling startTiming()
      *
      * @param sim the simulation to time
      */
@@ -33,25 +34,25 @@ public class SimulationTimer {
     }
 
     /**
-     *  Ensures that the simulation execution time is collected by
-     *  this object, if it has been started
+     * Ensures that the simulation execution time is collected by
+     * this object, if it has been started
      */
-    public void startTiming(){
-        if(!mySim.getModel().contains(myObserver)){
+    public void startTiming() {
+        if (!mySim.getModel().contains(myObserver)) {
             mySim.getModel().addObserver(myObserver);
         }
     }
 
-    /** Stop collecting execution time
-     *
+    /**
+     * Stop collecting execution time
      */
-    public void stopTiming(){
-        if(mySim.getModel().contains(myObserver)){
+    public void stopTiming() {
+        if (mySim.getModel().contains(myObserver)) {
             mySim.getModel().deleteObserver(myObserver);
         }
     }
 
-    private class SimObserver extends ModelElementObserver  {
+    private class SimObserver extends ModelElementObserver {
         @Override
         protected void beforeExperiment(ModelElement m, Object arg) {
             myRepTimeSaver.clearSavedData();
