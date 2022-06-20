@@ -12,7 +12,11 @@ import java.lang.annotation.*;
  * types (e.g. double/Double, Integer/int, etc.) are considered the same (interchangeable) as
  * denoted by the valid control types.  Even though the optional annotation fields (lowerBound and upperBound)
  * are specified as double values, they will be converted to an appropriate value for the specified
- * type.  Current control types are the primitives and their wrappers as well as boolean/Boolean. Future
+ * type.  Boolean/boolean parameters are represented as a 1 (true) and 0 (false) within the numerical
+ * conversion for the controls.  If a control is BOOLEAN, then the user can supply a 1 to represent true
+ * and a 0 to represent false when setting the control, which will then be set to true or false, appropriately.
+ *
+ * Current control types are the primitives and their wrappers as well as boolean/Boolean. Future
  * types may be more general object types, in which case, the bounds will be ignored.
  */
 
