@@ -63,6 +63,14 @@ public @interface JSLControl {
      * @return a comment associated with the annotation
      */
     String comment() default "";
+
+    /** Indicated whether to include in the controls for the model or not. Provides
+     *  a simple mechanism for turning off or not including specific controls.
+     *  The default is to include thm control in the extraction process.
+     *
+     * @return true means include in the controls
+     */
+    boolean include() default true;
 }
 
 

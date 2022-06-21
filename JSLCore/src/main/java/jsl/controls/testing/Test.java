@@ -64,7 +64,9 @@ public class Test extends TestAbstract {
         // add Test as a ModelElement
         new Test(mod);
 
-        Controls cs = Controls.extractControls(mod);
+        Controls cs = new Controls(mod);
+
+        System.out.println(cs.toControlsAsDoublesJSON());
 
         // create a new controller
 //        ExperimentRunner cs = new ExperimentRunner(mod);

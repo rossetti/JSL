@@ -63,7 +63,7 @@ public class Control<T> {
         Class<?> pType = method.getParameterTypes()[0];
         // type could be a primitive, which means it will not be assignable from any of the wrapper
         // classes. Thus, it must be wrapped if it is a primitive to its wrapper class to be tested
-        if (pType.isPrimitive()){
+        if (pType.isPrimitive()) {
             LOGGER.info("Method {} for class {} was specified as a control, but with primitive type {} " +
                             "and was wrapped for matching to control type {}",
                     method.getName(), method.getDeclaringClass().getName(), pType, type.getName());
@@ -135,18 +135,19 @@ public class Control<T> {
     }
 
 
-    /** Takes a double value and translates it to a valid value for the type of control.
-     *  This may involve a conversion to numeric types that have narrower numeric
-     *  representations as per the Java Language specification.
-     *  <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.3">...</a>
-     *  The conversion varies from standard java by rounding up integral values. For example,
-     *  4.99999 will be rounded to 5.0 rather than the standard truncation to 4.0.
-     *  If the double value is outside the range of the numeric type, then it is coerced to the
-     *  smallest or largest permissible value for the numeric type.  If the double value is
-     *  outside of upper and lower limits as specified by the control annotation, then the value
-     *  is coerced to the nearest limit. This method will call assignValue(T) with the appropriate
-     *  type for the control.  If the control type is Boolean, a 1.0 is coerced to true and any double not
-     *  equal to 1.0 is coerced to false.
+    /**
+     * Takes a double value and translates it to a valid value for the type of control.
+     * This may involve a conversion to numeric types that have narrower numeric
+     * representations as per the Java Language specification.
+     * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.3">...</a>
+     * The conversion varies from standard java by rounding up integral values. For example,
+     * 4.99999 will be rounded to 5.0 rather than the standard truncation to 4.0.
+     * If the double value is outside the range of the numeric type, then it is coerced to the
+     * smallest or largest permissible value for the numeric type.  If the double value is
+     * outside of upper and lower limits as specified by the control annotation, then the value
+     * is coerced to the nearest limit. This method will call assignValue(T) with the appropriate
+     * type for the control.  If the control type is Boolean, a 1.0 is coerced to true and any double not
+     * equal to 1.0 is coerced to false.
      *
      * @param value the value to set
      */
@@ -163,8 +164,9 @@ public class Control<T> {
         assignValue(v);
     }
 
-    /** Subclasses may need ot override this method if attempting to handle additional valid
-     *  control types.
+    /**
+     * Subclasses may need ot override this method if attempting to handle additional valid
+     * control types.
      *
      * @param value the value to coerce to the type of the control
      * @return the coerced value
@@ -188,14 +190,15 @@ public class Control<T> {
                 return type.cast(toBooleanValue(value));
             default:
                 LOGGER.error("The value {} could not be coerced to type {}. No available control type match!", value, type);
-               throw new IllegalStateException("Unable to coerce value to type of control. See logs for details");
+                throw new IllegalStateException("Unable to coerce value to type of control. See logs for details");
         }
     }
 
-    /** Allows the direct assignment of a value of type T to the control, and thus
-     *  to the element that was annotated by the control. This allows for the possibility of
-     *  non-numeric types to be added in the future.  Use setValue(double) for any numeric types
-     *  as well as boolean values.
+    /**
+     * Allows the direct assignment of a value of type T to the control, and thus
+     * to the element that was annotated by the control. This allows for the possibility of
+     * non-numeric types to be added in the future.  Use setValue(double) for any numeric types
+     * as well as boolean values.
      *
      * @param value the value to assign
      */
@@ -205,7 +208,9 @@ public class Control<T> {
             // record the value last set
             // rather than try to read it from a getter on demand
             lastValue = value;
+            LOGGER.info("Control {} was assigned value {}", getKey(), lastValue);
         } catch (IllegalAccessException | InvocationTargetException e) {
+            LOGGER.error("Unsuccessful assign for Control {} with value {}", getKey(), lastValue);
             throw new RuntimeException(e);
         }
     }
@@ -236,12 +241,13 @@ public class Control<T> {
         return lastValue;
     }
 
-    /** Checks if the type of control can be converted to a double
+    /**
+     * Checks if the type of control can be converted to a double
      *
      * @return true if control can be converted to a double
      */
-    public boolean isDoubleCompatible(){
-        switch (getAnnotationType() ) {
+    public boolean isDoubleCompatible() {
+        switch (getAnnotationType()) {
             case DOUBLE:
             case INTEGER:
             case LONG:
@@ -255,13 +261,14 @@ public class Control<T> {
         }
     }
 
-    /** Gets the last value of the control as a double. Use isDoubleCompatible() for
-     *  save call
+    /**
+     * Gets the last value of the control as a double. Use isDoubleCompatible() for
+     * save call
      *
-     * @return   the last value of the control converted to a double
+     * @return the last value of the control converted to a double
      */
-    public Double getLastValueAsDouble(){
-        switch (getAnnotationType() ) {
+    public Double getLastValueAsDouble() {
+        switch (getAnnotationType()) {
             case DOUBLE:
             case INTEGER:
             case LONG:
@@ -270,8 +277,11 @@ public class Control<T> {
             case BYTE:
                 return (Double) getLastValue();
             case BOOLEAN:
+                if (getLastValue() == null){
+                    return null;
+                }
                 boolean b = (boolean) getLastValue();
-                if (b){
+                if (b) {
                     return 1.0;
                 } else return 0.0;
             default:
@@ -286,7 +296,7 @@ public class Control<T> {
         StringBuilder str = new StringBuilder();
         str.append("[key = ").append(getKey());
         str.append(", control type = ").append(getAnnotationType());
-        str.append(", value = ").append(getLastValue() == null ? "[null]" : getLastValue() );
+        str.append(", value = ").append(getLastValue() == null ? "[null]" : getLastValue());
         str.append(", lower bound = ").append(getLowerBound());
         str.append(", upper bound = ").append(getUpperBound());
         str.append(", comment = ").append(getComment() == null ? "[null]" : getComment());
@@ -305,11 +315,12 @@ public class Control<T> {
 
 
     /**
-     *  Wrap a class if it is a primitive.
-     *  <a href="https://stackoverflow.com/questions/1704634/simple-way-to-get-wrapper-class-type-in-java">...</a>
-     * @param c the class to wrap
-     * @return the wrapped class or the class itself
+     * Wrap a class if it is a primitive.
+     * <a href="https://stackoverflow.com/questions/1704634/simple-way-to-get-wrapper-class-type-in-java">...</a>
+     *
+     * @param c   the class to wrap
      * @param <T> the type of the method
+     * @return the wrapped class or the class itself
      */
     @SuppressWarnings("unchecked")
     public static <T> Class<T> wrap(Class<T> c) {
@@ -317,11 +328,12 @@ public class Control<T> {
     }
 
     /**
-     *  Unwrap a class if it is a primitive.
-     *  <a href="https://stackoverflow.com/questions/1704634/simple-way-to-get-wrapper-class-type-in-java">...</a>
-     * @param c the class to wrap
-     * @return the wrapped class or the class itself
+     * Unwrap a class if it is a primitive.
+     * <a href="https://stackoverflow.com/questions/1704634/simple-way-to-get-wrapper-class-type-in-java">...</a>
+     *
+     * @param c   the class to wrap
      * @param <T> the type of the method
+     * @return the wrapped class or the class itself
      */
     @SuppressWarnings("unchecked")
     public static <T> Class<T> unwrap(Class<T> c) {
@@ -428,8 +440,8 @@ public class Control<T> {
     }
 
     /**
-     * @param controlType  the control type
-     * @param value a double value
+     * @param controlType the control type
+     * @param value       a double value
      * @return the value coerced to be appropriate for the type, or Double.NaN
      */
     public static double coerceValue(ControlType controlType, double value) {
@@ -471,10 +483,10 @@ public class Control<T> {
      */
     public static Byte toByteValue(double value) {
         if (value >= Byte.MAX_VALUE) {
-            LOGGER.info("{} was limited to {} in toByteValue()", value, Byte.MAX_VALUE);
+            LOGGER.trace("{} was limited to {} in toByteValue()", value, Byte.MAX_VALUE);
             return Byte.MAX_VALUE;
         } else if (value <= Byte.MIN_VALUE) {
-            LOGGER.info("{} was limited to {} in toByteValue()", value, Byte.MIN_VALUE);
+            LOGGER.trace("{} was limited to {} in toByteValue()", value, Byte.MIN_VALUE);
             return Byte.MIN_VALUE;
         } else {
             // in the range of byte, convert to the nearest byte
@@ -494,10 +506,10 @@ public class Control<T> {
      */
     public static Long toLongValue(double value) {
         if (value >= Long.MAX_VALUE) {
-            LOGGER.info("{} was limited to {} in toLongValue()", value, Long.MAX_VALUE);
+            LOGGER.trace("{} was limited to {} in toLongValue()", value, Long.MAX_VALUE);
             return Long.MAX_VALUE;
         } else if (value <= Long.MIN_VALUE) {
-            LOGGER.info("{} was limited to {} in toLongValue()", value, Long.MIN_VALUE);
+            LOGGER.trace("{} was limited to {} in toLongValue()", value, Long.MIN_VALUE);
             return Long.MIN_VALUE;
         } else {
             // in the range of long, convert to the nearest long
@@ -517,10 +529,10 @@ public class Control<T> {
      */
     public static Integer toIntValue(double value) {
         if (value >= Integer.MAX_VALUE) {
-            LOGGER.info("{} was limited to {} in toIntValue()", value, Integer.MAX_VALUE);
+            LOGGER.trace("{} was limited to {} in toIntValue()", value, Integer.MAX_VALUE);
             return Integer.MAX_VALUE;
         } else if (value <= Integer.MIN_VALUE) {
-            LOGGER.info("{} was limited to {} in toIntValue()", value, Integer.MIN_VALUE);
+            LOGGER.trace("{} was limited to {} in toIntValue()", value, Integer.MIN_VALUE);
             return Integer.MIN_VALUE;
         } else {
             // in the range of int, convert to the nearest int
@@ -540,10 +552,10 @@ public class Control<T> {
      */
     public static Short toShortValue(double value) {
         if (value >= Short.MAX_VALUE) {
-            LOGGER.info("{} was limited to {} in toShortValue()", value, Short.MAX_VALUE);
+            LOGGER.trace("{} was limited to {} in toShortValue()", value, Short.MAX_VALUE);
             return Short.MAX_VALUE;
         } else if (value <= Short.MIN_VALUE) {
-            LOGGER.info("{} was limited to {} in toShortValue()", value, Short.MIN_VALUE);
+            LOGGER.trace("{} was limited to {} in toShortValue()", value, Short.MIN_VALUE);
             return Short.MIN_VALUE;
         } else {
             // in the range of int, convert to the nearest int
@@ -560,17 +572,17 @@ public class Control<T> {
      */
     public static Boolean toBooleanValue(double value) {
         if (value == 1.0) {
-            LOGGER.info("{} was converted to {} in toBooleanValue()", value, true);
+            LOGGER.trace("{} was converted to {} in toBooleanValue()", value, true);
             return true;
         } else {
-            if (value == Double.NEGATIVE_INFINITY){
-                LOGGER.info("{} was converted to {} in toBooleanValue()", value, false);
+            if (value == Double.NEGATIVE_INFINITY) {
+                LOGGER.trace("{} was converted to {} in toBooleanValue()", value, false);
                 return false;
-            } else if (value == Double.POSITIVE_INFINITY){
-                LOGGER.info("{} was converted to {} in toBooleanValue()", value, true);
+            } else if (value == Double.POSITIVE_INFINITY) {
+                LOGGER.trace("{} was converted to {} in toBooleanValue()", value, true);
                 return true;
             } else if (value != 0.0) {
-                LOGGER.info("{} was converted to {} in toBooleanValue()", value, false);
+                LOGGER.trace("{} was converted to {} in toBooleanValue()", value, false);
                 return false;
             }
             return false;

@@ -1,7 +1,9 @@
 package jsl.controls;
 
+import com.google.gson.Gson;
 import jsl.simulation.Model;
 import jsl.simulation.ModelElement;
+import jsl.utilities.reporting.JSONUtil;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -17,22 +19,78 @@ public class Controls {
 
     private final LinkedHashMap<String, Control<?>> myControls = new LinkedHashMap<>();
 
+    private final Model myModel;
+
+    /** Extracts and stores the controls from the supplied model
+     *
+     * @param model the model from which to extract controls. Must not be null
+     */
+    public Controls(Model model) {
+        Objects.requireNonNull(model, "The supplied model was null");
+        this.myModel = model;
+        extractControls(myModel);
+    }
+
+    /**
+     * Extracts all controls from every model element of the model
+     * that has a control annotation.
+     *
+     * @param model the model for extraction
+     */
+    private void extractControls(Model model) {
+        List<ModelElement> elements = model.getModelElements();
+        for (ModelElement me : elements) {
+            extractControls(me);
+        }
+    }
+
+    /**
+     * extract Controls for a modelElement
+     *
+     * @param modelElement the model element to extract from
+     */
+    private void extractControls(ModelElement modelElement) {
+        Class<? extends ModelElement> cls = modelElement.getClass();
+        Method[] methods = cls.getMethods();
+        for (Method method : methods) {
+            if (Control.hasControlAnnotation(method)) {
+                JSLControl jslControl = Control.getControlAnnotation(method);
+                if (jslControl.include()){
+                    Control<?> control = new Control<>(jslControl.type().asClass(), modelElement, method);
+                    store(control);
+                    Control.LOGGER.info("Control {} from method {} was extracted and added to controls for model: {}",
+                            control.getKey(), method.getName(), getModelName());
+                } else {
+                    Control.LOGGER.info("Control {} from method {} was excluded during extraction for model: {}",
+                            jslControl.name(), method.getName(), getModelName());
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @return the name of the model associated with the controls
+     */
+    public final String getModelName(){
+        return myModel.getName();
+    }
+
     /**
      * Store a new control
      *
      * @param controlType the control to add
      */
-    public Control<?> store(Control<?> controlType) {
+    private Control<?> store(Control<?> controlType) {
         Objects.requireNonNull(controlType, "The control cannot be null");
         String key = controlType.getKey();
         return myControls.put(key, controlType);
     }
 
     /**
-     *
      * @return the control keys as an unmodifiable set of strings
      */
-    public Set<String> getControlKeys(){
+    public Set<String> getControlKeys() {
         return Collections.unmodifiableSet(myControls.keySet());
     }
 
@@ -40,7 +98,7 @@ public class Controls {
      * Store to ensure the key and
      * the key (from the control) match
      *
-     * @param key         the key
+     * @param key     the key
      * @param control the control type
      */
     private Control<?> store(String key, Control<?> control) {
@@ -54,69 +112,71 @@ public class Controls {
         return myControls.entrySet();
     }
 
-    /** Causes the supplied controls to be stored/added.
+    /**
+     * Causes the supplied controls to be stored/added.
      *
      * @param controls the controls to store
      */
-    public void storeAll(Controls controls) {
+    private void storeAll(Controls controls) {
         Objects.requireNonNull(controls, "The controls cannot be null");
         for (Map.Entry<String, Control<?>> entry : controls.entrySet()) {
             store(entry.getValue());
         }
     }
 
-    /** The class type should be associated with a valid control type. For example,
-     *  {@literal List<Control<Double>> list = getControls(Control<Double>.class)}
+    /**
+     * The class type should be associated with a valid control type. For example,
+     * {@literal List<Control<Double>> list = getControls(Control<Double>.class)}
      *
      * @param clazz the type of control wanted, must not be null.
      * @return a list of the controls associated with the supplied type, may be empty
      */
-    public <T> List<Control<T>> getControls(Class<Control<T>> clazz){
+    public <T> List<Control<T>> getControls(Class<Control<T>> clazz) {
         Objects.requireNonNull(clazz, "The supplied class type was null");
-        if (!ControlType.classTypesToValidTypesMap.containsKey(clazz)){
+        if (!ControlType.classTypesToValidTypesMap.containsKey(clazz)) {
             return new ArrayList<>();
         }
         ControlType type = ControlType.classTypesToValidTypesMap.get(clazz);
         List<Control<T>> list = new ArrayList<>();
         for (Map.Entry<String, Control<?>> entry : myControls.entrySet()) {
-            if (entry.getValue().getAnnotationType() == type){
+            if (entry.getValue().getAnnotationType() == type) {
                 Control<?> v = entry.getValue();
                 try {
                     list.add(clazz.cast(v));
-                } catch(ClassCastException ignored) {
+                } catch (ClassCastException ignored) {
                 }
             }
         }
         return list;
     }
 
-    /** Gets a control of the name with the specific class type. For example,
+    /**
+     * Gets a control of the name with the specific class type. For example,
      * {@literal Control<Double> getControl(name, Control<Double>.class); }
      *
      * @param controlKey the key for the control, must not be null
-     * @param clazz the class type for the control
+     * @param clazz      the class type for the control
      * @return the control or null if the key does not exist as a control or if
      * the control with the name cannot be cast to T
      */
-    public <T> Control<T> getControl(String controlKey, Class<Control<T>> clazz){
+    public <T> Control<T> getControl(String controlKey, Class<Control<T>> clazz) {
         Objects.requireNonNull(controlKey, "The supplied string was null");
         try {
             Control<?> v = myControls.get(controlKey);
-            if (v == null){
+            if (v == null) {
                 return null;
             } else {
                 return clazz.cast(v);
             }
-        } catch(ClassCastException ignored) {
+        } catch (ClassCastException ignored) {
         }
         return null;
     }
 
     /**
-     *
      * @return the set of possible control types held
      */
-    public Set<ControlType> getControlTypes(){
+    public Set<ControlType> getControlTypes() {
         Set<ControlType> set = new HashSet<>();
         for (Map.Entry<String, Control<?>> entry : myControls.entrySet()) {
             set.add(entry.getValue().getAnnotationType());
@@ -136,11 +196,34 @@ public class Controls {
         Map<String, Double> map = new LinkedHashMap<>();
         for (Map.Entry<String, Control<?>> entry : myControls.entrySet()) {
             Control<?> c = entry.getValue();
-            if (c.isDoubleCompatible()){
+            if (c.isDoubleCompatible()) {
                 map.put(entry.getKey(), c.getLastValueAsDouble());
             }
         }
         return map;
+    }
+
+    /**
+     * Sets all the contained control values using the supplied flat map
+     *
+     * @param controlMap a flat map of control keys and values, must not be null
+     * @return the number of control (key, value) pairs that were successfully set
+     */
+    public int setControlsAsDoubles(Map<String, Double> controlMap) {
+        Objects.requireNonNull(controlMap, "The supplied control flat map was null");
+        int j = 0;
+        for (Map.Entry<String, Double> entry : controlMap.entrySet()) {
+            String k = entry.getKey();
+            if (myControls.containsKey(k)) {
+                Control<?> c = myControls.get(k);
+                Double v = entry.getValue();
+                c.setValue(v);
+                j++;
+            } else {
+                Control.LOGGER.warn("The key {} was not found when trying to set control values for supplied flat map", k);
+            }
+        }
+        return j;
     }
 
     /**
@@ -172,39 +255,8 @@ public class Controls {
         return str.toString();
     }
 
-    /** Extracts all controls from every model element of the model
-     * that has a control annotation.
-     *
-     * @param model the model for extraction
-     * @return the extracted controls
-     */
-    public static Controls extractControls(Model model) {
-        List<ModelElement> elements = model.getModelElements();
-        Controls cs = new Controls();
-        for (ModelElement me : elements) {
-            Controls ac = Controls.extractControls(me);
-            cs.storeAll(ac);
-        }
-        return cs;
-    }
-
-    /**
-     * extract Controls for a modelElement
-     *
-     * @param modelElement the model element to extract from
-     * @return Controls
-     */
-    public static Controls extractControls(ModelElement modelElement) {
-        Controls controls = new Controls();
-        Class<? extends ModelElement> cls = modelElement.getClass();
-        Method[] methods = cls.getMethods();
-        for (Method method : methods) {
-            if (Control.hasControlAnnotation(method)){
-                JSLControl jslControl = Control.getControlAnnotation(method);
-                controls.store(new Control<>(jslControl.type().asClass(), modelElement, method));
-            }
-        }
-        return controls;
+    public String toControlsAsDoublesJSON(){
+        return JSONUtil.toJSONPretty(getControlsAsDoubles());
     }
 
 }

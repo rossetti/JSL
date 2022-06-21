@@ -2411,4 +2411,26 @@ public class JSLArrayUtil {
         return String.format("%,." + p + "f", value);
     }
 
+    /** Creates a LinkedHashMap to preserve order. If any key is null or if the value is NaN,
+     *  then the entry is not added to the map.
+     *
+     * @param keys the keys to add to the map, must not be null. Length should be same as values.
+     * @param values the values to add to the map, must not be null
+     * @return the created map
+     */
+    public static LinkedHashMap<String, Double> makeMap(String[] keys, double[] values) {
+        Objects.requireNonNull(keys, "The key array was null");
+        Objects.requireNonNull(values, "The value array was null");
+        if (keys.length != values.length) {
+            throw new IllegalArgumentException("The supplied arrays must have the same length");
+        }
+        LinkedHashMap<String, Double> map = new LinkedHashMap<>();
+        for (int i = 0; i < keys.length; i++) {
+            if ((keys[i] != null) && (!Double.isNaN(values[i]))) {
+                map.put(keys[i], values[i]);
+            }
+        }
+        return map;
+    }
+
 }
