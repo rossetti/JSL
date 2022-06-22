@@ -1,11 +1,13 @@
 package jsl.controls;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import jsl.simulation.Model;
 import jsl.simulation.ModelElement;
 import jsl.utilities.reporting.JSONUtil;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.*;
 
 
@@ -257,6 +259,19 @@ public class Controls {
 
     public String toControlsAsDoublesJSON(){
         return JSONUtil.toJSONPretty(getControlsAsDoubles());
+    }
+
+    /**
+     *
+     * @param json a json string representing a {@literal Map<String, Double>}
+     * @return the created map
+     */
+    public static Map<String, Double> fromControlsAsDoublesJSON(String json){
+        Objects.requireNonNull(json, "The supplied json string was null");
+        Gson gson = new Gson();
+        Type collectionType = new TypeToken<Map<String, Double>>(){}.getType();
+        Map<String, Double> map = gson.fromJson(json, collectionType);
+        return map;
     }
 
 }

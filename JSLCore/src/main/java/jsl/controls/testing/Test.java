@@ -1,11 +1,14 @@
 package jsl.controls.testing;
 
+import jsl.controls.Control;
 import jsl.controls.ControlType;
 import jsl.controls.Controls;
 import jsl.controls.JSLControl;
 import jsl.simulation.Model;
 import jsl.simulation.ModelElement;
 import jsl.simulation.Simulation;
+
+import java.util.Map;
 
 /**
  * testUtilities annotation control inheritance.
@@ -57,7 +60,7 @@ public class Test extends TestAbstract {
     }
 
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         Simulation sim = new Simulation();
         Model mod = sim.getModel();
 
@@ -66,8 +69,15 @@ public class Test extends TestAbstract {
 
         Controls cs = new Controls(mod);
 
-        System.out.println(cs.toControlsAsDoublesJSON());
+        String cStr = cs.toControlsAsDoublesJSON();
+        System.out.println(cStr);
 
+        System.out.println();
+        Map<String, Double> map = Controls.fromControlsAsDoublesJSON(cStr);
+        for (Map.Entry<String, Double> entry : map.entrySet()) {
+            System.out.printf("%s, %f %n", entry.getKey(), entry.getValue());
+        }
+        System.out.println();
         // create a new controller
 //        ExperimentRunner cs = new ExperimentRunner(mod);
         // all control-setter values should be NULL as values are not loaded
