@@ -229,6 +229,16 @@ public class Controls {
     }
 
     /**
+     *
+     * @param json a valid json string representing a {@literal Map<String, Double>}
+     *             that contains the control keys and double values for the controls
+     * @return the number of control (key, value) pairs that were successfully set
+     */
+    public int setControlsAsDoubles(String json){
+        return setControlsAsDoubles(fromControlsAsDoublesJSON(json));
+    }
+
+    /**
      * Return an ArrayList of ControlDetailsRecords providing
      * additional detail on Controls (but without giving
      * direct access to the control)
@@ -270,8 +280,7 @@ public class Controls {
         Objects.requireNonNull(json, "The supplied json string was null");
         Gson gson = new Gson();
         Type collectionType = new TypeToken<Map<String, Double>>(){}.getType();
-        Map<String, Double> map = gson.fromJson(json, collectionType);
-        return map;
+        return gson.fromJson(json, collectionType);
     }
 
 }

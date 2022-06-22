@@ -30,14 +30,14 @@ public class SimulationTimer {
         mySimStartTime = Double.NaN;
         myRepStartTime = Double.NaN;
         myObserver = new SimObserver();
-        startTiming();
+        startObserving();
     }
 
     /**
      * Ensures that the simulation execution time is collected by
      * this object, if it has been started
      */
-    public void startTiming() {
+    public void startObserving() {
         if (!mySim.getModel().contains(myObserver)) {
             mySim.getModel().addObserver(myObserver);
         }
@@ -46,7 +46,7 @@ public class SimulationTimer {
     /**
      * Stop collecting execution time
      */
-    public void stopTiming() {
+    public void stopObserving() {
         if (mySim.getModel().contains(myObserver)) {
             mySim.getModel().deleteObserver(myObserver);
         }

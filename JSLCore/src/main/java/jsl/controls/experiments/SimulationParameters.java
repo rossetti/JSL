@@ -8,12 +8,13 @@ package jsl.controls.experiments;
  */
 public class SimulationParameters {
     // simple public fields for effective JSON data transfer
+    //TODO why null values instead of logical defaults? to prevent JSON creation? if so, why?
     public Double lengthOfReplication = null;
     public Double lengthOfWarmup = null;
     public Integer numberOfReplications = null;
     // firstReplication MUST be defined (as it's not held anywhere else)
     // and defaults to 0 (the first replication)
-    public int firstReplication = 0;
+    public int firstReplication = 0; //TODO why not 1 as default?
     public boolean useAntithetic = false;
 
     /**
@@ -22,10 +23,16 @@ public class SimulationParameters {
     public SimulationParameters() {
     }
 
-    /**
-     * full constructor
+    /** Replications start sequentially at the value provided by firstReplication.  For example, if
+     *  firstReplication is 3, and there are 5 replications, then the parameters represents replications
+     *  3, 4, 5, 6, 7.  This is to allow the specification of subsets of replications that constitute
+     *  portions of a SimulationRun to be executed, perhaps concurrently.
      *
-     * @param firstReplication
+     * @param firstReplication the number of the first replication in the sequence of replications
+     * @param lengthOfReplication the length of each replication
+     * @param lengthOfWarmup thh length of the warmup period for each replication
+     * @param numberOfReplications the number of replications in the set
+     * @param useAntithetic whether the antithetic option is on or off
      */
     public SimulationParameters(
             int firstReplication,
