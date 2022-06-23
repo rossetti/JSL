@@ -64,7 +64,6 @@ public class SimulationRunner {
             // make use of a ReplicationDataCollector class to grab all
             // response variables at the end of each run.
             ReplicationDataCollector rdc = new ReplicationDataCollector(myModel, true);
-
             SimulationTimer timer = new SimulationTimer(mySim);
 
             // reset streams to their start for all RandomIfc elements in the model
