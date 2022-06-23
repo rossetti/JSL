@@ -90,7 +90,7 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
     private final ReplicationExecutionProcess myReplicationExecutionProcess;
 
     /**
-     * A flag to control whether or not a warning is issued if the user does not
+     * A flag to control whether a warning is issued if the user does not
      * set the replication run length
      */
     private boolean myRepLengthWarningMsgOption = true;
@@ -544,7 +544,7 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
      * @param reportFileName the name of the report
      */
     public final void turnOnLogReport(String reportFileName){
-        Objects.requireNonNull("The name of the report was null");
+        Objects.requireNonNull(reportFileName,"The name of the report was null");
         Path pathToFile = getOutputDirectory().getOutDir().resolve(reportFileName);
         turnOnLogReport(pathToFile);
     }
@@ -631,7 +631,7 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
 
     /**
      * Sets the option to have the streams advance to the beginning of the next
-     * substream after each replication
+     * sub-stream after each replication
      *
      * @param b true means option is on
      */
@@ -640,7 +640,7 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
     }
 
     /**
-     * Sets whether or not the replication should be initialized before each
+     * Sets whether the replication should be initialized before each
      * replication
      *
      * @param repInitOption true for initialize
@@ -650,7 +650,7 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
     }
 
     /**
-     * Sets the number of replications to be executed and whether or not the
+     * Sets the number of replications to be executed and whether the
      * antithetic option is on. If the antithetic option is on then the number
      * of replications should be divisible by 2 so that antithetic pairs can be
      * formed.
@@ -684,7 +684,7 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
     }
 
     /**
-     * Allows the length of the warm up period for each replication to be set
+     * Allows the length of the warm-up period for each replication to be set
      *
      * @param lengthOfWarmUp in simulation time
      */
@@ -712,7 +712,7 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
     }
 
     /**
-     * Returns whether or not the start stream will be reset prior to executing
+     * Returns whether the start stream will be reset prior to executing
      * the simulation
      *
      * @return true if option is on
@@ -734,7 +734,7 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
     }
 
     /**
-     * Returns whether or not replications will be initialized prior to running
+     * Returns whether replications will be initialized prior to running
      * each replication
      *
      * @return true if replications will be initialized
@@ -757,9 +757,9 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
     }
 
     /**
-     * Provides the length of the warm up period for each replication
+     * Provides the length of the warm-up period for each replication
      *
-     * @return the length of the warm up period
+     * @return the length of the warm-up period
      */
     @Override
     public final double getLengthOfWarmUp() {
@@ -777,7 +777,7 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
     }
 
     /**
-     * Indicates whether or not the antithetic streams have been turn on or off
+     * Indicates whether the antithetic streams have been turn on or off
      *
      * @return true means option is on
      */
@@ -787,7 +787,7 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
     }
 
     /**
-     * Determines whether or not System.gc() is called after each replication
+     * Determines whether System.gc() is called after each replication
      *
      * @param flag true means yes
      */
@@ -796,7 +796,7 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
     }
 
     /**
-     * Returns whether or not System.gc() is called after each replication
+     * Returns whether System.gc() is called after each replication
      *
      * @return true means yes
      */
