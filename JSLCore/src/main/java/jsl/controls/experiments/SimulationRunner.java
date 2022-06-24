@@ -3,6 +3,7 @@ package jsl.controls.experiments;
 import jsl.controls.Controls;
 import jsl.observers.ReplicationDataCollector;
 import jsl.observers.SimulationTimer;
+import jsl.simulation.Experiment;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;
 import jsl.utilities.JSLArrayUtil;
@@ -31,29 +32,27 @@ public class SimulationRunner {
     private final Simulation mySim;
     private final Model myModel;
 
-    private final Controls myControls;
-
     private SimulationRun simulationRun = new SimulationRun();
 
     public SimulationRunner(Simulation sim) {
         Objects.requireNonNull(sim, "The supplied simulation must not be null");
         mySim = sim;
         myModel = sim.getModel();
-        myControls = new Controls(myModel);
         // make sure the model random numbers are reset to starting positions
         //TODO why immediately, why not mySim.setResetStartStreamOption(true);
         myModel.resetStartStream();
-
     }
 
-    //TODO why permit external access to the model
-    public Model getModel() {
-        return myModel;
-    }
+    /**
+     *  Sets up the simulation to run with the experimental parameters
+     *  and controls
+     */
+    protected void setupSimulation(){
+        mySim.getExperiment();
+        //TODO use simulationRun.parameters to set the simulation
 
-    public void setSimulationRun(SimulationRun sRun){
-        Objects.requireNonNull(sRun, "The provided SimulationRun was null");
-        //TODO why would this be needed
+        //set up the controls for the run
+        mySim.useControls(simulationRun.controls);
     }
 
     public SimulationRun run() {
@@ -73,12 +72,8 @@ public class SimulationRunner {
                 myModel.advanceSubstreams(simulationRun.parameters.firstReplication);
             }
 
-            // apply values to controls from the cached values
-            //TODO investigate this caching stuff
-            myControls.setControlsAsDoubles(simulationRun.controls);
-//TODO            applyControlValues();
-
-            //TODO how are the simulation parameters set???????
+            // set simulation run parameters and controls
+            setupSimulation();
             // run the simulation
             mySim.run();
 

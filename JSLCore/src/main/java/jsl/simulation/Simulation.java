@@ -30,6 +30,7 @@ import java.io.PrintWriter;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -647,6 +648,21 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
      */
     public final void setReplicationInitializationOption(boolean repInitOption) {
         myExperiment.setReplicationInitializationOption(repInitOption);
+    }
+
+    @Override
+    public boolean hasControls() {
+        return myExperiment.hasControls();
+    }
+
+    @Override
+    public void useControls(Map<String, Double> controlMap) {
+        myExperiment.useControls(controlMap);
+    }
+
+    @Override
+    public Optional<Map<String, Double>> getControls() {
+        return myExperiment.getControls();
     }
 
     /**

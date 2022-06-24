@@ -452,17 +452,17 @@ public class Experiment implements ExperimentGetIfc {
     }
 
     /**
-     * Gets the reset next substream option. The reset next sub stream option
-     * This option indicates whether or not the random variables used during the
+     * Gets the reset next sub-stream option. The reset next sub stream option
+     * This option indicates whether the random variables used during the
      * replication within the experiment will be reset to their next substream
      * after running each replication. The default is TRUE. This ensures that
-     * the random variables will jump to the next substream within their current
+     * the random variables will jump to the next sub-stream within their current
      * stream at the end of a replication. This will cause the random variables
-     * in each subsequent replication to start in the same substream in the
+     * in each subsequent replication to start in the same sub-stream in the
      * underlying random number streams if the replication is repeatedly used
      * and the ResetStartStreamOption is set to false (which is the default).
      * Otherwise, this option really has no effect if there is only 1
-     * replication in an experiment. and then jump to the next substream (if
+     * replication in an experiment. and then jump to the next sub-stream (if
      * this option is on). Having ResetNextSubStreamOption true assists in
      * synchronizing the random number draws from one replication to another
      * aiding in the implementation of common random numbers. Each replication
@@ -476,17 +476,17 @@ public class Experiment implements ExperimentGetIfc {
     }
 
     /**
-     * Sets the reset next substream option. The reset next sub stream option
-     * This option indicates whether or not the random variables used during the
+     * Sets the reset next sub-stream option. The reset next sub stream option
+     * This option indicates whether the random variables used during the
      * replication within the experiment will be reset to their next substream
      * after running each replication. The default is TRUE. This ensures that
-     * the random variables will jump to the next substream within their current
+     * the random variables will jump to the next sub-stream within their current
      * stream at the end of a replication. This will cause the random variables
-     * in each subsequent replication to start in the same substream in the
+     * in each subsequent replication to start in the same sub-stream in the
      * underlying random number streams if the replication is repeatedly used
      * and the ResetStartStreamOption is set to false (which is the default).
      * Otherwise, this option really has no effect if there is only 1
-     * replication in an experiment. and then jump to the next substream (if
+     * replication in an experiment. and then jump to the next sub-stream (if
      * this option is on). Having ResetNextSubStreamOption true assists in
      * synchronizing the random number draws from one replication to another
      * aiding in the implementation of common random numbers. Each replication
@@ -500,13 +500,13 @@ public class Experiment implements ExperimentGetIfc {
 
     /**
      * Gets the reset start stream option. The reset start stream option This
-     * option indicates whether or not the random variables used during the
+     * option indicates whether the random variables used during the
      * experiment will be reset to their starting stream prior to running the
      * first replication. The default is FALSE. This ensures that the random
      * variable's streams WILL NOT be reset prior to running the experiment.
      * This will cause different experiments or the same experiment run multiple
      * times that use the same random variables (via the same model) to continue
-     * within their current stream. Therefore the experiments will be
+     * within their current stream. Therefore, the experiments will be
      * independent when invoked within the same program execution. To get common
      * random number (CRN), run the experiments in different program executions
      * OR set this option to true prior to running the experiment again within
@@ -521,13 +521,13 @@ public class Experiment implements ExperimentGetIfc {
 
     /**
      * Sets the reset start stream option. The reset start stream option This
-     * option indicates whether or not the random variables used during the
+     * option indicates whether the random variables used during the
      * experiment will be reset to their starting stream prior to running the
      * first replication. The default is FALSE. This ensures that the random
      * variable's streams WILL NOT be reset prior to running the experiment.
      * This will cause different experiments or the same experiment run multiple
      * times that use the same random variables (via the same model) to continue
-     * within their current stream. Therefore the experiments will be
+     * within their current stream. Therefore, the experiments will be
      * independent when invoked within the same program execution. To get common
      * random number (CRN), run the experiments in different program executions
      * OR set this option to true prior to running the experiment again within
@@ -540,7 +540,7 @@ public class Experiment implements ExperimentGetIfc {
     }
 
     /**
-     * Indicates whether or not System.gc() should be called after each
+     * Indicates whether System.gc() should be called after each
      * replication
      *
      * @return true if on
@@ -551,7 +551,7 @@ public class Experiment implements ExperimentGetIfc {
     }
 
     /**
-     * Indicates whether or not System.gc() should be called after each
+     * Indicates whether System.gc() should be called after each
      * replication
      *
      * @param flag true if on
