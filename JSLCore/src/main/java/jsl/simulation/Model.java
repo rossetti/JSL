@@ -27,6 +27,7 @@ import jsl.modeling.elements.variable.*;
 //import jsl.spatial.spatial2D.SpatialModel2D;
 import jsl.modeling.elements.entity.EntityType;
 import jsl.observers.ObserverIfc;
+import jsl.utilities.reporting.JSL;
 import jsl.utilities.statistic.StatisticAccessorIfc;
 
 /**
@@ -109,6 +110,11 @@ public class Model extends ModelElement {
     private EntityType myDefaultEntityType;
 
     private double myTimeUnit = ModelElement.TIME_UNIT_MILLISECOND;
+
+    /** to hold the controls if used
+     *
+     */
+    private Controls myControls;
 
 //    /**
 //     *
@@ -1137,6 +1143,17 @@ public class Model extends ModelElement {
     }
 
     /**
+     *
+     * @return the controls for the model
+     */
+    public final Controls getControls(){
+        if (myControls == null){
+            myControls = new Controls(this);
+        }
+        return myControls;
+    }
+
+    /**
      *  Called from Simulation.ReplicationExecutionProcess.initializeIterations()
      *  Represents what to do to set up an experiment
      */
@@ -1162,9 +1179,9 @@ public class Model extends ModelElement {
             if (oc.isPresent()){
                 Map<String, Double> cMap = oc.get();
                 // extract controls and apply them
-                //TODO make class instance variable
-                Controls controls = new Controls(this);
-                controls.setControlsAsDoubles(cMap);
+                int k = getControls().setControlsAsDoubles(cMap);
+                JSL.getInstance().LOGGER.info("{} out of {} controls were applied to Model {} to setup the experiment.",
+                        k, cMap.size(), getName());
             }
         }
         // do all model element beforeExperiment() actions
