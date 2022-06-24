@@ -14,8 +14,7 @@ import java.util.*;
 /**
  * The purpose of this class is to hold controls that have been processed from a JSL model.
  * The user of this class can access the controls by their names and then invoke changes to
- * the controlled element.  The main method for creating the controls is to use the static methods
- * that extract controls from a Model or a ModelElement.
+ * the controlled element.
  */
 public class Controls {
 

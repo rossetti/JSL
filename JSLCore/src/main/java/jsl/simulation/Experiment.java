@@ -20,9 +20,12 @@
  */
 package jsl.simulation;
 
+import java.util.Map;
+import java.util.Optional;
+
 /**
  * This class provides the information for running a simulation experiment. An
- * experiment is a specification for the number of replications, the warm up
+ * experiment is a specification for the number of replications, the warm-up
  * length, replication length, etc. for controlling the running of a simulation.
  *
  * The defaults include:
@@ -37,7 +40,7 @@ package jsl.simulation;
  * implies that if the experiment is re-run on the same model in the same code
  * invocation that an independent set of replications will be made.
  *
- * - advance next substream option TRUE - The random variables in a within an experiment
+ * - advance next sub-stream option TRUE - The random variables in a within an experiment
  * will start at the next sub-stream for each new replication
  *
  * - number of times to advance streams = 1 This indicates how many times that the streams should
@@ -83,12 +86,12 @@ public class Experiment implements ExperimentGetIfc {
 
     /**
      * The length of time from the start of an individual replication to the
-     * warm up event for that replication.
+     * warm-up event for that replication.
      */
     private double myLengthOfWarmUp = 0.0; // zero is no warmup
 
     /**
-     * A flag to indicate whether or not each replication within the experiment
+     * A flag to indicate whether each replication within the experiment
      * should be re-initialized at the beginning of each replication. True means
      * that it will be re-initialized.
      */
@@ -101,13 +104,13 @@ public class Experiment implements ExperimentGetIfc {
     private long myMaxAllowedExecutionTimePR;
 
     /**
-     * The reset start stream option This option indicates whether or not the
+     * The reset start stream option This option indicates whether the
      * random variables used during the experiment will be reset to their
      * starting stream prior to running the first replication. The default is
      * FALSE. This ensures that the random variable's streams WILL NOT be reset
      * prior to running the experiment. This will cause different experiments or
      * the same experiment run multiple times that use the same random variables
-     * (via the same model) to continue within their current stream. Therefore
+     * (via the same model) to continue within their current stream. Therefore,
      * the experiments will be independent when invoked within the same program
      * execution. To get common random number (CRN), run the experiments in
      * different program executions OR set this option to true prior to running
@@ -116,15 +119,15 @@ public class Experiment implements ExperimentGetIfc {
     private boolean myResetStartStreamOption;
 
     /**
-     * The reset next sub stream option This option indicates whether or not the
+     * The reset next sub stream option This option indicates whether the
      * random variables used during the replication within the experiment will
-     * be reset to their next substream after running each replication. The
+     * be reset to their next sub-stream after running each replication. The
      * default is TRUE. This ensures that the random variables will jump to the
-     * next substream within their current stream at the end of a replication.
+     * next sub-stream within their current stream at the end of a replication.
      * This will cause the random variables in each subsequent replication to
-     * start in the same substream in the underlying random number streams if
+     * start in the same sub-stream in the underlying random number streams if
      * the replication is repeatedly used and the ResetStartStreamOption is set
-     * to false (which is the default) and then jump to the next substream (if
+     * to false (which is the default) and then jump to the next sub-stream (if
      * this option is on). This option has no effect if there is only 1
      * replication in an experiment.
      *
@@ -136,7 +139,7 @@ public class Experiment implements ExperimentGetIfc {
     private boolean myAdvNextSubStreamOption;
 
     /**
-     * Indicates whether or not antithetic replications should be run. The
+     * Indicates whether antithetic replications should be run. The
      * default is false. If set the user must supply an even number of
      * replications; otherwise an exception will be thrown. The replications
      * will no longer be independent; however, pairs of replications will be
@@ -158,6 +161,12 @@ public class Experiment implements ExperimentGetIfc {
      *
      */
     private boolean myGCAfterRepFlag;
+
+    /**
+     *  Holds values for each controllable parameter of the simulation
+     *  model.
+     */
+    private Map<String, Double> myControls;
 
     /**
      * Constructs an experiment called "Experiment" with antithetic option off
@@ -185,6 +194,33 @@ public class Experiment implements ExperimentGetIfc {
         myAntitheticOption = false;
         myAdvStreamNum = 0;
         myGCAfterRepFlag = false;
+    }
+
+    /**
+     *
+     * @return true if a control map has been supplied
+     */
+    @Override
+    public final boolean hasControls(){
+        return myControls != null;
+    }
+
+    /** Indicates that the experiment should be run with these control values.
+     *
+     * @param controlMap the controls to use, may be null to stop use of controls
+     */
+    @Override
+    public final void useControls(Map<String, Double> controlMap){
+        myControls = controlMap;
+    }
+
+    /**
+     *
+     * @return the control map if it was set
+     */
+    @Override
+    public final Optional<Map<String, Double>> getControls(){
+        return Optional.ofNullable(myControls);
     }
 
     /**

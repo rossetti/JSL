@@ -15,6 +15,9 @@
  */
 package jsl.simulation;
 
+import java.util.Map;
+import java.util.Optional;
+
 /**
  *
  * @author rossetti
@@ -148,5 +151,23 @@ public interface ExperimentGetIfc {
      * @return true if more 
      */
     boolean hasMoreReplications();
+
+    /**
+     *
+     * @return true if a control map has been supplied
+     */
+    boolean hasControls();
+
+    /** Indicates that the experiment should be run with these control values.
+     *
+     * @param controlMap the controls to use, may be null to stop use of controls
+     */
+    void useControls(Map<String, Double> controlMap);
+
+    /**
+     *
+     * @return the control map if it was set
+     */
+    Optional<Map<String, Double>> getControls();
 
 }

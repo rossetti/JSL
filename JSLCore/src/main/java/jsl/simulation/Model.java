@@ -17,6 +17,8 @@ package jsl.simulation;
 
 import java.lang.IllegalStateException;
 import java.util.*;
+
+import jsl.controls.Controls;
 import jsl.modeling.elements.RandomElementIfc;
 
 import jsl.modeling.elements.spatial.SpatialModel;
@@ -1153,6 +1155,17 @@ public class Model extends ModelElement {
             // tell the model to use the specifications from the experiment
             setAllRVResetStartStreamOptions(getExperiment().getResetStartStreamOption());
             setAllRVResetNextSubStreamOptions(getExperiment().getAdvanceNextSubStreamOption());
+        }
+
+        if (getExperiment().hasControls()){
+            Optional<Map<String, Double>> oc = getExperiment().getControls();
+            if (oc.isPresent()){
+                Map<String, Double> cMap = oc.get();
+                // extract controls and apply them
+                //TODO make class instance variable
+                Controls controls = new Controls(this);
+                controls.setControlsAsDoubles(cMap);
+            }
         }
         // do all model element beforeExperiment() actions
         beforeExperiment_();
