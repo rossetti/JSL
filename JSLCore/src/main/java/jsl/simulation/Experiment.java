@@ -65,7 +65,7 @@ public class Experiment implements ExperimentGetIfc {
     /**
      * The id of this object
      */
-    private int myId;
+    private final int myId;
 
     /**
      * The number of replications to run for this experiment

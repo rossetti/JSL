@@ -1267,6 +1267,10 @@ public class Model extends ModelElement {
         afterExperiment_();
     }
 
+    /** Called from the constructor of Simulation
+     *
+     * @param sim the simulation
+     */
     final void setSimulation(Simulation sim) {
         mySimulation = sim;
     }

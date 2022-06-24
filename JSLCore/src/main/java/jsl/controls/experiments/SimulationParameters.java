@@ -14,7 +14,7 @@ public class SimulationParameters {
     public Integer numberOfReplications = null;
     // firstReplication MUST be defined (as it's not held anywhere else)
     // and defaults to 0 (the first replication)
-    public int firstReplication = 0; //TODO why not 1 as default?
+    public int firstReplication = 0; //TODO why not 1 as default?, probably array indexing silliness
     public boolean useAntithetic = false;
 
     /**

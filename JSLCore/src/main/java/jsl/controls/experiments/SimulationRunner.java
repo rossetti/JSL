@@ -44,12 +44,32 @@ public class SimulationRunner {
     }
 
     /**
-     *  Sets up the simulation to run with the experimental parameters
-     *  and controls
+     * Sets up the simulation to run with the experimental parameters
+     * and controls
      */
-    protected void setupSimulation(){
-        mySim.getExperiment();
-        //TODO use simulationRun.parameters to set the simulation
+    protected void setupSimulation() {
+        //try to use simulationRun.parameters to set the simulation
+        //need to worry about null and improper values, see updateParameters() in Andrew's code
+        SimulationParameters p = simulationRun.parameters;
+        if (p != null) {
+            // there are parameters to use, need to check if they were set, if so, use them
+            if (p.lengthOfReplication != null)
+                mySim.setLengthOfReplication(p.lengthOfReplication);
+            if (p.lengthOfWarmup != null)
+                mySim.setLengthOfWarmUp(p.lengthOfWarmup);
+            if (p.numberOfReplications != null){
+                mySim.setNumberOfReplications(p.numberOfReplications, p.useAntithetic);
+            }
+           //TODO p.firstReplication = p.firstReplication; no need
+        } else {
+            // no supplied parameters, remember what was specified for the simulation by the user
+            simulationRun.parameters = new SimulationParameters();
+            simulationRun.parameters.lengthOfReplication = mySim.getLengthOfReplication();
+            simulationRun.parameters.lengthOfWarmup = mySim.getLengthOfWarmUp();
+            simulationRun.parameters.numberOfReplications = mySim.getNumberOfReplications();
+            simulationRun.parameters.useAntithetic = mySim.getAntitheticOption();
+           //TODO p.firstReplication = ??
+        }
 
         //set up the controls for the run
         mySim.useControls(simulationRun.controls);
@@ -103,7 +123,7 @@ public class SimulationRunner {
             e.printStackTrace(pw);
             simulationRun.functionError = sw.toString();
             // return an empty HashMap of results
-            simulationRun.responseData  = new LinkedHashMap<>();
+            simulationRun.responseData = new LinkedHashMap<>();
             JSL.getInstance().LOGGER.error("There was a fatal exception during the running of simulation {} within SimulationRunner.",
                     mySim.getName());
             JSL.getInstance().LOGGER.error("No responses were recorded.");

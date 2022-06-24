@@ -26,6 +26,8 @@ public class SimulationRun {
      */
     public String id = null;
 
+    //TODO I think that there should be a name for the experiment
+
     /**
      * to capture status information
      */
@@ -71,7 +73,7 @@ public class SimulationRun {
      * Extract a new SimulationRun for some sub-list of replications
      *
      * @param fromReplicationInclusive - integer
-     * @param toReplicationExclusive   - integer
+     * @param toReplicationExclusive   - integer, warning notice exclusive
      * @return the created simulation run
      */
     public SimulationRun subTask(int fromReplicationInclusive, int toReplicationExclusive) {
@@ -79,7 +81,7 @@ public class SimulationRun {
             throw new IllegalArgumentException("index error fromReplicationInclusive < firstReplication");
         if (toReplicationExclusive > (parameters.lastReplication() + 1))
             throw new IllegalArgumentException("index error toReplicationExclusive > (lastReplication + 1)");
-
+//TODO notice toReplicationExclusive
         // define the new parameters
         SimulationParameters p = parameters.newInstance();
         p.numberOfReplications = toReplicationExclusive - fromReplicationInclusive;
