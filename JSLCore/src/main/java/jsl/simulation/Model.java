@@ -1162,7 +1162,6 @@ public class Model extends ModelElement {
         advanceSubstreams(getExperiment().getNumberOfStreamAdvancesPriorToRunning());
 
         if (getExperiment().getAntitheticOption() == true) {
-            //TODO should still check this
             // make sure the streams are not reset after all replications are run
             setAllRVResetStartStreamOptions(false);
             // make sure that streams are not advanced to next substreams after each replication
@@ -1174,6 +1173,7 @@ public class Model extends ModelElement {
             setAllRVResetNextSubStreamOptions(getExperiment().getAdvanceNextSubStreamOption());
         }
 
+        //TODO need to apply generic control types here someday
         if (getExperiment().hasControls()){
             Optional<Map<String, Double>> oc = getExperiment().getControls();
             if (oc.isPresent()){
@@ -1184,6 +1184,7 @@ public class Model extends ModelElement {
                         k, cMap.size(), getName());
             }
         }
+
         // do all model element beforeExperiment() actions
         beforeExperiment_();
     }

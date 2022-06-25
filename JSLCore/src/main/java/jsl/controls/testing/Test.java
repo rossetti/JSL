@@ -67,7 +67,7 @@ public class Test extends TestAbstract {
         // add Test as a ModelElement
         new Test(mod);
 
-        Controls cs = new Controls(mod);
+        Controls cs = sim.getModelControls();
 
         String cStr = cs.toControlsAsDoublesJSON();
         System.out.println(cStr);
@@ -78,10 +78,6 @@ public class Test extends TestAbstract {
             System.out.printf("%s, %f %n", entry.getKey(), entry.getValue());
         }
         System.out.println();
-        // create a new controller
-//        ExperimentRunner cs = new ExperimentRunner(mod);
-        // all control-setter values should be NULL as values are not loaded
-//        cs.extractControls();
 
         System.out.println("\nSearching for annotated controls in a 'Test' model element");
         System.out.println("Note that the 'Test' class extends the abstract 'TestAbstract' class " +

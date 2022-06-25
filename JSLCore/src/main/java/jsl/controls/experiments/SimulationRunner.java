@@ -1,18 +1,14 @@
 package jsl.controls.experiments;
 
-import jsl.controls.Controls;
 import jsl.observers.ReplicationDataCollector;
 import jsl.observers.SimulationTimer;
-import jsl.simulation.Experiment;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;
-import jsl.utilities.JSLArrayUtil;
 import jsl.utilities.reporting.JSL;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**

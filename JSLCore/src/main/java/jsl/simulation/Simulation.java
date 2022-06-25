@@ -15,6 +15,7 @@
  */
 package jsl.simulation;
 
+import jsl.controls.Controls;
 import jsl.observers.ObservableIfc;
 import jsl.observers.ObserverIfc;
 import jsl.observers.scheduler.ExecutiveTraceReport;
@@ -663,6 +664,14 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
     @Override
     public Optional<Map<String, Double>> getControls() {
         return myExperiment.getControls();
+    }
+
+    /**
+     *
+     * @return the controls defined on the model
+     */
+    public Controls getModelControls(){
+        return myModel.getControls();
     }
 
     /**
