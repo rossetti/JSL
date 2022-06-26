@@ -26,7 +26,10 @@ public class SimulationRun {
      */
     public String id = null;
 
-    //TODO I think that there should be a name for the experiment
+    /**
+     *  the name of the simulation run/experiment
+     */
+    public String name = null;
 
     /**
      * to capture status information

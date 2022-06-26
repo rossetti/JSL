@@ -1,11 +1,9 @@
 package jsl.observers;
 
 import jsl.modeling.elements.variable.Counter;
-import jsl.modeling.elements.variable.RandomVariable;
 import jsl.modeling.elements.variable.ResponseVariable;
 import jsl.simulation.Model;
 import jsl.simulation.ModelElement;
-import jsl.utilities.math.JSLMath;
 
 import java.util.*;
 
@@ -20,7 +18,7 @@ import java.util.*;
  * various methods to save the data if it is needed prior to running the simulation again. Or, remove
  * the collector as an observer of the model prior to running subsequent simulations.
  */
-public class ReplicationDataCollector extends ModelElementObserver {
+public class ReplicationDataCollector {
 
     private final List<ResponseVariable> myResponses;
 
@@ -31,6 +29,8 @@ public class ReplicationDataCollector extends ModelElementObserver {
     private final Map<String, double[]> myResponseData;
 
     private int myNumReplications = 0;
+
+    private final ModelObserver modelObserver;
 
     /** Creates a ReplicationDataCollector and does not automatically add response or counters.
      *
@@ -51,9 +51,65 @@ public class ReplicationDataCollector extends ModelElementObserver {
         myResponses = new ArrayList<>();
         myCounters = new ArrayList<>();
         myResponseData = new LinkedHashMap<>();
-        model.addObserver(this);
+        modelObserver = new ModelObserver();
+        model.addObserver(modelObserver);
         if (addAll){
             addAllResponsesAndCounters();
+        }
+    }
+
+    /**
+     * Start observing the model
+     */
+    public void startObserving() {
+        if (!myModel.contains(modelObserver)) {
+            myModel.addObserver(modelObserver);
+        }
+    }
+
+    /**
+     * Stop observing the model
+     */
+    public void stopObserving() {
+        if (myModel.contains(modelObserver)) {
+            myModel.deleteObserver(modelObserver);
+        }
+    }
+
+    void beforeExperiment() {
+        myNumReplications = 0;
+        myResponseData.clear();
+        int numRows = myModel.getSimulation().getNumberOfReplications();
+        for (ResponseVariable r : myResponses) {
+            myResponseData.put(r.getName(), new double[numRows]);
+        }
+        for (Counter c : myCounters) {
+            myResponseData.put(c.getName(), new double[numRows]);
+        }
+    }
+
+    void afterReplication() {
+        myNumReplications = myModel.getCurrentReplicationNumber();
+        int row = myNumReplications - 1;
+        for (ResponseVariable r : myResponses) {
+            double[] data = myResponseData.get(r.getName());
+            data[row] = r.getWithinReplicationStatistic().getAverage();
+        }
+        for (Counter c : myCounters) {
+            double[] data = myResponseData.get(c.getName());
+            data[row] = c.getValue();
+        }
+    }
+
+    private class ModelObserver extends ModelElementObserver{
+        @Override
+        protected void beforeExperiment(ModelElement m, Object arg) {
+            ReplicationDataCollector.this.beforeExperiment();
+        }
+
+        @Override
+        protected void afterReplication(ModelElement m, Object arg) {
+            ReplicationDataCollector.this.afterReplication();
         }
     }
 
@@ -112,32 +168,6 @@ public class ReplicationDataCollector extends ModelElementObserver {
         return myResponses.size() + myCounters.size();
     }
 
-    @Override
-    protected void beforeExperiment(ModelElement m, Object arg) {
-        myNumReplications = 0;
-        myResponseData.clear();
-        int numRows = m.getSimulation().getNumberOfReplications();
-        for (ResponseVariable r : myResponses) {
-            myResponseData.put(r.getName(), new double[numRows]);
-        }
-        for (Counter c : myCounters) {
-            myResponseData.put(c.getName(), new double[numRows]);
-        }
-    }
-
-    @Override
-    protected void afterReplication(ModelElement m, Object arg) {
-        myNumReplications = m.getCurrentReplicationNumber();
-        int row = myNumReplications - 1;
-        for (ResponseVariable r : myResponses) {
-            double[] data = myResponseData.get(r.getName());
-            data[row] = r.getWithinReplicationStatistic().getAverage();
-        }
-        for (Counter c : myCounters) {
-            double[] data = myResponseData.get(c.getName());
-            data[row] = c.getValue();
-        }
-    }
 
     /**
      *

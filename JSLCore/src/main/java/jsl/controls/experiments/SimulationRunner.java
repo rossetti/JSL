@@ -49,14 +49,18 @@ public class SimulationRunner {
         SimulationParameters p = simulationRun.parameters;
         if (p != null) {
             // there are parameters to use, need to check if they were set, if so, use them
-            if (p.lengthOfReplication != null)
+            if (p.lengthOfReplication != null) {
                 mySim.setLengthOfReplication(p.lengthOfReplication);
-            if (p.lengthOfWarmup != null)
+            }
+            if (p.lengthOfWarmup != null) {
                 mySim.setLengthOfWarmUp(p.lengthOfWarmup);
+            }
             if (p.numberOfReplications != null){
                 mySim.setNumberOfReplications(p.numberOfReplications, p.useAntithetic);
             }
-           //TODO p.firstReplication = p.firstReplication; no need
+            if (simulationRun.name != null){
+                mySim.setExperimentName(simulationRun.name);
+            }
         } else {
             // no supplied parameters, remember what was specified for the simulation by the user
             simulationRun.parameters = new SimulationParameters();
@@ -64,7 +68,8 @@ public class SimulationRunner {
             simulationRun.parameters.lengthOfWarmup = mySim.getLengthOfWarmUp();
             simulationRun.parameters.numberOfReplications = mySim.getNumberOfReplications();
             simulationRun.parameters.useAntithetic = mySim.getAntitheticOption();
-           //TODO p.firstReplication = ??
+            simulationRun.name = mySim.getExperimentName();
+           //TODO simulationRun.parameters.firstReplication = ??
         }
 
         //set up the controls for the run
