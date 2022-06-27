@@ -84,7 +84,7 @@ public class SimulationRun {
             throw new IllegalArgumentException("index error fromReplicationInclusive < firstReplication");
         if (toReplicationExclusive > (parameters.lastReplication() + 1))
             throw new IllegalArgumentException("index error toReplicationExclusive > (lastReplication + 1)");
-//TODO notice toReplicationExclusive
+//TODO notice toReplicationExclusive, this is a 0 based array index implementation leaking out to the API
         // define the new parameters
         SimulationParameters p = parameters.newInstance();
         p.numberOfReplications = toReplicationExclusive - fromReplicationInclusive;
