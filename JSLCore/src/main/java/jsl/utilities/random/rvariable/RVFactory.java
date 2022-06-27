@@ -67,9 +67,19 @@ public class RVFactory {
      * @param type the type of the random variable
      * @return an optional holding the control or empty if the type was not found
      */
-    public static Optional<RVControls> getRVControls(RVariableIfc.RVType type) {
+    public static RVControls getRVControls(RVariableIfc.RVType type) {
         Objects.requireNonNull(type, "The random variable type must not be null");
-        return Optional.ofNullable(myFactories.get(type));
+        return myFactories.get(type);
     }
 
+    public static void main(String[] args) {
+        // test making some controls
+        RVControls rvControls = getRVControls(Triangular);
+        RVariableIfc rv = rvControls.makeRVariable();
+        System.out.println(rv.getValue());
+        System.out.println();
+        System.out.println(rvControls);
+        System.out.println();
+        System.out.println(rvControls.toJSON());
+    }
 }

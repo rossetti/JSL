@@ -69,4 +69,12 @@ public abstract class RVControls extends Controls {
      */
     abstract public RVariableIfc makeRVariable(RNStreamIfc rnStream);
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("RV Type = ").append(getType());
+        sb.append(System.lineSeparator());
+        sb.append(super.toString());
+        return sb.toString();
+    }
 }

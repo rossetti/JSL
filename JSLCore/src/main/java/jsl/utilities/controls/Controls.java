@@ -17,7 +17,6 @@ package jsl.utilities.controls;
 
 import java.util.*;
 
-import jsl.utilities.random.RandomIfc;
 import jsl.utilities.reporting.JSONUtil;
 
 /**
@@ -123,9 +122,9 @@ abstract public class Controls {
      * @return the JSON string representation
      */
     public String toJSON(){
-        return JSONUtil.toJSONPretty(this);
+        return JSONUtil.toJSONPretty(this);//TODO
     }
-    
+
     abstract protected void fillControls();
 
     /** Use for labeling, etc
@@ -144,7 +143,7 @@ abstract public class Controls {
         return myName;
     }
 
-    private void addControlName(String name, Class type) {
+    private void addControlName(String name, Class<?> type) {
         Objects.requireNonNull(name, "The control name cannot be null");
         Objects.requireNonNull(type, "The class type cannot be null");
         if (myControlTypes.containsKey(name)) {
@@ -641,27 +640,35 @@ abstract public class Controls {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
+        sb.append("String Controls ");
         sb.append(myStringControls.toString());
         sb.append(System.lineSeparator());
 
+        sb.append("Double Controls ");
         sb.append(myDoubleControls.toString());
         sb.append(System.lineSeparator());
 
+        sb.append("Integer Controls ");
         sb.append(myIntegerControls.toString());
         sb.append(System.lineSeparator());
 
+        sb.append("Long Controls ");
         sb.append(myLongControls.toString());
         sb.append(System.lineSeparator());
 
+        sb.append("Boolean Controls ");
         sb.append(myBooleanControls.toString());
         sb.append(System.lineSeparator());
 
+        sb.append("Float Controls ");
         sb.append(myFloatControls.toString());
         sb.append(System.lineSeparator());
 
+        sb.append("Controllable Controls ");
         sb.append(myControllableIfcControls.toString());
         sb.append(System.lineSeparator());
 
+        sb.append("Double Array Controls ");
         for (String key : myDoubleArrayControls.keySet()) {
             sb.append(key).append(" = ").append(Arrays.toString(myDoubleArrayControls.get(key)));
             sb.append(System.lineSeparator());
