@@ -119,11 +119,12 @@ public final class BernoulliRV extends AbstractRVariable {
      * @return a control for Bernoulli random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.Bernoulli) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("ProbOfSuccess", 0.5);
                 setName(RVariableIfc.RVType.Bernoulli.name());
+                setRVType(RVariableIfc.RVType.Bernoulli);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

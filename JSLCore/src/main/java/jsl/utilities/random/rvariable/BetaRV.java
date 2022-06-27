@@ -93,12 +93,13 @@ public final class BetaRV extends AbstractRVariable {
      * @return a control for Beta random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.Beta) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("alpha1", 1.0);
                 addDoubleControl("alpha2", 1.0);
                 setName(RVariableIfc.RVType.Beta.name());
+                setRVType(RVariableIfc.RVType.Beta);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

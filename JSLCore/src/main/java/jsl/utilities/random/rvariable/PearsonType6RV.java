@@ -93,13 +93,14 @@ public final class PearsonType6RV extends AbstractRVariable {
      * @return a control for PearsonType6 random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.PearsonType6) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("alpha1", 2.0);
                 addDoubleControl("alpha2", 3.0);
                 addDoubleControl("beta", 1.0);
                 setName(RVariableIfc.RVType.PearsonType6.name());
+                setRVType(RVariableIfc.RVType.PearsonType6);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

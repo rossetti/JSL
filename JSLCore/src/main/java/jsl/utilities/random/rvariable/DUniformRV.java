@@ -90,12 +90,13 @@ public final class DUniformRV extends AbstractRVariable {
      * @return a control for DUniform random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.DUniform) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addIntegerControl("min", 0);
                 addIntegerControl("max", 1);
                 setName(RVariableIfc.RVType.DUniform.name());
+                setRVType(RVariableIfc.RVType.DUniform);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

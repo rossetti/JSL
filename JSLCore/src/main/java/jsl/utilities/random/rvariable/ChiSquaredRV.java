@@ -75,11 +75,12 @@ public final class ChiSquaredRV extends AbstractRVariable {
      * @return a control for Chi-Squared random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.ChiSquared) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("dof", 1.0);
                 setName(RVariableIfc.RVType.ChiSquared.name());
+                setRVType(RVariableIfc.RVType.ChiSquared);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

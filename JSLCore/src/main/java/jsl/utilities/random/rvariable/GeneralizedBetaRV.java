@@ -112,7 +112,7 @@ public final class GeneralizedBetaRV extends AbstractRVariable {
      * @return a control for GeneralizeBeta random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.GeneralizedBeta) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("alpha1", 1.0);
@@ -120,6 +120,7 @@ public final class GeneralizedBetaRV extends AbstractRVariable {
                 addDoubleControl("min", 0.0);
                 addDoubleControl("max", 1.0);
                 setName(RVariableIfc.RVType.GeneralizedBeta.name());
+                setRVType(RVariableIfc.RVType.GeneralizedBeta);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

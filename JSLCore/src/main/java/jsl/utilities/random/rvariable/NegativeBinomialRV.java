@@ -108,12 +108,13 @@ public final class NegativeBinomialRV extends AbstractRVariable {
      * @return a control for Negative Binomial random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.NegativeBinomial) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("ProbOfSuccess", 0.5);
                 addIntegerControl("NumSuccesses", 1);
                 setName(RVariableIfc.RVType.NegativeBinomial.name());
+                setRVType(RVariableIfc.RVType.NegativeBinomial);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

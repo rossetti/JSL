@@ -18,23 +18,32 @@ package jsl.utilities.random.rvariable;
 
 import jsl.utilities.controls.Controls;
 import jsl.utilities.random.rng.RNStreamIfc;
+import jsl.utilities.reporting.JSONUtil;
 
 import java.util.Objects;
 
 public abstract class RVControls extends Controls {
 
-    private final RVariableIfc.RVType myType;
+    private RVariableIfc.RVType type;
 
-    public RVControls(RVariableIfc.RVType type) {
-        Objects.requireNonNull(type, "The random variable type must not be null");
-        this.myType = type;
+    public RVControls() {
+        super();
     }
 
     /**
      * @return the type of the random variable
      */
     public final RVariableIfc.RVType getType() {
-        return myType;
+        return type;
+    }
+
+    /** Used internally to set the type
+     *
+     * @param type the type
+     */
+    final void setRVType(RVariableIfc.RVType type){
+        Objects.requireNonNull(type, "The supplied type was null");
+        this.type = type;
     }
 
     /**
@@ -59,4 +68,5 @@ public abstract class RVControls extends Controls {
      * @return an instance of the random variable based on the current control parameters
      */
     abstract public RVariableIfc makeRVariable(RNStreamIfc rnStream);
+
 }

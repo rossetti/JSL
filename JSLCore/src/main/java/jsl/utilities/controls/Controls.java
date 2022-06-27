@@ -18,6 +18,7 @@ package jsl.utilities.controls;
 import java.util.*;
 
 import jsl.utilities.random.RandomIfc;
+import jsl.utilities.reporting.JSONUtil;
 
 /**
  * This class acts holds different types of Maps to allow named controls and
@@ -33,6 +34,11 @@ import jsl.utilities.random.RandomIfc;
  * control data type has been defined.
  */
 abstract public class Controls {
+
+    /**
+     *  To allow setting/tracking of name of control
+     */
+    private String myName;
 
     /**
      * The Map that hold the controls as pairs
@@ -93,12 +99,7 @@ abstract public class Controls {
     /**
      *  A map to keep track of control names and their types
      */
-    private final Map<String, Class> myControlTypes;
-
-    /**
-     *  To allow setting/tracking of name of control
-     */
-    private String myName;
+    private final Map<String, Class<?>> myControlTypes;
 
     /**
      *
@@ -117,8 +118,14 @@ abstract public class Controls {
         fillControls();
     }
 
-
-
+    /**
+     *
+     * @return the JSON string representation
+     */
+    public String toJSON(){
+        return JSONUtil.toJSONPretty(this);
+    }
+    
     abstract protected void fillControls();
 
     /** Use for labeling, etc

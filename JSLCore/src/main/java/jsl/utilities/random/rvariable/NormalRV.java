@@ -105,12 +105,13 @@ public final class NormalRV extends AbstractRVariable {
      * @return a control for Normal random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.Normal) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("mean", 0.0);
                 addDoubleControl("variance", 1.0);
                 setName(RVariableIfc.RVType.Normal.name());
+                setRVType(RVariableIfc.RVType.Normal);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

@@ -91,12 +91,13 @@ public final class LognormalRV extends AbstractRVariable {
      * @return a control for Lognormal random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.Lognormal) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("mean", 1.0);
                 addDoubleControl("variance", 1.0);
                 setName(RVariableIfc.RVType.Lognormal.name());
+                setRVType(RVariableIfc.RVType.Lognormal);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

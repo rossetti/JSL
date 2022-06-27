@@ -66,11 +66,12 @@ public final class EmpiricalRV extends AbstractRVariable {
      * @return a control for Bernoulli random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.Empirical) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleArrayControl("Population", new double[1]);
                 setName(RVariableIfc.RVType.Empirical.name());
+                setRVType(RVariableIfc.RVType.Empirical);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

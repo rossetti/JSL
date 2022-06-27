@@ -94,11 +94,12 @@ public final class ExponentialRV extends AbstractRVariable {
      * @return a control for Exponential random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.Exponential) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("mean", 1.0);
                 setName(RVariableIfc.RVType.Exponential.name());
+                setRVType(RVariableIfc.RVType.Exponential);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

@@ -90,12 +90,13 @@ public final class WeibullRV extends AbstractRVariable {
      * @return a control for Weibull random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.Weibull) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("shape", 1.0);
                 addDoubleControl("scale", 1.0);
                 setName(RVariableIfc.RVType.Weibull.name());
+                setRVType(RVariableIfc.RVType.Weibull);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

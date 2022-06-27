@@ -136,12 +136,13 @@ public final class DEmpiricalRV extends AbstractRVariable {
      * @return a control for DEmpirical random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.DEmpirical) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleArrayControl("values", new double[]{0.0, 1.0});
                 addDoubleArrayControl("cdf", new double[]{0.5, 1.0});
                 setName(RVariableIfc.RVType.DEmpirical.name());
+                setRVType(RVariableIfc.RVType.DEmpirical);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

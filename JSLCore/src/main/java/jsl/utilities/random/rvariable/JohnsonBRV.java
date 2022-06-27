@@ -118,7 +118,7 @@ public final class JohnsonBRV extends AbstractRVariable {
      * @return a control for JohnsonB random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.JohnsonB) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("alpha1", 0.0);
@@ -126,6 +126,7 @@ public final class JohnsonBRV extends AbstractRVariable {
                 addDoubleControl("min", 0.0);
                 addDoubleControl("max", 1.0);
                 setName(RVariableIfc.RVType.JohnsonB.name());
+                setRVType(RVariableIfc.RVType.JohnsonB);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

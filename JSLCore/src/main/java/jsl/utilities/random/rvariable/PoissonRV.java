@@ -75,11 +75,12 @@ public final class PoissonRV extends AbstractRVariable {
      * @return a control for Poisson random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.Poisson) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("mean", 1.0);
                 setName(RVariableIfc.RVType.Poisson.name());
+                setRVType(RVariableIfc.RVType.Poisson);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

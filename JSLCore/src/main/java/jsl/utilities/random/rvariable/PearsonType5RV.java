@@ -93,12 +93,13 @@ public final class PearsonType5RV extends AbstractRVariable {
      * @return a control for PearsonType5 random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.PearsonType5) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("shape", 1.0);
                 addDoubleControl("scale", 1.0);
                 setName(RVariableIfc.RVType.PearsonType5.name());
+                setRVType(RVariableIfc.RVType.PearsonType5);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

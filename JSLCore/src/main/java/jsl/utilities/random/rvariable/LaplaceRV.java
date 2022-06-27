@@ -87,12 +87,13 @@ public final class LaplaceRV extends AbstractRVariable {
      * @return a control for Laplace random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.Laplace) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("mean", 0.0);
                 addDoubleControl("scale", 1.0);
                 setName(RVariableIfc.RVType.Laplace.name());
+                setRVType(RVariableIfc.RVType.Laplace);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

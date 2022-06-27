@@ -98,12 +98,13 @@ public final class TriangularRV extends AbstractRVariable {
      * @return a control for Triangular random variables
      */
     public static RVControls makeControls() {
-        return new RVControls(RVariableIfc.RVType.Triangular) {
+        return new RVControls() {
             @Override
             protected final void fillControls() {
                 addDoubleControl("min", 0.0);
                 addDoubleControl("mode", 0.5);
                 addDoubleControl("max", 1.0);
+                setRVType(RVariableIfc.RVType.Triangular);
                 setName(RVariableIfc.RVType.Triangular.name());
             }
 
