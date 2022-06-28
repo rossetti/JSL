@@ -37,16 +37,6 @@ public interface RVariableIfc extends RandomIfc, NewAntitheticInstanceIfc,
         PreviousValueIfc, DoubleSupplier {
 
     /**
-     * The set of pre-defined distribution types
-     */
-    enum RVType {
-        Bernoulli, Beta, ChiSquared, Binomial, Constant, DUniform, Exponential,
-        Gamma, GeneralizedBeta, Geometric, JohnsonB, Laplace, LogLogistic, Lognormal,
-        NegativeBinomial, Normal, PearsonType5, PearsonType6, Poisson, ShiftedGeometric,
-        Triangular, Uniform, Weibull, DEmpirical, Empirical
-    }
-
-    /**
      * @return returns a sampled values
      */
     default double getValue() {

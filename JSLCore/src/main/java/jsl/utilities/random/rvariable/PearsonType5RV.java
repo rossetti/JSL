@@ -98,8 +98,8 @@ public final class PearsonType5RV extends AbstractRVariable {
             protected final void fillControls() {
                 addDoubleControl("shape", 1.0);
                 addDoubleControl("scale", 1.0);
-                setName(RVariableIfc.RVType.PearsonType5.name());
-                setRVType(RVariableIfc.RVType.PearsonType5);
+                setName(RVType.PearsonType5.name());
+                setRVType(RVType.PearsonType5);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

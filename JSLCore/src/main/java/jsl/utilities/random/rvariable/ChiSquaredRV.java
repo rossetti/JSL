@@ -79,8 +79,8 @@ public final class ChiSquaredRV extends AbstractRVariable {
             @Override
             protected final void fillControls() {
                 addDoubleControl("dof", 1.0);
-                setName(RVariableIfc.RVType.ChiSquared.name());
-                setRVType(RVariableIfc.RVType.ChiSquared);
+                setName(RVType.ChiSquared.name());
+                setRVType(RVType.ChiSquared);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

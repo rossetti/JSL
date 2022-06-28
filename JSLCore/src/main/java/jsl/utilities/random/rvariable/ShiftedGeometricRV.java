@@ -91,8 +91,8 @@ public final class ShiftedGeometricRV extends AbstractRVariable {
             @Override
             protected final void fillControls() {
                 addDoubleControl("ProbOfSuccess", 0.5);
-                setName(RVariableIfc.RVType.ShiftedGeometric.name());
-                setRVType(RVariableIfc.RVType.ShiftedGeometric);
+                setName(RVType.ShiftedGeometric.name());
+                setRVType(RVType.ShiftedGeometric);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

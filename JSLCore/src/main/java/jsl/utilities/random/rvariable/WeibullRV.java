@@ -95,8 +95,8 @@ public final class WeibullRV extends AbstractRVariable {
             protected final void fillControls() {
                 addDoubleControl("shape", 1.0);
                 addDoubleControl("scale", 1.0);
-                setName(RVariableIfc.RVType.Weibull.name());
-                setRVType(RVariableIfc.RVType.Weibull);
+                setName(RVType.Weibull.name());
+                setRVType(RVType.Weibull);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

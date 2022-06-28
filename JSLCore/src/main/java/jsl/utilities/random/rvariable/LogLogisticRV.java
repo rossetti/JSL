@@ -98,8 +98,8 @@ public final class LogLogisticRV extends AbstractRVariable {
             protected final void fillControls() {
                 addDoubleControl("shape", 1.0);
                 addDoubleControl("scale", 1.0);
-                setName(RVariableIfc.RVType.LogLogistic.name());
-                setRVType(RVariableIfc.RVType.LogLogistic);
+                setName(RVType.LogLogistic.name());
+                setRVType(RVType.LogLogistic);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

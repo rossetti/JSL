@@ -119,8 +119,8 @@ public final class GeneralizedBetaRV extends AbstractRVariable {
                 addDoubleControl("alpha2", 1.0);
                 addDoubleControl("min", 0.0);
                 addDoubleControl("max", 1.0);
-                setName(RVariableIfc.RVType.GeneralizedBeta.name());
-                setRVType(RVariableIfc.RVType.GeneralizedBeta);
+                setName(RVType.GeneralizedBeta.name());
+                setRVType(RVType.GeneralizedBeta);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

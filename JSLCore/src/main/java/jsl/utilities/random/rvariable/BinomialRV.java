@@ -113,8 +113,8 @@ public final class BinomialRV extends AbstractRVariable {
             protected final void fillControls() {
                 addDoubleControl("ProbOfSuccess", 0.5);
                 addIntegerControl("NumTrials", 2);
-                setName(RVariableIfc.RVType.Binomial.name());
-                setRVType(RVariableIfc.RVType.Binomial);
+                setName(RVType.Binomial.name());
+                setRVType(RVType.Binomial);
             }
 
             @Override

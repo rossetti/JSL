@@ -12,7 +12,7 @@ import java.util.*;
  */
 public class RVParameters {
 
-    private RVariableIfc.RVType type;
+    private RVType type;
 
     private int streamNumber;
 
@@ -39,7 +39,7 @@ public class RVParameters {
      *
      * @param type the type
      */
-    final void setRVType(RVariableIfc.RVType type){
+    final void setRVType(RVType type){
         Objects.requireNonNull(type, "The supplied type was null");
         this.type = type;
     }
@@ -79,7 +79,7 @@ public class RVParameters {
      *
      * @return the type of random variable associated with the parameters
      */
-    public final RVariableIfc.RVType getRVType(){
+    public final RVType getRVType(){
         return type;
     }
 

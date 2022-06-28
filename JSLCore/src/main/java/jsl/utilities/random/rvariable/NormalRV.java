@@ -110,8 +110,8 @@ public final class NormalRV extends AbstractRVariable {
             protected final void fillControls() {
                 addDoubleControl("mean", 0.0);
                 addDoubleControl("variance", 1.0);
-                setName(RVariableIfc.RVType.Normal.name());
-                setRVType(RVariableIfc.RVType.Normal);
+                setName(RVType.Normal.name());
+                setRVType(RVType.Normal);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

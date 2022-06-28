@@ -19,9 +19,8 @@ package jsl.utilities.random.rvariable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
-import static jsl.utilities.random.rvariable.RVariableIfc.RVType.*;
+import static jsl.utilities.random.rvariable.RVType.*;
 
 /**
  * Permits construction of random variables based on factory instances defined by
@@ -33,7 +32,7 @@ import static jsl.utilities.random.rvariable.RVariableIfc.RVType.*;
  */
 public class RVFactory {
 
-    private static Map<RVariableIfc.RVType, RVControls> myFactories;
+    private static Map<RVType, RVControls> myFactories;
 
     static {
         myFactories = new HashMap<>();
@@ -67,7 +66,7 @@ public class RVFactory {
      * @param type the type of the random variable
      * @return an optional holding the control or empty if the type was not found
      */
-    public static RVControls getRVControls(RVariableIfc.RVType type) {
+    public static RVControls getRVControls(RVType type) {
         Objects.requireNonNull(type, "The random variable type must not be null");
         return myFactories.get(type);
     }

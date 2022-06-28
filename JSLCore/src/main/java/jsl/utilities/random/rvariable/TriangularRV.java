@@ -104,8 +104,8 @@ public final class TriangularRV extends AbstractRVariable {
                 addDoubleControl("min", 0.0);
                 addDoubleControl("mode", 0.5);
                 addDoubleControl("max", 1.0);
-                setRVType(RVariableIfc.RVType.Triangular);
-                setName(RVariableIfc.RVType.Triangular.name());
+                setRVType(RVType.Triangular);
+                setName(RVType.Triangular.name());
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

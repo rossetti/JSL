@@ -125,8 +125,8 @@ public final class JohnsonBRV extends AbstractRVariable {
                 addDoubleControl("alpha2", 1.0);
                 addDoubleControl("min", 0.0);
                 addDoubleControl("max", 1.0);
-                setName(RVariableIfc.RVType.JohnsonB.name());
-                setRVType(RVariableIfc.RVType.JohnsonB);
+                setName(RVType.JohnsonB.name());
+                setRVType(RVType.JohnsonB);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

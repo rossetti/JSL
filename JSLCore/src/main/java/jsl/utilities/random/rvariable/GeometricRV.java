@@ -91,8 +91,8 @@ public final class GeometricRV extends AbstractRVariable {
             @Override
             protected final void fillControls() {
                 addDoubleControl("ProbOfSuccess", 0.5);
-                setName(RVariableIfc.RVType.Geometric.name());
-                setRVType(RVariableIfc.RVType.Geometric);
+                setName(RVType.Geometric.name());
+                setRVType(RVType.Geometric);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

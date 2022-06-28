@@ -113,8 +113,8 @@ public final class NegativeBinomialRV extends AbstractRVariable {
             protected final void fillControls() {
                 addDoubleControl("ProbOfSuccess", 0.5);
                 addIntegerControl("NumSuccesses", 1);
-                setName(RVariableIfc.RVType.NegativeBinomial.name());
-                setRVType(RVariableIfc.RVType.NegativeBinomial);
+                setName(RVType.NegativeBinomial.name());
+                setRVType(RVType.NegativeBinomial);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

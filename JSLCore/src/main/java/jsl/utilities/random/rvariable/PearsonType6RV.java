@@ -99,8 +99,8 @@ public final class PearsonType6RV extends AbstractRVariable {
                 addDoubleControl("alpha1", 2.0);
                 addDoubleControl("alpha2", 3.0);
                 addDoubleControl("beta", 1.0);
-                setName(RVariableIfc.RVType.PearsonType6.name());
-                setRVType(RVariableIfc.RVType.PearsonType6);
+                setName(RVType.PearsonType6.name());
+                setRVType(RVType.PearsonType6);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

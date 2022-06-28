@@ -79,8 +79,8 @@ public final class PoissonRV extends AbstractRVariable {
             @Override
             protected final void fillControls() {
                 addDoubleControl("mean", 1.0);
-                setName(RVariableIfc.RVType.Poisson.name());
-                setRVType(RVariableIfc.RVType.Poisson);
+                setName(RVType.Poisson.name());
+                setRVType(RVType.Poisson);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

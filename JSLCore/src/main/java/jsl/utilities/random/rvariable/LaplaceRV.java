@@ -92,8 +92,8 @@ public final class LaplaceRV extends AbstractRVariable {
             protected final void fillControls() {
                 addDoubleControl("mean", 0.0);
                 addDoubleControl("scale", 1.0);
-                setName(RVariableIfc.RVType.Laplace.name());
-                setRVType(RVariableIfc.RVType.Laplace);
+                setName(RVType.Laplace.name());
+                setRVType(RVType.Laplace);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

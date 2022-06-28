@@ -70,8 +70,8 @@ public final class EmpiricalRV extends AbstractRVariable {
             @Override
             protected final void fillControls() {
                 addDoubleArrayControl("Population", new double[1]);
-                setName(RVariableIfc.RVType.Empirical.name());
-                setRVType(RVariableIfc.RVType.Empirical);
+                setName(RVType.Empirical.name());
+                setRVType(RVType.Empirical);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

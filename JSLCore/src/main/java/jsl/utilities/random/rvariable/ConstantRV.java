@@ -23,7 +23,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Allows a constant to pretend to be a random variable
  */
-public class ConstantRV implements RVariableIfc, IdentityIfc {
+public class ConstantRV extends AbstractRVariable {
 
     /**
      * A constant to represent zero for sharing
@@ -45,10 +45,9 @@ public class ConstantRV implements RVariableIfc, IdentityIfc {
     public final static ConstantRV POSITIVE_INFINITY = new ConstantRV(Double.POSITIVE_INFINITY);
 
     protected double myValue;
-    private final Identity myIdentity;
 
     public ConstantRV(double value) {
-        myIdentity = new Identity();
+        super(JSLRandom.getDefaultRNStream());
         myValue = value;
     }
 
@@ -75,63 +74,8 @@ public class ConstantRV implements RVariableIfc, IdentityIfc {
     }
 
     @Override
-    public final String getName() {
-        return myIdentity.getName();
-    }
-
-    @Override
-    public final int getId() {
-        return myIdentity.getId();
-    }
-
-    /**
-     * Sets the name
-     *
-     * @param str The name as a string.
-     */
-    public final void setName(String str) {
-        myIdentity.setName(str);
-    }
-
-
-    @Override
-    public final double sample() {
+    protected double generate() {
         return myValue;
-    }
-
-    @Override
-    public final void resetStartStream() {
-
-    }
-
-    @Override
-    public final void resetStartSubstream() {
-
-    }
-
-    @Override
-    public final void advanceToNextSubstream() {
-
-    }
-
-    @Override
-    public final void setAntitheticOption(boolean flag) {
-
-    }
-
-    @Override
-    public final boolean getAntitheticOption() {
-        return false;
-    }
-
-    @Override
-    public double getPreviousValue() {
-        return myValue;
-    }
-
-    @Override
-    public final RVariableIfc newAntitheticInstance() {
-        return new ConstantRV(myValue);
     }
 
     /**
@@ -144,8 +88,8 @@ public class ConstantRV implements RVariableIfc, IdentityIfc {
             @Override
             protected final void fillControls() {
                 addDoubleControl("value", 1.0);
-                setName(RVariableIfc.RVType.Constant.name());
-                setRVType(RVariableIfc.RVType.Constant);
+                setName(RVType.Constant.name());
+                setRVType(RVType.Constant);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
@@ -155,13 +99,4 @@ public class ConstantRV implements RVariableIfc, IdentityIfc {
         };
     }
 
-    @Override
-    public RNStreamIfc getRandomNumberStream() {
-        return JSLRandom.getDefaultRNStream();
-    }
-
-    @Override
-    public void setRandomNumberStream(RNStreamIfc stream) {
-
-    }
 }

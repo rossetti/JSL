@@ -141,8 +141,8 @@ public final class DEmpiricalRV extends AbstractRVariable {
             protected final void fillControls() {
                 addDoubleArrayControl("values", new double[]{0.0, 1.0});
                 addDoubleArrayControl("cdf", new double[]{0.5, 1.0});
-                setName(RVariableIfc.RVType.DEmpirical.name());
-                setRVType(RVariableIfc.RVType.DEmpirical);
+                setName(RVType.DEmpirical.name());
+                setRVType(RVType.DEmpirical);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

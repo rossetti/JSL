@@ -98,8 +98,8 @@ public final class UniformRV extends AbstractRVariable {
             protected final void fillControls() {
                 addDoubleControl("min", 0.0);
                 addDoubleControl("max", 1.0);
-                setName(RVariableIfc.RVType.Uniform.name());
-                setRVType(RVariableIfc.RVType.Uniform);
+                setName(RVType.Uniform.name());
+                setRVType(RVType.Uniform);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

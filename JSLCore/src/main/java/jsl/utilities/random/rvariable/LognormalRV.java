@@ -96,8 +96,8 @@ public final class LognormalRV extends AbstractRVariable {
             protected final void fillControls() {
                 addDoubleControl("mean", 1.0);
                 addDoubleControl("variance", 1.0);
-                setName(RVariableIfc.RVType.Lognormal.name());
-                setRVType(RVariableIfc.RVType.Lognormal);
+                setName(RVType.Lognormal.name());
+                setRVType(RVType.Lognormal);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

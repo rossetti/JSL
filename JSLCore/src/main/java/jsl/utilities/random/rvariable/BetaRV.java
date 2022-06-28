@@ -98,8 +98,8 @@ public final class BetaRV extends AbstractRVariable {
             protected final void fillControls() {
                 addDoubleControl("alpha1", 1.0);
                 addDoubleControl("alpha2", 1.0);
-                setName(RVariableIfc.RVType.Beta.name());
-                setRVType(RVariableIfc.RVType.Beta);
+                setName(RVType.Beta.name());
+                setRVType(RVType.Beta);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

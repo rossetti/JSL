@@ -91,8 +91,8 @@ public final class GammaRV extends AbstractRVariable {
             protected final void fillControls() {
                 addDoubleControl("shape", 1.0);
                 addDoubleControl("scale", 1.0);
-                setName(RVariableIfc.RVType.Gamma.name());
-                setRVType(RVariableIfc.RVType.Gamma);
+                setName(RVType.Gamma.name());
+                setRVType(RVType.Gamma);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

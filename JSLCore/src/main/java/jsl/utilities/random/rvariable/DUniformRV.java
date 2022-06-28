@@ -95,8 +95,8 @@ public final class DUniformRV extends AbstractRVariable {
             protected final void fillControls() {
                 addIntegerControl("min", 0);
                 addIntegerControl("max", 1);
-                setName(RVariableIfc.RVType.DUniform.name());
-                setRVType(RVariableIfc.RVType.DUniform);
+                setName(RVType.DUniform.name());
+                setRVType(RVType.DUniform);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

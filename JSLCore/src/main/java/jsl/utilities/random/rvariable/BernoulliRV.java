@@ -123,8 +123,8 @@ public final class BernoulliRV extends AbstractRVariable {
             @Override
             protected final void fillControls() {
                 addDoubleControl("ProbOfSuccess", 0.5);
-                setName(RVariableIfc.RVType.Bernoulli.name());
-                setRVType(RVariableIfc.RVType.Bernoulli);
+                setName(RVType.Bernoulli.name());
+                setRVType(RVType.Bernoulli);
             }
 
             public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
