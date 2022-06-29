@@ -411,17 +411,40 @@ public abstract class RVParameters {
         if (this == o) return true;
         if (!(o instanceof RVParameters)) return false;
         RVParameters that = (RVParameters) o;
-        //TODO need to check the elements of doubleArrayParameters because it holds double[]
-        return name.equals(that.name) && type == that.type &&
-                doubleParameters.equals(that.doubleParameters) &&
-                integerParameters.equals(that.integerParameters) &&
-                doubleArrayParameters.equals(that.doubleArrayParameters)
-                && dataTypes.equals(that.dataTypes);
+        if (!name.equals(that.name)) return false;
+        if ((type != that.type)) return false;
+        if (!doubleParameters.equals(that.doubleParameters)) return false;
+        if (!integerParameters.equals(that.integerParameters)) return false;
+        if (!dataTypes.equals(that.dataTypes)) return false;
+        // need to handle doubleArrayParameters differently because it contains double[]
+        // must have the same keys
+        if (!doubleArrayParameters.keySet().equals(that.doubleArrayParameters.keySet())) return false;
+        // ok, same keys, now check the values for each key
+        for(Map.Entry<String, double[]> entry: doubleArrayParameters.entrySet()){
+            String key = entry.getKey();
+            double[] thisData = entry.getValue();
+            double[] thatData = that.doubleArrayParameters.get(key);
+            if (!Arrays.equals(thisData, thatData)) return false;
+        }
+        // all keys the same, all data the same, everything is the same
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type, doubleParameters, integerParameters,
-                doubleArrayParameters, dataTypes);
+        List<Object> list = new ArrayList<>();
+        list.add(name);
+        list.add(type);
+        list.add(doubleParameters);
+        list.add(integerParameters);
+        list.add(dataTypes);
+        for(Map.Entry<String, double[]> entry: doubleArrayParameters.entrySet()){
+            String key = entry.getKey();
+            double[] thisData = entry.getValue();
+            list.add(key);
+            list.add(thisData);
+        }
+        Object[] objects = list.toArray();
+        return Arrays.hashCode(objects);
     }
 }
