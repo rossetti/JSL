@@ -34,9 +34,9 @@ import jsl.observers.ObservableIfc;
 import jsl.observers.ObserverIfc;
 import jsl.utilities.GetValueIfc;
 import jsl.utilities.IdentityIfc;
-import jsl.utilities.controls.Controls;
+//import jsl.utilities.controls.Controls;
 import jsl.utilities.random.rvariable.ConstantRV;
-import jsl.utilities.reporting.LogPrintWriter;
+//import jsl.utilities.reporting.LogPrintWriter;
 
 import java.lang.IllegalStateException;
 import java.util.*;
@@ -49,6 +49,20 @@ import java.util.*;
  */
 public abstract class ModelElement implements IdentityIfc, ObservableIfc {
 
+    /**
+     * An "enum" to indicate that the model element was added to the model
+     * element hierarchy
+     */
+    public static final int MODEL_ELEMENT_ADDED = getNextEnumConstant();
+    /**
+     * An "enum" to indicate that the model element was removed from the model
+     * element hierarchy
+     */
+    public static final int MODEL_ELEMENT_REMOVED = getNextEnumConstant();
+    /**
+     * Used to assign unique enum constants
+     */
+    private static int myEnumCounter_;
     /**
      * A reference to a spatial model if available
      */
@@ -73,64 +87,64 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
     /**
      * An "enum" for the setup state.
      */
-    public static final int BEFORE_EXPERIMENT = Model.getNextEnumConstant();
+    public static final int BEFORE_EXPERIMENT = getNextEnumConstant();
 
     /**
      * An "enum" for the before replication state.
      */
-    public static final int BEFORE_REPLICATION = Model.getNextEnumConstant();
+    public static final int BEFORE_REPLICATION = getNextEnumConstant();
 
     /**
      * An "enum" for the initialization state.
      */
-    public static final int INITIALIZED = Model.getNextEnumConstant();
+    public static final int INITIALIZED = getNextEnumConstant();
 
     /**
      * An "enum" for the monte carlo state.
      */
-    public static final int MONTE_CARLO = Model.getNextEnumConstant();
+    public static final int MONTE_CARLO = getNextEnumConstant();
 
     /**
      * An "enum" for the update state.
      */
-    public static final int UPDATE = Model.getNextEnumConstant();
+    public static final int UPDATE = getNextEnumConstant();
 
     /**
      * An "enum" for the warmup state.
      */
-    public static final int WARMUP = Model.getNextEnumConstant();
+    public static final int WARMUP = getNextEnumConstant();
 
     /**
      * An "enum" for the timed update state.
      */
-    public static final int TIMED_UPDATE = Model.getNextEnumConstant();
+    public static final int TIMED_UPDATE = getNextEnumConstant();
 
     /**
      * An "enum" for when the replication ends
      */
-    public static final int REPLICATION_ENDED = Model.getNextEnumConstant();
+    public static final int REPLICATION_ENDED = getNextEnumConstant();
 
     /**
      * An "enum" for the after replication state.
      */
-    public static final int AFTER_REPLICATION = Model.getNextEnumConstant();
+    public static final int AFTER_REPLICATION = getNextEnumConstant();
 
     /**
      * An "enum" for the end of simulation state.
      */
-    public static final int AFTER_EXPERIMENT = Model.getNextEnumConstant();
+    public static final int AFTER_EXPERIMENT = getNextEnumConstant();
 
     /**
      * An "enum" to indicate that the model element was removed from the model
      * element hierarchy
      */
-    public static final int REMOVED_FROM_MODEL = Model.getNextEnumConstant();
+    public static final int REMOVED_FROM_MODEL = getNextEnumConstant();
 
     /**
      * An "enum" to indicate that the model element performed its
      * registerConditionalActions() method
      */
-    public static final int CONDITIONAL_ACTION_REGISTRATION = Model.getNextEnumConstant();
+    public static final int CONDITIONAL_ACTION_REGISTRATION = getNextEnumConstant();
 
     /**
      * An "enum" to represent time unit conversion.
@@ -265,7 +279,7 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
      * By default myControls is null, unless setControls() is called Use the
      * protected method getControls() to access this in subclasses.
      */
-    private Controls myControls;
+//    private Controls myControls;
 
     /**
      * The action listener that reacts to the warm up event.
@@ -398,6 +412,16 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
     }
 
     /**
+     * Should be used by subclasses to get the next constant
+     * so that unique constants can be used
+     *
+     * @return the constant
+     */
+    public static int getNextEnumConstant() {
+        return (++myEnumCounter_);
+    }
+
+    /**
      * @param name the name of the model element
      */
     private void constructorCalls_(String name) {
@@ -448,9 +472,9 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
      * Returns a string representation of the model element and its child model
      * elements. Useful for realizing the model element hierarchy.
      *
-     * {@literal<type> getClass().getSimpleName() <\type>}
-     * {@literal<name> getName() <\name>} child elements here, etc.
-     * {@literal</modelelement>}
+     * {@literal <type> getClass().getSimpleName() <\type>}
+     * {@literal <name> getName() <\name>} child elements here, etc.
+     * {@literal </modelelement>}
      *
      * @return the model element as a string
      */
@@ -485,9 +509,9 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
      * element hierarchy.
      *
      * {@literal <modelelement>}
-     * {@literal<type> getClass().getSimpleName() <\type>}
-     * {@literal<name> getName() <\name>} child elements here, etc.
-     * {@literal</modelelement>}
+     * {@literal <type> getClass().getSimpleName() <\type>}
+     * {@literal <name> getName() <\name>} child elements here, etc.
+     * {@literal </modelelement>}
      *
      * @param sb to hold the model element as a string
      * @param n  The starting level of indentation for the model elements
@@ -1910,8 +1934,8 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
      * be set by a client and then can be used in this method to properly assign
      * the values from the controls to the inner state of the model element
      */
-    protected void useControls() {
-    }
+//    protected void useControls() {
+//    }
 
     /**
      * This method should be overridden by subclasses that need logic to be
@@ -2152,9 +2176,9 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
             }
         }
 
-        if (myControls != null) {
-            useControls();
-        }
+//        if (myControls != null) {
+//            useControls();
+//        }
 
         if (getBeforeExperimentOption()) {
             beforeExperiment();
@@ -3094,43 +3118,43 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
         }
 
         @Override
-        public final Request days() {
+        public Request days() {
             timeUnits = ModelElement.this.day();
             return units();
         }
 
         @Override
-        public final Request minutes() {
+        public Request minutes() {
             timeUnits = ModelElement.this.minute();
             return units();
         }
 
         @Override
-        public final Request hours() {
+        public Request hours() {
             timeUnits = ModelElement.this.hour();
             return units();
         }
 
         @Override
-        public final Request seconds() {
+        public Request seconds() {
             timeUnits = ModelElement.this.second();
             return units();
         }
 
         @Override
-        public final Request weeks() {
+        public Request weeks() {
             timeUnits = ModelElement.this.week();
             return units();
         }
 
         @Override
-        public final Request milliseconds() {
+        public Request milliseconds() {
             timeUnits = ModelElement.this.millisecond();
             return units();
         }
 
         @Override
-        public final Request units() {
+        public Request units() {
             Request request = new Request(getTime(), name, null,
                     reactor, timeSetter, entity, rule, priority, timeUnits);
             return resource.seize(request);
@@ -3142,7 +3166,7 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
      *
      * @return a comparator that compares based on getId()
      */
-    public static final Comparator<ModelElement> getModelElementCompartor(){
+    public static Comparator<ModelElement> getModelElementComparator(){
         return new ModelElementComparator();
     }
 

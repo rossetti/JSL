@@ -12,30 +12,32 @@ public class RVParameterSetter {
 
     private final Model model;
 
-    private final LinkedHashMap<String, RVControls> rvControls;
+    private final LinkedHashMap<String, RVParameters> rvControls;
 
     public RVParameterSetter(Model model) {
         Objects.requireNonNull(model, "The supplied model was null");
         this.model = model;
         rvControls = new LinkedHashMap<>();
         List<RandomVariable> rvList = model.getRandomVariables();
-        for(RandomVariable rv: rvList){
-            RandomIfc r = rv.getRandomSource();
-            if (r instanceof AbstractRVariable){
-                RVType type = RVType.getRVType((Class<? extends AbstractRVariable>) r.getClass());
-                rvControls.put(rv.getName(), type.getRVControls());
+        for (RandomVariable rv : rvList) {
+            RandomIfc rs = rv.getRandomSource();
+            if (rs instanceof AbstractRVariable) {
+                @SuppressWarnings("unchecked")
+                Class<? extends AbstractRVariable> cls = (Class<? extends AbstractRVariable>) rs.getClass();
+                RVType type = RVType.getRVType(cls);
+                RVParameters parameters = type.getRVParameters();
+                rvControls.put(rv.getName(), parameters);
             }
         }
     }
 
     /**
-     *
      * @param rvName the name of the random variable, must not be null and must be in the model
      * @return the controls associated with the named random variable
      */
-    public RVControls getRVControls(String rvName){
+    public RVParameters getRVControls(String rvName) {
         Objects.requireNonNull(rvName, "The name of the random variable cannot be null");
-        if (!rvControls.containsKey(rvName)){
+        if (!rvControls.containsKey(rvName)) {
             throw new IllegalArgumentException("The supplied name is not a valid random variable name");
         }
         return rvControls.get(rvName);

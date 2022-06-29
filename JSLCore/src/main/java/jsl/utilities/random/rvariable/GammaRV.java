@@ -85,22 +85,8 @@ public final class GammaRV extends AbstractRVariable {
      *
      * @return a control for Gamma random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("shape", 1.0);
-                addDoubleControl("scale", 1.0);
-                setName(RVType.Gamma.name());
-                setRVType(RVType.Gamma);
-            }
-
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double scale = getDoubleControl("scale");
-                double shape = getDoubleControl("shape");
-                return new GammaRV(shape, scale, rnStream);
-            }
-        };
+    public static RVParameters makeControls() {
+        return new GammaRVParameters();
     }
 
     /**
@@ -174,4 +160,19 @@ public final class GammaRV extends AbstractRVariable {
         }
     }
 
+    private static class GammaRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("shape", 1.0);
+            addDoubleParameter("scale", 1.0);
+            setName(RVType.Gamma.name());
+            setRVType(RVType.Gamma);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double scale = getDoubleParameter("scale");
+            double shape = getDoubleParameter("shape");
+            return new GammaRV(shape, scale, rnStream);
+        }
+    }
 }

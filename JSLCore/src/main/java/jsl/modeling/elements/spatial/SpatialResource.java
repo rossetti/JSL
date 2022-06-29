@@ -15,7 +15,6 @@
  */
 package jsl.modeling.elements.spatial;
 
-import jsl.simulation.Model;
 import jsl.simulation.ModelElement;
 import jsl.modeling.elements.entity.Resource;
 import jsl.observers.ObserverIfc;
@@ -36,7 +35,7 @@ public class SpatialResource extends Resource implements SpatialElementIfc {
     /**
      * Indicates that the transporter has changed state to its observers
      */
-    public static final int MOVED = Model.getNextEnumConstant();
+    public static final int MOVED = ModelElement.getNextEnumConstant();
 
     /**
      * Used to respresent the resources in a SpatialModel2D

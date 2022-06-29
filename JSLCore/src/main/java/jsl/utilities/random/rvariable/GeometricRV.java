@@ -86,20 +86,21 @@ public final class GeometricRV extends AbstractRVariable {
      *
      * @return a control for Geometric random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("ProbOfSuccess", 0.5);
-                setName(RVType.Geometric.name());
-                setRVType(RVType.Geometric);
-            }
-
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double probOfSuccess = getDoubleControl("ProbOfSuccess");
-                return new GeometricRV(probOfSuccess, rnStream);
-            }
-        };
+    public static RVParameters makeControls() {
+        return new GeometricRVParameters();
     }
 
+    private static class GeometricRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("ProbOfSuccess", 0.5);
+            setName(RVType.Geometric.name());
+            setRVType(RVType.Geometric);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double probOfSuccess = getDoubleParameter("ProbOfSuccess");
+            return new GeometricRV(probOfSuccess, rnStream);
+        }
+    }
 }

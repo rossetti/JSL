@@ -15,10 +15,9 @@
  */
 package jsl.utilities.distributions;
 
+import jsl.utilities.IdentityIfc;
 import jsl.utilities.Interval;
 import jsl.utilities.NewInstanceIfc;
-import jsl.utilities.controls.ControllableIfc;
-import jsl.utilities.controls.Controls;
 import jsl.utilities.math.FunctionIfc;
 import jsl.utilities.random.rng.RNStreamIfc;
 import jsl.utilities.random.rvariable.InverseCDFRV;
@@ -32,7 +31,7 @@ import jsl.utilities.rootfinding.BisectionRootFinder;
  *
  *
  */
-public abstract class Distribution implements DistributionIfc, ControllableIfc, NewInstanceIfc {
+public abstract class Distribution implements DistributionIfc, IdentityIfc, NewInstanceIfc {
 
     private static BisectionRootFinder myRootFinder;
 
@@ -100,19 +99,6 @@ public abstract class Distribution implements DistributionIfc, ControllableIfc, 
     }
 
     @Override
-    public Controls getControls() {
-        return new RandomControls();
-    }
-
-    @Override
-    public void setControls(Controls controls) {
-        if (controls == null) {
-            throw new IllegalArgumentException("The supplied controls were null!");
-        }
-        setParameters(controls.getDoubleArrayControl("parameters"));
-    }
-
-    @Override
     public final double getStandardDeviation() {
         return Math.sqrt(getVariance());
     }
@@ -138,13 +124,6 @@ public abstract class Distribution implements DistributionIfc, ControllableIfc, 
         sb.append(getVariance());
         sb.append(System.lineSeparator());
         return (sb.toString());
-    }
-
-    protected class RandomControls extends Controls {
-
-        protected void fillControls(){
-            addDoubleArrayControl("parameters", getParameters());
-        }
     }
 
     /**

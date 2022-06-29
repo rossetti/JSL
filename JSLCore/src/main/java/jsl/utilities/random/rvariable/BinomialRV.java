@@ -107,22 +107,24 @@ public final class BinomialRV extends AbstractRVariable {
      *
      * @return a control for Binomial random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("ProbOfSuccess", 0.5);
-                addIntegerControl("NumTrials", 2);
-                setName(RVType.Binomial.name());
-                setRVType(RVType.Binomial);
-            }
+    public static RVParameters makeControls() {
+        return new BinomialRVParameters();
+    }
 
-            @Override
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double probOfSuccess = getDoubleControl("ProbOfSuccess");
-                int numTrials = getIntegerControl("NumTrials");
-                return new BinomialRV(probOfSuccess, numTrials, rnStream);
-            }
-        };
+    private static class BinomialRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("ProbOfSuccess", 0.5);
+            addIntegerParameter("NumTrials", 2);
+            setName(RVType.Binomial.name());
+            setRVType(RVType.Binomial);
+        }
+
+        @Override
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double probOfSuccess = getDoubleParameter("ProbOfSuccess");
+            int numTrials = getIntegerParameter("NumTrials");
+            return new BinomialRV(probOfSuccess, numTrials, rnStream);
+        }
     }
 }

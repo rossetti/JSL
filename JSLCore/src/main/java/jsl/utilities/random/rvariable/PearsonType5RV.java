@@ -92,21 +92,23 @@ public final class PearsonType5RV extends AbstractRVariable {
      *
      * @return a control for PearsonType5 random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("shape", 1.0);
-                addDoubleControl("scale", 1.0);
-                setName(RVType.PearsonType5.name());
-                setRVType(RVType.PearsonType5);
-            }
+    public static RVParameters makeControls() {
+        return new PearsonType5RVParameters();
+    }
 
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double scale = getDoubleControl("scale");
-                double shape = getDoubleControl("shape");
-                return new PearsonType5RV(shape, scale, rnStream);
-            }
-        };
+    private static class PearsonType5RVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("shape", 1.0);
+            addDoubleParameter("scale", 1.0);
+            setName(RVType.PearsonType5.name());
+            setRVType(RVType.PearsonType5);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double scale = getDoubleParameter("scale");
+            double shape = getDoubleParameter("shape");
+            return new PearsonType5RV(shape, scale, rnStream);
+        }
     }
 }

@@ -117,26 +117,27 @@ public final class JohnsonBRV extends AbstractRVariable {
      *
      * @return a control for JohnsonB random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("alpha1", 0.0);
-                addDoubleControl("alpha2", 1.0);
-                addDoubleControl("min", 0.0);
-                addDoubleControl("max", 1.0);
-                setName(RVType.JohnsonB.name());
-                setRVType(RVType.JohnsonB);
-            }
-
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double alpha1 = getDoubleControl("alpha1");
-                double alpha2 = getDoubleControl("alpha2");
-                double min = getDoubleControl("min");
-                double max = getDoubleControl("max");
-                return new JohnsonBRV(alpha1, alpha2, min, max, rnStream);
-            }
-        };
+    public static RVParameters makeControls() {
+        return new JohnsonBRVParameters();
     }
 
+    private static class JohnsonBRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("alpha1", 0.0);
+            addDoubleParameter("alpha2", 1.0);
+            addDoubleParameter("min", 0.0);
+            addDoubleParameter("max", 1.0);
+            setName(RVType.JohnsonB.name());
+            setRVType(RVType.JohnsonB);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double alpha1 = getDoubleParameter("alpha1");
+            double alpha2 = getDoubleParameter("alpha2");
+            double min = getDoubleParameter("min");
+            double max = getDoubleParameter("max");
+            return new JohnsonBRV(alpha1, alpha2, min, max, rnStream);
+        }
+    }
 }

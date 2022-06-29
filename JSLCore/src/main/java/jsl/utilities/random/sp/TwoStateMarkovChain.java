@@ -16,9 +16,8 @@
 
 package jsl.utilities.random.sp;
 
+import jsl.utilities.IdentityIfc;
 import jsl.utilities.NewInstanceIfc;
-import jsl.utilities.controls.ControllableIfc;
-import jsl.utilities.controls.Controls;
 import jsl.utilities.random.ParametersIfc;
 import jsl.utilities.random.RandomIfc;
 import jsl.utilities.random.rng.RNStreamIfc;
@@ -37,7 +36,7 @@ import java.util.Objects;
  *
  * @author rossetti
  */
-public class TwoStateMarkovChain implements TwoStateMarkovChainIfc, ControllableIfc,
+public class TwoStateMarkovChain implements TwoStateMarkovChainIfc, IdentityIfc,
         ParametersIfc, NewInstanceIfc<TwoStateMarkovChain>, RandomIfc {
 
     /**
@@ -287,23 +286,4 @@ public class TwoStateMarkovChain implements TwoStateMarkovChainIfc, Controllable
         System.out.println(s);
     }
 
-    @Override
-    public Controls getControls() {
-        return new RandomControls();
-    }
-
-    @Override
-    public void setControls(Controls controls) {
-        if (controls == null) {
-            throw new IllegalArgumentException("The supplied controls were null!");
-        }
-        setParameters(controls.getDoubleArrayControl("parameters"));
-    }
-
-    protected class RandomControls extends Controls {
-
-        protected void fillControls() {
-            addDoubleArrayControl("parameters", getParameters());
-        }
-    }
 }

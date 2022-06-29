@@ -104,22 +104,8 @@ public final class NormalRV extends AbstractRVariable {
      *
      * @return a control for Normal random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("mean", 0.0);
-                addDoubleControl("variance", 1.0);
-                setName(RVType.Normal.name());
-                setRVType(RVType.Normal);
-            }
-
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double mean = getDoubleControl("mean");
-                double variance = getDoubleControl("variance");
-                return new NormalRV(mean, variance, rnStream);
-            }
-        };
+    public static RVParameters makeControls() {
+        return new NormalRVParameters();
     }
 
     /**
@@ -151,4 +137,19 @@ public final class NormalRV extends AbstractRVariable {
         }
     }
 
+    private static class NormalRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("mean", 0.0);
+            addDoubleParameter("variance", 1.0);
+            setName(RVType.Normal.name());
+            setRVType(RVType.Normal);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double mean = getDoubleParameter("mean");
+            double variance = getDoubleParameter("variance");
+            return new NormalRV(mean, variance, rnStream);
+        }
+    }
 }

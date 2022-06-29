@@ -86,19 +86,21 @@ public final class ShiftedGeometricRV extends AbstractRVariable {
      *
      * @return a control for ShiftedGeometric random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("ProbOfSuccess", 0.5);
-                setName(RVType.ShiftedGeometric.name());
-                setRVType(RVType.ShiftedGeometric);
-            }
+    public static RVParameters makeControls() {
+        return new ShiftedGeometricRVParameters();
+    }
 
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double probOfSuccess = getDoubleControl("ProbOfSuccess");
-                return new ShiftedGeometricRV(probOfSuccess, rnStream);
-            }
-        };
+    private static class ShiftedGeometricRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("ProbOfSuccess", 0.5);
+            setName(RVType.ShiftedGeometric.name());
+            setRVType(RVType.ShiftedGeometric);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double probOfSuccess = getDoubleParameter("ProbOfSuccess");
+            return new ShiftedGeometricRV(probOfSuccess, rnStream);
+        }
     }
 }

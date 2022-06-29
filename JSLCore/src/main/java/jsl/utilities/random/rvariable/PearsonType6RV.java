@@ -92,23 +92,25 @@ public final class PearsonType6RV extends AbstractRVariable {
      *
      * @return a control for PearsonType6 random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("alpha1", 2.0);
-                addDoubleControl("alpha2", 3.0);
-                addDoubleControl("beta", 1.0);
-                setName(RVType.PearsonType6.name());
-                setRVType(RVType.PearsonType6);
-            }
+    public static RVParameters makeControls() {
+        return new PearsonType6RVParameters();
+    }
 
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double alpha1 = getDoubleControl("alpha1");
-                double alpha2 = getDoubleControl("alpha2");
-                double beta = getDoubleControl("beta");
-                return new PearsonType6RV(alpha1, alpha2, beta, rnStream);
-            }
-        };
+    private static class PearsonType6RVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("alpha1", 2.0);
+            addDoubleParameter("alpha2", 3.0);
+            addDoubleParameter("beta", 1.0);
+            setName(RVType.PearsonType6.name());
+            setRVType(RVType.PearsonType6);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double alpha1 = getDoubleParameter("alpha1");
+            double alpha2 = getDoubleParameter("alpha2");
+            double beta = getDoubleParameter("beta");
+            return new PearsonType6RV(alpha1, alpha2, beta, rnStream);
+        }
     }
 }

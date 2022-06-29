@@ -93,19 +93,23 @@ public final class ExponentialRV extends AbstractRVariable {
      *
      * @return a control for Exponential random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("mean", 1.0);
-                setName(RVType.Exponential.name());
-                setRVType(RVType.Exponential);
-            }
+    public static RVParameters makeControls() {
+        return new ExponentialRVParameters();
+    }
 
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double mean = getDoubleControl("mean");
-                return new ExponentialRV(mean, rnStream);
-            }
-        };
+    private static class ExponentialRVParameters extends RVParameters {
+
+        @Override
+        protected void fillParameters() {
+            addDoubleParameter("mean", 1.0);
+            setName(RVType.Exponential.name());
+            setRVType(RVType.Exponential);
+        }
+
+        @Override
+        public RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double mean = getDoubleParameter("mean");
+            return new ExponentialRV(mean, rnStream);
+        }
     }
 }

@@ -22,6 +22,7 @@ import jsl.simulation.Model;
 import jsl.observers.ObservableComponent;
 import jsl.observers.ObservableIfc;
 import jsl.observers.ObserverIfc;
+import jsl.simulation.ModelElement;
 import jsl.utilities.IdentityIfc;
 import jsl.utilities.math.JSLMath;
 
@@ -34,19 +35,19 @@ public abstract class SpatialModel implements ObservableIfc, IdentityIfc {
      * An "enum" to indicate that a element has been added when notifying
      * observers
      */
-    public static final int ADDED_ELEMENT = Model.getNextEnumConstant();
+    public static final int ADDED_ELEMENT = ModelElement.getNextEnumConstant();
 
     /**
      * An "enum" to indicate that a element has been reomved when notifying
      * observers
      */
-    public static final int REMOVED_ELEMENT = Model.getNextEnumConstant();
+    public static final int REMOVED_ELEMENT = ModelElement.getNextEnumConstant();
 
     /**
      * An enum to indicate that the spatial model as just updated the position
      * of a element
      */
-    public static final int UPDATED_POSITION = Model.getNextEnumConstant();
+    public static final int UPDATED_POSITION = ModelElement.getNextEnumConstant();
 
     /**
      * incremented to give a running total of the number of objects created

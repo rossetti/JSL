@@ -55,8 +55,7 @@ public final class EmpiricalRV extends AbstractRVariable {
 
     @Override
     protected double generate() {
-        double v = myPop.getValue();
-        return v;
+        return myPop.getValue();
     }
 
     /**
@@ -65,19 +64,21 @@ public final class EmpiricalRV extends AbstractRVariable {
      *
      * @return a control for Bernoulli random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleArrayControl("Population", new double[1]);
-                setName(RVType.Empirical.name());
-                setRVType(RVType.Empirical);
-            }
+    public static RVParameters makeControls() {
+        return new EmpiricalRVParameters();
+    }
 
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double[] population = getDoubleArrayControl("Population");
-                return new EmpiricalRV(population, rnStream);
-            }
-        };
+    private static class EmpiricalRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleArrayParameter("Population", new double[1]);
+            setName(RVType.Empirical.name());
+            setRVType(RVType.Empirical);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double[] population = getDoubleArrayParameter("Population");
+            return new EmpiricalRV(population, rnStream);
+        }
     }
 }

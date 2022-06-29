@@ -90,22 +90,23 @@ public final class LognormalRV extends AbstractRVariable {
      *
      * @return a control for Lognormal random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("mean", 1.0);
-                addDoubleControl("variance", 1.0);
-                setName(RVType.Lognormal.name());
-                setRVType(RVType.Lognormal);
-            }
-
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double mean = getDoubleControl("mean");
-                double variance = getDoubleControl("variance");
-                return new LognormalRV(mean, variance, rnStream);
-            }
-        };
+    public static RVParameters makeControls() {
+        return new LognormalRVParameters();
     }
 
+    private static class LognormalRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("mean", 1.0);
+            addDoubleParameter("variance", 1.0);
+            setName(RVType.Lognormal.name());
+            setRVType(RVType.Lognormal);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double mean = getDoubleParameter("mean");
+            double variance = getDoubleParameter("variance");
+            return new LognormalRV(mean, variance, rnStream);
+        }
+    }
 }

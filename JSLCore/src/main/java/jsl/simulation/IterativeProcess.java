@@ -81,28 +81,28 @@ abstract public class IterativeProcess<T> implements ObservableIfc, IterativePro
     /**
      * Indicates whether the iterative process haD no steps to run
      */
-    public static final int NO_STEPS_EXECUTED = Model.getNextEnumConstant();
+    public static final int NO_STEPS_EXECUTED = ModelElement.getNextEnumConstant();
 
     /**
      * Indicates whether the iterative process has completed running all steps
      */
-    public static final int COMPLETED_ALL_STEPS = Model.getNextEnumConstant();
+    public static final int COMPLETED_ALL_STEPS = ModelElement.getNextEnumConstant();
 
     /**
      * Indicates whether the iterative process has exceeded its maximum
      * execution time
      */
-    public static final int EXCEEDED_EXECUTION_TIME = Model.getNextEnumConstant();
+    public static final int EXCEEDED_EXECUTION_TIME = ModelElement.getNextEnumConstant();
 
     /**
      * Indicates whether the iterative process ended due to the being stopped
      */
-    public static final int MET_STOPPING_CONDITION = Model.getNextEnumConstant();
+    public static final int MET_STOPPING_CONDITION = ModelElement.getNextEnumConstant();
 
     /**
      * Indicates that the iterative process is in progress
      */
-    public static final int UNFINISHED = Model.getNextEnumConstant();
+    public static final int UNFINISHED = ModelElement.getNextEnumConstant();
 
     /**
      * Message used when process completes all steps

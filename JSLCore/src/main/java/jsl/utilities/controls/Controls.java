@@ -17,6 +17,8 @@ package jsl.utilities.controls;
 
 import java.util.*;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import jsl.utilities.reporting.JSONUtil;
 
 /**
@@ -115,14 +117,6 @@ abstract public class Controls {
         myControllableIfcControls = new HashMap<>();
         myControlTypes = new HashMap<>();
         fillControls();
-    }
-
-    /**
-     *
-     * @return the JSON string representation
-     */
-    public String toJSON(){
-        return JSONUtil.toJSONPretty(this);//TODO
     }
 
     abstract protected void fillControls();
@@ -253,7 +247,7 @@ abstract public class Controls {
      * @param name the name of the control
      * @return the Class type of the control
      */
-    public final Class getControlClass(String name){
+    public final Class<?> getControlClass(String name){
         return myControlTypes.get(name);
     }
 
@@ -669,11 +663,13 @@ abstract public class Controls {
         sb.append(System.lineSeparator());
 
         sb.append("Double Array Controls ");
+        sb.append("{");
         for (String key : myDoubleArrayControls.keySet()) {
-            sb.append(key).append(" = ").append(Arrays.toString(myDoubleArrayControls.get(key)));
             sb.append(System.lineSeparator());
+            sb.append(key).append(" = ").append(Arrays.toString(myDoubleArrayControls.get(key)));
         }
-
+        sb.append("}");
+        sb.append(System.lineSeparator());
         return sb.toString();
     }
 }

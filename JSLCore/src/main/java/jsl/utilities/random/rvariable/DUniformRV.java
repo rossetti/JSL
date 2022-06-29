@@ -89,21 +89,23 @@ public final class DUniformRV extends AbstractRVariable {
      *
      * @return a control for DUniform random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addIntegerControl("min", 0);
-                addIntegerControl("max", 1);
-                setName(RVType.DUniform.name());
-                setRVType(RVType.DUniform);
-            }
+    public static RVParameters makeControls() {
+        return new DUniformRVParameters();
+    }
 
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                int min = getIntegerControl("min");
-                int max = getIntegerControl("max");
-                return new DUniformRV(min, max, rnStream);
-            }
-        };
+    private static class DUniformRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addIntegerParameter("min", 0);
+            addIntegerParameter("max", 1);
+            setName(RVType.DUniform.name());
+            setRVType(RVType.DUniform);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            int min = getIntegerParameter("min");
+            int max = getIntegerParameter("max");
+            return new DUniformRV(min, max, rnStream);
+        }
     }
 }

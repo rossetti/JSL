@@ -97,23 +97,25 @@ public final class TriangularRV extends AbstractRVariable {
      *
      * @return a control for Triangular random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("min", 0.0);
-                addDoubleControl("mode", 0.5);
-                addDoubleControl("max", 1.0);
-                setRVType(RVType.Triangular);
-                setName(RVType.Triangular.name());
-            }
+    public static RVParameters makeControls() {
+        return new TriangularRVParameters();
+    }
 
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double mode = getDoubleControl("mode");
-                double min = getDoubleControl("min");
-                double max = getDoubleControl("max");
-                return new TriangularRV(min, mode, max, rnStream);
-            }
-        };
+    private static class TriangularRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("min", 0.0);
+            addDoubleParameter("mode", 0.5);
+            addDoubleParameter("max", 1.0);
+            setRVType(RVType.Triangular);
+            setName(RVType.Triangular.name());
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double mode = getDoubleParameter("mode");
+            double min = getDoubleParameter("min");
+            double max = getDoubleParameter("max");
+            return new TriangularRV(min, mode, max, rnStream);
+        }
     }
 }

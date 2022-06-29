@@ -118,19 +118,21 @@ public final class BernoulliRV extends AbstractRVariable {
      *
      * @return a control for Bernoulli random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("ProbOfSuccess", 0.5);
-                setName(RVType.Bernoulli.name());
-                setRVType(RVType.Bernoulli);
-            }
+    public static RVParameters makeControls() {
+        return new BernoulliRVParameters();
+    }
 
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double probOfSuccess = getDoubleControl("ProbOfSuccess");
-                return new BernoulliRV(probOfSuccess, rnStream);
-            }
-        };
+    private static class BernoulliRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("ProbOfSuccess", 0.5);
+            setName(RVType.Bernoulli.name());
+            setRVType(RVType.Bernoulli);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double probOfSuccess = getDoubleParameter("ProbOfSuccess");
+            return new BernoulliRV(probOfSuccess, rnStream);
+        }
     }
 }

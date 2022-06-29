@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import jsl.simulation.ExperimentGetIfc;
 
-import jsl.simulation.Model;
 import jsl.simulation.ModelElement;
 import jsl.utilities.statistic.Statistic;
 import jsl.utilities.statistic.StatisticAccessorIfc;
@@ -39,7 +38,7 @@ public class Counter extends Aggregatable implements CounterActionIfc, DefaultRe
     /**
      * An "enum" for the counter state.
      */
-    public static final int COUNTER_LIMIT_REACHED = Model.getNextEnumConstant();
+    public static final int COUNTER_LIMIT_REACHED = ModelElement.getNextEnumConstant();
 
     /**
      * The initial value of the counter

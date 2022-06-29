@@ -19,7 +19,7 @@
  */
 package jsl.utilities;
 
-import jsl.simulation.Model;
+import jsl.simulation.ModelElement;
 
 /** An abstract base class for modeling data sources that users can iterate through
  *
@@ -32,13 +32,13 @@ public abstract class IterativeDataObservable extends DataObservable {
      *  Subclasses are responsible for using notifyObservers(RESET) to let observers
      *  know that a reset has been done.
      */
-    public static final int RESET = Model.getNextEnumConstant();
+    public static final int RESET = ModelElement.getNextEnumConstant();
 
     /** An "enum" to indicate that this iterative data source has just reached it's end
      *  Subclasses are responsible for using notifyObservers(END_SOURCE) to let observers
      *  know that the end of the source has been reached
      */
-    public static final int END_SOURCE = Model.getNextEnumConstant();
+    public static final int END_SOURCE = ModelElement.getNextEnumConstant();
 
     /** Indicates that the end of the source has been reached. Should be used
      *  by subclasses to indicate end of source

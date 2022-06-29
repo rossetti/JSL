@@ -107,21 +107,23 @@ public final class NegativeBinomialRV extends AbstractRVariable {
      *
      * @return a control for Negative Binomial random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("ProbOfSuccess", 0.5);
-                addIntegerControl("NumSuccesses", 1);
-                setName(RVType.NegativeBinomial.name());
-                setRVType(RVType.NegativeBinomial);
-            }
+    public static RVParameters makeControls() {
+        return new NegativeBinomialRVParameters();
+    }
 
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double probOfSuccess = getDoubleControl("ProbOfSuccess");
-                double numSuccesses = getDoubleControl("NumSuccesses");
-                return new NegativeBinomialRV(probOfSuccess, numSuccesses, rnStream);
-            }
-        };
+    private static class NegativeBinomialRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("ProbOfSuccess", 0.5);
+            addIntegerParameter("NumSuccesses", 1);
+            setName(RVType.NegativeBinomial.name());
+            setRVType(RVType.NegativeBinomial);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double probOfSuccess = getDoubleParameter("ProbOfSuccess");
+            double numSuccesses = getDoubleParameter("NumSuccesses");
+            return new NegativeBinomialRV(probOfSuccess, numSuccesses, rnStream);
+        }
     }
 }

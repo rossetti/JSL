@@ -16,8 +16,6 @@
 
 package jsl.utilities.random.rvariable;
 
-import jsl.utilities.Identity;
-import jsl.utilities.IdentityIfc;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 /**
@@ -83,20 +81,21 @@ public class ConstantRV extends AbstractRVariable {
      *
      * @return a control for Constant random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("value", 1.0);
-                setName(RVType.Constant.name());
-                setRVType(RVType.Constant);
-            }
-
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double value = getDoubleControl("value");
-                return new ConstantRV(value);
-            }
-        };
+    public static RVParameters makeControls() {
+        return new ConstantRVParameters();
     }
 
+    private static class ConstantRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("value", 1.0);
+            setName(RVType.Constant.name());
+            setRVType(RVType.Constant);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double value = getDoubleParameter("value");
+            return new ConstantRV(value);
+        }
+    }
 }

@@ -92,22 +92,23 @@ public final class BetaRV extends AbstractRVariable {
      *
      * @return a control for Beta random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("alpha1", 1.0);
-                addDoubleControl("alpha2", 1.0);
-                setName(RVType.Beta.name());
-                setRVType(RVType.Beta);
-            }
-
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double alpha1 = getDoubleControl("alpha1");
-                double alpha2 = getDoubleControl("alpha2");
-                return new BetaRV(alpha1, alpha2, rnStream);
-            }
-        };
+    public static RVParameters makeControls() {
+        return new BetaRVParameters();
     }
 
+    private static class BetaRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("alpha1", 1.0);
+            addDoubleParameter("alpha2", 1.0);
+            setName(RVType.Beta.name());
+            setRVType(RVType.Beta);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double alpha1 = getDoubleParameter("alpha1");
+            double alpha2 = getDoubleParameter("alpha2");
+            return new BetaRV(alpha1, alpha2, rnStream);
+        }
+    }
 }

@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Collections;
 
-import jsl.simulation.Model;
+import jsl.simulation.ModelElement;
 import jsl.utilities.math.JSLMath;
 
 /**
@@ -37,7 +37,7 @@ public class RectangularGridSpatialModel2D extends SpatialModel {
      * An "enum" to indicate that a element has been added when notifying
      * observers
      */
-    public static final int CELL_CHANGED = Model.getNextEnumConstant();
+    public static final int CELL_CHANGED = ModelElement.getNextEnumConstant();
     /**
      * The upper left corner point for the grid
      */

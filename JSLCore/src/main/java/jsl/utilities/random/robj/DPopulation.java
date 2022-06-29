@@ -15,9 +15,8 @@
  */
 package jsl.utilities.random.robj;
 
+import jsl.utilities.IdentityIfc;
 import jsl.utilities.NewInstanceIfc;
-import jsl.utilities.controls.ControllableIfc;
-import jsl.utilities.controls.Controls;
 import jsl.utilities.random.ParametersIfc;
 import jsl.utilities.random.RandomIfc;
 import jsl.utilities.random.SampleIfc;
@@ -30,7 +29,7 @@ import java.util.Objects;
  * @author rossetti
  *
  */
-public class DPopulation implements RandomIfc, SampleIfc, ControllableIfc, ParametersIfc, NewInstanceIfc<DPopulation> {
+public class DPopulation implements RandomIfc, SampleIfc, IdentityIfc, ParametersIfc, NewInstanceIfc<DPopulation> {
 
     /** A counter to count the number of created to assign "unique" ids
      */
@@ -209,26 +208,6 @@ public class DPopulation implements RandomIfc, SampleIfc, ControllableIfc, Param
         }
         myElements = new double[elements.length];
         System.arraycopy(elements, 0, myElements, 0, elements.length);
-    }
-
-    protected class DPopControls extends Controls {
-
-        protected void fillControls() {
-            addDoubleArrayControl("parameters", getParameters());
-        }
-    }
-
-    @Override
-    public Controls getControls() {
-        return new DPopControls();
-    }
-
-    @Override
-    public void setControls(Controls controls) {
-        if (controls == null) {
-            throw new IllegalArgumentException("The supplied controls were null!");
-        }
-        setParameters(controls.getDoubleArrayControl("parameters"));
     }
 
     /** Returns a randomly selected element from the population.  All

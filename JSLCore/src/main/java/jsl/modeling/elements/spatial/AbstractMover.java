@@ -17,7 +17,6 @@ package jsl.modeling.elements.spatial;
 
 import jsl.simulation.EventAction;
 import jsl.simulation.JSLEvent;
-import jsl.simulation.Model;
 import jsl.simulation.ModelElement;
 import jsl.modeling.elements.variable.Counter;
 import jsl.modeling.elements.variable.RandomVariable;
@@ -51,27 +50,27 @@ abstract public class AbstractMover extends SpatialModelElement implements Mover
     /**
      * Indicates that a AbstractMover started a trip
      */
-    public static final int TRIP_STARTED = Model.getNextEnumConstant();
+    public static final int TRIP_STARTED = ModelElement.getNextEnumConstant();
 
     /**
      * Indicates that a AbstractMover ended a trip
      */
-    public static final int TRIP_ENDED = Model.getNextEnumConstant();
+    public static final int TRIP_ENDED = ModelElement.getNextEnumConstant();
 
     /**
      * Indicates that a AbstractMover had its trip canceled
      */
-    public static final int TRIP_CANCELED = Model.getNextEnumConstant();
+    public static final int TRIP_CANCELED = ModelElement.getNextEnumConstant();
 
     /**
      * Indicates that a AbstractMover started a movement
      */
-    public static final int MOVE_STARTED = Model.getNextEnumConstant();
+    public static final int MOVE_STARTED = ModelElement.getNextEnumConstant();
 
     /**
      * Indicates that a AbstractMover ended a movement
      */
-    public static final int MOVE_ENDED = Model.getNextEnumConstant();
+    public static final int MOVE_ENDED = ModelElement.getNextEnumConstant();
 
     /**
      * Controls the movement of this element

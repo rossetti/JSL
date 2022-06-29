@@ -89,21 +89,23 @@ public final class WeibullRV extends AbstractRVariable {
      *
      * @return a control for Weibull random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("shape", 1.0);
-                addDoubleControl("scale", 1.0);
-                setName(RVType.Weibull.name());
-                setRVType(RVType.Weibull);
-            }
+    public static RVParameters makeControls() {
+        return new WeibullRVParameters();
+    }
 
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double scale = getDoubleControl("scale");
-                double shape = getDoubleControl("shape");
-                return new WeibullRV(shape, scale, rnStream);
-            }
-        };
+    private static class WeibullRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("shape", 1.0);
+            addDoubleParameter("scale", 1.0);
+            setName(RVType.Weibull.name());
+            setRVType(RVType.Weibull);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double scale = getDoubleParameter("scale");
+            double shape = getDoubleParameter("shape");
+            return new WeibullRV(shape, scale, rnStream);
+        }
     }
 }

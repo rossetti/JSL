@@ -9,17 +9,133 @@ import java.util.Objects;
  * The set of pre-defined distribution types
  */
 public enum RVType {
-    Bernoulli(BernoulliRV.class), Beta(BetaRV.class), ChiSquared(ChiSquaredRV.class),
-    Binomial(BernoulliRV.class), Constant(ConstantRV.class), DUniform(DUniformRV.class),
-    Exponential(ExponentialRV.class), Gamma(GammaRV.class), GeneralizedBeta(GeneralizedBetaRV.class),
-    Geometric(GeometricRV.class), JohnsonB(JohnsonBRV.class), Laplace(LaplaceRV.class),
-    LogLogistic(LogLogisticRV.class), Lognormal(LognormalRV.class), NegativeBinomial(NegativeBinomialRV.class),
+    Bernoulli(BernoulliRV.class) {
+        public RVParameters getRVParameters() {
+            return BernoulliRV.makeControls();
+        }
+    },
+    Beta(BetaRV.class) {
+        public RVParameters getRVParameters() {
+            return BetaRV.makeControls();
+        }
+    },
+    ChiSquared(ChiSquaredRV.class) {
+        public RVParameters getRVParameters() {
+            return ChiSquaredRV.makeControls();
+        }
+    },
+    Binomial(BinomialRV.class) {
+        public RVParameters getRVParameters() {
+            return BinomialRV.makeControls();
+        }
+    },
+    Constant(ConstantRV.class) {
+        public RVParameters getRVParameters() {
+            return ConstantRV.makeControls();
+        }
+    },
+    DUniform(DUniformRV.class) {
+        public RVParameters getRVParameters() {
+            return DUniformRV.makeControls();
+        }
+    },
+    Exponential(ExponentialRV.class) {
+        public RVParameters getRVParameters() {
+            return ExponentialRV.makeControls();
+        }
+    },
+    Gamma(GammaRV.class) {
+        public RVParameters getRVParameters() {
+            return GammaRV.makeControls();
+        }
+    },
+    GeneralizedBeta(GeneralizedBetaRV.class) {
+        public RVParameters getRVParameters() {
+            return GeneralizedBetaRV.makeControls();
+        }
+    },
+    Geometric(GeometricRV.class) {
+        public RVParameters getRVParameters() {
+            return GeometricRV.makeControls();
+        }
+    },
+    JohnsonB(JohnsonBRV.class) {
+        public RVParameters getRVParameters() {
+            return JohnsonBRV.makeControls();
+        }
+    },
+    Laplace(LaplaceRV.class) {
+        public RVParameters getRVParameters() {
+            return LaplaceRV.makeControls();
+        }
+    },
+    LogLogistic(LogLogisticRV.class) {
+        public RVParameters getRVParameters() {
+            return LogLogisticRV.makeControls();
+        }
+    },
+    Lognormal(LognormalRV.class) {
+        public RVParameters getRVParameters() {
+            return LognormalRV.makeControls();
+        }
+    },
+    NegativeBinomial(NegativeBinomialRV.class) {
+        public RVParameters getRVParameters() {
+            return NegativeBinomialRV.makeControls();
+        }
+    },
 
-    Normal(NormalRV.class), PearsonType5(PearsonType5RV.class), PearsonType6(PearsonType6RV.class),
+    Normal(NormalRV.class) {
+        public RVParameters getRVParameters() {
+            return NormalRV.makeControls();
+        }
+    },
+    PearsonType5(PearsonType5RV.class) {
+        public RVParameters getRVParameters() {
+            return PearsonType5RV.makeControls();
+        }
+    },
+    PearsonType6(PearsonType6RV.class) {
+        public RVParameters getRVParameters() {
+            return PearsonType6RV.makeControls();
+        }
+    },
 
-    Poisson(PoissonRV.class), ShiftedGeometric(ShiftedGeometricRV.class),
-    Triangular(TriangularRV.class), Uniform(UniformRV.class), Weibull(WeibullRV.class),
-    DEmpirical(DEmpiricalRV.class), Empirical(EmpiricalRV.class);
+    Poisson(PoissonRV.class) {
+        public RVParameters getRVParameters() {
+            return PoissonRV.makeControls();
+        }
+    },
+    ShiftedGeometric(ShiftedGeometricRV.class) {
+        public RVParameters getRVParameters() {
+            return ShiftedGeometricRV.makeControls();
+        }
+    },
+    Triangular(TriangularRV.class) {
+        public RVParameters getRVParameters() {
+            return TriangularRV.makeControls();
+        }
+    },
+    Uniform(UniformRV.class) {
+        public RVParameters getRVParameters() {
+            return UniformRV.makeControls();
+        }
+    },
+    Weibull(WeibullRV.class) {
+        public RVParameters getRVParameters() {
+            return WeibullRV.makeControls();
+        }
+    },
+    DEmpirical(DEmpiricalRV.class) {
+        public RVParameters getRVParameters() {
+            return DEmpiricalRV.makeControls();
+        }
+    },
+    Empirical(EmpiricalRV.class) {
+        public RVParameters getRVParameters() {
+            return EmpiricalRV.makeControls();
+        }
+    };
 
     private final Class<? extends AbstractRVariable> clazz;
 
@@ -28,7 +144,6 @@ public enum RVType {
     }
 
     /**
-     *
      * @return the class associated with this type
      */
     public Class<? extends AbstractRVariable> asClass() {
@@ -36,12 +151,9 @@ public enum RVType {
     }
 
     /**
-     *
      * @return the controls associated with this type
      */
-    public RVControls getRVControls(){
-        return myFactories.get(this);
-    }
+    abstract public RVParameters getRVParameters();
 
     public static final EnumSet<RVType> RVTYPE_SET = EnumSet.of(RVType.Bernoulli, RVType.Beta,
             RVType.ChiSquared, RVType.Binomial, RVType.Constant, RVType.DUniform,
@@ -53,9 +165,9 @@ public enum RVType {
 
     private static final Map<Class<? extends AbstractRVariable>, RVType> classToTypeMap = new HashMap<>();
 
-    public static RVType getRVType(Class<? extends AbstractRVariable> clazz){
+    public static RVType getRVType(Class<? extends AbstractRVariable> clazz) {
         Objects.requireNonNull(clazz, "The sub-class of AbstractRVariable must not be null");
-        if (!classToTypeMap.containsKey(clazz)){
+        if (!classToTypeMap.containsKey(clazz)) {
             throw new IllegalArgumentException("The supplied class does not map to a valid RVType");
         }
         return classToTypeMap.get(clazz);
@@ -88,46 +200,15 @@ public enum RVType {
         classToTypeMap.put(EmpiricalRV.class, Empirical);
     }
 
-    private static final Map<RVType, RVControls> myFactories;
+    public static void main(String[] args) {
+        // test making some controls
+        RVParameters rvParameters = Triangular.getRVParameters();
+        RVariableIfc rv = rvParameters.makeRVariable();
+        System.out.println(rv.getValue());
+        System.out.println();
+        System.out.println(rvParameters);
+        System.out.println();
 
-    static {
-        myFactories = new HashMap<>();
-        myFactories.put(Bernoulli, BernoulliRV.makeControls());
-        myFactories.put(Beta, BetaRV.makeControls());
-        myFactories.put(ChiSquared, ChiSquaredRV.makeControls());
-        myFactories.put(Binomial, BinomialRV.makeControls());
-        myFactories.put(Constant, ConstantRV.makeControls());
-        myFactories.put(DUniform, DUniformRV.makeControls());
-        myFactories.put(Exponential, ExponentialRV.makeControls());
-        myFactories.put(Gamma, GammaRV.makeControls());
-        myFactories.put(DEmpirical, DEmpiricalRV.makeControls());
-        myFactories.put(GeneralizedBeta, GeneralizedBetaRV.makeControls());
-        myFactories.put(Geometric, GeometricRV.makeControls());
-        myFactories.put(JohnsonB, JohnsonBRV.makeControls());
-        myFactories.put(Laplace, LaplaceRV.makeControls());
-        myFactories.put(LogLogistic, LogLogisticRV.makeControls());
-        myFactories.put(Lognormal, LognormalRV.makeControls());
-        myFactories.put(NegativeBinomial, NegativeBinomialRV.makeControls());
-        myFactories.put(Normal, NormalRV.makeControls());
-        myFactories.put(PearsonType5, PearsonType5RV.makeControls());
-        myFactories.put(PearsonType6, PearsonType6RV.makeControls());
-        myFactories.put(Poisson, PoissonRV.makeControls());
-        myFactories.put(Triangular, TriangularRV.makeControls());
-        myFactories.put(Uniform, UniformRV.makeControls());
-        myFactories.put(Weibull, WeibullRV.makeControls());
-        myFactories.put(Empirical, EmpiricalRV.makeControls());
+        System.out.println(rvParameters.toJSON());
     }
-
-    /**
-     * @param type the type of the random variable
-     * @return an optional holding the control or empty if the type was not found
-     */
-    public static RVControls getRVControls(RVType type) {
-        Objects.requireNonNull(type, "The random variable type must not be null");
-        if (!myFactories.containsKey(type)){
-            throw new IllegalArgumentException("The supplied RVType does not have a registered RVControls");
-        }
-        return myFactories.get(type);
-    }
-
 }

@@ -62,25 +62,25 @@ public class Executive implements IdentityIfc, ObservableIfc, IterativeProcessIf
      * Used when observers are notified after all events are executed
      *
      */
-    public final static int AFTER_EXECUTION = Model.getNextEnumConstant();
+    public final static int AFTER_EXECUTION = ModelElement.getNextEnumConstant();
 
     /**
      * Used when observers are notified of initialization
      *
      */
-    public final static int INITIALIZED = Model.getNextEnumConstant();
+    public final static int INITIALIZED = ModelElement.getNextEnumConstant();
 
     /**
      * Used to indicate to observers that an event will be executed
      *
      */
-    public final static int BEFORE_EVENT = Model.getNextEnumConstant();
+    public final static int BEFORE_EVENT = ModelElement.getNextEnumConstant();
 
     /**
      * Used to indicate to observers that an event will be executed
      *
      */
-    public final static int AFTER_EVENT = Model.getNextEnumConstant();
+    public final static int AFTER_EVENT = ModelElement.getNextEnumConstant();
 
     /**
      * Keeps track of the status for observers

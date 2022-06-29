@@ -135,21 +135,23 @@ public final class DEmpiricalRV extends AbstractRVariable {
      *
      * @return a control for DEmpirical random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleArrayControl("values", new double[]{0.0, 1.0});
-                addDoubleArrayControl("cdf", new double[]{0.5, 1.0});
-                setName(RVType.DEmpirical.name());
-                setRVType(RVType.DEmpirical);
-            }
+    public static RVParameters makeControls() {
+        return new DEmpiricalRVParameters();
+    }
 
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double[] values = getDoubleArrayControl("values");
-                double[] cdf = getDoubleArrayControl("cdf");
-                return new DEmpiricalRV(values, cdf, rnStream);
-            }
-        };
+    private static class DEmpiricalRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleArrayParameter("values", new double[]{0.0, 1.0});
+            addDoubleArrayParameter("cdf", new double[]{0.5, 1.0});
+            setName(RVType.DEmpirical.name());
+            setRVType(RVType.DEmpirical);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double[] values = getDoubleArrayParameter("values");
+            double[] cdf = getDoubleArrayParameter("cdf");
+            return new DEmpiricalRV(values, cdf, rnStream);
+        }
     }
 }

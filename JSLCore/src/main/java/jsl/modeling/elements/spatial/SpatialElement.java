@@ -15,7 +15,6 @@
  */
 package jsl.modeling.elements.spatial;
 
-import jsl.simulation.Model;
 import jsl.simulation.ModelElement;
 import jsl.observers.ObservableComponent;
 import jsl.observers.ObserverIfc;
@@ -49,7 +48,7 @@ public class SpatialElement implements SpatialElementIfc {
      * An enum to indicate that an element changed its position within a spatial
      * model
      */
-    public static final int CHANGED_POSITION = Model.getNextEnumConstant();
+    public static final int CHANGED_POSITION = ModelElement.getNextEnumConstant();
 
     /**
      * Holds the initial position in the spatial model

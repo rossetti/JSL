@@ -32,7 +32,7 @@ public class Component extends SchedulingElement {
     /**
      * Indicates that the transporter has changed state to its observers
      */
-    public static final int STATE_CHANGE = Model.getNextEnumConstant();
+    public static final int STATE_CHANGE = ModelElement.getNextEnumConstant();
 
     //  ===========================================
     //      Attributes

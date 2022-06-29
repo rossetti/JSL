@@ -18,7 +18,7 @@ package jsl.utilities;
 import jsl.observers.ObservableComponent;
 import jsl.observers.ObservableIfc;
 import jsl.observers.ObserverIfc;
-import jsl.simulation.Model;
+import jsl.simulation.ModelElement;
 
 /**
  * @author rossetti
@@ -32,7 +32,7 @@ public abstract class DataObservable implements ObservableIfc, GetValueIfc, Prev
 
     /** An "enum" to indicate that a new value has just been made available to observers
      */
-    public static final int NEW_VALUE = Model.getNextEnumConstant();
+    public static final int NEW_VALUE = ModelElement.getNextEnumConstant();
 
     /**
      * helper for observable pattern

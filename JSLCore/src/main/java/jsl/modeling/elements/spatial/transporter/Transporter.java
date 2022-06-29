@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import jsl.simulation.IllegalStateException;
-import jsl.simulation.Model;
 import jsl.simulation.ModelElement;
 import jsl.simulation.State;
 import jsl.modeling.elements.spatial.AbstractMover;
@@ -38,7 +37,7 @@ public class Transporter extends AbstractMover {
     /**
      * Indicates that the transporter has changed state to its observers
      */
-    public static final int STATE_CHANGE = Model.getNextEnumConstant();
+    public static final int STATE_CHANGE = ModelElement.getNextEnumConstant();
 
     /** The list of transporter sets currently holding this transporter
      */

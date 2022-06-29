@@ -92,21 +92,23 @@ public final class UniformRV extends AbstractRVariable {
      *
      * @return a control for Uniform random variables
      */
-    public static RVControls makeControls() {
-        return new RVControls() {
-            @Override
-            protected final void fillControls() {
-                addDoubleControl("min", 0.0);
-                addDoubleControl("max", 1.0);
-                setName(RVType.Uniform.name());
-                setRVType(RVType.Uniform);
-            }
+    public static RVParameters makeControls() {
+        return new UniformRVParameters();
+    }
 
-            public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-                double min = getDoubleControl("min");
-                double max = getDoubleControl("max");
-                return new UniformRV(min, max, rnStream);
-            }
-        };
+    private static class UniformRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("min", 0.0);
+            addDoubleParameter("max", 1.0);
+            setName(RVType.Uniform.name());
+            setRVType(RVType.Uniform);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double min = getDoubleParameter("min");
+            double max = getDoubleParameter("max");
+            return new UniformRV(min, max, rnStream);
+        }
     }
 }

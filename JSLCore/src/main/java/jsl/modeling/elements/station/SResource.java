@@ -21,7 +21,6 @@
  */
 package jsl.modeling.elements.station;
 
-import jsl.simulation.Model;
 import jsl.simulation.ModelElement;
 import jsl.simulation.ModelElementState;
 import jsl.simulation.SchedulingElement;
@@ -49,13 +48,13 @@ public class SResource extends SchedulingElement {
      * Indicates that the resource was seized for state change purposes That is,
      * units of the resource became busy.
      */
-    public static final int SEIZE = Model.getNextEnumConstant();
+    public static final int SEIZE = ModelElement.getNextEnumConstant();
 
     /**
      * Indicates that the resource was released for state change purposes That
      * is, units of resource became idle.
      */
-    public static final int RELEASE = Model.getNextEnumConstant();
+    public static final int RELEASE = ModelElement.getNextEnumConstant();
     /**
      * The initial capacity of the resource at time just prior to 0.0
      */

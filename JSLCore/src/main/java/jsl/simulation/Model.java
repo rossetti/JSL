@@ -38,23 +38,6 @@ import jsl.utilities.statistic.StatisticAccessorIfc;
 public class Model extends ModelElement {
 
     /**
-     * An "enum" to indicate that the model element was added to the model
-     * element hierarchy
-     */
-    public static final int MODEL_ELEMENT_ADDED = getNextEnumConstant();
-
-    /**
-     * An "enum" to indicate that the model element was removed from the model
-     * element hierarchy
-     */
-    public static final int MODEL_ELEMENT_REMOVED = getNextEnumConstant();
-
-    /**
-     * Used to assign unique enum constants
-     */
-    private static int myEnumCounter_;
-
-    /**
      * A list of all the response variables (including TimeWeighted) within the
      * model
      */
@@ -149,16 +132,6 @@ public class Model extends ModelElement {
         setParentModelElement(null);
         addToModelElementMap(this);
         addDefaultElements();
-    }
-
-    /**
-     * Should be used by subclasses to get the next constant
-     * so that unique constants can be used
-     *
-     * @return the constant
-     */
-    public static int getNextEnumConstant() {
-        return (++myEnumCounter_);
     }
 
     private void addDefaultElements() {
