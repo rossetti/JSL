@@ -401,8 +401,7 @@ public abstract class RVParameters {
 
     public String toJSON(){
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String rvcJSON = gson.toJson(this);
-        return rvcJSON;
+        return gson.toJson(this);
     }
 
     //TODO equality and hashcode
@@ -412,7 +411,7 @@ public abstract class RVParameters {
         if (this == o) return true;
         if (!(o instanceof RVParameters)) return false;
         RVParameters that = (RVParameters) o;
-        //TODO need to check the elements
+        //TODO need to check the elements of doubleArrayParameters because it holds double[]
         return name.equals(that.name) && type == that.type &&
                 doubleParameters.equals(that.doubleParameters) &&
                 integerParameters.equals(that.integerParameters) &&
