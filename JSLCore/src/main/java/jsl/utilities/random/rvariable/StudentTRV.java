@@ -2,7 +2,7 @@ package jsl.utilities.random.rvariable;
 
 import jsl.utilities.random.rng.RNStreamIfc;
 
-public class StudentTRV extends AbstractRVariable {
+public class StudentTRV extends RVariable {
 
     private final double myDoF;
 

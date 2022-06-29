@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Poisson(mean) random variable
  */
-public final class PoissonRV extends AbstractRVariable {
+public final class PoissonRV extends ParameterizedRV {
 
     private final double mean;
 
@@ -65,8 +65,14 @@ public final class PoissonRV extends AbstractRVariable {
 
     @Override
     protected double generate() {
-        double v = JSLRandom.rPoisson(mean, myRNStream);
-        return v;
+        return JSLRandom.rPoisson(mean, myRNStream);
+    }
+
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new PoissonRVParameters();
+        parameters.changeDoubleParameter("mean", mean);
+        return parameters;
     }
 
     /**
@@ -74,7 +80,7 @@ public final class PoissonRV extends AbstractRVariable {
      *
      * @return a control for Poisson random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new PoissonRVParameters();
     }
 
@@ -82,7 +88,7 @@ public final class PoissonRV extends AbstractRVariable {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("mean", 1.0);
-            setName(RVType.Poisson.name());
+            setClassName(RVType.Poisson.asClass().getName());
             setRVType(RVType.Poisson);
         }
 

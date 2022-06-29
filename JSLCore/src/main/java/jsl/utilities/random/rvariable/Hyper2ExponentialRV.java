@@ -7,7 +7,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
  * order hyper-exponential use MixtureRV.  The mixing probability is the
  * probability of getting the first exponential distribution with mean1
  */
-public class Hyper2ExponentialRV extends AbstractRVariable {
+public class Hyper2ExponentialRV extends RVariable {
 
     private final double myMixingProb;
     private final double myMean1;

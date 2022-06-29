@@ -45,7 +45,7 @@ public abstract class RVParameters {
     /**
      *  To allow setting/tracking of name of parameter
      */
-    private String name;
+    private String className;
 
     private RVType type;
 
@@ -108,18 +108,18 @@ public abstract class RVParameters {
 
     /** Use for labeling, etc
      *
-     * @param name the name of the parameter
+     * @param className the name of the parameter
      */
-    protected final void setName(String name){
-        this.name = name;
+    protected final void setClassName(String className){
+        this.className = className;
     }
 
     /**
      *
      * @return the name of the parameter
      */
-    public final String getName(){
-        return name;
+    public final String getClassName(){
+        return className;
     }
 
     private void addParameterName(String name, DataType type) {
@@ -404,14 +404,33 @@ public abstract class RVParameters {
         return gson.toJson(this);
     }
 
-    //TODO equality and hashcode
+    /** Copies from the supplied parameters into this parameters
+     *
+     * @param rvParameters the parameters to copy from
+     */
+    public void copyFrom(RVParameters rvParameters){
+        Objects.requireNonNull(rvParameters, "The supplied RVParameters was null");
+        if (this.type != rvParameters.type){
+            throw new IllegalArgumentException("Cannot copy into with different parameter types");
+        }
+        if (this.equals(rvParameters)){
+            return;
+        }
+        // not equal copy over, will have same keys
+        doubleParameters.putAll(rvParameters.doubleParameters);
+        integerParameters.putAll(rvParameters.integerParameters);
+        for(Map.Entry<String, double[]> entry: rvParameters.doubleArrayParameters.entrySet()){
+            double[] data = Arrays.copyOf(entry.getValue(),entry.getValue().length);
+            doubleArrayParameters.put(entry.getKey(), data);
+        }
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof RVParameters)) return false;
         RVParameters that = (RVParameters) o;
-        if (!name.equals(that.name)) return false;
+        if (!className.equals(that.className)) return false;
         if ((type != that.type)) return false;
         if (!doubleParameters.equals(that.doubleParameters)) return false;
         if (!integerParameters.equals(that.integerParameters)) return false;
@@ -433,7 +452,7 @@ public abstract class RVParameters {
     @Override
     public int hashCode() {
         List<Object> list = new ArrayList<>();
-        list.add(name);
+        list.add(className);
         list.add(type);
         list.add(doubleParameters);
         list.add(integerParameters);
@@ -446,5 +465,75 @@ public abstract class RVParameters {
         }
         Object[] objects = list.toArray();
         return Arrays.hashCode(objects);
+    }
+
+    public static void main(String[] args) {
+        RVParameters p1 = RVType.Binomial.getRVParameters();
+        RVParameters p2 =RVType.Normal.getRVParameters();
+        RVParameters p3 =RVType.Triangular.getRVParameters();
+        RVParameters p4 =RVType.Triangular.getRVParameters();
+
+        System.out.println(p1.toJSON());
+        System.out.println();
+
+        System.out.println(p2.toJSON());
+        System.out.println();
+
+        System.out.println(p3.toJSON());
+        System.out.println();
+
+        System.out.println(p4.toJSON());
+        System.out.println();
+
+        if (p3.equals(p4)){
+            System.out.println("p3 == p4");
+        } else {
+            System.out.println("p3 != p4");
+        }
+
+        if (p3.hashCode() == p4.hashCode()){
+            System.out.println("hashcode p3 == p4");
+        } else {
+            System.out.println("hashcode p3 != p4");
+        }
+
+        if (p1.equals(p2)){
+            System.out.println("p1 == p2");
+        } else {
+            System.out.println("p1 != p2");
+        }
+
+        p3.changeDoubleParameter("min", -5.0);
+        if (p3.equals(p4)){
+            System.out.println("p3 == p4");
+        } else {
+            System.out.println("p3 != p4");
+        }
+
+        if (p3.hashCode() == p4.hashCode()){
+            System.out.println("hashcode p3 == p4");
+        } else {
+            System.out.println("hashcode p3 != p4");
+        }
+
+        // not copy them over so that they are back to being the same
+        p4.copyFrom(p3);
+        if (p3.equals(p4)){
+            System.out.println("p3 == p4");
+        } else {
+            System.out.println("p3 != p4");
+        }
+
+        if (p3.hashCode() == p4.hashCode()){
+            System.out.println("hashcode p3 == p4");
+        } else {
+            System.out.println("hashcode p3 != p4");
+        }
+
+        System.out.println(p3.toJSON());
+        System.out.println();
+
+        System.out.println(p4.toJSON());
+        System.out.println();
     }
 }

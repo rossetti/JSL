@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * JohnsonB(alpha1, alpha2, min, max) random variable
  */
-public final class JohnsonBRV extends AbstractRVariable {
+public final class JohnsonBRV extends ParameterizedRV {
 
     private final double myAlpha1;
 
@@ -106,8 +106,17 @@ public final class JohnsonBRV extends AbstractRVariable {
 
     @Override
     protected double generate() {
-        double v = JSLRandom.rJohnsonB(myAlpha1, myAlpha2, myMin, myMax, myRNStream);
-        return v;
+        return JSLRandom.rJohnsonB(myAlpha1, myAlpha2, myMin, myMax, myRNStream);
+    }
+
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new JohnsonBRVParameters();
+        parameters.changeDoubleParameter("alpha1", myAlpha1);
+        parameters.changeDoubleParameter("alpha2", myAlpha2);
+        parameters.changeDoubleParameter("min", myMin);
+        parameters.changeDoubleParameter("max", myMax);
+        return parameters;
     }
 
     /**
@@ -117,7 +126,7 @@ public final class JohnsonBRV extends AbstractRVariable {
      *
      * @return a control for JohnsonB random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new JohnsonBRVParameters();
     }
 
@@ -128,7 +137,7 @@ public final class JohnsonBRV extends AbstractRVariable {
             addDoubleParameter("alpha2", 1.0);
             addDoubleParameter("min", 0.0);
             addDoubleParameter("max", 1.0);
-            setName(RVType.JohnsonB.name());
+            setClassName(RVType.JohnsonB.asClass().getName());
             setRVType(RVType.JohnsonB);
         }
 

@@ -27,7 +27,7 @@ import java.util.Arrays;
  * Every element must be greater than or equal to the previous element in the CDF array.
  * That is, monotonically increasing.
  */
-public final class DEmpiricalRV extends AbstractRVariable {
+public final class DEmpiricalRV extends ParameterizedRV {
 
     private final double[] myValues;
     private final double[] myCDF;
@@ -129,13 +129,21 @@ public final class DEmpiricalRV extends AbstractRVariable {
         return value;
     }
 
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new DEmpiricalRVParameters();
+        parameters.changeDoubleArrayParameter("values", myValues);
+        parameters.changeDoubleArrayParameter("cdf", myCDF);
+        return parameters;
+    }
+
     /**
      * The keys are "values" with default an array {0.0, 1.0} and
      * key "cdf" with default array {0.5, 1.0}
      *
      * @return a control for DEmpirical random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new DEmpiricalRVParameters();
     }
 
@@ -144,7 +152,7 @@ public final class DEmpiricalRV extends AbstractRVariable {
         protected final void fillParameters() {
             addDoubleArrayParameter("values", new double[]{0.0, 1.0});
             addDoubleArrayParameter("cdf", new double[]{0.5, 1.0});
-            setName(RVType.DEmpirical.name());
+            setClassName(RVType.DEmpirical.asClass().getName());
             setRVType(RVType.DEmpirical);
         }
 

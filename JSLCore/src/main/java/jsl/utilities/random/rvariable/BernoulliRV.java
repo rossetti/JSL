@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Bernoulli(probability of success) random variable
  */
-public final class BernoulliRV extends AbstractRVariable {
+public final class BernoulliRV extends ParameterizedRV {
 
     private final double myProbSuccess;
 
@@ -113,12 +113,19 @@ public final class BernoulliRV extends AbstractRVariable {
         return b;
     }
 
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new BernoulliRVParameters();
+        parameters.changeDoubleParameter("ProbOfSuccess", myProbSuccess);
+        return parameters;
+    }
+
     /**
      * The key is "ProbOfSuccess", the default value is 0.5
      *
      * @return a control for Bernoulli random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new BernoulliRVParameters();
     }
 
@@ -126,7 +133,7 @@ public final class BernoulliRV extends AbstractRVariable {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("ProbOfSuccess", 0.5);
-            setName(RVType.Bernoulli.name());
+            setClassName(RVType.Bernoulli.asClass().getName());
             setRVType(RVType.Bernoulli);
         }
 

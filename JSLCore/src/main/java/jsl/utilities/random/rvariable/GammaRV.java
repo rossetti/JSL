@@ -22,7 +22,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Gamma(shape, scale) random variable
  */
-public final class GammaRV extends AbstractRVariable {
+public final class GammaRV extends ParameterizedRV {
 
     private final Gamma myGamma;
 
@@ -75,8 +75,15 @@ public final class GammaRV extends AbstractRVariable {
 
     @Override
     protected double generate() {
-        double v = myGamma.invCDF(myRNStream.randU01());
-        return v;
+        return myGamma.invCDF(myRNStream.randU01());
+    }
+
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new GammaRVParameters();
+        parameters.changeDoubleParameter("shape", myGamma.getShape());
+        parameters.changeDoubleParameter("scale", myGamma.getScale());
+        return parameters;
     }
 
     /**
@@ -85,7 +92,7 @@ public final class GammaRV extends AbstractRVariable {
      *
      * @return a control for Gamma random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new GammaRVParameters();
     }
 
@@ -165,7 +172,7 @@ public final class GammaRV extends AbstractRVariable {
         protected final void fillParameters() {
             addDoubleParameter("shape", 1.0);
             addDoubleParameter("scale", 1.0);
-            setName(RVType.Gamma.name());
+            setClassName(RVType.Gamma.asClass().getName());
             setRVType(RVType.Gamma);
         }
 

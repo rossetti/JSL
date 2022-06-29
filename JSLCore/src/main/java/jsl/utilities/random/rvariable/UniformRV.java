@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Continuous uniform(min, max) random variable
  */
-public final class UniformRV extends AbstractRVariable {
+public final class UniformRV extends ParameterizedRV {
 
     private final double min;
     private final double max;
@@ -83,8 +83,15 @@ public final class UniformRV extends AbstractRVariable {
 
     @Override
     protected double generate() {
-        double v = JSLRandom.rUniform(min, max, myRNStream);
-        return v;
+        return JSLRandom.rUniform(min, max, myRNStream);
+    }
+
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new UniformRVParameters();
+        parameters.changeDoubleParameter("min", min);
+        parameters.changeDoubleParameter("max", max);
+        return parameters;
     }
 
     /**
@@ -92,7 +99,7 @@ public final class UniformRV extends AbstractRVariable {
      *
      * @return a control for Uniform random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new UniformRVParameters();
     }
 
@@ -101,7 +108,7 @@ public final class UniformRV extends AbstractRVariable {
         protected final void fillParameters() {
             addDoubleParameter("min", 0.0);
             addDoubleParameter("max", 1.0);
-            setName(RVType.Uniform.name());
+            setClassName(RVType.Uniform.asClass().getName());
             setRVType(RVType.Uniform);
         }
 

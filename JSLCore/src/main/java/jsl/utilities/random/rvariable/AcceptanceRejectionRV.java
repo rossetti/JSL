@@ -12,7 +12,7 @@ import java.util.Objects;
  *  and the PDF of the distribution from which random variates will be generated.
  *  The two distributions must be domain compatible.
  */
-public class AcceptanceRejectionRV extends AbstractRVariable {
+public class AcceptanceRejectionRV extends RVariable {
 
     private final ContinuousDistributionIfc distribution;
 

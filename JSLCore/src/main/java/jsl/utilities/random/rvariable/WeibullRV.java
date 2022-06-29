@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  *  Weibull(shape, scale) random variable
  */
-public final class WeibullRV extends AbstractRVariable {
+public final class WeibullRV extends ParameterizedRV {
 
     private final double myShape;
     private final double myScale;
@@ -83,13 +83,21 @@ public final class WeibullRV extends AbstractRVariable {
         return v;
     }
 
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new WeibullRVParameters();
+        parameters.changeDoubleParameter("shape", myShape);
+        parameters.changeDoubleParameter("scale", myScale);
+        return parameters;
+    }
+
     /**
      * The keys are "shape" with default value 1.0 and "scale" with
      * default value 1.0
      *
      * @return a control for Weibull random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new WeibullRVParameters();
     }
 
@@ -98,7 +106,7 @@ public final class WeibullRV extends AbstractRVariable {
         protected final void fillParameters() {
             addDoubleParameter("shape", 1.0);
             addDoubleParameter("scale", 1.0);
-            setName(RVType.Weibull.name());
+            setClassName(RVType.Weibull.asClass().getName());
             setRVType(RVType.Weibull);
         }
 

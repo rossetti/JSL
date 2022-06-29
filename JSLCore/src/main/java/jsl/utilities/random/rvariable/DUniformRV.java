@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * discrete uniform(min, max) random variable
  */
-public final class DUniformRV extends AbstractRVariable {
+public final class DUniformRV extends ParameterizedRV {
 
     private final int min;
     private final int max;
@@ -79,8 +79,15 @@ public final class DUniformRV extends AbstractRVariable {
 
     @Override
     protected double generate() {
-        double v = JSLRandom.rDUniform(min, max, myRNStream);
-        return v;
+        return JSLRandom.rDUniform(min, max, myRNStream);
+    }
+
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new DUniformRVParameters();
+        parameters.changeIntegerParameter("min", min);
+        parameters.changeIntegerParameter("max", max);
+        return parameters;
     }
 
     /**
@@ -89,7 +96,7 @@ public final class DUniformRV extends AbstractRVariable {
      *
      * @return a control for DUniform random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new DUniformRVParameters();
     }
 
@@ -98,7 +105,7 @@ public final class DUniformRV extends AbstractRVariable {
         protected final void fillParameters() {
             addIntegerParameter("min", 0);
             addIntegerParameter("max", 1);
-            setName(RVType.DUniform.name());
+            setClassName(RVType.DUniform.asClass().getName());
             setRVType(RVType.DUniform);
         }
 

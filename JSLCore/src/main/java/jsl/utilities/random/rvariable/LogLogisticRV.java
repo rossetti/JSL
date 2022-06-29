@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * LogLogistic(shape, scale) random variable
  */
-public final class LogLogisticRV extends AbstractRVariable {
+public final class LogLogisticRV extends ParameterizedRV {
 
     private final double myShape;
     private final double myScale;
@@ -82,8 +82,15 @@ public final class LogLogisticRV extends AbstractRVariable {
 
     @Override
     protected double generate() {
-        double v = JSLRandom.rLogLogistic(myShape, myScale, myRNStream);
-        return v;
+        return JSLRandom.rLogLogistic(myShape, myScale, myRNStream);
+    }
+
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new LogLogisticRVParameters();
+        parameters.changeDoubleParameter("shape", myShape);
+        parameters.changeDoubleParameter("scale", myScale);
+        return parameters;
     }
 
     /**
@@ -92,7 +99,7 @@ public final class LogLogisticRV extends AbstractRVariable {
      *
      * @return a control for LogLogistic random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new LogLogisticRVParameters();
     }
 
@@ -101,7 +108,7 @@ public final class LogLogisticRV extends AbstractRVariable {
         protected final void fillParameters() {
             addDoubleParameter("shape", 1.0);
             addDoubleParameter("scale", 1.0);
-            setName(RVType.LogLogistic.name());
+            setClassName(RVType.LogLogistic.asClass().getName());
             setRVType(RVType.LogLogistic);
         }
 

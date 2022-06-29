@@ -4,7 +4,7 @@ import jsl.utilities.distributions.DistributionIfc;
 import jsl.utilities.math.JSLMath;
 import jsl.utilities.random.rng.RNStreamIfc;
 
-public class TruncatedRV extends AbstractRVariable {
+public class TruncatedRV extends RVariable {
 
     protected final DistributionIfc myDistribution;
 

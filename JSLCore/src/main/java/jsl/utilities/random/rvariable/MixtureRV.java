@@ -22,7 +22,7 @@ import jsl.utilities.random.robj.DEmpiricalList;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class MixtureRV extends AbstractRVariable {
+public final class MixtureRV extends RVariable {
 
     private final DEmpiricalList<RVariableIfc> myRVList;
 

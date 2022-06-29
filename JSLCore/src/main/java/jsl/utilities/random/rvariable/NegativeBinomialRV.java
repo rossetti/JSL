@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * NegativeBinomial(probability of success, number of trials until rth success)
  */
-public final class NegativeBinomialRV extends AbstractRVariable {
+public final class NegativeBinomialRV extends ParameterizedRV {
 
     private final double myProbSuccess;
 
@@ -101,13 +101,21 @@ public final class NegativeBinomialRV extends AbstractRVariable {
         return JSLRandom.rNegBinomial(myProbSuccess, myNumSuccesses, myRNStream);
     }
 
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new NegativeBinomialRVParameters();
+        parameters.changeDoubleParameter("ProbOfSuccess", myProbSuccess);
+        parameters.changeIntegerParameter("NumSuccesses", (int)myNumSuccesses);
+        return parameters;
+    }
+
     /**
      * The keys are "ProbOfSuccess", the default value is 0.5 and
      * "NumSuccesses" with default value 1.
      *
      * @return a control for Negative Binomial random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new NegativeBinomialRVParameters();
     }
 
@@ -116,7 +124,7 @@ public final class NegativeBinomialRV extends AbstractRVariable {
         protected final void fillParameters() {
             addDoubleParameter("ProbOfSuccess", 0.5);
             addIntegerParameter("NumSuccesses", 1);
-            setName(RVType.NegativeBinomial.name());
+            setClassName(RVType.NegativeBinomial.asClass().getName());
             setRVType(RVType.NegativeBinomial);
         }
 

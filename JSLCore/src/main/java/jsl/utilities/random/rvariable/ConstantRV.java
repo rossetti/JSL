@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Allows a constant to pretend to be a random variable
  */
-public class ConstantRV extends AbstractRVariable {
+public class ConstantRV extends ParameterizedRV {
 
     /**
      * A constant to represent zero for sharing
@@ -76,12 +76,19 @@ public class ConstantRV extends AbstractRVariable {
         return myValue;
     }
 
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new ConstantRVParameters();
+        parameters.changeDoubleParameter("value", myValue);
+        return parameters;
+    }
+
     /**
      * The keys are "value", the default value is 1.0
      *
      * @return a control for Constant random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new ConstantRVParameters();
     }
 
@@ -89,7 +96,7 @@ public class ConstantRV extends AbstractRVariable {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("value", 1.0);
-            setName(RVType.Constant.name());
+            setClassName(RVType.Constant.asClass().getName());
             setRVType(RVType.Constant);
         }
 

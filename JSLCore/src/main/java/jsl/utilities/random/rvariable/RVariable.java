@@ -25,7 +25,7 @@ import java.util.Objects;
  *  An abstract base class for building random variables.  Implement
  *  the random generation procedure in the method generate().
  */
-abstract public class AbstractRVariable implements RVariableIfc, IdentityIfc {
+abstract public class RVariable implements RVariableIfc, IdentityIfc {
 
     private final Identity myIdentity;
 
@@ -42,7 +42,7 @@ abstract public class AbstractRVariable implements RVariableIfc, IdentityIfc {
      * @throws NullPointerException if rng is null
      *
      */
-    public AbstractRVariable(RNStreamIfc stream) {
+    public RVariable(RNStreamIfc stream) {
         myRNStream = Objects.requireNonNull(stream,"RNStreamIfc stream must be non-null" );
         myIdentity = new Identity();
         myPrevValue = Double.NaN;

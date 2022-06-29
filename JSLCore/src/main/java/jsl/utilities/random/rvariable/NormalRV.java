@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Normal(mean, variance)
  */
-public final class NormalRV extends AbstractRVariable {
+public final class NormalRV extends ParameterizedRV {
 
     private final double myMean;
 
@@ -94,8 +94,15 @@ public final class NormalRV extends AbstractRVariable {
 
     @Override
     protected double generate() {
-        double v = JSLRandom.rNormal(myMean, myVar, myRNStream);
-        return v;
+        return JSLRandom.rNormal(myMean, myVar, myRNStream);
+    }
+
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new NormalRVParameters();
+        parameters.changeDoubleParameter("mean", myMean);
+        parameters.changeDoubleParameter("variance", myVar);
+        return parameters;
     }
 
     /**
@@ -104,7 +111,7 @@ public final class NormalRV extends AbstractRVariable {
      *
      * @return a control for Normal random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new NormalRVParameters();
     }
 
@@ -142,7 +149,7 @@ public final class NormalRV extends AbstractRVariable {
         protected final void fillParameters() {
             addDoubleParameter("mean", 0.0);
             addDoubleParameter("variance", 1.0);
-            setName(RVType.Normal.name());
+            setClassName(RVType.Normal.asClass().getName());
             setRVType(RVType.Normal);
         }
 

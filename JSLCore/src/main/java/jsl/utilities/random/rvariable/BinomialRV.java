@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * BinomialRV(probability of success, number of trials)
  */
-public final class BinomialRV extends AbstractRVariable {
+public final class BinomialRV extends ParameterizedRV {
 
     private final double myProbSuccess;
 
@@ -100,6 +100,14 @@ public final class BinomialRV extends AbstractRVariable {
         return JSLRandom.rBinomial(myProbSuccess, myNumTrials, myRNStream);
     }
 
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new BinomialRVParameters();
+        parameters.changeDoubleParameter("ProbOfSuccess", myProbSuccess);
+        parameters.changeIntegerParameter("NumTrials", myNumTrials);
+        return parameters;
+    }
+
     /**
      * The keys are "ProbOfSuccess", the default value is 0.5 and
      * "NumTrials" with default value 2.  NumTrials is an Integer control and
@@ -107,7 +115,7 @@ public final class BinomialRV extends AbstractRVariable {
      *
      * @return a control for Binomial random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new BinomialRVParameters();
     }
 
@@ -116,7 +124,7 @@ public final class BinomialRV extends AbstractRVariable {
         protected final void fillParameters() {
             addDoubleParameter("ProbOfSuccess", 0.5);
             addIntegerParameter("NumTrials", 2);
-            setName(RVType.Binomial.name());
+            setClassName(RVType.Binomial.asClass().getName());
             setRVType(RVType.Binomial);
         }
 

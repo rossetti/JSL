@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Pearson Type 6(alpha1, alpha2, beta) random variable
  */
-public final class PearsonType6RV extends AbstractRVariable {
+public final class PearsonType6RV extends ParameterizedRV {
 
     private final double myAlpha1;
     private final double myAlpha2;
@@ -86,13 +86,21 @@ public final class PearsonType6RV extends AbstractRVariable {
         return v;
     }
 
+    public RVParameters getParameters() {
+        RVParameters parameters = new PearsonType6RVParameters();
+        parameters.changeDoubleParameter("alpha1", myAlpha1);
+        parameters.changeDoubleParameter("alpha2", myAlpha2);
+        parameters.changeDoubleParameter("beta", myBeta);
+        return parameters;
+    }
+
     /**
      * The keys are "alpha1" with default value 2.0 and "alpha2" with
      * default value 3.0, and "beta" with default value 1.0
      *
      * @return a control for PearsonType6 random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new PearsonType6RVParameters();
     }
 
@@ -102,7 +110,7 @@ public final class PearsonType6RV extends AbstractRVariable {
             addDoubleParameter("alpha1", 2.0);
             addDoubleParameter("alpha2", 3.0);
             addDoubleParameter("beta", 1.0);
-            setName(RVType.PearsonType6.name());
+            setClassName(RVType.PearsonType6.asClass().getName());
             setRVType(RVType.PearsonType6);
         }
 

@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Exponential(mean) random variable
  */
-public final class ExponentialRV extends AbstractRVariable {
+public final class ExponentialRV extends ParameterizedRV {
 
     private final double mean;
 
@@ -88,12 +88,19 @@ public final class ExponentialRV extends AbstractRVariable {
         return JSLRandom.rExponential(mean, myRNStream);
     }
 
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new ExponentialRVParameters();
+        parameters.changeDoubleParameter("mean", mean);
+        return parameters;
+    }
+
     /**
      * The key is "mean" with default value 1.0
      *
      * @return a control for Exponential random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new ExponentialRVParameters();
     }
 
@@ -102,7 +109,7 @@ public final class ExponentialRV extends AbstractRVariable {
         @Override
         protected void fillParameters() {
             addDoubleParameter("mean", 1.0);
-            setName(RVType.Exponential.name());
+            setClassName(RVType.Exponential.asClass().getName());
             setRVType(RVType.Exponential);
         }
 

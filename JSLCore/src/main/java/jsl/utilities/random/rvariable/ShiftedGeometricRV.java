@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Shifted Geometric(probability of success) random variable, range 1, 2, 3, etc.
  */
-public final class ShiftedGeometricRV extends AbstractRVariable {
+public final class ShiftedGeometricRV extends ParameterizedRV {
 
     private final double myProbSuccess;
 
@@ -81,12 +81,18 @@ public final class ShiftedGeometricRV extends AbstractRVariable {
         return 1.0 + JSLRandom.rGeometric(myProbSuccess, myRNStream);
     }
 
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new ShiftedGeometricRVParameters();
+        parameters.changeDoubleParameter("ProbOfSuccess", myProbSuccess);
+        return parameters;
+    }
     /**
      * The key is "ProbOfSuccess", the default value is 0.5
      *
      * @return a control for ShiftedGeometric random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new ShiftedGeometricRVParameters();
     }
 
@@ -94,7 +100,7 @@ public final class ShiftedGeometricRV extends AbstractRVariable {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("ProbOfSuccess", 0.5);
-            setName(RVType.ShiftedGeometric.name());
+            setClassName(RVType.ShiftedGeometric.asClass().getName());
             setRVType(RVType.ShiftedGeometric);
         }
 

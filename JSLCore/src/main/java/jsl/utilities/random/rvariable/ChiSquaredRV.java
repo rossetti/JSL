@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Chi-Squared(degrees of freedom) random variable
  */
-public final class ChiSquaredRV extends AbstractRVariable {
+public final class ChiSquaredRV extends ParameterizedRV {
 
     private final double dof;
 
@@ -65,8 +65,14 @@ public final class ChiSquaredRV extends AbstractRVariable {
 
     @Override
     protected double generate() {
-        double v = JSLRandom.rChiSquared(dof, myRNStream);
-        return v;
+        return JSLRandom.rChiSquared(dof, myRNStream);
+    }
+
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new ChiSquaredRVParameters();
+        parameters.changeDoubleParameter("dof", dof);
+        return parameters;
     }
 
     /**
@@ -74,7 +80,7 @@ public final class ChiSquaredRV extends AbstractRVariable {
      *
      * @return a control for Chi-Squared random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new ChiSquaredRVParameters();
     }
 
@@ -82,7 +88,7 @@ public final class ChiSquaredRV extends AbstractRVariable {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("dof", 1.0);
-            setName(RVType.ChiSquared.name());
+            setClassName(RVType.ChiSquared.asClass().getName());
             setRVType(RVType.ChiSquared);
         }
 

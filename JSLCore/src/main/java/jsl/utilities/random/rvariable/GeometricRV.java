@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Geometric(probability of success) random variable, range 0, 1, 2, etc.
  */
-public final class GeometricRV extends AbstractRVariable {
+public final class GeometricRV extends ParameterizedRV {
 
     private final double myProbSuccess;
 
@@ -81,12 +81,18 @@ public final class GeometricRV extends AbstractRVariable {
         return JSLRandom.rGeometric(myProbSuccess, myRNStream);
     }
 
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new GeometricRVParameters();
+        parameters.changeDoubleParameter("ProbOfSuccess", myProbSuccess);
+        return parameters;
+    }
     /**
      * The key is "ProbOfSuccess", the default value is 0.5
      *
      * @return a control for Geometric random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new GeometricRVParameters();
     }
 
@@ -94,7 +100,7 @@ public final class GeometricRV extends AbstractRVariable {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("ProbOfSuccess", 0.5);
-            setName(RVType.Geometric.name());
+            setClassName(RVType.Geometric.asClass().getName());
             setRVType(RVType.Geometric);
         }
 

@@ -9,7 +9,9 @@ import java.util.Objects;
  *  Provides a framework for generating random variates using the
  *  ratio of uniforms method.
  */
-public class RatioOfUniformsRV extends AbstractRVariable {
+public class RatioOfUniformsRV extends RVariable {
+
+    private double myPrevValue;
 
     protected UniformRV uCDF;
 
@@ -42,9 +44,9 @@ public class RatioOfUniformsRV extends AbstractRVariable {
         uCDF = new UniformRV(0.0, umax, rnStream);
         vCDF = new UniformRV(vmin, vmax, rnStream);
         pdf = f;
+        myPrevValue = Double.NaN;
     }
 
-    @Override
     protected double generate() {
         while (true) {
             double u = uCDF.getValue();
@@ -60,4 +62,5 @@ public class RatioOfUniformsRV extends AbstractRVariable {
     public RVariableIfc newInstance(RNStreamIfc rng) {
         return new RatioOfUniformsRV(uCDF.getMaximum(), vCDF.getMinimum(), vCDF.getMaximum(), pdf, rng);
     }
+
 }

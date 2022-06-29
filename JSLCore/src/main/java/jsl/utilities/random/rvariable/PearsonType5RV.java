@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Pearson Type 5(shape, scale) random variable
  */
-public final class PearsonType5RV extends AbstractRVariable {
+public final class PearsonType5RV extends ParameterizedRV {
 
     private final double myShape;
     private final double myScale;
@@ -82,8 +82,15 @@ public final class PearsonType5RV extends AbstractRVariable {
 
     @Override
     protected double generate() {
-        double v = JSLRandom.rPearsonType5(myShape, myScale, myRNStream);
-        return v;
+        return JSLRandom.rPearsonType5(myShape, myScale, myRNStream);
+    }
+
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new PearsonType5RVParameters();
+        parameters.changeDoubleParameter("shape", myShape);
+        parameters.changeDoubleParameter("scale", myScale);
+        return parameters;
     }
 
     /**
@@ -92,7 +99,7 @@ public final class PearsonType5RV extends AbstractRVariable {
      *
      * @return a control for PearsonType5 random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new PearsonType5RVParameters();
     }
 
@@ -101,7 +108,7 @@ public final class PearsonType5RV extends AbstractRVariable {
         protected final void fillParameters() {
             addDoubleParameter("shape", 1.0);
             addDoubleParameter("scale", 1.0);
-            setName(RVType.PearsonType5.name());
+            setClassName(RVType.PearsonType5.asClass().getName());
             setRVType(RVType.PearsonType5);
         }
 

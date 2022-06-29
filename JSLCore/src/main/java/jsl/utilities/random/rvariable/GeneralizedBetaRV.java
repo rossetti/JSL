@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * GeneralizeBetaRV(alpha1, alpha2, min, max) random variable
  */
-public final class GeneralizedBetaRV extends AbstractRVariable {
+public final class GeneralizedBetaRV extends ParameterizedRV {
 
     private final double myMin;
 
@@ -100,8 +100,17 @@ public final class GeneralizedBetaRV extends AbstractRVariable {
     @Override
     protected double generate() {
         double x = myBeta.getValue();
-        double v = myMin + (myMax - myMin) * x;
-        return v;
+        return myMin + (myMax - myMin) * x;
+    }
+
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new GeneralizedBetaRVParameters();
+        parameters.changeDoubleParameter("alpha1", myBeta.getAlpha1());
+        parameters.changeDoubleParameter("alpha2", myBeta.getAlpha2());
+        parameters.changeDoubleParameter("min", myMin);
+        parameters.changeDoubleParameter("max", myMax);
+        return parameters;
     }
 
     /**
@@ -111,7 +120,7 @@ public final class GeneralizedBetaRV extends AbstractRVariable {
      *
      * @return a control for GeneralizeBeta random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new GeneralizedBetaRVParameters();
     }
 
@@ -122,7 +131,7 @@ public final class GeneralizedBetaRV extends AbstractRVariable {
             addDoubleParameter("alpha2", 1.0);
             addDoubleParameter("min", 0.0);
             addDoubleParameter("max", 1.0);
-            setName(RVType.GeneralizedBeta.name());
+            setClassName(RVType.GeneralizedBeta.asClass().getName());
             setRVType(RVType.GeneralizedBeta);
         }
 

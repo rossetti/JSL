@@ -18,7 +18,7 @@ package jsl.utilities.random.rvariable;
 
 import jsl.utilities.random.rng.RNStreamIfc;
 
-public class AR1NormalRV extends AbstractRVariable {
+public class AR1NormalRV extends ParameterizedRV {
 
     private final double myPhi;
 
@@ -43,7 +43,7 @@ public class AR1NormalRV extends AbstractRVariable {
 
     /** Creates an autoregressive order 1 normal, N(0,1) process
      *
-     * @param correlation
+     * @param correlation the correlation
      */
     public AR1NormalRV(double correlation) {
         this(0.0, 1.0, correlation, JSLRandom.nextRNStream());
@@ -51,9 +51,9 @@ public class AR1NormalRV extends AbstractRVariable {
 
     /** Creates an autoregressive order 1 normal process
      *
-     * @param mean
-     * @param variance
-     * @param correlation
+     * @param mean the mean
+     * @param variance the variance
+     * @param correlation the correlation
      */
     public AR1NormalRV(double mean, double variance, double correlation) {
         this(mean, variance, correlation, JSLRandom.nextRNStream());
@@ -61,10 +61,10 @@ public class AR1NormalRV extends AbstractRVariable {
 
     /** Creates an autoregressive order 1 normal process
      *
-     * @param mean
-     * @param variance
-     * @param correlation
-     * @param rng
+     * @param mean the mean
+     * @param variance the variance
+     * @param correlation the correlation
+     * @param rng the random number stream
      */
     public AR1NormalRV(double mean, double variance, double correlation, RNStreamIfc rng) {
         super(rng);
@@ -115,7 +115,7 @@ public class AR1NormalRV extends AbstractRVariable {
 
     /**
      *
-     * @return Gets the lag 1 autocorrelation
+     * @return Gets the lag 1 auto-correlation
      */
     public final double getLag1Correlation() {
         return (myPhi);
@@ -127,4 +127,40 @@ public class AR1NormalRV extends AbstractRVariable {
         return myX;
     }
 
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new AR1NormalRVParameters();
+        parameters.changeDoubleParameter("mean", myMean);
+        parameters.changeDoubleParameter("variance", myVar);
+        parameters.changeDoubleParameter("correlation", myPhi);
+        return parameters;
+    }
+
+    /**
+     * The keys are "mean" with default value 0.0 and "variance" with
+     * default value 1.0, and "correlation" with default value 0.0
+     *
+     * @return a control for Weibull random variables
+     */
+    public static RVParameters createParameters() {
+        return new AR1NormalRVParameters();
+    }
+
+    private static class AR1NormalRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("mean", 0.0);
+            addDoubleParameter("variance", 1.0);
+            addDoubleParameter("correlation", 0.0);
+            setClassName(RVType.AR1Normal.asClass().getName());
+            setRVType(RVType.AR1Normal);
+        }
+
+        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+            double mean = getDoubleParameter("mean");
+            double variance = getDoubleParameter("variance");
+            double correlation = getDoubleParameter("variance");
+            return new AR1NormalRV(mean, variance, correlation, rnStream);
+        }
+    }
 }

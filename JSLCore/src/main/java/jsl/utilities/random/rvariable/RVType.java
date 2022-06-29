@@ -11,142 +11,147 @@ import java.util.Objects;
 public enum RVType {
     Bernoulli(BernoulliRV.class) {
         public RVParameters getRVParameters() {
-            return BernoulliRV.makeControls();
+            return BernoulliRV.createParameters();
         }
     },
     Beta(BetaRV.class) {
         public RVParameters getRVParameters() {
-            return BetaRV.makeControls();
+            return BetaRV.createParameters();
         }
     },
     ChiSquared(ChiSquaredRV.class) {
         public RVParameters getRVParameters() {
-            return ChiSquaredRV.makeControls();
+            return ChiSquaredRV.createParameters();
         }
     },
     Binomial(BinomialRV.class) {
         public RVParameters getRVParameters() {
-            return BinomialRV.makeControls();
+            return BinomialRV.createParameters();
         }
     },
     Constant(ConstantRV.class) {
         public RVParameters getRVParameters() {
-            return ConstantRV.makeControls();
+            return ConstantRV.createParameters();
         }
     },
     DUniform(DUniformRV.class) {
         public RVParameters getRVParameters() {
-            return DUniformRV.makeControls();
+            return DUniformRV.createParameters();
         }
     },
     Exponential(ExponentialRV.class) {
         public RVParameters getRVParameters() {
-            return ExponentialRV.makeControls();
+            return ExponentialRV.createParameters();
         }
     },
     Gamma(GammaRV.class) {
         public RVParameters getRVParameters() {
-            return GammaRV.makeControls();
+            return GammaRV.createParameters();
         }
     },
     GeneralizedBeta(GeneralizedBetaRV.class) {
         public RVParameters getRVParameters() {
-            return GeneralizedBetaRV.makeControls();
+            return GeneralizedBetaRV.createParameters();
         }
     },
     Geometric(GeometricRV.class) {
         public RVParameters getRVParameters() {
-            return GeometricRV.makeControls();
+            return GeometricRV.createParameters();
         }
     },
     JohnsonB(JohnsonBRV.class) {
         public RVParameters getRVParameters() {
-            return JohnsonBRV.makeControls();
+            return JohnsonBRV.createParameters();
         }
     },
     Laplace(LaplaceRV.class) {
         public RVParameters getRVParameters() {
-            return LaplaceRV.makeControls();
+            return LaplaceRV.createParameters();
         }
     },
     LogLogistic(LogLogisticRV.class) {
         public RVParameters getRVParameters() {
-            return LogLogisticRV.makeControls();
+            return LogLogisticRV.createParameters();
         }
     },
     Lognormal(LognormalRV.class) {
         public RVParameters getRVParameters() {
-            return LognormalRV.makeControls();
+            return LognormalRV.createParameters();
         }
     },
     NegativeBinomial(NegativeBinomialRV.class) {
         public RVParameters getRVParameters() {
-            return NegativeBinomialRV.makeControls();
+            return NegativeBinomialRV.createParameters();
         }
     },
 
     Normal(NormalRV.class) {
         public RVParameters getRVParameters() {
-            return NormalRV.makeControls();
+            return NormalRV.createParameters();
         }
     },
     PearsonType5(PearsonType5RV.class) {
         public RVParameters getRVParameters() {
-            return PearsonType5RV.makeControls();
+            return PearsonType5RV.createParameters();
         }
     },
     PearsonType6(PearsonType6RV.class) {
         public RVParameters getRVParameters() {
-            return PearsonType6RV.makeControls();
+            return PearsonType6RV.createParameters();
         }
     },
 
     Poisson(PoissonRV.class) {
         public RVParameters getRVParameters() {
-            return PoissonRV.makeControls();
+            return PoissonRV.createParameters();
         }
     },
     ShiftedGeometric(ShiftedGeometricRV.class) {
         public RVParameters getRVParameters() {
-            return ShiftedGeometricRV.makeControls();
+            return ShiftedGeometricRV.createParameters();
         }
     },
     Triangular(TriangularRV.class) {
         public RVParameters getRVParameters() {
-            return TriangularRV.makeControls();
+            return TriangularRV.createParameters();
         }
     },
     Uniform(UniformRV.class) {
         public RVParameters getRVParameters() {
-            return UniformRV.makeControls();
+            return UniformRV.createParameters();
         }
     },
     Weibull(WeibullRV.class) {
         public RVParameters getRVParameters() {
-            return WeibullRV.makeControls();
+            return WeibullRV.createParameters();
         }
     },
     DEmpirical(DEmpiricalRV.class) {
         public RVParameters getRVParameters() {
-            return DEmpiricalRV.makeControls();
+            return DEmpiricalRV.createParameters();
         }
     },
     Empirical(EmpiricalRV.class) {
         public RVParameters getRVParameters() {
-            return EmpiricalRV.makeControls();
+            return EmpiricalRV.createParameters();
+        }
+    },
+    AR1Normal(DEmpiricalRV.class) {
+        public RVParameters getRVParameters() {
+            return AR1NormalRV.createParameters();
         }
     };
 
-    private final Class<? extends AbstractRVariable> clazz;
+    private final Class<? extends RVariable> clazz;
 
-    RVType(Class<? extends AbstractRVariable> clazz) {
+    RVType(Class<? extends RVariable> clazz) {
         this.clazz = clazz;
     }
 
     /**
      * @return the class associated with this type
      */
-    public Class<? extends AbstractRVariable> asClass() {
+    public Class<? extends RVariable> asClass() {
         return clazz;
     }
 
@@ -161,11 +166,11 @@ public enum RVType {
             RVType.JohnsonB, RVType.Laplace, RVType.LogLogistic, RVType.Lognormal,
             RVType.NegativeBinomial, RVType.Normal, RVType.PearsonType5, RVType.PearsonType6,
             RVType.Poisson, RVType.ShiftedGeometric, RVType.Triangular, RVType.Uniform,
-            RVType.Weibull, RVType.DEmpirical, RVType.Empirical);
+            RVType.Weibull, RVType.DEmpirical, RVType.Empirical, RVType.AR1Normal);
 
-    private static final Map<Class<? extends AbstractRVariable>, RVType> classToTypeMap = new HashMap<>();
+    private static final Map<Class<? extends RVariable>, RVType> classToTypeMap = new HashMap<>();
 
-    public static RVType getRVType(Class<? extends AbstractRVariable> clazz) {
+    public static RVType getRVType(Class<? extends RVariable> clazz) {
         Objects.requireNonNull(clazz, "The sub-class of AbstractRVariable must not be null");
         if (!classToTypeMap.containsKey(clazz)) {
             throw new IllegalArgumentException("The supplied class does not map to a valid RVType");
@@ -198,6 +203,7 @@ public enum RVType {
         classToTypeMap.put(UniformRV.class, Uniform);
         classToTypeMap.put(WeibullRV.class, Weibull);
         classToTypeMap.put(EmpiricalRV.class, Empirical);
+        classToTypeMap.put(AR1NormalRV.class, AR1Normal);
     }
 
     public static void main(String[] args) {

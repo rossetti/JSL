@@ -22,7 +22,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Beta(alpha1, alpha2) random variable, range (0,1)
  */
-public final class BetaRV extends AbstractRVariable {
+public final class BetaRV extends ParameterizedRV {
 
     private final double myAlpha1;
 
@@ -86,13 +86,21 @@ public final class BetaRV extends AbstractRVariable {
         return Beta.stdBetaInvCDF(myRNStream.randU01(), myAlpha1, myAlpha1, mylnBetaA1A2);
     }
 
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new BetaRVParameters();
+        parameters.changeDoubleParameter("alpha1", myAlpha1);
+        parameters.changeDoubleParameter("alpha2", myAlpha2);
+        return parameters;
+    }
+
     /**
      * The keys are "alpha1", the default value is 1.0 and
      * "alpha2" with default value 1.0.
      *
      * @return a control for Beta random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new BetaRVParameters();
     }
 
@@ -101,7 +109,7 @@ public final class BetaRV extends AbstractRVariable {
         protected final void fillParameters() {
             addDoubleParameter("alpha1", 1.0);
             addDoubleParameter("alpha2", 1.0);
-            setName(RVType.Beta.name());
+            setClassName(RVType.Beta.asClass().getName());
             setRVType(RVType.Beta);
         }
 

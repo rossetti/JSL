@@ -24,7 +24,7 @@ import java.util.Objects;
 /**
  * Facilitates the creation of random variables from distributions that implement InverseCDFIfc
  */
-public class InverseCDFRV extends AbstractRVariable {
+public class InverseCDFRV extends RVariable {
 
     private final InverseCDFIfc myInverse;
 

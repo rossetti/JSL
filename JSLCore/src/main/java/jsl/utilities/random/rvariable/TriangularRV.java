@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Triangular(min, mode, max) random variable
  */
-public final class TriangularRV extends AbstractRVariable {
+public final class TriangularRV extends ParameterizedRV {
 
     private final double myMin;
 
@@ -87,8 +87,16 @@ public final class TriangularRV extends AbstractRVariable {
 
     @Override
     protected double generate() {
-        double v = JSLRandom.rTriangular(myMin, myMode, myMax, myRNStream);
-        return v;
+        return JSLRandom.rTriangular(myMin, myMode, myMax, myRNStream);
+    }
+
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new TriangularRVParameters();
+        parameters.changeDoubleParameter("min", myMin);
+        parameters.changeDoubleParameter("mode", myMode);
+        parameters.changeDoubleParameter("max", myMax);
+        return parameters;
     }
 
     /**
@@ -97,7 +105,7 @@ public final class TriangularRV extends AbstractRVariable {
      *
      * @return a control for Triangular random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new TriangularRVParameters();
     }
 
@@ -108,7 +116,7 @@ public final class TriangularRV extends AbstractRVariable {
             addDoubleParameter("mode", 0.5);
             addDoubleParameter("max", 1.0);
             setRVType(RVType.Triangular);
-            setName(RVType.Triangular.name());
+            setClassName(RVType.Triangular.asClass().getName());
         }
 
         public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {

@@ -8,7 +8,7 @@ import java.util.Objects;
  * Shifts the generated value of the supplied random variable by the shift amount.
  * The shift amount must be positive.
  */
-public final class ShiftedRV extends AbstractRVariable {
+public final class ShiftedRV extends RVariable {
 
     private final double myShift;
     private final RVariableIfc myRV;

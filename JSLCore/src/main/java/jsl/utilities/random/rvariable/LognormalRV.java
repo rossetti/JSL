@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Lognormal(mean, variance). The mean and variance are for the lognormal random variables
  */
-public final class LognormalRV extends AbstractRVariable {
+public final class LognormalRV extends ParameterizedRV {
 
     private final double myMean;
 
@@ -80,8 +80,15 @@ public final class LognormalRV extends AbstractRVariable {
 
     @Override
     protected double generate() {
-        double v = JSLRandom.rLogNormal(myMean, myVar, myRNStream);
-        return v;
+        return JSLRandom.rLogNormal(myMean, myVar, myRNStream);
+    }
+
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new LognormalRVParameters();
+        parameters.changeDoubleParameter("mean", myMean);
+        parameters.changeDoubleParameter("variance", myVar);
+        return parameters;
     }
 
     /**
@@ -90,7 +97,7 @@ public final class LognormalRV extends AbstractRVariable {
      *
      * @return a control for Lognormal random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new LognormalRVParameters();
     }
 
@@ -99,7 +106,7 @@ public final class LognormalRV extends AbstractRVariable {
         protected final void fillParameters() {
             addDoubleParameter("mean", 1.0);
             addDoubleParameter("variance", 1.0);
-            setName(RVType.Lognormal.name());
+            setClassName(RVType.Lognormal.asClass().getName());
             setRVType(RVType.Lognormal);
         }
 

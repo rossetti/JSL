@@ -22,7 +22,7 @@ import jsl.utilities.random.robj.DPopulation;
 /**
  * A random variable that samples from the provided data
  */
-public final class EmpiricalRV extends AbstractRVariable {
+public final class EmpiricalRV extends ParameterizedRV {
 
     private final DPopulation myPop;
 
@@ -58,13 +58,20 @@ public final class EmpiricalRV extends AbstractRVariable {
         return myPop.getValue();
     }
 
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new EmpiricalRVParameters();
+        parameters.changeDoubleArrayParameter("Population", myPop.getParameters());
+        return parameters;
+    }
+
     /**
      * The key is "Population", an empty array of size 1 is made. The user of the control
      * can provide any size population back
      *
      * @return a control for Bernoulli random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new EmpiricalRVParameters();
     }
 
@@ -72,7 +79,7 @@ public final class EmpiricalRV extends AbstractRVariable {
         @Override
         protected final void fillParameters() {
             addDoubleArrayParameter("Population", new double[1]);
-            setName(RVType.Empirical.name());
+            setClassName(RVType.Empirical.asClass().getName());
             setRVType(RVType.Empirical);
         }
 

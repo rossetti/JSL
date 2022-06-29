@@ -21,7 +21,7 @@ import jsl.utilities.random.rng.RNStreamIfc;
 /**
  * Normal(mean, variance)
  */
-public final class LaplaceRV extends AbstractRVariable {
+public final class LaplaceRV extends ParameterizedRV {
 
     private final double myMean;
 
@@ -76,8 +76,15 @@ public final class LaplaceRV extends AbstractRVariable {
 
     @Override
     protected double generate() {
-        double v = JSLRandom.rLaplace(myMean, myScale, myRNStream);
-        return v;
+        return JSLRandom.rLaplace(myMean, myScale, myRNStream);
+    }
+
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new LaplaceRVParameters();
+        parameters.changeDoubleParameter("mean", myMean);
+        parameters.changeDoubleParameter("scale", myScale);
+        return parameters;
     }
 
     /**
@@ -86,7 +93,7 @@ public final class LaplaceRV extends AbstractRVariable {
      *
      * @return a control for Laplace random variables
      */
-    public static RVParameters makeControls() {
+    public static RVParameters createParameters() {
         return new LaplaceRVParameters();
     }
 
@@ -95,7 +102,7 @@ public final class LaplaceRV extends AbstractRVariable {
         protected final void fillParameters() {
             addDoubleParameter("mean", 0.0);
             addDoubleParameter("scale", 1.0);
-            setName(RVType.Laplace.name());
+            setClassName(RVType.Laplace.asClass().getName());
             setRVType(RVType.Laplace);
         }
 
