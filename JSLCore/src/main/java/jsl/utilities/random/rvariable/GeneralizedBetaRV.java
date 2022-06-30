@@ -124,7 +124,7 @@ public final class GeneralizedBetaRV extends ParameterizedRV {
         return new GeneralizedBetaRVParameters();
     }
 
-    private static class GeneralizedBetaRVParameters extends RVParameters {
+    static class GeneralizedBetaRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("alpha1", 1.0);
@@ -135,7 +135,7 @@ public final class GeneralizedBetaRV extends ParameterizedRV {
             setRVType(RVType.GeneralizedBeta);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double alpha1 = getDoubleParameter("alpha1");
             double alpha2 = getDoubleParameter("alpha2");
             double min = getDoubleParameter("min");

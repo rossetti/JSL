@@ -101,7 +101,7 @@ public final class WeibullRV extends ParameterizedRV {
         return new WeibullRVParameters();
     }
 
-    private static class WeibullRVParameters extends RVParameters {
+    static class WeibullRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("shape", 1.0);
@@ -110,7 +110,7 @@ public final class WeibullRV extends ParameterizedRV {
             setRVType(RVType.Weibull);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double scale = getDoubleParameter("scale");
             double shape = getDoubleParameter("shape");
             return new WeibullRV(shape, scale, rnStream);

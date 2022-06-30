@@ -119,7 +119,7 @@ public final class NegativeBinomialRV extends ParameterizedRV {
         return new NegativeBinomialRVParameters();
     }
 
-    private static class NegativeBinomialRVParameters extends RVParameters {
+    static class NegativeBinomialRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("ProbOfSuccess", 0.5);
@@ -128,7 +128,7 @@ public final class NegativeBinomialRV extends ParameterizedRV {
             setRVType(RVType.NegativeBinomial);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double probOfSuccess = getDoubleParameter("ProbOfSuccess");
             double numSuccesses = getDoubleParameter("NumSuccesses");
             return new NegativeBinomialRV(probOfSuccess, numSuccesses, rnStream);

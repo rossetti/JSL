@@ -103,7 +103,7 @@ public final class UniformRV extends ParameterizedRV {
         return new UniformRVParameters();
     }
 
-    private static class UniformRVParameters extends RVParameters {
+    static class UniformRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("min", 0.0);
@@ -112,7 +112,7 @@ public final class UniformRV extends ParameterizedRV {
             setRVType(RVType.Uniform);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double min = getDoubleParameter("min");
             double max = getDoubleParameter("max");
             return new UniformRV(min, max, rnStream);

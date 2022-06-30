@@ -97,7 +97,7 @@ public final class LaplaceRV extends ParameterizedRV {
         return new LaplaceRVParameters();
     }
 
-    private static class LaplaceRVParameters extends RVParameters {
+    static class LaplaceRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("mean", 0.0);
@@ -106,7 +106,7 @@ public final class LaplaceRV extends ParameterizedRV {
             setRVType(RVType.Laplace);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double scale = getDoubleParameter("scale");
             double mean = getDoubleParameter("mean");
             return new LaplaceRV(mean, scale, rnStream);

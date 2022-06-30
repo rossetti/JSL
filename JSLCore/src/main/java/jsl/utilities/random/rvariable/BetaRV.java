@@ -104,7 +104,7 @@ public final class BetaRV extends ParameterizedRV {
         return new BetaRVParameters();
     }
 
-    private static class BetaRVParameters extends RVParameters {
+    static class BetaRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("alpha1", 1.0);
@@ -113,7 +113,7 @@ public final class BetaRV extends ParameterizedRV {
             setRVType(RVType.Beta);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double alpha1 = getDoubleParameter("alpha1");
             double alpha2 = getDoubleParameter("alpha2");
             return new BetaRV(alpha1, alpha2, rnStream);

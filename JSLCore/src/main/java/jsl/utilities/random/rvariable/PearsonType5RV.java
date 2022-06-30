@@ -103,7 +103,7 @@ public final class PearsonType5RV extends ParameterizedRV {
         return new PearsonType5RVParameters();
     }
 
-    private static class PearsonType5RVParameters extends RVParameters {
+    static class PearsonType5RVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("shape", 1.0);
@@ -112,7 +112,7 @@ public final class PearsonType5RV extends ParameterizedRV {
             setRVType(RVType.PearsonType5);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double scale = getDoubleParameter("scale");
             double shape = getDoubleParameter("shape");
             return new PearsonType5RV(shape, scale, rnStream);

@@ -132,30 +132,30 @@ public abstract class RVParameters {
     }
 
     /**
-     * @param key   the name of the parameter, must not be null, must not already have been added
+     * @param parameterName   the name of the parameter, must not be null, must not already have been added
      * @param value the value of the parameter
      */
-    protected final void addDoubleParameter(String key, Double value) {
-        addParameterName(key, DataType.DOUBLE);
-        doubleParameters.put(key, value);
+    protected final void addDoubleParameter(String parameterName, Double value) {
+        addParameterName(parameterName, DataType.DOUBLE);
+        doubleParameters.put(parameterName, value);
     }
 
     /**
-     * @param key   the name of the parameter, must not be null, must not already have been added
+     * @param parameterName   the name of the parameter, must not be null, must not already have been added
      * @param value the value of the parameter
      */
-    protected final void addIntegerParameter(String key, Integer value) {
-        addParameterName(key, DataType.INTEGER);
-        integerParameters.put(key, value);
+    protected final void addIntegerParameter(String parameterName, Integer value) {
+        addParameterName(parameterName, DataType.INTEGER);
+        integerParameters.put(parameterName, value);
     }
 
     /**
-     * @param key   the name of the parameter, must not be null, must not already have been added
+     * @param parameterName   the name of the parameter, must not be null, must not already have been added
      * @param value the value of the parameter
      */
-    protected final void addDoubleArrayParameter(String key, double[] value) {
-        addParameterName(key, DataType.DOUBLE_ARRAY);
-        doubleArrayParameters.put(key, value);
+    protected final void addDoubleArrayParameter(String parameterName, double[] value) {
+        addParameterName(parameterName, DataType.DOUBLE_ARRAY);
+        doubleArrayParameters.put(parameterName, value);
     }
 
     /**
@@ -196,118 +196,118 @@ public abstract class RVParameters {
      * @param name the name of the parameter
      * @return the Class type of the parameter
      */
-    public final DataType getParameterClass(String name){
+    public final DataType getParameterDataType(String name){
         return dataTypes.get(name);
     }
 
     /**
-     * Gets the value associated with the supplied key as a double.  If the key is null
-     * or there is no parameter for the supplied key, then an exception occurs
+     * Gets the value associated with the supplied parameterName as a double.  If the parameterName is null
+     * or there is no parameter for the supplied parameterName, then an exception occurs
      *
-     * @param key the name of the parameter
+     * @param parameterName the name of the parameter
      * @return the value of the parameter
      */
-    public double getDoubleParameter(String key) {
-        checkKey(key);
-        return doubleParameters.get(key);
+    public double getDoubleParameter(String parameterName) {
+        checkKey(parameterName);
+        return doubleParameters.get(parameterName);
     }
 
     /**
-     * Changes the value associated with the key to the supplied value.  If the key is null
-     * or there is no parameter for the supplied key, then an exception occurs
+     * Changes the value associated with the parameterName to the supplied value.  If the parameterName is null
+     * or there is no parameter for the supplied parameterName, then an exception occurs
      *
-     * @param key   key with which the value is to be associated
-     * @param value the value to be associated with key
-     * @return the previous value that was associated with the key
+     * @param parameterName   parameterName with which the value is to be associated
+     * @param value the value to be associated with parameterName
+     * @return the previous value that was associated with the parameterName
      */
-    public double changeDoubleParameter(String key, Double value) {
-        checkKey(key);
-        return doubleParameters.put(key, value);
+    public double changeDoubleParameter(String parameterName, Double value) {
+        checkKey(parameterName);
+        return doubleParameters.put(parameterName, value);
     }
 
     /**
-     * Gets the value associated with the supplied key as a double{].  If the key is null
-     * or there is no parameter for the supplied key, then an exception occurs
+     * Gets the value associated with the supplied parameterName as a double{].  If the parameterName is null
+     * or there is no parameter for the supplied parameterName, then an exception occurs
      *
-     * @param key the name of the parameter
+     * @param parameterName the name of the parameter
      * @return a copy of the associated double[] is returned
      */
-    public double[] getDoubleArrayParameter(String key) {
-        checkKey(key);
-        double[] value = doubleArrayParameters.get(key);
+    public double[] getDoubleArrayParameter(String parameterName) {
+        checkKey(parameterName);
+        double[] value = doubleArrayParameters.get(parameterName);
         double[] tmp = new double[value.length];
         System.arraycopy(value, 0, tmp, 0, value.length);
         return tmp;
     }
 
     /**
-     * Returns the size (array length) of the DoubleArray parameter. If the key is null
-     * or there is no parameter for the supplied key, then an exception occurs
+     * Returns the size (array length) of the DoubleArray parameter. If the parameterName is null
+     * or there is no parameter for the supplied parameterName, then an exception occurs
      *
-     * @param key the name of the parameter
+     * @param parameterName the name of the parameter
      * @return the size of the array
      */
-    public int getDoubleArrayParameterSize(String key) {
-        checkKey(key);
-        return doubleArrayParameters.get(key).length;
+    public int getDoubleArrayParameterSize(String parameterName) {
+        checkKey(parameterName);
+        return doubleArrayParameters.get(parameterName).length;
     }
 
     /**
-     * Changes the value associated with the key to the supplied value.  If the key is null
-     * or there is no parameter for the supplied key, then an exception occurs.
+     * Changes the value associated with the parameterName to the supplied value.  If the parameterName is null
+     * or there is no parameter for the supplied parameterName, then an exception occurs.
      * <p>
      * The supplied array is copied.
      *
-     * @param key   key with which the double[] value is to be associated
-     * @param value the double[] value to be associated with key, cannot be null, must be same size as original double[]
-     * @return the previous double[] value that was associated with the key
+     * @param parameterName   parameterName with which the double[] value is to be associated
+     * @param value the double[] value to be associated with parameterName, cannot be null, must be same size as original double[]
+     * @return the previous double[] value that was associated with the parameterName
      */
-    public double[] changeDoubleArrayParameter(String key, double[] value) {
-        checkKey(key);
+    public double[] changeDoubleArrayParameter(String parameterName, double[] value) {
+        checkKey(parameterName);
         if (value == null) {
             throw new IllegalArgumentException("The supplied array cannot be null");
         }
-        int size = this.getDoubleArrayParameterSize(key);
-        if (size != value.length) {
-            throw new IllegalArgumentException("The supplied array is not the same size as the original double[]");
-        }
+//        int size = this.getDoubleArrayParameterSize(parameterName);
+//        if (size != value.length) {
+//            throw new IllegalArgumentException("The supplied array is not the same size as the original double[]");
+//        }
 
         double[] tmp = new double[value.length];
         System.arraycopy(value, 0, tmp, 0, value.length);
-        return doubleArrayParameters.put(key, tmp);
+        return doubleArrayParameters.put(parameterName, tmp);
     }
 
     /**
-     * Gets the value associated with the supplied key. If the key is null
-     * or there is no parameter for the supplied key, then an exception occurs.
+     * Gets the value associated with the supplied parameterName. If the parameterName is null
+     * or there is no parameter for the supplied parameterName, then an exception occurs.
      *
-     * @param key the name of the parameter
+     * @param parameterName the name of the parameter
      * @return the value of the parameter
      */
-    public int getIntegerParameter(String key) {
-        checkKey(key);
-        return integerParameters.get(key);
+    public int getIntegerParameter(String parameterName) {
+        checkKey(parameterName);
+        return integerParameters.get(parameterName);
     }
 
     /**
-     * Changes the value of the key to the supplied value.  If the key is null
-     * or there is no parameter for the supplied key, then an exception occurs.
+     * Changes the value of the parameterName to the supplied value.  If the parameterName is null
+     * or there is no parameter for the supplied parameterName, then an exception occurs.
      *
-     * @param key the name of the parameter
+     * @param parameterName the name of the parameter
      * @param value the value of the parameter
-     * @return the previous value that was associated with the key
+     * @return the previous value that was associated with the parameterName
      */
-    public int changeIntegerParameter(String key, int value) {
-        checkKey(key);
-        return integerParameters.put(key, value);
+    public int changeIntegerParameter(String parameterName, int value) {
+        checkKey(parameterName);
+        return integerParameters.put(parameterName, value);
     }
 
     /**
      * @return an instance of the random variable based on the current parameter parameters,
      * with a new stream
      */
-    public final RVariableIfc makeRVariable() {
-        return makeRVariable(JSLRandom.nextRNStream());
+    public final RVariableIfc createRVariable() {
+        return createRVariable(JSLRandom.nextRNStream());
     }
 
     /**
@@ -315,8 +315,8 @@ public abstract class RVParameters {
      * @return an instance of the random variable based on the current parameter parameters using the designated
      * stream number
      */
-    public final RVariableIfc makeRVariable(int streamNumber) {
-        return makeRVariable(JSLRandom.rnStream(streamNumber));
+    public final RVariableIfc createRVariable(int streamNumber) {
+        return createRVariable(JSLRandom.rnStream(streamNumber));
     }
 
     /**
@@ -371,7 +371,7 @@ public abstract class RVParameters {
      * @param rnStream the stream to use
      * @return an instance of the random variable based on the current parameter parameters
      */
-    abstract public RVariableIfc makeRVariable(RNStreamIfc rnStream);
+    abstract public RVariableIfc createRVariable(RNStreamIfc rnStream);
 
     @Override
     public String toString() {
@@ -420,8 +420,7 @@ public abstract class RVParameters {
         doubleParameters.putAll(rvParameters.doubleParameters);
         integerParameters.putAll(rvParameters.integerParameters);
         for(Map.Entry<String, double[]> entry: rvParameters.doubleArrayParameters.entrySet()){
-            double[] data = Arrays.copyOf(entry.getValue(),entry.getValue().length);
-            doubleArrayParameters.put(entry.getKey(), data);
+            changeDoubleArrayParameter(entry.getKey(), entry.getValue());
         }
     }
 

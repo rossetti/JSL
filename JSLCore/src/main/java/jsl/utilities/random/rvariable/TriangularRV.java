@@ -109,7 +109,7 @@ public final class TriangularRV extends ParameterizedRV {
         return new TriangularRVParameters();
     }
 
-    private static class TriangularRVParameters extends RVParameters {
+    static class TriangularRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("min", 0.0);
@@ -119,7 +119,7 @@ public final class TriangularRV extends ParameterizedRV {
             setClassName(RVType.Triangular.asClass().getName());
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double mode = getDoubleParameter("mode");
             double min = getDoubleParameter("min");
             double max = getDoubleParameter("max");

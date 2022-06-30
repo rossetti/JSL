@@ -209,7 +209,7 @@ public enum RVType {
     public static void main(String[] args) {
         // test making some controls
         RVParameters rvParameters = Triangular.getRVParameters();
-        RVariableIfc rv = rvParameters.makeRVariable();
+        RVariableIfc rv = rvParameters.createRVariable();
         System.out.println(rv.getValue());
         System.out.println();
         System.out.println(rvParameters);

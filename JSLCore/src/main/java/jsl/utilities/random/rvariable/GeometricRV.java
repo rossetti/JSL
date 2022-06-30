@@ -96,7 +96,7 @@ public final class GeometricRV extends ParameterizedRV {
         return new GeometricRVParameters();
     }
 
-    private static class GeometricRVParameters extends RVParameters {
+    static class GeometricRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("ProbOfSuccess", 0.5);
@@ -104,7 +104,7 @@ public final class GeometricRV extends ParameterizedRV {
             setRVType(RVType.Geometric);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double probOfSuccess = getDoubleParameter("ProbOfSuccess");
             return new GeometricRV(probOfSuccess, rnStream);
         }

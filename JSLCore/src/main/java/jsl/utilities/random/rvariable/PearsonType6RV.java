@@ -104,7 +104,7 @@ public final class PearsonType6RV extends ParameterizedRV {
         return new PearsonType6RVParameters();
     }
 
-    private static class PearsonType6RVParameters extends RVParameters {
+    static class PearsonType6RVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("alpha1", 2.0);
@@ -114,7 +114,7 @@ public final class PearsonType6RV extends ParameterizedRV {
             setRVType(RVType.PearsonType6);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double alpha1 = getDoubleParameter("alpha1");
             double alpha2 = getDoubleParameter("alpha2");
             double beta = getDoubleParameter("beta");

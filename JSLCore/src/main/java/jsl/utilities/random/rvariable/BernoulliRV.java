@@ -28,30 +28,30 @@ public final class BernoulliRV extends ParameterizedRV {
     /**
      * Uses a new stream from the default provider of streams
      *
-     * @param prob the probability, must be in (0,1)
+     * @param probOfSuccess the probability, must be in (0,1)
      */
-    public BernoulliRV(double prob) {
-        this(prob, JSLRandom.nextRNStream());
+    public BernoulliRV(double probOfSuccess) {
+        this(probOfSuccess, JSLRandom.nextRNStream());
     }
 
     /**
-     * @param prob      the probability, must be in (0,1)
+     * @param probOfSuccess      the probability, must be in (0,1)
      * @param streamNum the stream number
      */
-    public BernoulliRV(double prob, int streamNum) {
-        this(prob, JSLRandom.rnStream(streamNum));
+    public BernoulliRV(double probOfSuccess, int streamNum) {
+        this(probOfSuccess, JSLRandom.rnStream(streamNum));
     }
 
     /**
-     * @param prob   the probability, must be in (0,1)
+     * @param probOfSuccess   the probability, must be in (0,1)
      * @param stream the RNStreamIfc to use
      */
-    public BernoulliRV(double prob, RNStreamIfc stream) {
+    public BernoulliRV(double probOfSuccess, RNStreamIfc stream) {
         super(stream);
-        if ((prob <= 0.0) || (prob >= 1.0)) {
+        if ((probOfSuccess <= 0.0) || (probOfSuccess >= 1.0)) {
             throw new IllegalArgumentException("Probability must be (0,1)");
         }
-        myProbSuccess = prob;
+        myProbSuccess = probOfSuccess;
     }
 
     /**
@@ -65,7 +65,7 @@ public final class BernoulliRV extends ParameterizedRV {
     @Override
     public String toString() {
         return "BernoulliRV{" +
-                "pSuccess=" + myProbSuccess +
+                "probOfSuccess=" + myProbSuccess +
                 '}';
     }
 
@@ -116,29 +116,29 @@ public final class BernoulliRV extends ParameterizedRV {
     @Override
     public RVParameters getParameters() {
         RVParameters parameters = new BernoulliRVParameters();
-        parameters.changeDoubleParameter("ProbOfSuccess", myProbSuccess);
+        parameters.changeDoubleParameter("probOfSuccess", myProbSuccess);
         return parameters;
     }
 
     /**
-     * The key is "ProbOfSuccess", the default value is 0.5
+     * The key is "probOfSuccess", the default value is 0.5
      *
      * @return a control for Bernoulli random variables
      */
-    public static RVParameters createParameters() {
+    static RVParameters createParameters() {
         return new BernoulliRVParameters();
     }
 
-    private static class BernoulliRVParameters extends RVParameters {
+    static class BernoulliRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
-            addDoubleParameter("ProbOfSuccess", 0.5);
+            addDoubleParameter("probOfSuccess", 0.5);
             setClassName(RVType.Bernoulli.asClass().getName());
             setRVType(RVType.Bernoulli);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-            double probOfSuccess = getDoubleParameter("ProbOfSuccess");
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double probOfSuccess = getDoubleParameter("probOfSuccess");
             return new BernoulliRV(probOfSuccess, rnStream);
         }
     }

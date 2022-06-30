@@ -84,7 +84,7 @@ public final class PoissonRV extends ParameterizedRV {
         return new PoissonRVParameters();
     }
 
-    private static class PoissonRVParameters extends RVParameters {
+    static class PoissonRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("mean", 1.0);
@@ -92,7 +92,7 @@ public final class PoissonRV extends ParameterizedRV {
             setRVType(RVType.Poisson);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double mean = getDoubleParameter("mean");
             return new PoissonRV(mean, rnStream);
         }

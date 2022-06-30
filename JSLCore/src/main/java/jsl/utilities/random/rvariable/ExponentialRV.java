@@ -104,7 +104,7 @@ public final class ExponentialRV extends ParameterizedRV {
         return new ExponentialRVParameters();
     }
 
-    private static class ExponentialRVParameters extends RVParameters {
+    static class ExponentialRVParameters extends RVParameters {
 
         @Override
         protected void fillParameters() {
@@ -114,7 +114,7 @@ public final class ExponentialRV extends ParameterizedRV {
         }
 
         @Override
-        public RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double mean = getDoubleParameter("mean");
             return new ExponentialRV(mean, rnStream);
         }

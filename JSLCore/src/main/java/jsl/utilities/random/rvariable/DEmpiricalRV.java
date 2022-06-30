@@ -147,7 +147,7 @@ public final class DEmpiricalRV extends ParameterizedRV {
         return new DEmpiricalRVParameters();
     }
 
-    private static class DEmpiricalRVParameters extends RVParameters {
+    static class DEmpiricalRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleArrayParameter("values", new double[]{0.0, 1.0});
@@ -156,7 +156,7 @@ public final class DEmpiricalRV extends ParameterizedRV {
             setRVType(RVType.DEmpirical);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double[] values = getDoubleArrayParameter("values");
             double[] cdf = getDoubleArrayParameter("cdf");
             return new DEmpiricalRV(values, cdf, rnStream);

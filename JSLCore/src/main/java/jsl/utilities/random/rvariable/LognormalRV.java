@@ -101,7 +101,7 @@ public final class LognormalRV extends ParameterizedRV {
         return new LognormalRVParameters();
     }
 
-    private static class LognormalRVParameters extends RVParameters {
+    static class LognormalRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("mean", 1.0);
@@ -110,7 +110,7 @@ public final class LognormalRV extends ParameterizedRV {
             setRVType(RVType.Lognormal);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double mean = getDoubleParameter("mean");
             double variance = getDoubleParameter("variance");
             return new LognormalRV(mean, variance, rnStream);

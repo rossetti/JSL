@@ -103,7 +103,7 @@ public final class LogLogisticRV extends ParameterizedRV {
         return new LogLogisticRVParameters();
     }
 
-    private static class LogLogisticRVParameters extends RVParameters {
+    static class LogLogisticRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("shape", 1.0);
@@ -112,7 +112,7 @@ public final class LogLogisticRV extends ParameterizedRV {
             setRVType(RVType.LogLogistic);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double scale = getDoubleParameter("scale");
             double shape = getDoubleParameter("shape");
             return new LogLogisticRV(shape, scale, rnStream);

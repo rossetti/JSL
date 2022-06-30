@@ -92,7 +92,7 @@ public class ConstantRV extends ParameterizedRV {
         return new ConstantRVParameters();
     }
 
-    private static class ConstantRVParameters extends RVParameters {
+    static class ConstantRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("value", 1.0);
@@ -100,7 +100,7 @@ public class ConstantRV extends ParameterizedRV {
             setRVType(RVType.Constant);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double value = getDoubleParameter("value");
             return new ConstantRV(value);
         }

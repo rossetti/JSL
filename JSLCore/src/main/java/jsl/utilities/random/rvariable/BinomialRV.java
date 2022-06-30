@@ -28,36 +28,36 @@ public final class BinomialRV extends ParameterizedRV {
     private final int myNumTrials;
 
     /**
-     * @param pSuccess  the probability of success, must be in (0,1)
+     * @param probOfSuccess  the probability of success, must be in (0,1)
      * @param numTrials the number of trials, must be greater than 0
      */
-    public BinomialRV(double pSuccess, int numTrials) {
-        this(pSuccess, numTrials, JSLRandom.nextRNStream());
+    public BinomialRV(double probOfSuccess, int numTrials) {
+        this(probOfSuccess, numTrials, JSLRandom.nextRNStream());
     }
 
     /**
-     * @param pSuccess  the probability of success, must be in (0,1)
+     * @param probOfSuccess  the probability of success, must be in (0,1)
      * @param numTrials the number of trials, must be greater than 0
      * @param streamNum the stream number from the stream provider to use
      */
-    public BinomialRV(double pSuccess, int numTrials, int streamNum) {
-        this(pSuccess, numTrials, JSLRandom.rnStream(streamNum));
+    public BinomialRV(double probOfSuccess, int numTrials, int streamNum) {
+        this(probOfSuccess, numTrials, JSLRandom.rnStream(streamNum));
     }
 
     /**
-     * @param pSuccess  the probability of success, must be in (0,1)
+     * @param probOfSuccess  the probability of success, must be in (0,1)
      * @param numTrials the number of trials, must be greater than 0
      * @param stream    the stream from the stream provider to use
      */
-    public BinomialRV(double pSuccess, int numTrials, RNStreamIfc stream) {
+    public BinomialRV(double probOfSuccess, int numTrials, RNStreamIfc stream) {
         super(stream);
-        if ((pSuccess < 0.0) || (pSuccess > 1.0)) {
+        if ((probOfSuccess < 0.0) || (probOfSuccess > 1.0)) {
             throw new IllegalArgumentException("Success Probability must be [0,1]");
         }
         if (numTrials <= 0) {
             throw new IllegalArgumentException("Number of trials must be >= 1");
         }
-        myProbSuccess = pSuccess;
+        myProbSuccess = probOfSuccess;
         myNumTrials = numTrials;
     }
 
@@ -72,7 +72,7 @@ public final class BinomialRV extends ParameterizedRV {
     @Override
     public String toString() {
         return "BinomialRV{" +
-                "probSuccess=" + myProbSuccess +
+                "probOfSuccess=" + myProbSuccess +
                 ", numTrials=" + myNumTrials +
                 '}';
     }
@@ -82,7 +82,7 @@ public final class BinomialRV extends ParameterizedRV {
      *
      * @return The success probability
      */
-    public double getProb() {
+    public double getProbOfSuccess() {
         return (myProbSuccess);
     }
 
@@ -91,7 +91,7 @@ public final class BinomialRV extends ParameterizedRV {
      *
      * @return the number of trials
      */
-    public int getTrials() {
+    public int getNumTrials() {
         return (myNumTrials);
     }
 
@@ -103,8 +103,8 @@ public final class BinomialRV extends ParameterizedRV {
     @Override
     public RVParameters getParameters() {
         RVParameters parameters = new BinomialRVParameters();
-        parameters.changeDoubleParameter("ProbOfSuccess", myProbSuccess);
-        parameters.changeIntegerParameter("NumTrials", myNumTrials);
+        parameters.changeDoubleParameter("probOfSuccess", myProbSuccess);
+        parameters.changeIntegerParameter("numTrials", myNumTrials);
         return parameters;
     }
 
@@ -119,19 +119,19 @@ public final class BinomialRV extends ParameterizedRV {
         return new BinomialRVParameters();
     }
 
-    private static class BinomialRVParameters extends RVParameters {
+    static class BinomialRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
-            addDoubleParameter("ProbOfSuccess", 0.5);
-            addIntegerParameter("NumTrials", 2);
+            addDoubleParameter("probOfSuccess", 0.5);
+            addIntegerParameter("numTrials", 2);
             setClassName(RVType.Binomial.asClass().getName());
             setRVType(RVType.Binomial);
         }
 
         @Override
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
-            double probOfSuccess = getDoubleParameter("ProbOfSuccess");
-            int numTrials = getIntegerParameter("NumTrials");
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double probOfSuccess = getDoubleParameter("probOfSuccess");
+            int numTrials = getIntegerParameter("numTrials");
             return new BinomialRV(probOfSuccess, numTrials, rnStream);
         }
     }

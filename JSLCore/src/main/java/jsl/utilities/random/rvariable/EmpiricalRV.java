@@ -75,7 +75,7 @@ public final class EmpiricalRV extends ParameterizedRV {
         return new EmpiricalRVParameters();
     }
 
-    private static class EmpiricalRVParameters extends RVParameters {
+    static class EmpiricalRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleArrayParameter("Population", new double[1]);
@@ -83,7 +83,7 @@ public final class EmpiricalRV extends ParameterizedRV {
             setRVType(RVType.Empirical);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double[] population = getDoubleArrayParameter("Population");
             return new EmpiricalRV(population, rnStream);
         }

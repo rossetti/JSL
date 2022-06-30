@@ -146,7 +146,7 @@ public class AR1NormalRV extends ParameterizedRV {
         return new AR1NormalRVParameters();
     }
 
-    private static class AR1NormalRVParameters extends RVParameters {
+    static class AR1NormalRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("mean", 0.0);
@@ -156,7 +156,7 @@ public class AR1NormalRV extends ParameterizedRV {
             setRVType(RVType.AR1Normal);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double mean = getDoubleParameter("mean");
             double variance = getDoubleParameter("variance");
             double correlation = getDoubleParameter("variance");

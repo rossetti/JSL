@@ -167,7 +167,7 @@ public final class GammaRV extends ParameterizedRV {
         }
     }
 
-    private static class GammaRVParameters extends RVParameters {
+    static class GammaRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("shape", 1.0);
@@ -176,7 +176,7 @@ public final class GammaRV extends ParameterizedRV {
             setRVType(RVType.Gamma);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double scale = getDoubleParameter("scale");
             double shape = getDoubleParameter("shape");
             return new GammaRV(shape, scale, rnStream);

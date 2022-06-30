@@ -84,7 +84,7 @@ public final class ChiSquaredRV extends ParameterizedRV {
         return new ChiSquaredRVParameters();
     }
 
-    private static class ChiSquaredRVParameters extends RVParameters {
+    static class ChiSquaredRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("dof", 1.0);
@@ -92,7 +92,7 @@ public final class ChiSquaredRV extends ParameterizedRV {
             setRVType(RVType.ChiSquared);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double dof = getDoubleParameter("dof");
             return new ChiSquaredRV(dof, rnStream);
         }

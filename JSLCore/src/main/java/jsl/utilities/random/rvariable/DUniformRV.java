@@ -100,7 +100,7 @@ public final class DUniformRV extends ParameterizedRV {
         return new DUniformRVParameters();
     }
 
-    private static class DUniformRVParameters extends RVParameters {
+    static class DUniformRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addIntegerParameter("min", 0);
@@ -109,7 +109,7 @@ public final class DUniformRV extends ParameterizedRV {
             setRVType(RVType.DUniform);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             int min = getIntegerParameter("min");
             int max = getIntegerParameter("max");
             return new DUniformRV(min, max, rnStream);

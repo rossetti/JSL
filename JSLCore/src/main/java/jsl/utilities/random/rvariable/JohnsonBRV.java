@@ -130,7 +130,7 @@ public final class JohnsonBRV extends ParameterizedRV {
         return new JohnsonBRVParameters();
     }
 
-    private static class JohnsonBRVParameters extends RVParameters {
+    static class JohnsonBRVParameters extends RVParameters {
         @Override
         protected final void fillParameters() {
             addDoubleParameter("alpha1", 0.0);
@@ -141,7 +141,7 @@ public final class JohnsonBRV extends ParameterizedRV {
             setRVType(RVType.JohnsonB);
         }
 
-        public final RVariableIfc makeRVariable(RNStreamIfc rnStream) {
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
             double alpha1 = getDoubleParameter("alpha1");
             double alpha2 = getDoubleParameter("alpha2");
             double min = getDoubleParameter("min");
