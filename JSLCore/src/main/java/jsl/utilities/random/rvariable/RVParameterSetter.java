@@ -114,9 +114,15 @@ public class RVParameterSetter {
                 }
             }
         }
+        JSL.getInstance().LOGGER.info("{} out of {} random variable parameters were changed in the model via the parameter setter.",
+                countChanged, getNumberOfParameterizedRandomVariables());
         return countChanged;
     }
 
+    /**
+     *
+     * @return the JSON representation of the RVParameterSetter
+     */
     public String toJSON() {
         Type type = new TypeToken<RVParameterSetter>() {
         }.getType();

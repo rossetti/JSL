@@ -27,6 +27,7 @@ import jsl.modeling.elements.variable.*;
 //import jsl.spatial.spatial2D.SpatialModel2D;
 import jsl.modeling.elements.entity.EntityType;
 import jsl.observers.ObserverIfc;
+import jsl.utilities.random.rvariable.RVParameterSetter;
 import jsl.utilities.reporting.JSL;
 import jsl.utilities.statistic.StatisticAccessorIfc;
 
@@ -98,6 +99,11 @@ public class Model extends ModelElement {
      *
      */
     private Controls myControls;
+
+    /**
+     * to hold the parameters of the random variables if used
+     */
+    private RVParameterSetter myRVParameterSetter;
 
 //    /**
 //     *
@@ -1126,6 +1132,19 @@ public class Model extends ModelElement {
         return myControls;
     }
 
+    /** Can be used to change the parameters of any random variable
+     * that is using a parameterized random variable
+     *
+     * @return a random variable parameter setter
+     */
+    public final RVParameterSetter getRVParameterSetter(){
+        if (myRVParameterSetter == null){
+            myRVParameterSetter = new RVParameterSetter();
+            myRVParameterSetter.extractParameters(this);
+        }
+        return myRVParameterSetter;
+    }
+
     /**
      *  Called from Simulation.ReplicationExecutionProcess.initializeIterations()
      *  Represents what to do to set up an experiment
@@ -1156,6 +1175,12 @@ public class Model extends ModelElement {
                 JSL.getInstance().LOGGER.info("{} out of {} controls were applied to Model {} to setup the experiment.",
                         k, cMap.size(), getName());
             }
+        }
+
+        // if the user has asked for the parameters, then they may have changed
+        // thus apply the possibly new parameters to setup the model
+        if (myRVParameterSetter != null){
+            myRVParameterSetter.applyParameterChanges(this);
         }
 
         // do all model element beforeExperiment() actions

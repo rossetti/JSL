@@ -20,6 +20,7 @@ import jsl.observers.ObservableIfc;
 import jsl.observers.ObserverIfc;
 import jsl.observers.scheduler.ExecutiveTraceReport;
 import jsl.observers.textfile.IPLogReport;
+import jsl.utilities.random.rvariable.RVParameterSetter;
 import jsl.utilities.reporting.LogPrintWriter;
 import jsl.utilities.reporting.OutputDirectory;
 import jsl.utilities.reporting.StatisticReporter;
@@ -664,6 +665,15 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
     @Override
     public Optional<Map<String, Double>> getControls() {
         return myExperiment.getControls();
+    }
+
+    /** Can be used to change the parameters of any random variable
+     * that is using a parameterized random variable
+     *
+     * @return a random variable parameter setter
+     */
+    public final RVParameterSetter getRVParameterSetter(){
+        return getModel().getRVParameterSetter();
     }
 
     /**
