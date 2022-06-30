@@ -86,39 +86,16 @@ public final class PearsonType6RV extends ParameterizedRV {
         return v;
     }
 
+    /**
+     * The parameter names are "alpha1", "alpha2", and "beta"
+     *
+     * @return the parameters for PearsonType6 random variables
+     */
     public RVParameters getParameters() {
-        RVParameters parameters = new PearsonType6RVParameters();
+        RVParameters parameters = new RVParameters.PearsonType6RVParameters();
         parameters.changeDoubleParameter("alpha1", myAlpha1);
         parameters.changeDoubleParameter("alpha2", myAlpha2);
         parameters.changeDoubleParameter("beta", myBeta);
         return parameters;
-    }
-
-    /**
-     * The keys are "alpha1" with default value 2.0 and "alpha2" with
-     * default value 3.0, and "beta" with default value 1.0
-     *
-     * @return a control for PearsonType6 random variables
-     */
-    public static RVParameters createParameters() {
-        return new PearsonType6RVParameters();
-    }
-
-    static class PearsonType6RVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("alpha1", 2.0);
-            addDoubleParameter("alpha2", 3.0);
-            addDoubleParameter("beta", 1.0);
-            setClassName(RVType.PearsonType6.asClass().getName());
-            setRVType(RVType.PearsonType6);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double alpha1 = getDoubleParameter("alpha1");
-            double alpha2 = getDoubleParameter("alpha2");
-            double beta = getDoubleParameter("beta");
-            return new PearsonType6RV(alpha1, alpha2, beta, rnStream);
-        }
     }
 }

@@ -81,32 +81,15 @@ public final class GeometricRV extends ParameterizedRV {
         return JSLRandom.rGeometric(myProbSuccess, myRNStream);
     }
 
+    /**
+     * The parameter name is "ProbOfSuccess"
+     *
+     * @return the parameters for Geometric random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new GeometricRVParameters();
+        RVParameters parameters = new RVParameters.GeometricRVParameters();
         parameters.changeDoubleParameter("ProbOfSuccess", myProbSuccess);
         return parameters;
-    }
-    /**
-     * The key is "ProbOfSuccess", the default value is 0.5
-     *
-     * @return a control for Geometric random variables
-     */
-    public static RVParameters createParameters() {
-        return new GeometricRVParameters();
-    }
-
-    static class GeometricRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("ProbOfSuccess", 0.5);
-            setClassName(RVType.Geometric.asClass().getName());
-            setRVType(RVType.Geometric);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double probOfSuccess = getDoubleParameter("ProbOfSuccess");
-            return new GeometricRV(probOfSuccess, rnStream);
-        }
     }
 }

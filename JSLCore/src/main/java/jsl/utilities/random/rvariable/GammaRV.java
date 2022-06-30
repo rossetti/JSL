@@ -78,22 +78,17 @@ public final class GammaRV extends ParameterizedRV {
         return myGamma.invCDF(myRNStream.randU01());
     }
 
+    /**
+     * The parameter names are "shape" and "scale"
+     *
+     * @return the parameters for Gamma random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new GammaRVParameters();
+        RVParameters parameters = new RVParameters.GammaRVParameters();
         parameters.changeDoubleParameter("shape", myGamma.getShape());
         parameters.changeDoubleParameter("scale", myGamma.getScale());
         return parameters;
-    }
-
-    /**
-     * The keys are "shape" with default value 1.0 and "scale" with
-     * default value 1.0
-     *
-     * @return a control for Gamma random variables
-     */
-    public static RVParameters createParameters() {
-        return new GammaRVParameters();
     }
 
     /**
@@ -167,19 +162,4 @@ public final class GammaRV extends ParameterizedRV {
         }
     }
 
-    static class GammaRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("shape", 1.0);
-            addDoubleParameter("scale", 1.0);
-            setClassName(RVType.Gamma.asClass().getName());
-            setRVType(RVType.Gamma);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double scale = getDoubleParameter("scale");
-            double shape = getDoubleParameter("shape");
-            return new GammaRV(shape, scale, rnStream);
-        }
-    }
 }

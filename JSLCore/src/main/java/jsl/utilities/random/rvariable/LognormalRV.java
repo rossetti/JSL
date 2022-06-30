@@ -83,37 +83,16 @@ public final class LognormalRV extends ParameterizedRV {
         return JSLRandom.rLogNormal(myMean, myVar, myRNStream);
     }
 
+    /**
+     * The parameter names are "mean" and "variance"
+     *
+     * @return parameters for Lognormal random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new LognormalRVParameters();
+        RVParameters parameters = new RVParameters.LognormalRVParameters();
         parameters.changeDoubleParameter("mean", myMean);
         parameters.changeDoubleParameter("variance", myVar);
         return parameters;
-    }
-
-    /**
-     * The keys are "mean" with default value 1.0 and "variance" with
-     * default value 1.0
-     *
-     * @return a control for Lognormal random variables
-     */
-    public static RVParameters createParameters() {
-        return new LognormalRVParameters();
-    }
-
-    static class LognormalRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("mean", 1.0);
-            addDoubleParameter("variance", 1.0);
-            setClassName(RVType.Lognormal.asClass().getName());
-            setRVType(RVType.Lognormal);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double mean = getDoubleParameter("mean");
-            double variance = getDoubleParameter("variance");
-            return new LognormalRV(mean, variance, rnStream);
-        }
     }
 }

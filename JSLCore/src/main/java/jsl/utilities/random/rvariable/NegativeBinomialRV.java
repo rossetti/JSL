@@ -101,37 +101,16 @@ public final class NegativeBinomialRV extends ParameterizedRV {
         return JSLRandom.rNegBinomial(myProbSuccess, myNumSuccesses, myRNStream);
     }
 
-    @Override
-    public RVParameters getParameters() {
-        RVParameters parameters = new NegativeBinomialRVParameters();
-        parameters.changeDoubleParameter("ProbOfSuccess", myProbSuccess);
-        parameters.changeIntegerParameter("NumSuccesses", (int)myNumSuccesses);
-        return parameters;
-    }
-
     /**
-     * The keys are "ProbOfSuccess", the default value is 0.5 and
-     * "NumSuccesses" with default value 1.
+     * The parameter names are "probOfSuccess" and "numSuccesses"
      *
      * @return a control for Negative Binomial random variables
      */
-    public static RVParameters createParameters() {
-        return new NegativeBinomialRVParameters();
-    }
-
-    static class NegativeBinomialRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("ProbOfSuccess", 0.5);
-            addIntegerParameter("NumSuccesses", 1);
-            setClassName(RVType.NegativeBinomial.asClass().getName());
-            setRVType(RVType.NegativeBinomial);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double probOfSuccess = getDoubleParameter("ProbOfSuccess");
-            double numSuccesses = getDoubleParameter("NumSuccesses");
-            return new NegativeBinomialRV(probOfSuccess, numSuccesses, rnStream);
-        }
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new RVParameters.NegativeBinomialRVParameters();
+        parameters.changeDoubleParameter("probOfSuccess", myProbSuccess);
+        parameters.changeIntegerParameter("numSuccesses", (int)myNumSuccesses);
+        return parameters;
     }
 }

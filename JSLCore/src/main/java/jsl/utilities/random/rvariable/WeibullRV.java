@@ -79,41 +79,19 @@ public final class WeibullRV extends ParameterizedRV {
 
     @Override
     protected double generate() {
-        double v = JSLRandom.rWeibull(myShape, myScale, myRNStream);
-        return v;
-    }
-
-    @Override
-    public RVParameters getParameters() {
-        RVParameters parameters = new WeibullRVParameters();
-        parameters.changeDoubleParameter("shape", myShape);
-        parameters.changeDoubleParameter("scale", myScale);
-        return parameters;
+        return JSLRandom.rWeibull(myShape, myScale, myRNStream);
     }
 
     /**
-     * The keys are "shape" with default value 1.0 and "scale" with
-     * default value 1.0
+     * The parameter names are "shape" and "scale"
      *
-     * @return a control for Weibull random variables
+     * @return the parameters for Weibull random variables
      */
-    public static RVParameters createParameters() {
-        return new WeibullRVParameters();
-    }
-
-    static class WeibullRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("shape", 1.0);
-            addDoubleParameter("scale", 1.0);
-            setClassName(RVType.Weibull.asClass().getName());
-            setRVType(RVType.Weibull);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double scale = getDoubleParameter("scale");
-            double shape = getDoubleParameter("shape");
-            return new WeibullRV(shape, scale, rnStream);
-        }
+    @Override
+    public RVParameters getParameters() {
+        RVParameters parameters = new RVParameters.WeibullRVParameters();
+        parameters.changeDoubleParameter("shape", myShape);
+        parameters.changeDoubleParameter("scale", myScale);
+        return parameters;
     }
 }

@@ -68,33 +68,16 @@ public final class ChiSquaredRV extends ParameterizedRV {
         return JSLRandom.rChiSquared(dof, myRNStream);
     }
 
+    /**
+     * The parameter names: "dof"
+     *
+     * @return parameters for Chi-Squared random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new ChiSquaredRVParameters();
+        RVParameters parameters = new RVParameters.ChiSquaredRVParameters();
         parameters.changeDoubleParameter("dof", dof);
         return parameters;
     }
 
-    /**
-     * The keys are "dof", the default value is 1.0
-     *
-     * @return a control for Chi-Squared random variables
-     */
-    public static RVParameters createParameters() {
-        return new ChiSquaredRVParameters();
-    }
-
-    static class ChiSquaredRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("dof", 1.0);
-            setClassName(RVType.ChiSquared.asClass().getName());
-            setRVType(RVType.ChiSquared);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double dof = getDoubleParameter("dof");
-            return new ChiSquaredRV(dof, rnStream);
-        }
-    }
 }

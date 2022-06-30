@@ -34,16 +34,17 @@ public abstract class RVParameters {
         DataType(Class<?> clazz) {
             this.clazz = clazz;
         }
+
         /**
-         *
          * @return the class associated with this type
          */
         public Class<?> asClass() {
             return clazz;
         }
     }
+
     /**
-     *  To allow setting/tracking of name of parameter
+     * To allow setting/tracking of name of parameter
      */
     private String className;
 
@@ -71,7 +72,7 @@ public abstract class RVParameters {
     private final Map<String, double[]> doubleArrayParameters;
 
     /**
-     *  A map to keep track of parameter names and their types
+     * A map to keep track of parameter names and their types
      */
     //private final transient Map<String, Class<?>> myParameterTypes;
     //TODO marked as transient to prevent JSON serialization error with Class<?> type
@@ -95,30 +96,31 @@ public abstract class RVParameters {
         return type;
     }
 
-    /** Used internally to set the type
+    /**
+     * Used internally to set the type
      *
      * @param type the type
      */
-    final void setRVType(RVType type){
+    final void setRVType(RVType type) {
         Objects.requireNonNull(type, "The supplied type was null");
         this.type = type;
     }
 
     abstract protected void fillParameters();
 
-    /** Use for labeling, etc
+    /**
+     * Use for labeling, etc
      *
      * @param className the name of the parameter
      */
-    protected final void setClassName(String className){
+    protected final void setClassName(String className) {
         this.className = className;
     }
 
     /**
-     *
      * @return the name of the parameter
      */
-    public final String getClassName(){
+    public final String getClassName() {
         return className;
     }
 
@@ -132,8 +134,8 @@ public abstract class RVParameters {
     }
 
     /**
-     * @param parameterName   the name of the parameter, must not be null, must not already have been added
-     * @param value the value of the parameter
+     * @param parameterName the name of the parameter, must not be null, must not already have been added
+     * @param value         the value of the parameter
      */
     protected final void addDoubleParameter(String parameterName, Double value) {
         addParameterName(parameterName, DataType.DOUBLE);
@@ -141,8 +143,8 @@ public abstract class RVParameters {
     }
 
     /**
-     * @param parameterName   the name of the parameter, must not be null, must not already have been added
-     * @param value the value of the parameter
+     * @param parameterName the name of the parameter, must not be null, must not already have been added
+     * @param value         the value of the parameter
      */
     protected final void addIntegerParameter(String parameterName, Integer value) {
         addParameterName(parameterName, DataType.INTEGER);
@@ -150,8 +152,8 @@ public abstract class RVParameters {
     }
 
     /**
-     * @param parameterName   the name of the parameter, must not be null, must not already have been added
-     * @param value the value of the parameter
+     * @param parameterName the name of the parameter, must not be null, must not already have been added
+     * @param value         the value of the parameter
      */
     protected final void addDoubleArrayParameter(String parameterName, double[] value) {
         addParameterName(parameterName, DataType.DOUBLE_ARRAY);
@@ -184,19 +186,19 @@ public abstract class RVParameters {
     }
 
     /**
-     *
      * @return an unmodifiable Set view of the parameter names
      */
-    public final Set<String> getParameterNames(){
+    public final Set<String> getParameterNames() {
         return Collections.unmodifiableSet(dataTypes.keySet());
     }
 
-    /** Can be used to determine which of the getXParameter(String key) methods to call
+    /**
+     * Can be used to determine which of the getXParameter(String key) methods to call
      *
      * @param name the name of the parameter
      * @return the Class type of the parameter
      */
-    public final DataType getParameterDataType(String name){
+    public final DataType getParameterDataType(String name) {
         return dataTypes.get(name);
     }
 
@@ -216,8 +218,8 @@ public abstract class RVParameters {
      * Changes the value associated with the parameterName to the supplied value.  If the parameterName is null
      * or there is no parameter for the supplied parameterName, then an exception occurs
      *
-     * @param parameterName   parameterName with which the value is to be associated
-     * @param value the value to be associated with parameterName
+     * @param parameterName parameterName with which the value is to be associated
+     * @param value         the value to be associated with parameterName
      * @return the previous value that was associated with the parameterName
      */
     public double changeDoubleParameter(String parameterName, Double value) {
@@ -258,8 +260,8 @@ public abstract class RVParameters {
      * <p>
      * The supplied array is copied.
      *
-     * @param parameterName   parameterName with which the double[] value is to be associated
-     * @param value the double[] value to be associated with parameterName, cannot be null, must be same size as original double[]
+     * @param parameterName parameterName with which the double[] value is to be associated
+     * @param value         the double[] value to be associated with parameterName, cannot be null, must be same size as original double[]
      * @return the previous double[] value that was associated with the parameterName
      */
     public double[] changeDoubleArrayParameter(String parameterName, double[] value) {
@@ -294,7 +296,7 @@ public abstract class RVParameters {
      * or there is no parameter for the supplied parameterName, then an exception occurs.
      *
      * @param parameterName the name of the parameter
-     * @param value the value of the parameter
+     * @param value         the value of the parameter
      * @return the previous value that was associated with the parameterName
      */
     public int changeIntegerParameter(String parameterName, int value) {
@@ -399,27 +401,28 @@ public abstract class RVParameters {
         return sb.toString();
     }
 
-    public String toJSON(){
+    public String toJSON() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(this);
     }
 
-    /** Copies from the supplied parameters into this parameters
+    /**
+     * Copies from the supplied parameters into this parameters
      *
      * @param rvParameters the parameters to copy from
      */
-    public void copyFrom(RVParameters rvParameters){
+    public void copyFrom(RVParameters rvParameters) {
         Objects.requireNonNull(rvParameters, "The supplied RVParameters was null");
-        if (this.type != rvParameters.type){
+        if (this.type != rvParameters.type) {
             throw new IllegalArgumentException("Cannot copy into with different parameter types");
         }
-        if (this.equals(rvParameters)){
+        if (this.equals(rvParameters)) {
             return;
         }
         // not equal copy over, will have same keys
         doubleParameters.putAll(rvParameters.doubleParameters);
         integerParameters.putAll(rvParameters.integerParameters);
-        for(Map.Entry<String, double[]> entry: rvParameters.doubleArrayParameters.entrySet()){
+        for (Map.Entry<String, double[]> entry : rvParameters.doubleArrayParameters.entrySet()) {
             changeDoubleArrayParameter(entry.getKey(), entry.getValue());
         }
     }
@@ -438,7 +441,7 @@ public abstract class RVParameters {
         // must have the same keys
         if (!doubleArrayParameters.keySet().equals(that.doubleArrayParameters.keySet())) return false;
         // ok, same keys, now check the values for each key
-        for(Map.Entry<String, double[]> entry: doubleArrayParameters.entrySet()){
+        for (Map.Entry<String, double[]> entry : doubleArrayParameters.entrySet()) {
             String key = entry.getKey();
             double[] thisData = entry.getValue();
             double[] thatData = that.doubleArrayParameters.get(key);
@@ -456,7 +459,7 @@ public abstract class RVParameters {
         list.add(doubleParameters);
         list.add(integerParameters);
         list.add(dataTypes);
-        for(Map.Entry<String, double[]> entry: doubleArrayParameters.entrySet()){
+        for (Map.Entry<String, double[]> entry : doubleArrayParameters.entrySet()) {
             String key = entry.getKey();
             double[] thisData = entry.getValue();
             list.add(key);
@@ -468,9 +471,9 @@ public abstract class RVParameters {
 
     public static void main(String[] args) {
         RVParameters p1 = RVType.Binomial.getRVParameters();
-        RVParameters p2 =RVType.Normal.getRVParameters();
-        RVParameters p3 =RVType.Triangular.getRVParameters();
-        RVParameters p4 =RVType.Triangular.getRVParameters();
+        RVParameters p2 = RVType.Normal.getRVParameters();
+        RVParameters p3 = RVType.Triangular.getRVParameters();
+        RVParameters p4 = RVType.Triangular.getRVParameters();
 
         System.out.println(p1.toJSON());
         System.out.println();
@@ -484,32 +487,32 @@ public abstract class RVParameters {
         System.out.println(p4.toJSON());
         System.out.println();
 
-        if (p3.equals(p4)){
+        if (p3.equals(p4)) {
             System.out.println("p3 == p4");
         } else {
             System.out.println("p3 != p4");
         }
 
-        if (p3.hashCode() == p4.hashCode()){
+        if (p3.hashCode() == p4.hashCode()) {
             System.out.println("hashcode p3 == p4");
         } else {
             System.out.println("hashcode p3 != p4");
         }
 
-        if (p1.equals(p2)){
+        if (p1.equals(p2)) {
             System.out.println("p1 == p2");
         } else {
             System.out.println("p1 != p2");
         }
 
         p3.changeDoubleParameter("min", -5.0);
-        if (p3.equals(p4)){
+        if (p3.equals(p4)) {
             System.out.println("p3 == p4");
         } else {
             System.out.println("p3 != p4");
         }
 
-        if (p3.hashCode() == p4.hashCode()){
+        if (p3.hashCode() == p4.hashCode()) {
             System.out.println("hashcode p3 == p4");
         } else {
             System.out.println("hashcode p3 != p4");
@@ -517,13 +520,13 @@ public abstract class RVParameters {
 
         // not copy them over so that they are back to being the same
         p4.copyFrom(p3);
-        if (p3.equals(p4)){
+        if (p3.equals(p4)) {
             System.out.println("p3 == p4");
         } else {
             System.out.println("p3 != p4");
         }
 
-        if (p3.hashCode() == p4.hashCode()){
+        if (p3.hashCode() == p4.hashCode()) {
             System.out.println("hashcode p3 == p4");
         } else {
             System.out.println("hashcode p3 != p4");
@@ -534,5 +537,422 @@ public abstract class RVParameters {
 
         System.out.println(p4.toJSON());
         System.out.println();
+    }
+
+    static class WeibullRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("shape", 1.0);
+            addDoubleParameter("scale", 1.0);
+            setClassName(RVType.Weibull.getParametrizedRVClass().getName());
+            setRVType(RVType.Weibull);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double scale = getDoubleParameter("scale");
+            double shape = getDoubleParameter("shape");
+            return new WeibullRV(shape, scale, rnStream);
+        }
+    }
+
+    static class UniformRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("min", 0.0);
+            addDoubleParameter("max", 1.0);
+            setClassName(RVType.Uniform.getParametrizedRVClass().getName());
+            setRVType(RVType.Uniform);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double min = getDoubleParameter("min");
+            double max = getDoubleParameter("max");
+            return new UniformRV(min, max, rnStream);
+        }
+    }
+
+    static class TriangularRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("min", 0.0);
+            addDoubleParameter("mode", 0.5);
+            addDoubleParameter("max", 1.0);
+            setRVType(RVType.Triangular);
+            setClassName(RVType.Triangular.getParametrizedRVClass().getName());
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double mode = getDoubleParameter("mode");
+            double min = getDoubleParameter("min");
+            double max = getDoubleParameter("max");
+            return new TriangularRV(min, mode, max, rnStream);
+        }
+    }
+
+    static class ShiftedGeometricRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("probOfSuccess", 0.5);
+            setClassName(RVType.ShiftedGeometric.getParametrizedRVClass().getName());
+            setRVType(RVType.ShiftedGeometric);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double probOfSuccess = getDoubleParameter("probOfSuccess");
+            return new ShiftedGeometricRV(probOfSuccess, rnStream);
+        }
+    }
+
+    static class PoissonRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("mean", 1.0);
+            setClassName(RVType.Poisson.getParametrizedRVClass().getName());
+            setRVType(RVType.Poisson);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double mean = getDoubleParameter("mean");
+            return new PoissonRV(mean, rnStream);
+        }
+    }
+
+    static class PearsonType6RVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("alpha1", 2.0);
+            addDoubleParameter("alpha2", 3.0);
+            addDoubleParameter("beta", 1.0);
+            setClassName(RVType.PearsonType6.getParametrizedRVClass().getName());
+            setRVType(RVType.PearsonType6);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double alpha1 = getDoubleParameter("alpha1");
+            double alpha2 = getDoubleParameter("alpha2");
+            double beta = getDoubleParameter("beta");
+            return new PearsonType6RV(alpha1, alpha2, beta, rnStream);
+        }
+    }
+
+    static class PearsonType5RVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("shape", 1.0);
+            addDoubleParameter("scale", 1.0);
+            setClassName(RVType.PearsonType5.getParametrizedRVClass().getName());
+            setRVType(RVType.PearsonType5);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double scale = getDoubleParameter("scale");
+            double shape = getDoubleParameter("shape");
+            return new PearsonType5RV(shape, scale, rnStream);
+        }
+    }
+
+    static class NormalRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("mean", 0.0);
+            addDoubleParameter("variance", 1.0);
+            setClassName(RVType.Normal.getParametrizedRVClass().getName());
+            setRVType(RVType.Normal);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double mean = getDoubleParameter("mean");
+            double variance = getDoubleParameter("variance");
+            return new NormalRV(mean, variance, rnStream);
+        }
+    }
+
+    static class NegativeBinomialRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("probOfSuccess", 0.5);
+            addIntegerParameter("numSuccesses", 1);
+            setClassName(RVType.NegativeBinomial.getParametrizedRVClass().getName());
+            setRVType(RVType.NegativeBinomial);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double probOfSuccess = getDoubleParameter("probOfSuccess");
+            double numSuccesses = getDoubleParameter("numSuccesses");
+            return new NegativeBinomialRV(probOfSuccess, numSuccesses, rnStream);
+        }
+    }
+
+    static class LognormalRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("mean", 1.0);
+            addDoubleParameter("variance", 1.0);
+            setClassName(RVType.Lognormal.getParametrizedRVClass().getName());
+            setRVType(RVType.Lognormal);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double mean = getDoubleParameter("mean");
+            double variance = getDoubleParameter("variance");
+            return new LognormalRV(mean, variance, rnStream);
+        }
+    }
+
+    static class LogLogisticRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("shape", 1.0);
+            addDoubleParameter("scale", 1.0);
+            setClassName(RVType.LogLogistic.getParametrizedRVClass().getName());
+            setRVType(RVType.LogLogistic);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double scale = getDoubleParameter("scale");
+            double shape = getDoubleParameter("shape");
+            return new LogLogisticRV(shape, scale, rnStream);
+        }
+    }
+
+    static class LaplaceRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("mean", 0.0);
+            addDoubleParameter("scale", 1.0);
+            setClassName(RVType.Laplace.getParametrizedRVClass().getName());
+            setRVType(RVType.Laplace);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double scale = getDoubleParameter("scale");
+            double mean = getDoubleParameter("mean");
+            return new LaplaceRV(mean, scale, rnStream);
+        }
+    }
+
+    static class JohnsonBRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("alpha1", 0.0);
+            addDoubleParameter("alpha2", 1.0);
+            addDoubleParameter("min", 0.0);
+            addDoubleParameter("max", 1.0);
+            setClassName(RVType.JohnsonB.getParametrizedRVClass().getName());
+            setRVType(RVType.JohnsonB);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double alpha1 = getDoubleParameter("alpha1");
+            double alpha2 = getDoubleParameter("alpha2");
+            double min = getDoubleParameter("min");
+            double max = getDoubleParameter("max");
+            return new JohnsonBRV(alpha1, alpha2, min, max, rnStream);
+        }
+    }
+
+    static class GeometricRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("probOfSuccess", 0.5);
+            setClassName(RVType.Geometric.getParametrizedRVClass().getName());
+            setRVType(RVType.Geometric);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double probOfSuccess = getDoubleParameter("probOfSuccess");
+            return new GeometricRV(probOfSuccess, rnStream);
+        }
+    }
+
+    static class GeneralizedBetaRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("alpha1", 1.0);
+            addDoubleParameter("alpha2", 1.0);
+            addDoubleParameter("min", 0.0);
+            addDoubleParameter("max", 1.0);
+            setClassName(RVType.GeneralizedBeta.getParametrizedRVClass().getName());
+            setRVType(RVType.GeneralizedBeta);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double alpha1 = getDoubleParameter("alpha1");
+            double alpha2 = getDoubleParameter("alpha2");
+            double min = getDoubleParameter("min");
+            double max = getDoubleParameter("max");
+            return new GeneralizedBetaRV(alpha1, alpha2, min, max, rnStream);
+        }
+    }
+
+    static class GammaRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("shape", 1.0);
+            addDoubleParameter("scale", 1.0);
+            setClassName(RVType.Gamma.getParametrizedRVClass().getName());
+            setRVType(RVType.Gamma);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double scale = getDoubleParameter("scale");
+            double shape = getDoubleParameter("shape");
+            return new GammaRV(shape, scale, rnStream);
+        }
+    }
+
+    static class ExponentialRVParameters extends RVParameters {
+
+        @Override
+        protected void fillParameters() {
+            addDoubleParameter("mean", 1.0);
+            setClassName(RVType.Exponential.getParametrizedRVClass().getName());
+            setRVType(RVType.Exponential);
+        }
+
+        @Override
+        public RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double mean = getDoubleParameter("mean");
+            return new ExponentialRV(mean, rnStream);
+        }
+    }
+
+    static class EmpiricalRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleArrayParameter("population", new double[1]);
+            setClassName(RVType.Empirical.getParametrizedRVClass().getName());
+            setRVType(RVType.Empirical);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double[] population = getDoubleArrayParameter("population");
+            return new EmpiricalRV(population, rnStream);
+        }
+    }
+
+    static class DUniformRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addIntegerParameter("min", 0);
+            addIntegerParameter("max", 1);
+            setClassName(RVType.DUniform.getParametrizedRVClass().getName());
+            setRVType(RVType.DUniform);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            int min = getIntegerParameter("min");
+            int max = getIntegerParameter("max");
+            return new DUniformRV(min, max, rnStream);
+        }
+    }
+
+    static class DEmpiricalRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleArrayParameter("values", new double[]{0.0, 1.0});
+            addDoubleArrayParameter("cdf", new double[]{0.5, 1.0});
+            setClassName(RVType.DEmpirical.getParametrizedRVClass().getName());
+            setRVType(RVType.DEmpirical);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double[] values = getDoubleArrayParameter("values");
+            double[] cdf = getDoubleArrayParameter("cdf");
+            return new DEmpiricalRV(values, cdf, rnStream);
+        }
+    }
+
+    static class ConstantRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("value", 1.0);
+            setClassName(RVType.Constant.getParametrizedRVClass().getName());
+            setRVType(RVType.Constant);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double value = getDoubleParameter("value");
+            return new ConstantRV(value);
+        }
+    }
+
+    static class ChiSquaredRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("dof", 1.0);
+            setClassName(RVType.ChiSquared.getParametrizedRVClass().getName());
+            setRVType(RVType.ChiSquared);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double dof = getDoubleParameter("dof");
+            return new ChiSquaredRV(dof, rnStream);
+        }
+    }
+
+    static class BinomialRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("probOfSuccess", 0.5);
+            addIntegerParameter("numTrials", 2);
+            setClassName(RVType.Binomial.getParametrizedRVClass().getName());
+            setRVType(RVType.Binomial);
+        }
+
+        @Override
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double probOfSuccess = getDoubleParameter("probOfSuccess");
+            int numTrials = getIntegerParameter("numTrials");
+            return new BinomialRV(probOfSuccess, numTrials, rnStream);
+        }
+    }
+
+    static class BetaRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("alpha1", 1.0);
+            addDoubleParameter("alpha2", 1.0);
+            setClassName(RVType.Beta.getParametrizedRVClass().getName());
+            setRVType(RVType.Beta);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double alpha1 = getDoubleParameter("alpha1");
+            double alpha2 = getDoubleParameter("alpha2");
+            return new BetaRV(alpha1, alpha2, rnStream);
+        }
+    }
+
+    static class BernoulliRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("probOfSuccess", 0.5);
+            setClassName(RVType.Bernoulli.getParametrizedRVClass().getName());
+            setRVType(RVType.Bernoulli);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double probOfSuccess = getDoubleParameter("probOfSuccess");
+            return new BernoulliRV(probOfSuccess, rnStream);
+        }
+    }
+
+    static class AR1NormalRVParameters extends RVParameters {
+        @Override
+        protected final void fillParameters() {
+            addDoubleParameter("mean", 0.0);
+            addDoubleParameter("variance", 1.0);
+            addDoubleParameter("correlation", 0.0);
+            setClassName(RVType.AR1Normal.getParametrizedRVClass().getName());
+            setRVType(RVType.AR1Normal);
+        }
+
+        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
+            double mean = getDoubleParameter("mean");
+            double variance = getDoubleParameter("variance");
+            double correlation = getDoubleParameter("variance");
+            return new AR1NormalRV(mean, variance, correlation, rnStream);
+        }
     }
 }

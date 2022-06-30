@@ -76,33 +76,15 @@ public class ConstantRV extends ParameterizedRV {
         return myValue;
     }
 
+    /**
+     * The parameter names are "value"
+     *
+     * @return the parameters for Constant random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new ConstantRVParameters();
+        RVParameters parameters = new RVParameters.ConstantRVParameters();
         parameters.changeDoubleParameter("value", myValue);
         return parameters;
-    }
-
-    /**
-     * The keys are "value", the default value is 1.0
-     *
-     * @return a control for Constant random variables
-     */
-    public static RVParameters createParameters() {
-        return new ConstantRVParameters();
-    }
-
-    static class ConstantRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("value", 1.0);
-            setClassName(RVType.Constant.asClass().getName());
-            setRVType(RVType.Constant);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double value = getDoubleParameter("value");
-            return new ConstantRV(value);
-        }
     }
 }

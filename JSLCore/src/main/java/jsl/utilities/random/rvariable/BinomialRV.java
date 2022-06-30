@@ -100,39 +100,18 @@ public final class BinomialRV extends ParameterizedRV {
         return JSLRandom.rBinomial(myProbSuccess, myNumTrials, myRNStream);
     }
 
+    /**
+     * The keys are "probOfSuccess",  numTrials is an Integer and
+     * ProbOfSuccess is a Double.
+     *
+     * @return a parameters for Binomial random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new BinomialRVParameters();
+        RVParameters parameters = new RVParameters.BinomialRVParameters();
         parameters.changeDoubleParameter("probOfSuccess", myProbSuccess);
         parameters.changeIntegerParameter("numTrials", myNumTrials);
         return parameters;
     }
 
-    /**
-     * The keys are "ProbOfSuccess", the default value is 0.5 and
-     * "NumTrials" with default value 2.  NumTrials is an Integer control and
-     * ProbOfSuccess is a Double control.
-     *
-     * @return a control for Binomial random variables
-     */
-    public static RVParameters createParameters() {
-        return new BinomialRVParameters();
-    }
-
-    static class BinomialRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("probOfSuccess", 0.5);
-            addIntegerParameter("numTrials", 2);
-            setClassName(RVType.Binomial.asClass().getName());
-            setRVType(RVType.Binomial);
-        }
-
-        @Override
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double probOfSuccess = getDoubleParameter("probOfSuccess");
-            int numTrials = getIntegerParameter("numTrials");
-            return new BinomialRV(probOfSuccess, numTrials, rnStream);
-        }
-    }
 }

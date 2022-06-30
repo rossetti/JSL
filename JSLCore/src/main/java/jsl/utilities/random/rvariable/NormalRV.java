@@ -97,22 +97,17 @@ public final class NormalRV extends ParameterizedRV {
         return JSLRandom.rNormal(myMean, myVar, myRNStream);
     }
 
+    /**
+     * The parameter names are "mean" and "variance"
+     *
+     * @return the parameters for Normal random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new NormalRVParameters();
+        RVParameters parameters = new RVParameters.NormalRVParameters();
         parameters.changeDoubleParameter("mean", myMean);
         parameters.changeDoubleParameter("variance", myVar);
         return parameters;
-    }
-
-    /**
-     * The keys are "mean" with default value 0.0 and "variance" with
-     * default value 1.0
-     *
-     * @return a control for Normal random variables
-     */
-    public static RVParameters createParameters() {
-        return new NormalRVParameters();
     }
 
     /**
@@ -144,19 +139,4 @@ public final class NormalRV extends ParameterizedRV {
         }
     }
 
-    static class NormalRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("mean", 0.0);
-            addDoubleParameter("variance", 1.0);
-            setClassName(RVType.Normal.asClass().getName());
-            setRVType(RVType.Normal);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double mean = getDoubleParameter("mean");
-            double variance = getDoubleParameter("variance");
-            return new NormalRV(mean, variance, rnStream);
-        }
-    }
 }

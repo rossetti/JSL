@@ -79,37 +79,16 @@ public final class LaplaceRV extends ParameterizedRV {
         return JSLRandom.rLaplace(myMean, myScale, myRNStream);
     }
 
+    /**
+     * The parameters are "mean" and "scale"
+     *
+     * @return the parameters for Laplace random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new LaplaceRVParameters();
+        RVParameters parameters = new RVParameters.LaplaceRVParameters();
         parameters.changeDoubleParameter("mean", myMean);
         parameters.changeDoubleParameter("scale", myScale);
         return parameters;
-    }
-
-    /**
-     * The keys are "mean" with default value 0.0 and "scale" with
-     * default value 1.0
-     *
-     * @return a control for Laplace random variables
-     */
-    public static RVParameters createParameters() {
-        return new LaplaceRVParameters();
-    }
-
-    static class LaplaceRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("mean", 0.0);
-            addDoubleParameter("scale", 1.0);
-            setClassName(RVType.Laplace.asClass().getName());
-            setRVType(RVType.Laplace);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double scale = getDoubleParameter("scale");
-            double mean = getDoubleParameter("mean");
-            return new LaplaceRV(mean, scale, rnStream);
-        }
     }
 }

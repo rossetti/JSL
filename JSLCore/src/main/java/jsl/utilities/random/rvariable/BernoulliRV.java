@@ -113,33 +113,14 @@ public final class BernoulliRV extends ParameterizedRV {
         return b;
     }
 
+    /** The parameter names: probOfSuccess
+     *
+     * @return the parameters
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new BernoulliRVParameters();
+        RVParameters parameters = new RVParameters.BernoulliRVParameters();
         parameters.changeDoubleParameter("probOfSuccess", myProbSuccess);
         return parameters;
-    }
-
-    /**
-     * The key is "probOfSuccess", the default value is 0.5
-     *
-     * @return a control for Bernoulli random variables
-     */
-    static RVParameters createParameters() {
-        return new BernoulliRVParameters();
-    }
-
-    static class BernoulliRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("probOfSuccess", 0.5);
-            setClassName(RVType.Bernoulli.asClass().getName());
-            setRVType(RVType.Bernoulli);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double probOfSuccess = getDoubleParameter("probOfSuccess");
-            return new BernoulliRV(probOfSuccess, rnStream);
-        }
     }
 }

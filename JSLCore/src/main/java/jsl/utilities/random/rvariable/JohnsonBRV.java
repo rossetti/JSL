@@ -109,44 +109,18 @@ public final class JohnsonBRV extends ParameterizedRV {
         return JSLRandom.rJohnsonB(myAlpha1, myAlpha2, myMin, myMax, myRNStream);
     }
 
+    /**
+     * The parameter names are "alpha1", "alpha2", "min", and "max"
+     *
+     * @return a control for JohnsonB random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new JohnsonBRVParameters();
+        RVParameters parameters = new RVParameters.JohnsonBRVParameters();
         parameters.changeDoubleParameter("alpha1", myAlpha1);
         parameters.changeDoubleParameter("alpha2", myAlpha2);
         parameters.changeDoubleParameter("min", myMin);
         parameters.changeDoubleParameter("max", myMax);
         return parameters;
-    }
-
-    /**
-     * The keys are "alpha1" with default value 0.0,
-     * "alpha2" with default value 1.0,  "min" with default value 0.0 and "max" with
-     * default value 1.0
-     *
-     * @return a control for JohnsonB random variables
-     */
-    public static RVParameters createParameters() {
-        return new JohnsonBRVParameters();
-    }
-
-    static class JohnsonBRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("alpha1", 0.0);
-            addDoubleParameter("alpha2", 1.0);
-            addDoubleParameter("min", 0.0);
-            addDoubleParameter("max", 1.0);
-            setClassName(RVType.JohnsonB.asClass().getName());
-            setRVType(RVType.JohnsonB);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double alpha1 = getDoubleParameter("alpha1");
-            double alpha2 = getDoubleParameter("alpha2");
-            double min = getDoubleParameter("min");
-            double max = getDoubleParameter("max");
-            return new JohnsonBRV(alpha1, alpha2, min, max, rnStream);
-        }
     }
 }

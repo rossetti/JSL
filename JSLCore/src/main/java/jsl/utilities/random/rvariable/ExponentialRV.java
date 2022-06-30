@@ -88,35 +88,15 @@ public final class ExponentialRV extends ParameterizedRV {
         return JSLRandom.rExponential(mean, myRNStream);
     }
 
+    /**
+     * The parameter name is "mean"
+     *
+     * @return parameter for Exponential random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new ExponentialRVParameters();
+        RVParameters parameters = new RVParameters.ExponentialRVParameters();
         parameters.changeDoubleParameter("mean", mean);
         return parameters;
-    }
-
-    /**
-     * The key is "mean" with default value 1.0
-     *
-     * @return a control for Exponential random variables
-     */
-    public static RVParameters createParameters() {
-        return new ExponentialRVParameters();
-    }
-
-    static class ExponentialRVParameters extends RVParameters {
-
-        @Override
-        protected void fillParameters() {
-            addDoubleParameter("mean", 1.0);
-            setClassName(RVType.Exponential.asClass().getName());
-            setRVType(RVType.Exponential);
-        }
-
-        @Override
-        public RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double mean = getDoubleParameter("mean");
-            return new ExponentialRV(mean, rnStream);
-        }
     }
 }

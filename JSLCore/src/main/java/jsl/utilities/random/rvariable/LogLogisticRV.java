@@ -85,37 +85,17 @@ public final class LogLogisticRV extends ParameterizedRV {
         return JSLRandom.rLogLogistic(myShape, myScale, myRNStream);
     }
 
+    /**
+     * The parameter names are "shape" and "scale"
+     *
+     * @return the parameters for LogLogistic random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new LogLogisticRVParameters();
+        RVParameters parameters = new RVParameters.LogLogisticRVParameters();
         parameters.changeDoubleParameter("shape", myShape);
         parameters.changeDoubleParameter("scale", myScale);
         return parameters;
     }
 
-    /**
-     * The keys are "shape" with default value 1.0 and "scale" with
-     * default value 1.0
-     *
-     * @return a control for LogLogistic random variables
-     */
-    public static RVParameters createParameters() {
-        return new LogLogisticRVParameters();
-    }
-
-    static class LogLogisticRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("shape", 1.0);
-            addDoubleParameter("scale", 1.0);
-            setClassName(RVType.LogLogistic.asClass().getName());
-            setRVType(RVType.LogLogistic);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double scale = getDoubleParameter("scale");
-            double shape = getDoubleParameter("shape");
-            return new LogLogisticRV(shape, scale, rnStream);
-        }
-    }
 }

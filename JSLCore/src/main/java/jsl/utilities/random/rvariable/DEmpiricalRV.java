@@ -129,37 +129,17 @@ public final class DEmpiricalRV extends ParameterizedRV {
         return value;
     }
 
+    /**
+     * The parameter names are "values" and "cdf"
+     *
+     * @return the parameters for DEmpirical random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new DEmpiricalRVParameters();
+        RVParameters parameters = new RVParameters.DEmpiricalRVParameters();
         parameters.changeDoubleArrayParameter("values", myValues);
         parameters.changeDoubleArrayParameter("cdf", myCDF);
         return parameters;
     }
 
-    /**
-     * The keys are "values" with default an array {0.0, 1.0} and
-     * key "cdf" with default array {0.5, 1.0}
-     *
-     * @return a control for DEmpirical random variables
-     */
-    public static RVParameters createParameters() {
-        return new DEmpiricalRVParameters();
-    }
-
-    static class DEmpiricalRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleArrayParameter("values", new double[]{0.0, 1.0});
-            addDoubleArrayParameter("cdf", new double[]{0.5, 1.0});
-            setClassName(RVType.DEmpirical.asClass().getName());
-            setRVType(RVType.DEmpirical);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double[] values = getDoubleArrayParameter("values");
-            double[] cdf = getDoubleArrayParameter("cdf");
-            return new DEmpiricalRV(values, cdf, rnStream);
-        }
-    }
 }

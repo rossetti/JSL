@@ -86,37 +86,18 @@ public final class BetaRV extends ParameterizedRV {
         return Beta.stdBetaInvCDF(myRNStream.randU01(), myAlpha1, myAlpha1, mylnBetaA1A2);
     }
 
+    /**
+     * The keys are "alpha1", the default value is 1.0 and
+     * "alpha2" with default value 1.0.
+     *
+     * @return a parameters for Beta random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new BetaRVParameters();
+        RVParameters parameters = new RVParameters.BetaRVParameters();
         parameters.changeDoubleParameter("alpha1", myAlpha1);
         parameters.changeDoubleParameter("alpha2", myAlpha2);
         return parameters;
     }
 
-    /**
-     * The keys are "alpha1", the default value is 1.0 and
-     * "alpha2" with default value 1.0.
-     *
-     * @return a control for Beta random variables
-     */
-    public static RVParameters createParameters() {
-        return new BetaRVParameters();
-    }
-
-    static class BetaRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("alpha1", 1.0);
-            addDoubleParameter("alpha2", 1.0);
-            setClassName(RVType.Beta.asClass().getName());
-            setRVType(RVType.Beta);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double alpha1 = getDoubleParameter("alpha1");
-            double alpha2 = getDoubleParameter("alpha2");
-            return new BetaRV(alpha1, alpha2, rnStream);
-        }
-    }
 }

@@ -68,33 +68,16 @@ public final class PoissonRV extends ParameterizedRV {
         return JSLRandom.rPoisson(mean, myRNStream);
     }
 
+    /**
+     * The parameter name is "mean"
+     *
+     * @return the parameter for Poisson random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new PoissonRVParameters();
+        RVParameters parameters = new RVParameters.PoissonRVParameters();
         parameters.changeDoubleParameter("mean", mean);
         return parameters;
     }
 
-    /**
-     * The key is "mean" with default value 1.0
-     *
-     * @return a control for Poisson random variables
-     */
-    public static RVParameters createParameters() {
-        return new PoissonRVParameters();
-    }
-
-    static class PoissonRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("mean", 1.0);
-            setClassName(RVType.Poisson.asClass().getName());
-            setRVType(RVType.Poisson);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double mean = getDoubleParameter("mean");
-            return new PoissonRV(mean, rnStream);
-        }
-    }
 }

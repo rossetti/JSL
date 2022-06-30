@@ -86,36 +86,17 @@ public final class UniformRV extends ParameterizedRV {
         return JSLRandom.rUniform(min, max, myRNStream);
     }
 
+    /**
+     * The parameter names are "min" and "max"
+     *
+     * @return the parameters for Uniform random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new UniformRVParameters();
+        RVParameters parameters = new RVParameters.UniformRVParameters();
         parameters.changeDoubleParameter("min", min);
         parameters.changeDoubleParameter("max", max);
         return parameters;
     }
 
-    /**
-     * The keys are "min" with default value 0.0 and "max" with default value 1.0
-     *
-     * @return a control for Uniform random variables
-     */
-    public static RVParameters createParameters() {
-        return new UniformRVParameters();
-    }
-
-    static class UniformRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("min", 0.0);
-            addDoubleParameter("max", 1.0);
-            setClassName(RVType.Uniform.asClass().getName());
-            setRVType(RVType.Uniform);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double min = getDoubleParameter("min");
-            double max = getDoubleParameter("max");
-            return new UniformRV(min, max, rnStream);
-        }
-    }
 }

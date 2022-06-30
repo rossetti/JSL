@@ -9,150 +9,155 @@ import java.util.Objects;
  * The set of pre-defined distribution types
  */
 public enum RVType {
-    Bernoulli(BernoulliRV.class) {
+    Bernoulli(BernoulliRV.class, RVParameters.BernoulliRVParameters.class) {
         public RVParameters getRVParameters() {
-            return BernoulliRV.createParameters();
+            return new RVParameters.BernoulliRVParameters();
         }
     },
-    Beta(BetaRV.class) {
+    Beta(BetaRV.class, RVParameters.BetaRVParameters.class) {
         public RVParameters getRVParameters() {
-            return BetaRV.createParameters();
+            return new RVParameters.BetaRVParameters();
         }
     },
-    ChiSquared(ChiSquaredRV.class) {
+    ChiSquared(ChiSquaredRV.class, RVParameters.ChiSquaredRVParameters.class) {
         public RVParameters getRVParameters() {
-            return ChiSquaredRV.createParameters();
+            return new RVParameters.ChiSquaredRVParameters();
         }
     },
-    Binomial(BinomialRV.class) {
+    Binomial(BinomialRV.class, RVParameters.BinomialRVParameters.class) {
         public RVParameters getRVParameters() {
-            return BinomialRV.createParameters();
+            return new RVParameters.BinomialRVParameters();
         }
     },
-    Constant(ConstantRV.class) {
+    Constant(ConstantRV.class, RVParameters.ConstantRVParameters.class) {
         public RVParameters getRVParameters() {
-            return ConstantRV.createParameters();
+            return new RVParameters.ConstantRVParameters();
         }
     },
-    DUniform(DUniformRV.class) {
+    DUniform(DUniformRV.class, RVParameters.DUniformRVParameters.class) {
         public RVParameters getRVParameters() {
-            return DUniformRV.createParameters();
+            return new RVParameters.DUniformRVParameters();
         }
     },
-    Exponential(ExponentialRV.class) {
+    Exponential(ExponentialRV.class, RVParameters.ExponentialRVParameters.class) {
         public RVParameters getRVParameters() {
-            return ExponentialRV.createParameters();
+            return new RVParameters.ExponentialRVParameters();
         }
     },
-    Gamma(GammaRV.class) {
+    Gamma(GammaRV.class, RVParameters.GammaRVParameters.class) {
         public RVParameters getRVParameters() {
-            return GammaRV.createParameters();
+            return new RVParameters.GammaRVParameters();
         }
     },
-    GeneralizedBeta(GeneralizedBetaRV.class) {
+    GeneralizedBeta(GeneralizedBetaRV.class, RVParameters.GeneralizedBetaRVParameters.class) {
         public RVParameters getRVParameters() {
-            return GeneralizedBetaRV.createParameters();
+            return new RVParameters.GeneralizedBetaRVParameters();
         }
     },
-    Geometric(GeometricRV.class) {
+    Geometric(GeometricRV.class, RVParameters.GeometricRVParameters.class) {
         public RVParameters getRVParameters() {
-            return GeometricRV.createParameters();
+            return new RVParameters.GeometricRVParameters();
         }
     },
-    JohnsonB(JohnsonBRV.class) {
+    JohnsonB(JohnsonBRV.class, RVParameters.JohnsonBRVParameters.class) {
         public RVParameters getRVParameters() {
-            return JohnsonBRV.createParameters();
+            return new RVParameters.JohnsonBRVParameters();
         }
     },
-    Laplace(LaplaceRV.class) {
+    Laplace(LaplaceRV.class, RVParameters.LaplaceRVParameters.class) {
         public RVParameters getRVParameters() {
-            return LaplaceRV.createParameters();
+            return new RVParameters.LaplaceRVParameters();
         }
     },
-    LogLogistic(LogLogisticRV.class) {
+    LogLogistic(LogLogisticRV.class, RVParameters.LogLogisticRVParameters.class) {
         public RVParameters getRVParameters() {
-            return LogLogisticRV.createParameters();
+            return new RVParameters.LogLogisticRVParameters();
         }
     },
-    Lognormal(LognormalRV.class) {
+    Lognormal(LognormalRV.class, RVParameters.LognormalRVParameters.class) {
         public RVParameters getRVParameters() {
-            return LognormalRV.createParameters();
+            return new RVParameters.LognormalRVParameters();
         }
     },
-    NegativeBinomial(NegativeBinomialRV.class) {
+    NegativeBinomial(NegativeBinomialRV.class, RVParameters.NegativeBinomialRVParameters.class) {
         public RVParameters getRVParameters() {
-            return NegativeBinomialRV.createParameters();
+            return new RVParameters.NegativeBinomialRVParameters();
         }
     },
-
-    Normal(NormalRV.class) {
+    Normal(NormalRV.class, RVParameters.NormalRVParameters.class) {
         public RVParameters getRVParameters() {
-            return NormalRV.createParameters();
+            return new RVParameters.NormalRVParameters();
         }
     },
-    PearsonType5(PearsonType5RV.class) {
+    PearsonType5(PearsonType5RV.class, RVParameters.PearsonType5RVParameters.class) {
         public RVParameters getRVParameters() {
-            return PearsonType5RV.createParameters();
+            return new RVParameters.PearsonType5RVParameters();
         }
     },
-    PearsonType6(PearsonType6RV.class) {
+    PearsonType6(PearsonType6RV.class, RVParameters.PearsonType6RVParameters.class) {
         public RVParameters getRVParameters() {
-            return PearsonType6RV.createParameters();
+            return new RVParameters.PearsonType6RVParameters();
         }
     },
-
-    Poisson(PoissonRV.class) {
+    Poisson(PoissonRV.class, RVParameters.PoissonRVParameters.class) {
         public RVParameters getRVParameters() {
-            return PoissonRV.createParameters();
+            return new RVParameters.PoissonRVParameters();
         }
     },
-    ShiftedGeometric(ShiftedGeometricRV.class) {
+    ShiftedGeometric(ShiftedGeometricRV.class, RVParameters.ShiftedGeometricRVParameters.class) {
         public RVParameters getRVParameters() {
-            return ShiftedGeometricRV.createParameters();
+            return new RVParameters.ShiftedGeometricRVParameters();
         }
     },
-    Triangular(TriangularRV.class) {
+    Triangular(TriangularRV.class, RVParameters.TriangularRVParameters.class) {
         public RVParameters getRVParameters() {
-            return TriangularRV.createParameters();
+            return new RVParameters.TriangularRVParameters();
         }
     },
-    Uniform(UniformRV.class) {
+    Uniform(UniformRV.class, RVParameters.UniformRVParameters.class) {
         public RVParameters getRVParameters() {
-            return UniformRV.createParameters();
+            return new RVParameters.UniformRVParameters();
         }
     },
-    Weibull(WeibullRV.class) {
+    Weibull(WeibullRV.class, RVParameters.WeibullRVParameters.class) {
         public RVParameters getRVParameters() {
-            return WeibullRV.createParameters();
+            return new RVParameters.WeibullRVParameters();
         }
     },
-    DEmpirical(DEmpiricalRV.class) {
+    DEmpirical(DEmpiricalRV.class, RVParameters.DEmpiricalRVParameters.class) {
         public RVParameters getRVParameters() {
-            return DEmpiricalRV.createParameters();
+            return new RVParameters.DEmpiricalRVParameters();
         }
     },
-    Empirical(EmpiricalRV.class) {
+    Empirical(EmpiricalRV.class, RVParameters.EmpiricalRVParameters.class) {
         public RVParameters getRVParameters() {
-            return EmpiricalRV.createParameters();
+            return new RVParameters.EmpiricalRVParameters();
         }
     },
-    AR1Normal(DEmpiricalRV.class) {
+    AR1Normal(AR1NormalRV.class, RVParameters.AR1NormalRVParameters.class) {
         public RVParameters getRVParameters() {
-            return AR1NormalRV.createParameters();
+            return new RVParameters.AR1NormalRVParameters();
         }
     };
 
-    private final Class<? extends RVariable> clazz;
+    private final Class<? extends RVariable> parametrizedRVClass;
 
-    RVType(Class<? extends RVariable> clazz) {
-        this.clazz = clazz;
+    private final Class<? extends RVParameters> rvParametersClass;
+
+    RVType(Class<? extends RVariable> rvClass, Class<? extends RVParameters> paramClass) {
+        this.parametrizedRVClass = rvClass;
+        rvParametersClass = paramClass;
     }
 
     /**
      * @return the class associated with this type
      */
-    public Class<? extends RVariable> asClass() {
-        return clazz;
+    public Class<? extends RVariable> getParametrizedRVClass() {
+        return parametrizedRVClass;
+    }
+
+    public Class<? extends RVParameters> getRVParameterClass() {
+        return rvParametersClass;
     }
 
     /**

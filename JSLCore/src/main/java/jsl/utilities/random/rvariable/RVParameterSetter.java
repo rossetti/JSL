@@ -128,28 +128,22 @@ public class RVParameterSetter {
     //TODO does not work because of sub-classes for RVParameters cannot be deserialized
     // https://stackoverflow.com/questions/16000163/using-gson-and-abstract-classes
 
-//    /**
-//     *
-//     * @param json a json string representing a {@literal RVParameterSetter}
-//     * @return the created RVParameterSetter
-//     */
-//    public static RVParameterSetter fromJSON(String json){
-//        Objects.requireNonNull(json, "The supplied json string was null");
-//
-////        RuntimeTypeAdapterFactory<RVParameters> adapter =
-////                RuntimeTypeAdapterFactory
-////                        .of(RVParameters.class)
-////                        .registerSubtype(ObixBaseObj.class)
-////                        .registerSubtype(ObixOp.class);
-//
-////        RuntimeTypeAdapterFactory<RVParameters> adapter =
-////                RuntimeTypeAdapterFactory.of(RVParameters.class);
-////        adapter.registerSubtype()
-//
-//        Gson gson = new Gson();
-//        Type type = new TypeToken<RVParameterSetter>(){}.getType();
-//        return gson.fromJson(json, type);
-//    }
+    /**
+     *
+     * @param json a json string representing a {@literal RVParameterSetter}
+     * @return the created RVParameterSetter
+     */
+    public static RVParameterSetter fromJSON(String json){
+        Objects.requireNonNull(json, "The supplied json string was null");
+        RuntimeTypeAdapterFactory<RVParameters> adapter =
+                RuntimeTypeAdapterFactory.of(RVParameters.class);
+//        for (RVType type : RVType.RVTYPE_SET){
+//            adapter.registerSubtype(type.getRVParameterClass());
+//        }
+        Gson gson=new GsonBuilder().setPrettyPrinting().registerTypeAdapterFactory(adapter).create();
+        Type type = new TypeToken<RVParameterSetter>(){}.getType();
+        return gson.fromJson(json, type);
+    }
 
     public static void main(String[] args) {
         Simulation simulation = new Simulation();
@@ -178,9 +172,9 @@ public class RVParameterSetter {
         String json = setter2.toJSON();
         System.out.println(json);
 
-//        RVParameterSetter setter3 = RVParameterSetter.fromJSON(json);
-//        System.out.println();
-//        System.out.println("From JSON string");
-//        System.out.println(setter3.toJSON());
+        RVParameterSetter setter3 = RVParameterSetter.fromJSON(json);
+        System.out.println();
+        System.out.println("From JSON string");
+        System.out.println(setter3.toJSON());
     }
 }

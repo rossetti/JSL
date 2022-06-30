@@ -103,9 +103,14 @@ public final class GeneralizedBetaRV extends ParameterizedRV {
         return myMin + (myMax - myMin) * x;
     }
 
+    /**
+     * The parameter names are "alpha1", "alpha2"  "min", and "max"
+     *
+     * @return a control for GeneralizeBeta random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new GeneralizedBetaRVParameters();
+        RVParameters parameters = new RVParameters.GeneralizedBetaRVParameters();
         parameters.changeDoubleParameter("alpha1", myBeta.getAlpha1());
         parameters.changeDoubleParameter("alpha2", myBeta.getAlpha2());
         parameters.changeDoubleParameter("min", myMin);
@@ -113,34 +118,4 @@ public final class GeneralizedBetaRV extends ParameterizedRV {
         return parameters;
     }
 
-    /**
-     * The keys are "alpha1" with default value 1.0,
-     * "alpha2" with default value 1.0,  "min" with default value 0.0 and "max" with
-     * default value 1.0
-     *
-     * @return a control for GeneralizeBeta random variables
-     */
-    public static RVParameters createParameters() {
-        return new GeneralizedBetaRVParameters();
-    }
-
-    static class GeneralizedBetaRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("alpha1", 1.0);
-            addDoubleParameter("alpha2", 1.0);
-            addDoubleParameter("min", 0.0);
-            addDoubleParameter("max", 1.0);
-            setClassName(RVType.GeneralizedBeta.asClass().getName());
-            setRVType(RVType.GeneralizedBeta);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double alpha1 = getDoubleParameter("alpha1");
-            double alpha2 = getDoubleParameter("alpha2");
-            double min = getDoubleParameter("min");
-            double max = getDoubleParameter("max");
-            return new GeneralizedBetaRV(alpha1, alpha2, min, max, rnStream);
-        }
-    }
 }

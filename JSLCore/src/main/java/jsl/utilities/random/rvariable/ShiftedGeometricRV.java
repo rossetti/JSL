@@ -81,32 +81,15 @@ public final class ShiftedGeometricRV extends ParameterizedRV {
         return 1.0 + JSLRandom.rGeometric(myProbSuccess, myRNStream);
     }
 
+    /**
+     * The parameter name is "robOfSuccess", the default value is 0.5
+     *
+     * @return the parameter for ShiftedGeometric random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new ShiftedGeometricRVParameters();
-        parameters.changeDoubleParameter("ProbOfSuccess", myProbSuccess);
+        RVParameters parameters = new RVParameters.ShiftedGeometricRVParameters();
+        parameters.changeDoubleParameter("probOfSuccess", myProbSuccess);
         return parameters;
-    }
-    /**
-     * The key is "ProbOfSuccess", the default value is 0.5
-     *
-     * @return a control for ShiftedGeometric random variables
-     */
-    public static RVParameters createParameters() {
-        return new ShiftedGeometricRVParameters();
-    }
-
-    static class ShiftedGeometricRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("ProbOfSuccess", 0.5);
-            setClassName(RVType.ShiftedGeometric.asClass().getName());
-            setRVType(RVType.ShiftedGeometric);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double probOfSuccess = getDoubleParameter("ProbOfSuccess");
-            return new ShiftedGeometricRV(probOfSuccess, rnStream);
-        }
     }
 }

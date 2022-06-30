@@ -85,37 +85,17 @@ public final class PearsonType5RV extends ParameterizedRV {
         return JSLRandom.rPearsonType5(myShape, myScale, myRNStream);
     }
 
+    /**
+     * The parameter names are "shape" and "scale"
+     *
+     * @return the parameters for PearsonType5 random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new PearsonType5RVParameters();
+        RVParameters parameters = new RVParameters.PearsonType5RVParameters();
         parameters.changeDoubleParameter("shape", myShape);
         parameters.changeDoubleParameter("scale", myScale);
         return parameters;
     }
 
-    /**
-     * The keys are "shape" with default value 1.0 and "scale" with
-     * default value 1.0
-     *
-     * @return a control for PearsonType5 random variables
-     */
-    public static RVParameters createParameters() {
-        return new PearsonType5RVParameters();
-    }
-
-    static class PearsonType5RVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("shape", 1.0);
-            addDoubleParameter("scale", 1.0);
-            setClassName(RVType.PearsonType5.asClass().getName());
-            setRVType(RVType.PearsonType5);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double scale = getDoubleParameter("scale");
-            double shape = getDoubleParameter("shape");
-            return new PearsonType5RV(shape, scale, rnStream);
-        }
-    }
 }

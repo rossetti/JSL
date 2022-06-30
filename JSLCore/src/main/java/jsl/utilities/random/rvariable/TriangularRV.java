@@ -90,40 +90,17 @@ public final class TriangularRV extends ParameterizedRV {
         return JSLRandom.rTriangular(myMin, myMode, myMax, myRNStream);
     }
 
+    /**
+     * The parameter names are "min", "mode", and "max"
+     *
+     * @return a control for Triangular random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new TriangularRVParameters();
+        RVParameters parameters = new RVParameters.TriangularRVParameters();
         parameters.changeDoubleParameter("min", myMin);
         parameters.changeDoubleParameter("mode", myMode);
         parameters.changeDoubleParameter("max", myMax);
         return parameters;
-    }
-
-    /**
-     * The keys are "min" with default value 0.0 and "mode" with
-     * default value 0.5, and "max" with default value 1.0
-     *
-     * @return a control for Triangular random variables
-     */
-    public static RVParameters createParameters() {
-        return new TriangularRVParameters();
-    }
-
-    static class TriangularRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("min", 0.0);
-            addDoubleParameter("mode", 0.5);
-            addDoubleParameter("max", 1.0);
-            setRVType(RVType.Triangular);
-            setClassName(RVType.Triangular.asClass().getName());
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double mode = getDoubleParameter("mode");
-            double min = getDoubleParameter("min");
-            double max = getDoubleParameter("max");
-            return new TriangularRV(min, mode, max, rnStream);
-        }
     }
 }

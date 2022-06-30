@@ -127,40 +127,17 @@ public class AR1NormalRV extends ParameterizedRV {
         return myX;
     }
 
+    /** Parameter names, mean, variance, correlation
+     *
+     * @return the parameters
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new AR1NormalRVParameters();
+        RVParameters parameters = new RVParameters.AR1NormalRVParameters();
         parameters.changeDoubleParameter("mean", myMean);
         parameters.changeDoubleParameter("variance", myVar);
         parameters.changeDoubleParameter("correlation", myPhi);
         return parameters;
     }
 
-    /**
-     * The keys are "mean" with default value 0.0 and "variance" with
-     * default value 1.0, and "correlation" with default value 0.0
-     *
-     * @return a control for Weibull random variables
-     */
-    public static RVParameters createParameters() {
-        return new AR1NormalRVParameters();
-    }
-
-    static class AR1NormalRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleParameter("mean", 0.0);
-            addDoubleParameter("variance", 1.0);
-            addDoubleParameter("correlation", 0.0);
-            setClassName(RVType.AR1Normal.asClass().getName());
-            setRVType(RVType.AR1Normal);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double mean = getDoubleParameter("mean");
-            double variance = getDoubleParameter("variance");
-            double correlation = getDoubleParameter("variance");
-            return new AR1NormalRV(mean, variance, correlation, rnStream);
-        }
-    }
 }

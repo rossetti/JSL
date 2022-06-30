@@ -58,34 +58,15 @@ public final class EmpiricalRV extends ParameterizedRV {
         return myPop.getValue();
     }
 
+    /**
+     * The parameter name is "Population"
+     *
+     * @return parameters for Bernoulli random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new EmpiricalRVParameters();
-        parameters.changeDoubleArrayParameter("Population", myPop.getParameters());
+        RVParameters parameters = new RVParameters.EmpiricalRVParameters();
+        parameters.changeDoubleArrayParameter("population", myPop.getParameters());
         return parameters;
-    }
-
-    /**
-     * The key is "Population", an empty array of size 1 is made. The user of the control
-     * can provide any size population back
-     *
-     * @return a control for Bernoulli random variables
-     */
-    public static RVParameters createParameters() {
-        return new EmpiricalRVParameters();
-    }
-
-    static class EmpiricalRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addDoubleArrayParameter("Population", new double[1]);
-            setClassName(RVType.Empirical.asClass().getName());
-            setRVType(RVType.Empirical);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            double[] population = getDoubleArrayParameter("Population");
-            return new EmpiricalRV(population, rnStream);
-        }
     }
 }

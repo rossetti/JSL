@@ -82,37 +82,17 @@ public final class DUniformRV extends ParameterizedRV {
         return JSLRandom.rDUniform(min, max, myRNStream);
     }
 
+    /**
+     * The parameter names are "min" and "max"
+     *
+     * @return parameters for DUniform random variables
+     */
     @Override
     public RVParameters getParameters() {
-        RVParameters parameters = new DUniformRVParameters();
+        RVParameters parameters = new RVParameters.DUniformRVParameters();
         parameters.changeIntegerParameter("min", min);
         parameters.changeIntegerParameter("max", max);
         return parameters;
     }
 
-    /**
-     * The keys are "min" with default value 0 and "max" with
-     * default value 1
-     *
-     * @return a control for DUniform random variables
-     */
-    public static RVParameters createParameters() {
-        return new DUniformRVParameters();
-    }
-
-    static class DUniformRVParameters extends RVParameters {
-        @Override
-        protected final void fillParameters() {
-            addIntegerParameter("min", 0);
-            addIntegerParameter("max", 1);
-            setClassName(RVType.DUniform.asClass().getName());
-            setRVType(RVType.DUniform);
-        }
-
-        public final RVariableIfc createRVariable(RNStreamIfc rnStream) {
-            int min = getIntegerParameter("min");
-            int max = getIntegerParameter("max");
-            return new DUniformRV(min, max, rnStream);
-        }
-    }
 }
