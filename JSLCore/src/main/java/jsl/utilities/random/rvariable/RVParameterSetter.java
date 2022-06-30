@@ -26,11 +26,10 @@ public class RVParameterSetter {
     }
 
     /**
-     *
      * @param model the model to process
      * @return the parameters in a map for each parameterized random variable in the model
      */
-    public Map<String, RVParameters> extractParameters(Model model){
+    public Map<String, RVParameters> extractParameters(Model model) {
         Objects.requireNonNull(model, "The supplied model was null");
         modelName = model.getName();
         modelId = model.getId();
@@ -44,12 +43,13 @@ public class RVParameterSetter {
         return Collections.unmodifiableMap(rvParameters);
     }
 
-    /** The returned map cannot be modified, but the values can be retrieved and changed
-     *  as needed. Changing the values have no effect within the model until they are applied.
+    /**
+     * The returned map cannot be modified, but the values can be retrieved and changed
+     * as needed. Changing the values have no effect within the model until they are applied.
      *
      * @return parameters for every parameterized random variable within the model
      */
-    public Map<String, RVParameters> getAllRVParameters(){
+    public Map<String, RVParameters> getAllRVParameters() {
         return Collections.unmodifiableMap(rvParameters);
     }
 
@@ -69,36 +69,33 @@ public class RVParameterSetter {
     }
 
     /**
-     *
      * @return the list of names for the random variables that are parameterized
      */
-    public List<String> getRandomVariableNames(){
+    public List<String> getRandomVariableNames() {
         return new ArrayList<String>(rvParameters.keySet());
     }
 
     /**
-     *
      * @return the number of parameterized random variables that can be changed
      */
-    public int getNumberOfParameterizedRandomVariables(){
+    public int getNumberOfParameterizedRandomVariables() {
         return rvParameters.size();
     }
 
     /**
-     *
      * @return the number of parameterized random variables that had their parameters changed in some way
      */
-    public int applyParameterChanges(Model model){
+    public int applyParameterChanges(Model model) {
         Objects.requireNonNull(model, "The supplied model was null");
-        if (!modelName.equals(model.getName())){
+        if (!modelName.equals(model.getName())) {
             throw new IllegalArgumentException("Cannot apply parameters from model, " + model.getName() +
                     ", to model " + modelName);
         }
-        if (modelId != model.getId()){
-            throw new IllegalArgumentException("Cannot apply parameters from model id =, " + model.getId()+
+        if (modelId != model.getId()) {
+            throw new IllegalArgumentException("Cannot apply parameters from model id =, " + model.getId() +
                     ", to model with id = " + modelId);
         }
-        if (model.isRunning()){
+        if (model.isRunning()) {
             JSL.getInstance().LOGGER.warn("The model was running when attempting to apply parameter changes");
         }
         int countChanged = 0;
@@ -110,7 +107,7 @@ public class RVParameterSetter {
                 // compare the map entries
                 RVParameters toBe = rvParameters.get(rvName);
                 RVParameters current = ((ParameterizedRV) rs).getParameters();
-                if(!toBe.equals(current)){
+                if (!toBe.equals(current)) {
                     // change has occurred
                     countChanged++;
                     rv.setInitialRandomSource(toBe.createRVariable());
@@ -120,31 +117,33 @@ public class RVParameterSetter {
         return countChanged;
     }
 
-    public String toJSON(){
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(this);
+    public String toJSON() {
+        Type type = new TypeToken<RVParameterSetter>() {
+        }.getType();
+        return getAdaptedGson().toJson(this);
     }
 
-    //TODO does not work because of sub-classes for RVParameters cannot be deserialized
-    // https://stackoverflow.com/questions/16000163/using-gson-and-abstract-classes
+    private static Gson getAdaptedGson() {
+        // https://stackoverflow.com/questions/16000163/using-gson-and-abstract-classes
+        RuntimeTypeAdapterFactory<RVParameters> adapter =
+                RuntimeTypeAdapterFactory.of(RVParameters.class, "typeField");
+        for (RVType type : RVType.RVTYPE_SET) {
+            adapter.registerSubtype(type.getRVParameters().getClass(), type.getRVParameters().getClass().getName());
+        }
+        return new GsonBuilder().setPrettyPrinting().registerTypeAdapterFactory(adapter).create();
+    }
 
-//    /**
-//     *
-//     * @param json a json string representing a {@literal RVParameterSetter}
-//     * @return the created RVParameterSetter
-//     */
-//    public static RVParameterSetter fromJSON(String json){
-//        Objects.requireNonNull(json, "The supplied json string was null");
-//        RuntimeTypeAdapterFactory<RVParameters> adapter =
-//                RuntimeTypeAdapterFactory.of(RVParameters.class);
-//        for (RVType type : RVType.RVTYPE_SET){
-//            System.out.println(type.getRVParameters().getClass());
-//            adapter.registerSubtype(type.getRVParameters().getClass());
-//        }
-//        Gson gson=new GsonBuilder().setPrettyPrinting().registerTypeAdapterFactory(adapter).create();
-//        Type type = new TypeToken<RVParameterSetter>(){}.getType();
-//        return gson.fromJson(json, type);
-//    }
+    /**
+     * Converts the JSON string to a RVParameterSetter.
+     *
+     * @param json a json string representing a {@literal RVParameterSetter}
+     * @return the created RVParameterSetter
+     */
+    public static RVParameterSetter fromJSON(String json) {
+        Objects.requireNonNull(json, "The supplied json string was null");
+        Type type = new TypeToken<RVParameterSetter>() {}.getType();
+        return getAdaptedGson().fromJson(json, type);
+    }
 
     public static void main(String[] args) {
         Simulation simulation = new Simulation();
@@ -152,7 +151,7 @@ public class RVParameterSetter {
         RandomVariable rv1 = new RandomVariable(model, new BinomialRV(0.8, 10), "rv1");
         RandomVariable rv2 = new RandomVariable(model, new TriangularRV(10.0, 15.0, 25.0), "rv2");
         RandomVariable rv3 = new RandomVariable(model, new NormalRV(10.0, 4.0), "rv3");
-        RVariableIfc de = new DEmpiricalRV(new double[] {1.0, 2.0, 3.0}, new double[] {0.35, 0.80, 1.0});
+        RVariableIfc de = new DEmpiricalRV(new double[]{1.0, 2.0, 3.0}, new double[]{0.35, 0.80, 1.0});
         RandomVariable rv4 = new RandomVariable(model, de, "rv4");
 
         RVParameterSetter setter = new RVParameterSetter();
@@ -161,7 +160,7 @@ public class RVParameterSetter {
         RVParameters parameters1 = setter.getRVParameters("rv1");
         parameters1.changeDoubleParameter("probOfSuccess", 0.66);
         RVParameters parameters2 = setter.getRVParameters("rv4");
-        parameters2.changeDoubleArrayParameter("values", new double[] {5.0, 6.0, 8.0});
+        parameters2.changeDoubleArrayParameter("values", new double[]{5.0, 6.0, 8.0});
         System.out.println();
         System.out.println(setter.toJSON());
         int numChanged = setter.applyParameterChanges(model);
@@ -173,9 +172,9 @@ public class RVParameterSetter {
         String json = setter2.toJSON();
         System.out.println(json);
 
-//        RVParameterSetter setter3 = RVParameterSetter.fromJSON(json);
-//        System.out.println();
-//        System.out.println("From JSON string");
-//        System.out.println(setter3.toJSON());
+        RVParameterSetter setter3 = RVParameterSetter.fromJSON(json);
+        System.out.println();
+        System.out.println("From JSON string");
+        System.out.println(setter3.toJSON());
     }
 }
