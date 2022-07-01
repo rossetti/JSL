@@ -56,10 +56,10 @@ public class SimulationRunner {
             if (p.lengthOfWarmup != null) {
                 mySim.setLengthOfWarmUp(p.lengthOfWarmup);
             }
-            if (p.numberOfReplications != null){
+            if (p.numberOfReplications != null) {
                 mySim.setNumberOfReplications(p.numberOfReplications, p.useAntithetic);
             }
-            if (simulationRun.name != null){
+            if (simulationRun.name != null) {
                 mySim.setExperimentName(simulationRun.name);
             }
         } else {
@@ -70,15 +70,15 @@ public class SimulationRunner {
             simulationRun.parameters.numberOfReplications = mySim.getNumberOfReplications();
             simulationRun.parameters.useAntithetic = mySim.getAntitheticOption();
             simulationRun.name = mySim.getExperimentName();
-           //TODO simulationRun.parameters.firstReplication = ??
+            //TODO simulationRun.parameters.firstReplication = ??
         }
 
         //set up the controls for the run
-        if (simulationRun.controls!= null){
+        if (simulationRun.controls != null) {
             mySim.useControls(simulationRun.controls);
         }
 
-        if (simulationRun.rvParameters != null){
+        if (simulationRun.rvParameters != null) {
             RVParameterSetter setter = mySim.getRVParameterSetter();
             setter.changeParameters(simulationRun.rvParameters);
         }
