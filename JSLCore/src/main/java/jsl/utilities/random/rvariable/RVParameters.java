@@ -18,6 +18,7 @@ package jsl.utilities.random.rvariable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import jsl.controls.Control;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 import java.util.*;
@@ -214,6 +215,36 @@ public abstract class RVParameters {
         return doubleParameters.get(parameterName);
     }
 
+    /**
+     *  A convenience method to change the named parameter to the supplied value.
+     *  This will work with either double or integer parameters.
+     *  Integer parameters are coerced to the rounded up value of the supplied double,
+     *  provided that the integer can hold the supplied value.  If the named
+     *  parameter is not associated with the parameters, then no change occurs.
+     *  In other words, the action fails, silently by returning false.
+     *
+     * @param parameterName the name of the parameter to change
+     * @param value the value to change to
+     * @return true if changed, false if no change occurred
+     */
+    public boolean changeParameter(String parameterName, double value){
+        Objects.requireNonNull(parameterName, "The supplied parameter name was null");
+        if (!containsParameter(parameterName)){
+            return false;
+        }
+        // either double, integer or double array
+        // try double first, then integer
+        if (doubleParameters.containsKey(parameterName)){
+            changeDoubleParameter(parameterName, value);
+            return true;
+        } else if (integerParameters.containsKey(parameterName)){
+            int iValue = Control.toIntValue(value);
+            changeIntegerParameter(parameterName, iValue);
+            return true;
+        }
+        // must be double[] array, cannot do the setting, just return false
+        return false;
+    }
     /**
      * Changes the value associated with the parameterName to the supplied value.  If the parameterName is null
      * or there is no parameter for the supplied parameterName, then an exception occurs

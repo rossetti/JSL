@@ -44,6 +44,62 @@ public class RVParameterSetter {
     }
 
     /**
+     * A convenience method that will set any Double or Integer parameter to the
+     * supplied double value provided that the named random variable is
+     * available to be set and it has the named parameter.
+     *
+     * The inner map represents the parameters to change.
+     * Double values are coerced to Integer values
+     * by rounding up. If the key of the supplied map representing the
+     * random variable to change is not found, then no change occurs.
+     * If the parameter name is not found for the named random variable's parameters
+     * then no change occurs.  In other words, the change "fails silently"
+     *
+     * @param settings the map of settings
+     */
+    public void changeParameters(Map<String, Map<String, Double>> settings) {
+        Objects.requireNonNull(settings, "The supplied map was null");
+        for (Map.Entry<String, Map<String, Double>> entry : settings.entrySet()) {
+            String rvName = entry.getKey();
+            if (rvParameters.containsKey(rvName)) {
+                for (Map.Entry<String, Double> e : settings.get(rvName).entrySet()) {
+                    String paramName = e.getKey();
+                    double value = e.getValue();
+                    changeParameter(rvName, paramName, value);
+                }
+            }
+        }
+    }
+
+    /**
+     * A convenience method to change the named parameter of the named random variable
+     * to the supplied value. This will work with either double or integer parameters.
+     * Integer parameters are coerced to the rounded up value of the supplied double,
+     * provided that the integer can hold the supplied value.  If the named
+     * random variable is not in the setter, then no value will change. If the named
+     * parameter is not associated with the random variable type, then no change occurs.
+     * In other words, the action fails, silently by returning false.
+     *
+     * @param rvName    the name of the random variable to change, must not be null
+     * @param paramName the parameter name of the random variable, must not be null
+     * @param value     the value to change to
+     * @return true if the value was changed, false if no change occurred
+     */
+    public boolean changeParameter(String rvName, String paramName, double value) {
+        Objects.requireNonNull(rvName, "The supplied random variable name was null");
+        Objects.requireNonNull(paramName, "The supplied parameter name was null");
+        if (!rvParameters.containsKey(rvName)) {
+            return false;
+        }
+        RVParameters parameters = rvParameters.get(rvName);
+        if (!parameters.containsParameter(paramName)) {
+            return false;
+        }
+        // ask the parameter to make the change
+        return parameters.changeParameter(paramName, value);
+    }
+
+    /**
      * The returned map cannot be modified, but the values can be retrieved and changed
      * as needed. Changing the values have no effect within the model until they are applied.
      *
@@ -120,7 +176,6 @@ public class RVParameterSetter {
     }
 
     /**
-     *
      * @return the JSON representation of the RVParameterSetter
      */
     public String toJSON() {
@@ -147,7 +202,8 @@ public class RVParameterSetter {
      */
     public static RVParameterSetter fromJSON(String json) {
         Objects.requireNonNull(json, "The supplied json string was null");
-        Type type = new TypeToken<RVParameterSetter>() {}.getType();
+        Type type = new TypeToken<RVParameterSetter>() {
+        }.getType();
         return getAdaptedGson().fromJson(json, type);
     }
 
