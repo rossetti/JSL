@@ -51,6 +51,11 @@ public class SimulationRun {
     public Map<String, Double> controls = null;
 
     /**
+     *  Named random variables, and their parameters to change
+     */
+    public Map<String, Map<String, Double>> rvParameters;
+
+    /**
      * Time in nanoseconds handler started
      */
     public Long handlerStartedNs = null;
@@ -93,6 +98,7 @@ public class SimulationRun {
         return new SimulationRun.Builder()
                 .withParameters(p)
                 .withControls(controls)
+                .withRVParameters(rvParameters)
                 .withID(id)
                 .create();
     }
@@ -120,7 +126,6 @@ public class SimulationRun {
             return this;
         }
 
-
         public Builder withControl(String nm, double value) {
             Objects.requireNonNull(nm, "The supplied control name was null");
             simulationRun.controls.put(nm, value);
@@ -130,6 +135,12 @@ public class SimulationRun {
         public Builder withControls(Map<String, Double> controls) {
             Objects.requireNonNull(controls, "The supplied control map was null");
             simulationRun.controls = controls;
+            return this;
+        }
+
+        public Builder withRVParameters(Map<String, Map<String, Double>> rvParameters) {
+            Objects.requireNonNull(rvParameters, "The supplied random variable parameters map was null");
+            simulationRun.rvParameters = rvParameters;
             return this;
         }
 

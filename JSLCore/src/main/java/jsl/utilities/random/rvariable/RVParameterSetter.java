@@ -46,7 +46,7 @@ public class RVParameterSetter {
     /**
      * A convenience method that will set any Double or Integer parameter to the
      * supplied double value provided that the named random variable is
-     * available to be set and it has the named parameter.
+     * available to be set, and it has the named parameter.
      *
      * The inner map represents the parameters to change.
      * Double values are coerced to Integer values

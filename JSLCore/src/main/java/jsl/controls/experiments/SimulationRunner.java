@@ -4,6 +4,7 @@ import jsl.observers.ReplicationDataCollector;
 import jsl.observers.SimulationTimer;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;
+import jsl.utilities.random.rvariable.RVParameterSetter;
 import jsl.utilities.reporting.JSL;
 
 import java.io.PrintWriter;
@@ -73,7 +74,14 @@ public class SimulationRunner {
         }
 
         //set up the controls for the run
-        mySim.useControls(simulationRun.controls);
+        if (simulationRun.controls!= null){
+            mySim.useControls(simulationRun.controls);
+        }
+
+        if (simulationRun.rvParameters != null){
+            RVParameterSetter setter = mySim.getRVParameterSetter();
+            setter.changeParameters(simulationRun.rvParameters);
+        }
     }
 
     public SimulationRun run() {
