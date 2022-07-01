@@ -179,8 +179,7 @@ public class RVParameterSetter {
      * @return the JSON representation of the RVParameterSetter
      */
     public String toJSON() {
-        Type type = new TypeToken<RVParameterSetter>() {
-        }.getType();
+        Type type = new TypeToken<RVParameterSetter>() {}.getType();
         return getAdaptedGson().toJson(this);
     }
 
@@ -202,8 +201,7 @@ public class RVParameterSetter {
      */
     public static RVParameterSetter fromJSON(String json) {
         Objects.requireNonNull(json, "The supplied json string was null");
-        Type type = new TypeToken<RVParameterSetter>() {
-        }.getType();
+        Type type = new TypeToken<RVParameterSetter>() {}.getType();
         return getAdaptedGson().fromJson(json, type);
     }
 
