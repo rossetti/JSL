@@ -46,14 +46,14 @@ public class SimulationRun {
     public SimulationParameters parameters = null;
 
     /**
-     * The controls as (String, Double) pairs
+     * The simulation inputs as (String, Double) pairs
      */
-    public Map<String, Double> controls = null;
+    public Map<String, Double> inputs = null;
 
     /**
      *  Named random variables, and their parameters to change
      */
-    public Map<String, Map<String, Double>> rvParameters;
+//    public Map<String, Map<String, Double>> rvParameters;
 
     /**
      * Time in nanoseconds handler started
@@ -97,8 +97,8 @@ public class SimulationRun {
 
         return new SimulationRun.Builder()
                 .withParameters(p)
-                .withControls(controls)
-                .withRVParameters(rvParameters)
+                .withInputs(inputs)
+//                .withRVParameters(rvParameters)
                 .withID(id)
                 .create();
     }
@@ -126,26 +126,26 @@ public class SimulationRun {
             return this;
         }
 
-        public Builder withControl(String nm, double value) {
+        public Builder withInput(String nm, double value) {
             Objects.requireNonNull(nm, "The supplied control name was null");
-            simulationRun.controls.put(nm, value);
+            simulationRun.inputs.put(nm, value);
             return this;
         }
 
-        public Builder withControls(Map<String, Double> controls) {
+        public Builder withInputs(Map<String, Double> controls) {
             Objects.requireNonNull(controls, "The supplied control map was null");
-            simulationRun.controls = controls;
+            simulationRun.inputs = controls;
             return this;
         }
 
-        public Builder withRVParameters(Map<String, Map<String, Double>> rvParameters) {
-            Objects.requireNonNull(rvParameters, "The supplied random variable parameters map was null");
-            simulationRun.rvParameters = rvParameters;
-            return this;
-        }
+//        public Builder withRVParameters(Map<String, Map<String, Double>> rvParameters) {
+//            Objects.requireNonNull(rvParameters, "The supplied random variable parameters map was null");
+//            simulationRun.rvParameters = rvParameters;
+//            return this;
+//        }
 
-        public Builder withControls(String[] nms, double[] values) {
-            withControls(JSLArrayUtil.makeMap(nms, values));
+        public Builder withInputs(String[] nms, double[] values) {
+            withInputs(JSLArrayUtil.makeMap(nms, values));
             return this;
         }
 

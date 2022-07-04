@@ -2491,7 +2491,7 @@ public class JSLArrayUtil {
             Map<String, Double> innerMap = outMap.get(keys[0]);
             if (innerMap.containsKey(keys[1])){
                 throw new IllegalStateException("The concatenation character resulted in a duplicate " +
-                        "key, " + keys[1] + ", when trying to unflatten the map");
+                        "key, " + keys[1] + " for primary key " + keys[0] + ", when trying to unflatten the map");
             }
             innerMap.put(keys[1], value);
         }

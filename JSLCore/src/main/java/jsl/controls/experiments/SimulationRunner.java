@@ -73,15 +73,20 @@ public class SimulationRunner {
             //TODO simulationRun.parameters.firstReplication = ??
         }
 
-        //set up the controls for the run
-        if (simulationRun.controls != null) {
-            mySim.useControls(simulationRun.controls);
+        //set up the inputs for the run
+        if (simulationRun.inputs != null) {
+            //TODO some inputs could be controls, some could be random variable parameters
+            // get the controls
+
+            // get the random variables
+            mySim.useControls(simulationRun.inputs);
+
+//            if (simulationRun.rvParameters != null) {
+//                RVParameterSetter setter = mySim.getRVParameterSetter();
+//                setter.changeParameters(simulationRun.rvParameters);
+//            }
         }
 
-        if (simulationRun.rvParameters != null) {
-            RVParameterSetter setter = mySim.getRVParameterSetter();
-            setter.changeParameters(simulationRun.rvParameters);
-        }
     }
 
     public SimulationRun run() {
