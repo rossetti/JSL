@@ -15,21 +15,18 @@
  */
 package jsl.simulation;
 
-import java.lang.IllegalStateException;
-import java.util.*;
-
 import jsl.controls.Controls;
 import jsl.modeling.elements.RandomElementIfc;
-
+import jsl.modeling.elements.entity.EntityType;
 import jsl.modeling.elements.spatial.SpatialModel;
 import jsl.modeling.elements.variable.*;
-
-//import jsl.spatial.spatial2D.SpatialModel2D;
-import jsl.modeling.elements.entity.EntityType;
 import jsl.observers.ObserverIfc;
 import jsl.utilities.random.rvariable.RVParameterSetter;
 import jsl.utilities.reporting.JSL;
 import jsl.utilities.statistic.StatisticAccessorIfc;
+
+import java.lang.IllegalStateException;
+import java.util.*;
 
 /**
  *
