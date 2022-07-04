@@ -91,15 +91,7 @@ public class SimulationRunner {
 
     }
 
-//    public final Map<String, Double> getRVParametersAsDoubles(String catChar){
-//        Objects.requireNonNull(catChar, "The concatenation string must not be null");
-//        LinkedHashMap<String,Double> theMap = new LinkedHashMap<>();
-//        RVParameterSetter setter = new RVParameterSetter();
-//        Map<String, RVParameters> params = setter.extractParameters(this);
-//        //TODO process the parameters
-//
-//        return theMap;
-//    }
+
 
     public SimulationRun run() {
         try {

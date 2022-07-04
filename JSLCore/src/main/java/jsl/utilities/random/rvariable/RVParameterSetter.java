@@ -43,6 +43,19 @@ public class RVParameterSetter {
         return Collections.unmodifiableMap(rvParameters);
     }
 
+    public final Map<String, Map<String, Double>> getRVParametersAsDoubles(String catChar){
+        Objects.requireNonNull(catChar, "The concatenation string must not be null");
+        LinkedHashMap<String, Map<String, Double>> theMap = new LinkedHashMap<>();
+        for (Map.Entry<String, RVParameters> entry : rvParameters.entrySet()) {
+            String rvName = entry.getKey();
+            RVParameters parameters = entry.getValue();
+
+        }
+        //TODO process the parameters
+
+        return theMap;
+    }
+
     /**
      * A convenience method that will set any Double or Integer parameter to the
      * supplied double value provided that the named random variable is
