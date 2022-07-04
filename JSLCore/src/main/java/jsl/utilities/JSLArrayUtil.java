@@ -12,7 +12,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 /**
- * This class has some array manipulation methods that I have found useful over the years.
+ * This class has some array and map manipulation methods that I have found useful over the years.
  * Other libraries (e.g. guava and apache commons) also have array utilities which you might find useful.
  */
 public class JSLArrayUtil {
@@ -2411,10 +2411,11 @@ public class JSLArrayUtil {
         return String.format("%,." + p + "f", value);
     }
 
-    /** Creates a LinkedHashMap to preserve order. If any key is null or if the value is NaN,
-     *  then the entry is not added to the map.
+    /**
+     * Creates a LinkedHashMap to preserve order. If any key is null or if the value is NaN,
+     * then the entry is not added to the map.
      *
-     * @param keys the keys to add to the map, must not be null. Length should be same as values.
+     * @param keys   the keys to add to the map, must not be null. Length should be same as values.
      * @param values the values to add to the map, must not be null
      * @return the created map
      */
@@ -2431,6 +2432,70 @@ public class JSLArrayUtil {
             }
         }
         return map;
+    }
+
+    /**
+     * Takes the double map and creates a single map by forming unique keys from the double
+     * map keys.  Use a concatenation string that does not appear within the keys of the inMap and
+     * for which a unique key will be formed from the two keys.
+     *
+     * @param inMap    the incoming map to flatten, must not be null
+     * @param catChars the concatenation string used to form new unique string, must not be null
+     *                 and must result in unique keys
+     * @return the new flattened map
+     */
+    public static LinkedHashMap<String, Double> flattenMap(Map<String, Map<String, Double>> inMap, String catChars) {
+        Objects.requireNonNull(inMap, "The incoming map cannot be null");
+        Objects.requireNonNull(catChars, "The concatenation string cannot be null");
+        LinkedHashMap<String, Double> outMap = new LinkedHashMap<>();
+        for (Map.Entry<String, Map<String, Double>> outerEntry : inMap.entrySet()) {
+            String outerKey = outerEntry.getKey();
+            Map<String, Double> innerMap = outerEntry.getValue();
+            for (Map.Entry<String, Double> e : innerMap.entrySet()) {
+                String innerKey = e.getKey();
+                double value = e.getValue();
+                String newKey = outerKey.concat(catChars).concat(innerKey);
+                if (outMap.containsKey(newKey)) {
+                    throw new IllegalStateException("The concatenation character resulted in a duplicate " +
+                            "key, " + newKey + ", when trying to flatten the map");
+                } else {
+                    outMap.put(newKey, value);
+                }
+            }
+        }
+        return outMap;
+    }
+
+    /**  Reverses the operation of unflatten using the provided catChars.  Assumes that the catChars will
+     * slit the keys of the map into two separate strings that can be used as keys into the returned double
+     * map. A duplicate key within the inner map will result in an exception.
+     *
+     * @param inMap the map to unflatten, must not be null
+     * @param catChars the concatenation character, must not be null
+     * @return the unflattend map
+     */
+    public static LinkedHashMap<String, Map<String, Double>> unflattenMap(Map<String, Double> inMap, String catChars) {
+        Objects.requireNonNull(inMap, "The incoming map cannot be null");
+        Objects.requireNonNull(catChars, "The concatenation string cannot be null");
+        LinkedHashMap<String, Map<String, Double>> outMap = new LinkedHashMap<>();
+        for (Map.Entry<String, Double> e : inMap.entrySet()) {
+            String theKey = e.getKey();
+            double value = e.getValue();
+            //split the key
+            String[] keys = theKey.split(catChars, 2);
+            if (!outMap.containsKey(keys[0])) {
+                // make the inner map for first key occurrence
+                LinkedHashMap<String, Double> innerMap = new LinkedHashMap<>();
+                outMap.put(keys[0], innerMap);
+            }
+            Map<String, Double> innerMap = outMap.get(keys[0]);
+            if (innerMap.containsKey(keys[1])){
+                throw new IllegalStateException("The concatenation character resulted in a duplicate " +
+                        "key, " + keys[1] + ", when trying to unflatten the map");
+            }
+            innerMap.put(keys[1], value);
+        }
+        return outMap;
     }
 
 }
