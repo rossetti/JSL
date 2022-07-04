@@ -5,6 +5,7 @@ import jsl.observers.SimulationTimer;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;
 import jsl.utilities.random.rvariable.RVParameterSetter;
+import jsl.utilities.random.rvariable.RVParameters;
 import jsl.utilities.reporting.JSL;
 
 import java.io.PrintWriter;
@@ -85,9 +86,20 @@ public class SimulationRunner {
 //                RVParameterSetter setter = mySim.getRVParameterSetter();
 //                setter.changeParameters(simulationRun.rvParameters);
 //            }
+
         }
 
     }
+
+//    public final Map<String, Double> getRVParametersAsDoubles(String catChar){
+//        Objects.requireNonNull(catChar, "The concatenation string must not be null");
+//        LinkedHashMap<String,Double> theMap = new LinkedHashMap<>();
+//        RVParameterSetter setter = new RVParameterSetter();
+//        Map<String, RVParameters> params = setter.extractParameters(this);
+//        //TODO process the parameters
+//
+//        return theMap;
+//    }
 
     public SimulationRun run() {
         try {
