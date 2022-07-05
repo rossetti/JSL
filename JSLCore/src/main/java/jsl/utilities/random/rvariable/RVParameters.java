@@ -355,16 +355,24 @@ public abstract class RVParameters {
     /**
      * Returns true if at least one double[] parameter has been set
      *
-     * @return true if is has at least one
+     * @return true if it has at least one double[] parameter
      */
     public boolean hasDoubleArrayParameter() {
         return (!doubleArrayParameters.isEmpty());
     }
 
     /**
+     *
+     * @return true if it has at least one double parameter
+     */
+    public boolean hasDoubleParameters(){
+        return (!doubleParameters.isEmpty());
+    }
+
+    /**
      * Returns true if at least one Integer parameter has been set
      *
-     * @return true if is has at least one
+     * @return true if it has at least one integer parameter
      */
     public boolean hasIntegerParameter() {
         return (!integerParameters.isEmpty());

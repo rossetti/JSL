@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;
+import jsl.utilities.JSLArrayUtil;
 import jsl.utilities.misc.RuntimeTypeAdapterFactory;
 import jsl.utilities.random.RandomIfc;
 import jsl.utilities.reporting.JSL;
@@ -43,24 +44,67 @@ public class RVParameterSetter {
         return Collections.unmodifiableMap(rvParameters);
     }
 
-    public final Map<String, Map<String, Double>> getRVParametersAsDoubles(String catChar){
-        Objects.requireNonNull(catChar, "The concatenation string must not be null");
+    /**
+     * Converts double and integer parameters to a Map that holds a Map, with the
+     * outer key being the random variable name and the inner map the parameter names
+     * as keys and the parameter values as values.  Ignores any double array parameters
+     * and converts any integer parameter values to doubles.
+     *
+     * @return the parameters as a map of maps
+     */
+    public final Map<String, Map<String, Double>> getParametersAsDoubles() {
         LinkedHashMap<String, Map<String, Double>> theMap = new LinkedHashMap<>();
         for (Map.Entry<String, RVParameters> entry : rvParameters.entrySet()) {
             String rvName = entry.getKey();
+            if (!theMap.containsKey(rvName)) {
+                Map<String, Double> innerMap = new LinkedHashMap<>();
+                theMap.put(rvName, innerMap);
+            }
+            Map<String, Double> innerMap = theMap.get(rvName);
             RVParameters parameters = entry.getValue();
-
+            for (String pName : parameters.getDoubleParameterKeySet()) {
+                innerMap.put(pName, parameters.getDoubleParameter(pName));
+            }
+            for (String pName : parameters.getIntegerParameterKeySet()) {
+                double v = parameters.getIntegerParameter(pName);
+                innerMap.put(pName, v);
+            }
+            // ignore any double[] parameters
         }
-        //TODO process the parameters
-
         return theMap;
+    }
+
+    /**
+     * Uses getParametersAsDoubles() to get a map of map, then flattens the map
+     * to a single map with the key as the concatenated key of the outer and inner keys
+     * concatenated with the "_PARAM_" character string. The combined key needs to be unique
+     * and not be present within the random variable names.
+     *
+     * @return the flattened map
+     */
+    public final Map<String, Double> getFlatParametersAsDoubles(){
+        return getFlatParametersAsDoubles("_PARAM_");
+    }
+
+    /**
+     * Uses getParametersAsDoubles() to get a map of map, then flattens the map
+     * to a single map with the key as the concatenated key of the outer and inner keys
+     * concatenated with the supplied character string. The combined key needs to be unique
+     * and not be present within the random variable names.
+     *
+     * @param conCatString the string to form the common key
+     * @return the flattened map
+     */
+    public final Map<String, Double> getFlatParametersAsDoubles(String conCatString) {
+        Objects.requireNonNull(conCatString, "The concatenation string must not be null");
+        return JSLArrayUtil.flattenMap(getParametersAsDoubles(), conCatString);
     }
 
     /**
      * A convenience method that will set any Double or Integer parameter to the
      * supplied double value provided that the named random variable is
      * available to be set, and it has the named parameter.
-     *
+     * <p>
      * The inner map represents the parameters to change.
      * Double values are coerced to Integer values
      * by rounding up. If the key of the supplied map representing the
@@ -192,7 +236,8 @@ public class RVParameterSetter {
      * @return the JSON representation of the RVParameterSetter
      */
     public String toJSON() {
-        Type type = new TypeToken<RVParameterSetter>() {}.getType();
+        Type type = new TypeToken<RVParameterSetter>() {
+        }.getType();
         return getAdaptedGson().toJson(this);
     }
 
@@ -214,7 +259,8 @@ public class RVParameterSetter {
      */
     public static RVParameterSetter fromJSON(String json) {
         Objects.requireNonNull(json, "The supplied json string was null");
-        Type type = new TypeToken<RVParameterSetter>() {}.getType();
+        Type type = new TypeToken<RVParameterSetter>() {
+        }.getType();
         return getAdaptedGson().fromJson(json, type);
     }
 

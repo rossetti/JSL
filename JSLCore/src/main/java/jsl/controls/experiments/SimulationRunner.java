@@ -1,11 +1,12 @@
 package jsl.controls.experiments;
 
+import jsl.controls.Controls;
 import jsl.observers.ReplicationDataCollector;
 import jsl.observers.SimulationTimer;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;
+import jsl.utilities.JSLArrayUtil;
 import jsl.utilities.random.rvariable.RVParameterSetter;
-import jsl.utilities.random.rvariable.RVParameters;
 import jsl.utilities.reporting.JSL;
 
 import java.io.PrintWriter;
@@ -29,6 +30,12 @@ public class SimulationRunner {
 
     private final Simulation mySim;
     private final Model myModel;
+
+    /**
+     *  The string used to flatten or unflatten random variable parameters
+     *  Assumed as "_PARAM_" by default
+     */
+    public String rvParamConCatString = "_PARAM_";
 
     private SimulationRun simulationRun = new SimulationRun();
 
@@ -76,19 +83,37 @@ public class SimulationRunner {
 
         //set up the inputs for the run
         if (simulationRun.inputs != null) {
-            //TODO some inputs could be controls, some could be random variable parameters
-            // get the controls
-
-            // get the random variables
-            mySim.useControls(simulationRun.inputs);
-
-//            if (simulationRun.rvParameters != null) {
-//                RVParameterSetter setter = mySim.getRVParameterSetter();
-//                setter.changeParameters(simulationRun.rvParameters);
-//            }
-
+            //some inputs could be controls, some could be random variable parameters
+            Controls controls = mySim.getModelControls();
+            RVParameterSetter tmpSetter = new RVParameterSetter();
+            tmpSetter.extractParameters(myModel);
+            Map<String, Double> params = tmpSetter.getFlatParametersAsDoubles(rvParamConCatString);
+            Map<String, Double> controlsMap = new LinkedHashMap<>();
+            Map<String, Double> rvParamMap = new LinkedHashMap<>();
+            // split the inputs into controls and random variable parameters
+            for(Map.Entry<String, Double> entry: simulationRun.inputs.entrySet()){
+                if (controls.hasControl(entry.getKey())){
+                    controlsMap.put(entry.getKey(), entry.getValue());
+                } else if (params.containsKey(entry.getKey())){
+                    rvParamMap.put(entry.getKey(), entry.getValue());
+                } else {
+                    JSL.getInstance().LOGGER.info("Simulation input {} was not classified as a control or a " +
+                            "random variable parameter", entry.getKey());
+                }
+            }
+            if (!controlsMap.isEmpty()){
+                mySim.useControls(controlsMap);
+                JSL.getInstance().LOGGER.info("{} controls out of {} inputs were applied to simulation {}",
+                        controlsMap.size(), simulationRun.inputs.size(), mySim.getName());
+            }
+            if (!rvParamMap.isEmpty()){
+                RVParameterSetter setter = mySim.getRVParameterSetter();
+                Map<String, Map<String, Double>> rvParameters = JSLArrayUtil.unflattenMap(rvParamMap, rvParamConCatString);
+                setter.changeParameters(rvParameters);
+                JSL.getInstance().LOGGER.info("{} random variable parameters out of {} inputs were applied to simulation {}",
+                        rvParamMap.size(), simulationRun.inputs.size(), mySim.getName());
+            }
         }
-
     }
 
 

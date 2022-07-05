@@ -96,6 +96,15 @@ public class Controls {
     }
 
     /**
+     *
+     * @param name the control name to check
+     * @return true if the named control is in the controls
+     */
+    public final boolean hasControl(String name){
+        return myControls.containsKey(name);
+    }
+
+    /**
      * Store to ensure the key and
      * the key (from the control) match
      *
