@@ -2,6 +2,7 @@ package jsl.utilities.statistic.welch;
 
 import jsl.utilities.JSLArrayUtil;
 import jsl.utilities.JSLFileUtil;
+import jsl.utilities.reporting.JSL;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,10 +11,6 @@ import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static jsl.simulation.Simulation.LOGGER;
 
 public class WelchDataFileCollector extends AbstractWelchDataCollector {
 
@@ -36,7 +33,7 @@ public class WelchDataFileCollector extends AbstractWelchDataCollector {
             Files.createDirectories(pathToDirectory);
         } catch (IOException e) {
             String str = "Problem creating directory for " + pathToDirectory;
-            LOGGER.error(str, e);
+            JSL.getInstance().LOGGER.error(str, e);
             e.printStackTrace();
         }
         // now make the file to hold the observations within the directory
@@ -50,7 +47,7 @@ public class WelchDataFileCollector extends AbstractWelchDataCollector {
             myData = new RandomAccessFile(myDataFile, "rw");
         } catch (IOException ex) {
             String str = "Problem creating RandomAccessFile for " + myDataFile.getAbsolutePath();
-            LOGGER.error(str, ex);
+            JSL.getInstance().LOGGER.error(str, ex);
         }
     }
 
@@ -193,7 +190,7 @@ public class WelchDataFileCollector extends AbstractWelchDataCollector {
 //                JSL.out.println(observation);
 //            }
         } catch (IOException ex) {
-            Logger.getLogger(WelchDataFileCollector.class.getName()).log(Level.SEVERE, null, ex);
+            JSL.getInstance().LOGGER.error("Unable to write observation in welch data file ", ex);
         }
     }
 

@@ -7,7 +7,6 @@ import jsl.simulation.Model;
 import jsl.simulation.Simulation;
 import jsl.utilities.JSLArrayUtil;
 import jsl.utilities.random.rvariable.RVParameterSetter;
-import jsl.utilities.reporting.JSL;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -80,7 +79,7 @@ public class SimulationRunner {
             simulationRun.name = mySim.getExperimentName();
             //TODO simulationRun.parameters.firstReplication = ??
         }
-
+        Simulation.LOGGER.info("Run parameters for simulation: {} were set.", mySim.getName());
         //set up the inputs for the run
         if (simulationRun.inputs != null) {
             //some inputs could be controls, some could be random variable parameters
@@ -97,26 +96,24 @@ public class SimulationRunner {
                 } else if (params.containsKey(entry.getKey())){
                     rvParamMap.put(entry.getKey(), entry.getValue());
                 } else {
-                    JSL.getInstance().LOGGER.info("Simulation input {} was not classified as a control or a " +
+                    Simulation.LOGGER.trace("Simulation input {} was not classified as a control or a " +
                             "random variable parameter", entry.getKey());
                 }
             }
             if (!controlsMap.isEmpty()){
                 mySim.useControls(controlsMap);
-                JSL.getInstance().LOGGER.info("{} controls out of {} inputs were applied to simulation {}",
+                Simulation.LOGGER.info("{} controls out of {} inputs were applied to simulation {}",
                         controlsMap.size(), simulationRun.inputs.size(), mySim.getName());
             }
             if (!rvParamMap.isEmpty()){
                 RVParameterSetter setter = mySim.getRVParameterSetter();
                 Map<String, Map<String, Double>> rvParameters = JSLArrayUtil.unflattenMap(rvParamMap, rvParamConCatString);
                 setter.changeParameters(rvParameters);
-                JSL.getInstance().LOGGER.info("{} random variable parameters out of {} inputs were applied to simulation {}",
+                Simulation.LOGGER.info("{} random variable parameters out of {} inputs were applied to simulation {}",
                         rvParamMap.size(), simulationRun.inputs.size(), mySim.getName());
             }
         }
     }
-
-
 
     public SimulationRun run() {
         try {
@@ -136,10 +133,12 @@ public class SimulationRunner {
             }
 
             // set simulation run parameters and controls
+            Simulation.LOGGER.info("Setting up simulation: {} ", mySim.getName());
             setupSimulation();
             // run the simulation
+            Simulation.LOGGER.info("Running simulation: {} ", mySim.getName());
             mySim.run();
-
+            Simulation.LOGGER.info("Simulation {} ended, capturing results.", mySim.getName());
             // calculate replications
             int s = simulationRun.parameters.firstReplication;
             int n = mySim.getNumberOfReplications();
@@ -167,10 +166,10 @@ public class SimulationRunner {
             simulationRun.functionError = sw.toString();
             // return an empty HashMap of results
             simulationRun.responseData = new LinkedHashMap<>();
-            JSL.getInstance().LOGGER.error("There was a fatal exception during the running of simulation {} within SimulationRunner.",
+            Simulation.LOGGER.error("There was a fatal exception during the running of simulation {} within SimulationRunner.",
                     mySim.getName());
-            JSL.getInstance().LOGGER.error("No responses were recorded.");
-            JSL.getInstance().LOGGER.error(sw.toString());
+            Simulation.LOGGER.error("No responses were recorded.");
+            Simulation.LOGGER.error(sw.toString());
         } finally {
             // return the simulationRun (for chaining purposes)
             return simulationRun;

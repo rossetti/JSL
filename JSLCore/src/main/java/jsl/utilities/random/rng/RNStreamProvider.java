@@ -17,6 +17,7 @@
 package jsl.utilities.random.rng;
 
 import jsl.simulation.Simulation;
+import jsl.utilities.reporting.JSL;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,8 +95,8 @@ public final class RNStreamProvider implements RNStreamProviderIfc {
         RNStreamIfc stream = myStreamFactory.getStream();
         myStreams.add(stream);
         if (myStreams.size() > myStreamNumberWarningLimit) {
-            Simulation.LOGGER.warn("The number of streams made is now = {}", myStreams.size());
-            Simulation.LOGGER.warn("Increase the stream warning limit if you don't want to see this message");
+            JSL.getInstance().LOGGER.warn("The number of streams made is now = {}", myStreams.size());
+            JSL.getInstance().LOGGER.warn("Increase the stream warning limit if you don't want to see this message");
         }
         return stream;
     }

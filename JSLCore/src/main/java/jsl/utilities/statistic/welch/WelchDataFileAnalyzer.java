@@ -26,6 +26,7 @@ import jsl.observers.ObservableIfc;
 import jsl.observers.ObserverIfc;
 import jsl.utilities.JSLArrayUtil;
 import jsl.utilities.JSLFileUtil;
+import jsl.utilities.reporting.JSL;
 import jsl.utilities.statistic.BatchStatistic;
 import jsl.utilities.statistic.Statistic;
 
@@ -36,10 +37,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static jsl.simulation.Simulation.LOGGER;
 
 /**
  * This class knows how to process data collected by the WelchDataFileCollector
@@ -125,7 +122,7 @@ public class WelchDataFileAnalyzer implements ObservableIfc {
             myWDFDataFile = new RandomAccessFile(wdfDataFile, "r");
         } catch (IOException ex) {
             String str = "Problem creating RandomAccessFile for " + wdfDataFile.getAbsolutePath();
-            LOGGER.error(str, ex);
+            JSL.getInstance().LOGGER.error(str, ex);
         }
     }
 
@@ -237,7 +234,7 @@ public class WelchDataFileAnalyzer implements ObservableIfc {
             DataOutputStream out = new DataOutputStream(fout);
             writeWelchPlotData(out, numObs);
         } catch (IOException ex) {
-            Logger.getLogger(WelchDataFileAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+            JSL.getInstance().LOGGER.error("Unable to make welch data plot file ", ex);
         }
         return wpdf;
     }
@@ -295,7 +292,7 @@ public class WelchDataFileAnalyzer implements ObservableIfc {
         try {
             writeCSVWelchPlotData(pw, numObs);
         } catch (IOException ex) {
-            Logger.getLogger(WelchDataFileAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+            JSL.getInstance().LOGGER.error("Unable to make CSV welch data plot file ", ex);
         }
         return file;
     }

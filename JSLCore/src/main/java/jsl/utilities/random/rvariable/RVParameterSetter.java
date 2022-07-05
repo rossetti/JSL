@@ -9,7 +9,6 @@ import jsl.simulation.Simulation;
 import jsl.utilities.JSLArrayUtil;
 import jsl.utilities.misc.RuntimeTypeAdapterFactory;
 import jsl.utilities.random.RandomIfc;
-import jsl.utilities.reporting.JSL;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -209,7 +208,7 @@ public class RVParameterSetter {
                     ", to model with id = " + modelId);
         }
         if (model.isRunning()) {
-            JSL.getInstance().LOGGER.warn("The model was running when attempting to apply parameter changes");
+            Simulation.LOGGER.warn("The model was running when attempting to apply parameter changes");
         }
         int countChanged = 0;
         List<RandomVariable> rvList = model.getRandomVariables();
@@ -227,7 +226,7 @@ public class RVParameterSetter {
                 }
             }
         }
-        JSL.getInstance().LOGGER.info("{} out of {} random variable parameters were changed in the model via the parameter setter.",
+        Simulation.LOGGER.info("{} out of {} random variable parameters were changed in the model via the parameter setter.",
                 countChanged, getNumberOfParameterizedRandomVariables());
         return countChanged;
     }

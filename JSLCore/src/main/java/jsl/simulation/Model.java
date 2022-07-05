@@ -1169,7 +1169,7 @@ public class Model extends ModelElement {
                 Map<String, Double> cMap = oc.get();
                 // extract controls and apply them
                 int k = getControls().setControlsAsDoubles(cMap);
-                JSL.getInstance().LOGGER.info("{} out of {} controls were applied to Model {} to setup the experiment.",
+                Simulation.LOGGER.info("{} out of {} controls were applied to Model {} to setup the experiment.",
                         k, cMap.size(), getName());
             }
         }
