@@ -858,27 +858,6 @@ public class SimulationReporter {
     }
 
     /**
-     *  Prints a half-width summary report for the across replication statistics to
-     *  System.out
-     */
-    public final void printAcrossReplicationHalfWidthSummaryReport(){
-        PrintWriter printWriter = new PrintWriter(System.out);
-        writeAcrossReplicationHalfWidthSummaryReport(printWriter);
-    }
-
-    /** Writes a half-width summary report for the across replication statistics
-     *
-     * @param out the writer to write to
-     */
-    public final void writeAcrossReplicationHalfWidthSummaryReport(PrintWriter out){
-        List<StatisticAccessorIfc> list = getAcrossReplicationStatisticsList();
-        StatisticReporter statisticReporter = new StatisticReporter(list);
-        StringBuilder report = statisticReporter.getHalfWidthSummaryReport();
-        out.println(report.toString());
-        out.flush();
-    }
-
-    /**
      *
      * @return a StatisticReporter holding the across replication statistics for reporting
      */
@@ -886,5 +865,102 @@ public class SimulationReporter {
         List<StatisticAccessorIfc> list = getAcrossReplicationStatisticsList();
         StatisticReporter statisticReporter = new StatisticReporter(list);
         return statisticReporter;
+    }
+
+//    /**
+//     *  Prints a half-width summary report for the across replication statistics to
+//     *  System.out
+//     */
+//    public final void printAcrossReplicationHalfWidthSummaryReport(){
+//        PrintWriter printWriter = new PrintWriter(System.out);
+//        writeAcrossReplicationHalfWidthSummaryReport(printWriter);
+//    }
+//
+//    /** Writes a half-width summary report for the across replication statistics
+//     *
+//     * @param out the writer to write to
+//     */
+//    public final void writeAcrossReplicationHalfWidthSummaryReport(PrintWriter out){
+//        List<StatisticAccessorIfc> list = getAcrossReplicationStatisticsList();
+//        StatisticReporter statisticReporter = new StatisticReporter(list);
+//        StringBuilder report = statisticReporter.getHalfWidthSummaryReport();
+//        out.println(report.toString());
+//        out.flush();
+//    }
+
+    /**
+     * @return a StringBuilder with the Half-Width Summary Report and 95 percent confidence
+     */
+    public StringBuilder getHalfWidthSummaryReport() {
+        return getHalfWidthSummaryReport(null, 0.95);
+    }
+
+    /**
+     * @param confLevel the confidence level of the report
+     * @return a StringBuilder with the Half-Width Summary Report
+     */
+    public StringBuilder getHalfWidthSummaryReport(double confLevel) {
+        return getHalfWidthSummaryReport(null, confLevel);
+    }
+
+    /**
+     * @param title     the title
+     * @param confLevel the confidence level
+     * @return a StringBuilder representation of the half-width summary report
+     */
+    public StringBuilder getHalfWidthSummaryReport(String title, double confLevel) {
+        List<StatisticAccessorIfc> list = getAcrossReplicationStatisticsList();
+        StatisticReporter sr = new StatisticReporter(list);
+        return sr.getHalfWidthSummaryReport(title, confLevel);
+    }
+
+    /**
+     * Prints the default half-width summary report to the console
+     */
+    public void printHalfWidthSummaryReport() {
+        writeHalfWidthSummaryReport(new PrintWriter(System.out), null, 0.95);
+    }
+
+    /**
+     * @param confLevel the confidence level of the report
+     */
+    public void printHalfWidthSummaryReport(double confLevel) {
+        writeHalfWidthSummaryReport(new PrintWriter(System.out), null, confLevel);
+    }
+
+    /**
+     * @param title     the title of the report
+     * @param confLevel the confidence level of the report
+     */
+    public void printHalfWidthSummaryReport(String title, double confLevel) {
+        writeHalfWidthSummaryReport(new PrintWriter(System.out), title, confLevel);
+    }
+
+    /**
+     * @param out the place to write to
+     */
+    public void writeHalfWidthSummaryReport(PrintWriter out) {
+        writeHalfWidthSummaryReport(out, null, 0.95);
+    }
+
+    /**
+     * @param out       the place to write to
+     * @param confLevel the confidence level of the report
+     */
+    public void writeHalfWidthSummaryReport(PrintWriter out, double confLevel) {
+        writeHalfWidthSummaryReport(out, null, confLevel);
+    }
+
+    /**
+     * @param out       the place to write to
+     * @param title     the title of the report
+     * @param confLevel the confidence level of the report
+     */
+    public void writeHalfWidthSummaryReport(PrintWriter out, String title, double confLevel) {
+        if (out == null) {
+            throw new IllegalArgumentException("The PrintWriter was null");
+        }
+        out.print(getHalfWidthSummaryReport(title, confLevel).toString());
+        out.flush();
     }
 }
