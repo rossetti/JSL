@@ -22,7 +22,6 @@ public class Example4 {
         dtp.setTimeBtwArrivalRandomSource(new ExponentialRV(6.0));
         dtp.setServiceTimeRandomSource(new ExponentialRV(3.0));
         sim.run();
-        SimulationReporter reporter = sim.makeSimulationReporter();
-        reporter.printAcrossReplicationSummaryStatistics();
+        sim.printHalfWidthSummaryReport();
     }
 }
