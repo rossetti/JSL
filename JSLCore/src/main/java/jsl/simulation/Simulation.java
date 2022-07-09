@@ -942,80 +942,61 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
     }
 
     /**
-     * @return a StringBuilder with the Half-Width Summary Report and 95 percent confidence
-     */
-    public StringBuilder getHalfWidthSummaryReport() {
-        return getHalfWidthSummaryReport(null, 0.95);
-    }
-
-    /**
-     * @param confLevel the confidence level of the report
-     * @return a StringBuilder with the Half-Width Summary Report
-     */
-    public StringBuilder getHalfWidthSummaryReport(double confLevel) {
-        return getHalfWidthSummaryReport(null, confLevel);
-    }
-
-    /**
-     * @param title     the title
-     * @param confLevel the confidence level
-     * @return a StringBuilder representation of the half-width summary report
-     */
-    public StringBuilder getHalfWidthSummaryReport(String title, double confLevel) {
-        SimulationReporter reporter = makeSimulationReporter();
-        List<StatisticAccessorIfc> list = reporter.getAcrossReplicationStatisticsList();
-        StatisticReporter sr = new StatisticReporter(list);
-        return sr.getHalfWidthSummaryReport(title, confLevel);
-    }
-
-    /**
      * Prints the default half-width summary report to the console
+     * @return a SimulationReporter that can be used for further output
      */
-    public void printHalfWidthSummaryReport() {
-        writeHalfWidthSummaryReport(new PrintWriter(System.out), null, 0.95);
+    public SimulationReporter printHalfWidthSummaryReport() {
+        return writeHalfWidthSummaryReport(new PrintWriter(System.out), null, 0.95);
     }
 
     /**
      * @param confLevel the confidence level of the report
+     * @return a SimulationReporter that can be used for further output
      */
-    public void printHalfWidthSummaryReport(double confLevel) {
-        writeHalfWidthSummaryReport(new PrintWriter(System.out), null, confLevel);
+    public SimulationReporter printHalfWidthSummaryReport(double confLevel) {
+        return writeHalfWidthSummaryReport(new PrintWriter(System.out), null, confLevel);
     }
 
     /**
      * @param title     the title of the report
      * @param confLevel the confidence level of the report
+     * @return a SimulationReporter that can be used for further output
      */
-    public void printHalfWidthSummaryReport(String title, double confLevel) {
-        writeHalfWidthSummaryReport(new PrintWriter(System.out), title, confLevel);
+    public SimulationReporter printHalfWidthSummaryReport(String title, double confLevel) {
+        return writeHalfWidthSummaryReport(new PrintWriter(System.out), title, confLevel);
     }
 
     /**
      * @param out the place to write to
+     * @return a SimulationReporter that can be used for further output
      */
-    public void writeHalfWidthSummaryReport(PrintWriter out) {
-        writeHalfWidthSummaryReport(out, null, 0.95);
+    public SimulationReporter writeHalfWidthSummaryReport(PrintWriter out) {
+        return writeHalfWidthSummaryReport(out, null, 0.95);
     }
 
     /**
      * @param out       the place to write to
      * @param confLevel the confidence level of the report
+     * @return a SimulationReporter that can be used for further output
      */
-    public void writeHalfWidthSummaryReport(PrintWriter out, double confLevel) {
-        writeHalfWidthSummaryReport(out, null, confLevel);
+    public SimulationReporter writeHalfWidthSummaryReport(PrintWriter out, double confLevel) {
+        return writeHalfWidthSummaryReport(out, null, confLevel);
     }
 
     /**
      * @param out       the place to write to
      * @param title     the title of the report
      * @param confLevel the confidence level of the report
+     * @return a SimulationReporter that can be used for further output
      */
-    public void writeHalfWidthSummaryReport(PrintWriter out, String title, double confLevel) {
+    public SimulationReporter writeHalfWidthSummaryReport(PrintWriter out, String title, double confLevel) {
         if (out == null) {
             throw new IllegalArgumentException("The PrintWriter was null");
         }
-        out.print(getHalfWidthSummaryReport(title, confLevel).toString());
+        SimulationReporter reporter = makeSimulationReporter();
+        out.print(reporter.getHalfWidthSummaryReport(title, confLevel).toString());
         out.flush();
+        return reporter;
     }
 
     /**
