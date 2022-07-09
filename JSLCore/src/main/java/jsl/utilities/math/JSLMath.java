@@ -16,12 +16,11 @@
 package jsl.utilities.math;
 
 import jsl.utilities.distributions.Gamma;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintStream;
-import java.util.*;
-
-//TODO move all the array manipulation functionality to something like ArrayUtil
-// or consolidate this kind of stuff in JSLUtil
+import java.lang.invoke.MethodHandles;
 
 /**
  * This class implements additional mathematical functions and determines the
@@ -31,6 +30,11 @@ import java.util.*;
  * Implementation of Numerical Methods", Morgan-Kaufmann
  */
 public final class JSLMath {
+
+    /**
+     * for logging
+     */
+    public static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * holds initial factorials
@@ -509,4 +513,134 @@ public final class JSLMath {
         }
     }
 
+    /**
+     * Converts a double to a byte. If the double is outside
+     * the natural range, then the value is set to the minimum or
+     * maximum of the range. If within the range, the value
+     * is rounded to the nearest value. For example, 4.9999 is
+     * rounded to 5.0.
+     *
+     * @param value the value to convert
+     * @return the converted value
+     */
+    public static Byte toByteValue(double value) {
+        if (value >= Byte.MAX_VALUE) {
+            LOGGER.trace("{} was limited to {} in toByteValue()", value, Byte.MAX_VALUE);
+            return Byte.MAX_VALUE;
+        } else if (value <= Byte.MIN_VALUE) {
+            LOGGER.trace("{} was limited to {} in toByteValue()", value, Byte.MIN_VALUE);
+            return Byte.MIN_VALUE;
+        } else {
+            // in the range of byte, convert to the nearest byte
+            return (byte) Math.round(value);
+        }
+    }
+
+    /**
+     * Converts a double to a long. If the double is outside
+     * the natural range, then the value is set to the minimum or
+     * maximum of the range. If within the range, the value
+     * is rounded to the nearest value. For example, 4.9999 is
+     * rounded to 5.0.
+     *
+     * @param value the value to convert
+     * @return the converted value
+     */
+    public static Long toLongValue(double value) {
+        if (value >= Long.MAX_VALUE) {
+            LOGGER.trace("{} was limited to {} in toLongValue()", value, Long.MAX_VALUE);
+            return Long.MAX_VALUE;
+        } else if (value <= Long.MIN_VALUE) {
+            LOGGER.trace("{} was limited to {} in toLongValue()", value, Long.MIN_VALUE);
+            return Long.MIN_VALUE;
+        } else {
+            // in the range of long, convert to the nearest long
+            return Math.round(value);
+        }
+    }
+
+    /**
+     * Converts a double to an int. If the double is outside
+     * the natural range, then the value is set to the minimum or
+     * maximum of the range. If within the range, the value
+     * is rounded to the nearest value. For example, 4.9999 is
+     * rounded to 5.0.
+     *
+     * @param value the value to convert
+     * @return the converted value
+     */
+    public static Integer toIntValue(double value) {
+        if (value >= Integer.MAX_VALUE) {
+            LOGGER.trace("{} was limited to {} in toIntValue()", value, Integer.MAX_VALUE);
+            return Integer.MAX_VALUE;
+        } else if (value <= Integer.MIN_VALUE) {
+            LOGGER.trace("{} was limited to {} in toIntValue()", value, Integer.MIN_VALUE);
+            return Integer.MIN_VALUE;
+        } else {
+            // in the range of int, convert to the nearest int
+            return (int) Math.round(value);
+        }
+    }
+
+    /**
+     * Converts a double to a short. If the double is outside
+     * the natural range, then the value is set to the minimum or
+     * maximum of the range. If within the range, the value
+     * is rounded to the nearest value. For example, 4.9999 is
+     * rounded to 5.0.
+     *
+     * @param value the value to convert
+     * @return the converted value
+     */
+    public static Short toShortValue(double value) {
+        if (value >= Short.MAX_VALUE) {
+            LOGGER.trace("{} was limited to {} in toShortValue()", value, Short.MAX_VALUE);
+            return Short.MAX_VALUE;
+        } else if (value <= Short.MIN_VALUE) {
+            LOGGER.trace("{} was limited to {} in toShortValue()", value, Short.MIN_VALUE);
+            return Short.MIN_VALUE;
+        } else {
+            // in the range of int, convert to the nearest int
+            return (short) Math.round(value);
+        }
+    }
+
+    /**
+     * Converts a double to a boolean. 1.0 is true. Double.NEGATIVE_INFINITY is mapped to false,
+     * Double.POSITIVE_INFINITY is mapped to true, any other double values other are mapped to false.
+     *
+     * @param value the value to convert
+     * @return the converted value
+     */
+    public static Boolean toBooleanValue(double value) {
+        if (value == 1.0) {
+            LOGGER.trace("{} was converted to {} in toBooleanValue()", value, true);
+            return true;
+        } else {
+            if (value == Double.NEGATIVE_INFINITY) {
+                LOGGER.trace("{} was converted to {} in toBooleanValue()", value, false);
+                return false;
+            } else if (value == Double.POSITIVE_INFINITY) {
+                LOGGER.trace("{} was converted to {} in toBooleanValue()", value, true);
+                return true;
+            } else if (value != 0.0) {
+                LOGGER.trace("{} was converted to {} in toBooleanValue()", value, false);
+                return false;
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Converts a double to a float. Standard loss of precision
+     * as noted by the Java Language Specification will occur
+     * as per Double.floatValue()
+     *
+     * @param value the value to convert
+     * @return the converted value
+     */
+    public static Float toFloatValue(double value) {
+        // standard loss of precision is expected
+        return Double.valueOf(value).floatValue();
+    }
 }

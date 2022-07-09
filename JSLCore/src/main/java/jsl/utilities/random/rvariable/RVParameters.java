@@ -18,7 +18,7 @@ package jsl.utilities.random.rvariable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import jsl.controls.Control;
+import jsl.utilities.math.JSLMath;
 import jsl.utilities.random.rng.RNStreamIfc;
 
 import java.util.*;
@@ -238,7 +238,7 @@ public abstract class RVParameters {
             changeDoubleParameter(parameterName, value);
             return true;
         } else if (integerParameters.containsKey(parameterName)){
-            int iValue = Control.toIntValue(value);
+            int iValue = JSLMath.toIntValue(value);
             changeIntegerParameter(parameterName, iValue);
             return true;
         }
