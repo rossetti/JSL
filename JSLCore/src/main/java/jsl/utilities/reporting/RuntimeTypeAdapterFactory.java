@@ -1,4 +1,4 @@
-package jsl.utilities.misc;
+package jsl.utilities.reporting;
 
 /*
  * Copyright (C) 2011 Google Inc.

@@ -7,7 +7,7 @@ import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;
 import jsl.utilities.JSLArrayUtil;
-import jsl.utilities.misc.RuntimeTypeAdapterFactory;
+import jsl.utilities.reporting.RuntimeTypeAdapterFactory;
 import jsl.utilities.random.RandomIfc;
 
 import java.lang.reflect.Type;
