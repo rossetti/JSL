@@ -108,6 +108,23 @@
         </encoder>
     </appender>
 
+    <appender name="CONTROLS_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/controlsFile.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>logs/controlsFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 2 days' worth of history capped at 30MB total size -->
+            <maxHistory>2</maxHistory>
+            <totalSizeCap>30MB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <logger name="jslx.dbutilities.dbutil.DatabaseIfc" level="DEBUG" additivity="false">
         <appender-ref ref="JSLDB" />
     </logger>
@@ -124,8 +141,12 @@
         <appender-ref ref="JOOQFILE" />
     </logger>
 
-    <logger name="org.jooq.tools.LoggerListener" level="INFO" additivity="false">
+    <logger name="org.jooq.tools.LoggerListener" level="DEBUG" additivity="false">
         <appender-ref ref="JOOQFILE" />
+    </logger>
+
+    <logger name="jsl.controls.Control" level="DEBUG" additivity="false">
+        <appender-ref ref="CONTROLS_FILE" />
     </logger>
 
     <root level="INFO">
