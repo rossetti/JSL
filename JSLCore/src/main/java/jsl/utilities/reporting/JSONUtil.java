@@ -8,6 +8,7 @@ import jsl.utilities.random.rvariable.RVParameters;
 import jsl.utilities.random.rvariable.RVType;
 
 import java.lang.reflect.Type;
+import java.util.Map;
 import java.util.Objects;
 
 public class JSONUtil {
@@ -86,4 +87,15 @@ public class JSONUtil {
         return adapter;
     }
 
+    /**
+     *
+     * @param json a json string representing a {@literal Map<String, Double>}
+     * @return the created map
+     */
+    public static Map<String, Double> fromJSONStringToMapStringDouble(String json){
+        Objects.requireNonNull(json, "The supplied json string was null");
+        Gson gson = new Gson();
+        Type collectionType = new TypeToken<Map<String, Double>>(){}.getType();
+        return gson.fromJson(json, collectionType);
+    }
 }

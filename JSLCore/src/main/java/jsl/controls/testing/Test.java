@@ -1,12 +1,12 @@
 package jsl.controls.testing;
 
-import jsl.controls.Control;
 import jsl.controls.ControlType;
 import jsl.controls.Controls;
 import jsl.controls.JSLControl;
 import jsl.simulation.Model;
 import jsl.simulation.ModelElement;
 import jsl.simulation.Simulation;
+import jsl.utilities.reporting.JSONUtil;
 
 import java.util.Map;
 
@@ -69,11 +69,11 @@ public class Test extends TestAbstract {
 
         Controls cs = sim.getModelControls();
 
-        String cStr = cs.toControlsAsDoublesJSON();
+        String cStr = JSONUtil.toJSONPretty(cs.getControlsAsDoubles());
         System.out.println(cStr);
 
         System.out.println();
-        Map<String, Double> map = Controls.fromControlsAsDoublesJSON(cStr);
+        Map<String, Double> map = JSONUtil.fromJSONStringToMapStringDouble(cStr);
         for (Map.Entry<String, Double> entry : map.entrySet()) {
             System.out.printf("%s, %f %n", entry.getKey(), entry.getValue());
         }
