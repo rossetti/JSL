@@ -10,6 +10,7 @@ public class TimeWeightedStatistic extends AbstractCollector implements Weighted
     private double myLastValue;
     private double myLastTime;
     private final WeightedStatistic myWeightedStatistic;
+    public boolean updateTimeAtReset = true;
 
     public TimeWeightedStatistic(GetTimeIfc timeGetter){
         this(timeGetter, 0.0, 0.0);
@@ -40,7 +41,9 @@ public class TimeWeightedStatistic extends AbstractCollector implements Weighted
     @Override
     public void reset() {
         myWeightedStatistic.reset();
-        myLastTime = myTimeGetter.getTime();
+        if (updateTimeAtReset){
+            myLastTime = myTimeGetter.getTime();
+        }
     }
 
     @Override
