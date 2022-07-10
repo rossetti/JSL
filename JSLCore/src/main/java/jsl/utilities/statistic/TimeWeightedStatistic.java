@@ -32,6 +32,7 @@ public class TimeWeightedStatistic extends AbstractCollector implements Weighted
         double time = myTimeGetter.getTime();
         double weight = time - myLastTime;
         myLastTime = time;
+//        System.out.println("time = " + time + " value = " + value + " last  = " + myLastValue + " weight = " + weight);
         myWeightedStatistic.collect(myLastValue, weight);
         myLastValue = value;
     }
@@ -117,5 +118,45 @@ public class TimeWeightedStatistic extends AbstractCollector implements Weighted
     @Override
     public String getCSVStatisticHeader() {
         return myWeightedStatistic.getCSVStatisticHeader();
+    }
+
+    @Override
+    public String toString(){
+        return myWeightedStatistic.toString();
+    }
+
+    public static void main(String[] args) {
+        double[] t = {0, 2, 5, 11, 14, 17, 22, 26, 28, 31, 35, 36};
+        double[] n = {0, 1, 0, 1, 2, 3, 4, 3, 2, 1, 0, 0};
+
+        TimeWeightedStatistic tws = new TimeWeightedStatistic(new TimeArray(t));
+        for(double x: n){
+            tws.collect(x);
+        }
+        System.out.println(tws);
+
+    }
+
+    public static class TimeArray implements GetTimeIfc {
+
+        double[] time;
+        int index = -1;
+
+        public TimeArray(double[] time){
+            this.time = time;
+        }
+
+        @Override
+        public double getTime() {
+            if (index < time.length - 1){
+                index = index + 1;
+                return time[index];
+            }
+            return time[index];
+        }
+
+        public void reset(){
+            index = -1;
+        }
     }
 }

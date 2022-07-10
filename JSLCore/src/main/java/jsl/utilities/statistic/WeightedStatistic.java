@@ -101,8 +101,9 @@ public class WeightedStatistic implements CollectorIfc, WeightedStatisticIfc {
     }
 
     /**
-     * @param x      the value to collect
-     * @param weight the weight associated with the value
+     * @param x      the value to collect, a Double.NaN or infinite double is considered missing data
+     * @param weight the weight associated with the value, a Double.NaN or infinite double, or
+     *              weight less than or equal to 0 is considered missing data
      */
     public final void collect(double x, double weight) {
         if (Double.isNaN(x) || Double.isInfinite(x) || Double.isNaN(weight) || Double.isInfinite(weight) || (weight <= 0.0)) {
