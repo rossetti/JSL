@@ -1,16 +1,11 @@
 package jsl.utilities.random.rvariable;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;
 import jsl.utilities.JSLArrayUtil;
-import jsl.utilities.reporting.RuntimeTypeAdapterFactory;
 import jsl.utilities.random.RandomIfc;
 
-import java.lang.reflect.Type;
 import java.util.*;
 
 public class RVParameterSetter {
@@ -231,68 +226,4 @@ public class RVParameterSetter {
         return countChanged;
     }
 
-    /**
-     * @return the JSON representation of the RVParameterSetter
-     */
-    public String toJSON() {
-        Type type = new TypeToken<RVParameterSetter>() {
-        }.getType();
-        return getAdaptedGson().toJson(this);
-    }
-
-    private static Gson getAdaptedGson() {
-        // https://stackoverflow.com/questions/16000163/using-gson-and-abstract-classes
-        RuntimeTypeAdapterFactory<RVParameters> adapter =
-                RuntimeTypeAdapterFactory.of(RVParameters.class, "typeField");
-        for (RVType type : RVType.RVTYPE_SET) {
-            adapter.registerSubtype(type.getRVParameters().getClass(), type.getRVParameters().getClass().getName());
-        }
-        return new GsonBuilder().setPrettyPrinting().registerTypeAdapterFactory(adapter).create();
-    }
-
-    /**
-     * Converts the JSON string to a RVParameterSetter.
-     *
-     * @param json a json string representing a {@literal RVParameterSetter}
-     * @return the created RVParameterSetter
-     */
-    public static RVParameterSetter fromJSON(String json) {
-        Objects.requireNonNull(json, "The supplied json string was null");
-        Type type = new TypeToken<RVParameterSetter>() {
-        }.getType();
-        return getAdaptedGson().fromJson(json, type);
-    }
-
-    public static void main(String[] args) {
-        Simulation simulation = new Simulation();
-        Model model = simulation.getModel();
-        RandomVariable rv1 = new RandomVariable(model, new BinomialRV(0.8, 10), "rv1");
-        RandomVariable rv2 = new RandomVariable(model, new TriangularRV(10.0, 15.0, 25.0), "rv2");
-        RandomVariable rv3 = new RandomVariable(model, new NormalRV(10.0, 4.0), "rv3");
-        RVariableIfc de = new DEmpiricalRV(new double[]{1.0, 2.0, 3.0}, new double[]{0.35, 0.80, 1.0});
-        RandomVariable rv4 = new RandomVariable(model, de, "rv4");
-
-        RVParameterSetter setter = new RVParameterSetter();
-        setter.extractParameters(model);
-        System.out.println(setter.toJSON());
-        RVParameters parameters1 = setter.getRVParameters("rv1");
-        parameters1.changeDoubleParameter("probOfSuccess", 0.66);
-        RVParameters parameters2 = setter.getRVParameters("rv4");
-        parameters2.changeDoubleArrayParameter("values", new double[]{5.0, 6.0, 8.0});
-        System.out.println();
-        System.out.println(setter.toJSON());
-        int numChanged = setter.applyParameterChanges(model);
-        System.out.println();
-        System.out.println("number of parameter changes = " + numChanged);
-        RVParameterSetter setter2 = new RVParameterSetter();
-        setter2.extractParameters(model);
-        System.out.println();
-        String json = setter2.toJSON();
-        System.out.println(json);
-
-        RVParameterSetter setter3 = RVParameterSetter.fromJSON(json);
-        System.out.println();
-        System.out.println("From JSON string");
-        System.out.println(setter3.toJSON());
-    }
 }

@@ -18,7 +18,6 @@ package jsl.utilities.random.rvariable;
 
 import jsl.utilities.math.JSLMath;
 import jsl.utilities.random.rng.RNStreamIfc;
-import jsl.utilities.reporting.JSONUtil;
 
 import java.util.*;
 
@@ -505,76 +504,6 @@ public abstract class RVParameters {
         }
         Object[] objects = list.toArray();
         return Arrays.hashCode(objects);
-    }
-
-    public static void main(String[] args) {
-        RVParameters p1 = RVType.Binomial.getRVParameters();
-        RVParameters p2 = RVType.Normal.getRVParameters();
-        RVParameters p3 = RVType.Triangular.getRVParameters();
-        RVParameters p4 = RVType.Triangular.getRVParameters();
-
-        System.out.println(JSONUtil.toJSONPretty(p1));
-        System.out.println();
-
-        System.out.println(JSONUtil.toJSONPretty(p2));
-        System.out.println();
-
-        System.out.println(JSONUtil.toJSONPretty(p3));
-        System.out.println();
-
-        System.out.println(JSONUtil.toJSONPretty(p4));
-        System.out.println();
-
-        if (p3.equals(p4)) {
-            System.out.println("p3 == p4");
-        } else {
-            System.out.println("p3 != p4");
-        }
-
-        if (p3.hashCode() == p4.hashCode()) {
-            System.out.println("hashcode p3 == p4");
-        } else {
-            System.out.println("hashcode p3 != p4");
-        }
-
-        if (p1.equals(p2)) {
-            System.out.println("p1 == p2");
-        } else {
-            System.out.println("p1 != p2");
-        }
-
-        p3.changeDoubleParameter("min", -5.0);
-        if (p3.equals(p4)) {
-            System.out.println("p3 == p4");
-        } else {
-            System.out.println("p3 != p4");
-        }
-
-        if (p3.hashCode() == p4.hashCode()) {
-            System.out.println("hashcode p3 == p4");
-        } else {
-            System.out.println("hashcode p3 != p4");
-        }
-
-        // not copy them over so that they are back to being the same
-        p4.copyFrom(p3);
-        if (p3.equals(p4)) {
-            System.out.println("p3 == p4");
-        } else {
-            System.out.println("p3 != p4");
-        }
-
-        if (p3.hashCode() == p4.hashCode()) {
-            System.out.println("hashcode p3 == p4");
-        } else {
-            System.out.println("hashcode p3 != p4");
-        }
-
-        System.out.println(JSONUtil.toJSONPretty(p3));
-        System.out.println();
-
-        System.out.println(JSONUtil.toJSONPretty(p4));
-        System.out.println();
     }
 
     static class WeibullRVParameters extends RVParameters {

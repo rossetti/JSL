@@ -203,16 +203,4 @@ public enum RVType {
         classToTypeMap.put(EmpiricalRV.class, Empirical);
         classToTypeMap.put(AR1NormalRV.class, AR1Normal);
     }
-
-    public static void main(String[] args) {
-        // test making some controls
-        RVParameters rvParameters = Triangular.getRVParameters();
-        RVariableIfc rv = rvParameters.createRVariable();
-        System.out.println(rv.getValue());
-        System.out.println();
-        System.out.println(rvParameters);
-        System.out.println();
-
-        System.out.println(rvParameters.toJSON());
-    }
 }
