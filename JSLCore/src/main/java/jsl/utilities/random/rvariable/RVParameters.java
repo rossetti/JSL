@@ -16,10 +16,9 @@
 
 package jsl.utilities.random.rvariable;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import jsl.utilities.math.JSLMath;
 import jsl.utilities.random.rng.RNStreamIfc;
+import jsl.utilities.reporting.JSONUtil;
 
 import java.util.*;
 
@@ -440,10 +439,10 @@ public abstract class RVParameters {
         return sb.toString();
     }
 
-    public String toJSON() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(this);
-    }
+//    public String toJSON() {
+//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//        return gson.toJson(this);
+//    }
 
     /**
      * Copies from the supplied parameters into this parameters
@@ -514,16 +513,16 @@ public abstract class RVParameters {
         RVParameters p3 = RVType.Triangular.getRVParameters();
         RVParameters p4 = RVType.Triangular.getRVParameters();
 
-        System.out.println(p1.toJSON());
+        System.out.println(JSONUtil.toJSONPretty(p1));
         System.out.println();
 
-        System.out.println(p2.toJSON());
+        System.out.println(JSONUtil.toJSONPretty(p2));
         System.out.println();
 
-        System.out.println(p3.toJSON());
+        System.out.println(JSONUtil.toJSONPretty(p3));
         System.out.println();
 
-        System.out.println(p4.toJSON());
+        System.out.println(JSONUtil.toJSONPretty(p4));
         System.out.println();
 
         if (p3.equals(p4)) {
@@ -571,10 +570,10 @@ public abstract class RVParameters {
             System.out.println("hashcode p3 != p4");
         }
 
-        System.out.println(p3.toJSON());
+        System.out.println(JSONUtil.toJSONPretty(p3));
         System.out.println();
 
-        System.out.println(p4.toJSON());
+        System.out.println(JSONUtil.toJSONPretty(p4));
         System.out.println();
     }
 
