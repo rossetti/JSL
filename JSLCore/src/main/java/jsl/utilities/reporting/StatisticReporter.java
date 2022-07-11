@@ -672,7 +672,6 @@ public class StatisticReporter {
     public final List<StringBuilder> getHalfWidthSummaryReportAsLaTeXTables(int maxRows,
                                                                             double confLevel) {
         List<StringBuilder> list = getHalfWidthSummaryReportAsLaTeXTabular(maxRows, confLevel);
-        String hline = "\\hline";
         String caption = "\\caption{Half-Width Summary Report} \n";
         String captionc = "\\caption{Half-Width Summary Report (continued)} \n";
         String beginTable = "\\begin{table}[ht] \n";
@@ -711,7 +710,6 @@ public class StatisticReporter {
      */
     public final List<StringBuilder> getSummaryReportAsLaTeXTables(int maxRows) {
         List<StringBuilder> list = getSummaryReportAsLaTeXTabular(maxRows);
-        String hline = "\\hline";
         String caption = "\\caption{Statistical Summary Report} \n";
         String captionc = "\\caption{Statistical Summary Report (continued)} \n";
         String beginTable = "\\begin{table}[ht] \n";
