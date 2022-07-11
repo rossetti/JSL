@@ -22,6 +22,12 @@ public class TimeWeightedStatistic extends AbstractCollector implements Weighted
 
     public TimeWeightedStatistic(GetTimeIfc timeGetter, double initialValue, double initialTime){
         Objects.requireNonNull(timeGetter, "The GetTimeIfc instance was null");
+        if (initialTime < 0.0){
+            throw new IllegalArgumentException("The initial time must be >= 0.0");
+        }
+        if (initialValue < 0.0){
+            throw new IllegalArgumentException("The initial value must be >= 0.0");
+        }
         myTimeGetter = timeGetter;
         myWeightedStatistic = new WeightedStatistic();
         myLastTime = initialTime;
