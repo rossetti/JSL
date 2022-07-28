@@ -140,16 +140,16 @@ public enum RVType {
         }
     };
 
-    private final Class<? extends RVariable> parametrizedRVClass;
+    private final Class<? extends ParameterizedRV> parametrizedRVClass;
 
-    RVType(Class<? extends RVariable> rvClass) {
+    RVType(Class<? extends ParameterizedRV> rvClass) {
         this.parametrizedRVClass = rvClass;
     }
 
     /**
      * @return the class associated with this type
      */
-    public Class<? extends RVariable> getParametrizedRVClass() {
+    public Class<? extends ParameterizedRV> getParametrizedRVClass() {
         return parametrizedRVClass;
     }
 
@@ -166,9 +166,9 @@ public enum RVType {
             RVType.Poisson, RVType.ShiftedGeometric, RVType.Triangular, RVType.Uniform,
             RVType.Weibull, RVType.DEmpirical, RVType.Empirical, RVType.AR1Normal);
 
-    private static final Map<Class<? extends RVariable>, RVType> classToTypeMap = new HashMap<>();
+    private static final Map<Class<? extends ParameterizedRV>, RVType> classToTypeMap = new HashMap<>();
 
-    public static RVType getRVType(Class<? extends RVariable> clazz) {
+    public static RVType getRVType(Class<? extends ParameterizedRV> clazz) {
         Objects.requireNonNull(clazz, "The sub-class of AbstractRVariable must not be null");
         if (!classToTypeMap.containsKey(clazz)) {
             throw new IllegalArgumentException("The supplied class does not map to a valid RVType");
