@@ -139,9 +139,9 @@ tasks.jar {
 // these jars are placed in build/libs by default
 java {
     // comment this out to not make jar file with javadocs during normal build
-    withJavadocJar()
+//    withJavadocJar()
     // comment this out to not make jar file with source during normal build
-    withSourcesJar()
+//    withSourcesJar()
 }
 
 // run the publishing task to generate the signed jars required for maven central
