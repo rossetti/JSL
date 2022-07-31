@@ -9,9 +9,9 @@ import jsl.utilities.statistic.Statistic;
  * The simulation is performed in two loops: an outer loop called the macro replications and an inner loop called the micro replications.
  * The user specifies a desired (half-width) error bound, an initial sample size (k), and a maximum sample size limit (M) for
  * the macro replications.  The initial sample size is used to generate a pilot sample from which an estimate of the number of
- * samples needed to meet the absolute precision criteria. Let's call the estimated sample size, m.  If m > k, then an
+ * samples needed to meet the absolute precision criteria. Let's call the estimated sample size, m.  If {@literal m > k}, then an
  * additional (m-k) samples will be taken or until the error criteria is met or the maximum number of samples M is reached.
- * Thus, if m > M, and the error criterion is not met during the macro replications a total of M observations will be observed.
+ * Thus, if {@literal m > M}, and the error criterion is not met during the macro replications a total of M observations will be observed.
  * Thus, the total number of macro replications will not exceed M.  If the error criteria is met before M is reached, the
  * number of macro replications will be somewhere between k and M. The total number of macro replications can be
  * found by using the getStatistic() method to get the macro replication statistics and using the getCount() method.

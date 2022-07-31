@@ -47,12 +47,12 @@ import static java.lang.Math.*;
  *    The algorithm is based on that of the reference.
  *
  *  REFERENCE
- *
+ *    {@literal
  *    Copenhaver, Margaret Diponzio & Holland, Burt S.
  *    Multiple comparisons of simple effects in
  *    the two-way analysis of variance with fixed effects.
  *    Journal of Statistical Computation and Simulation,
- *    Vol.30, pp.1-15, 1988.
+ *    Vol.30, pp.1-15, 1988}
  *
  */
 public class Tukey {

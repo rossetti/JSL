@@ -19,7 +19,7 @@ public interface MCExperimentIfc extends MCExperimentSetUpIfc {
     double estimateSampleSize();
 
     /**
-     * See page 513 of Law & Kelton
+     * See page 513 of Law and Kelton
      *
      * @param relativeError a relative error bound
      * @return the recommended sample size
