@@ -925,7 +925,7 @@ public class Model extends ModelElement {
 
         if (myModelElementMap.containsKey(key)) {
             StringBuilder sb = new StringBuilder();
-            sb.append("A ModleElement with the name: ");
+            sb.append("A ModelElement with the name: ");
             sb.append(modelElement.getName());
             sb.append(" has already been added to the Model.\n");
             sb.append("Every model element must have a unique name");
