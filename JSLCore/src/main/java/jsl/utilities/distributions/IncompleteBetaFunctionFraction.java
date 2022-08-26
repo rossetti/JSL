@@ -41,12 +41,9 @@ public class IncompleteBetaFunctionFraction extends ContinuedFraction {
     protected void computeFactorsAt(int n){
     	int m = n / 2;
     	int m2 = 2 * m;
-    	factors[0] = m2 == n
-    					? x * m * ( alpha2 - m)
-    								/ ( (alpha1 + m2) * (alpha1 + m2 - 1))
-    					: -x * ( alpha1 + m) * (alpha1 + alpha2 + m)
-    								/ ( (alpha1 + m2) * (alpha1 + m2 + 1));
-    	return;
+		factors[0] = (m2 == n) ? ((x * m * (alpha2 - m)) / ((alpha1 + m2) * ((alpha1 + m2) - 1)))
+				: ((-x * (alpha1 + m) * (alpha1 + alpha2 + m))
+				/ ((alpha1 + m2) * (alpha1 + m2 + 1)));
     }
     
     protected double initialValue(){
