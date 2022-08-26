@@ -83,7 +83,7 @@ public final class BetaRV extends ParameterizedRV {
 
     @Override
     protected double generate() {
-        return Beta.stdBetaInvCDF(myRNStream.randU01(), myAlpha1, myAlpha1, mylnBetaA1A2);
+        return Beta.stdBetaInvCDF(myRNStream.randU01(), myAlpha1, myAlpha2, mylnBetaA1A2);
     }
 
     /**
