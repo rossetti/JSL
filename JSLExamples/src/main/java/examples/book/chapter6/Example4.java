@@ -1,5 +1,6 @@
 package examples.book.chapter6;
 
+import jsl.modeling.elements.variable.TimeWeighted;
 import jsl.simulation.Simulation;
 import jsl.simulation.SimulationReporter;
 import jsl.utilities.random.rvariable.ExponentialRV;
@@ -19,8 +20,8 @@ public class Example4 {
         sim.setLengthOfWarmUp(5000.0);
         // add DriveThroughPharmacy to the main model
         DriveThroughPharmacy dtp = new DriveThroughPharmacy(sim.getModel(), 1);
-        dtp.setTimeBtwArrivalRandomSource(new ExponentialRV(6.0));
-        dtp.setServiceTimeRandomSource(new ExponentialRV(3.0));
+        dtp.setTimeBtwArrivalRandomSource(new ExponentialRV(6.0, 1));
+        dtp.setServiceTimeRandomSource(new ExponentialRV(3.0, 2));
         sim.run();
         sim.printHalfWidthSummaryReport();
     }
