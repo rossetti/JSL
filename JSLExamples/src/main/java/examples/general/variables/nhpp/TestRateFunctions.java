@@ -35,13 +35,13 @@ public class TestRateFunctions {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-//        testPiecewiseConstantRateFunction1();
+//       testPiecewiseConstantRateFunction1();
 //        testPiecewiseConstantRateFunction2();
 //        testPiecewiseConstantRateFunction3();
 //        testPiecewiseConstantRateFunction4();
 //        testPiecewiseConstantRateFunction5();
-//        testPiecewiseLinearRateFunction1();
-        testPiecewiseLinearRateFunction2();
+        testPiecewiseLinearRateFunction1();
+//        testPiecewiseLinearRateFunction2();
     }
 
     public static void testPiecewiseLinearRateFunction1() {

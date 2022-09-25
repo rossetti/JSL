@@ -41,7 +41,7 @@ public class TestLevelResponse extends ModelElement {
 
     public TestLevelResponse(ModelElement parent, String name) {
         super(parent, name);
-        myRV = new RandomVariable(this, new NormalRV());
+        myRV = new RandomVariable(this, new NormalRV(0.0, 1.0, 1));
         myVariable = new Variable(this, "Level Variable");
         myLR = new LevelResponse(myVariable, 0.0);
         myR = new ResponseVariable(this, "Observations");
