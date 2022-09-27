@@ -183,7 +183,7 @@
         <appender-ref ref="CONTROLS_FILE" />
     </logger>
 
-    <logger name="jsl.utilities.random.rng.RNStreamProvider" level="TRACE" additivity="false">
+    <logger name="jsl.utilities.random.rng.RNStreamProvider" level="INFO" additivity="false">
         <appender-ref ref="JSL_STREAMS" />
     </logger>
 
