@@ -115,7 +115,7 @@ public class NHPPTimeBtwEventRV extends RandomVariable {
      */
     public NHPPTimeBtwEventRV(ModelElement parent, InvertibleCumulativeRateFunctionIfc rateFunction,
                               double lastRate, String name) {
-        super(parent, new ExponentialRV(1.0), name);
+        super(parent, new ExponentialRV(1.0, 1), name);
 
         myRate1Expo = (ExponentialRV) getInitialRandomSource();
         myRNStream = myRate1Expo.getRandomNumberStream();

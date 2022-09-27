@@ -15,6 +15,7 @@
  */
 package examples.general.variables.nhpp;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import jsl.modeling.elements.variable.nhpp.NHPPEventGenerator;
 import jsl.modeling.elements.variable.nhpp.PiecewiseConstantRateFunction;
 import jsl.modeling.elements.variable.nhpp.PiecewiseLinearRateFunction;
 import jsl.modeling.elements.variable.nhpp.PiecewiseRateFunction;
+import jsl.observers.variable.CounterTraceTextReport;
 import jsl.simulation.JSLEvent;
 import jsl.simulation.ModelElement;
 import jsl.simulation.Simulation;
@@ -57,6 +59,9 @@ public class TestNHPP extends ModelElement {
         for (int i = 0; i < n; i++) {
             Counter c = new Counter(this, "Interval " + i);
             myCounters.add(c);
+            Path path= getSimulation().getOutputDirectoryPath().resolve(c.getName()+".csv");
+            System.out.println(path);
+            c.addObserver(new CounterTraceTextReport(path, true));
         }
     }
 
@@ -87,7 +92,7 @@ public class TestNHPP extends ModelElement {
 
         // set the parameters of the experiment
         // set the parameters of the experiment
-        s.setNumberOfReplications(1);
+        s.setNumberOfReplications(2);
         s.setLengthOfReplication(100.0);
 
         // tell the simulation to run
