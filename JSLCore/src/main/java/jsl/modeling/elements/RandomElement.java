@@ -20,6 +20,7 @@ import java.util.List;
 
 import jsl.simulation.ModelElement;
 import jsl.utilities.random.rng.RNStreamIfc;
+import jsl.utilities.random.rng.RNStreamProvider;
 import jsl.utilities.random.robj.DEmpiricalList;
 
 /**
@@ -73,6 +74,9 @@ public class RandomElement<T> extends ModelElement implements RandomElementIfc {
         setWarmUpOption(false); // do not need to respond to warm events
         setResetStartStreamOption(true);
         setResetNextSubStreamOption(true);
+        getModel().addStream(myRandomList.getRandomNumberStream());
+        RNStreamProvider.logger.info("Initialized RandomVariable(id = {}, name = {}) with stream id = {}",
+                getId(), getName(), myRandomList.getStreamNumber());
     }
 
     /**

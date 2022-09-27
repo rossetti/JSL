@@ -397,7 +397,7 @@ public class RNStreamFactory extends Identity {
             for (int i = 0; i < 6; ++i)
                 Bg[i] = Ig[i];
             resetStartSubStream();
-            RNStreamProvider.logger.trace("Resetting stream {} to its starting stream", getId());
+            RNStreamProvider.logger.trace("Resetting stream {} to the start of its stream", getId());
             RNStreamProvider.logger.trace(this.toString());
         }
 
@@ -415,7 +415,7 @@ public class RNStreamFactory extends Identity {
         public final void advanceToNextSubStream() {
             multMatVect(Bg, A1p76, m1, A2p76, m2);
             resetStartSubStream();
-            RNStreamProvider.logger.trace("Advancing stream {} to its starting stream", getId());
+            RNStreamProvider.logger.trace("Advancing stream {} to the start of its next sub-stream", getId());
             RNStreamProvider.logger.trace(this.toString());
         }
 
