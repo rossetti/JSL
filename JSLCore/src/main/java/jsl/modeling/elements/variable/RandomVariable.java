@@ -63,8 +63,8 @@ import java.util.Optional;
  */
 public class RandomVariable extends ModelElement implements RandomIfc, RandomElementIfc {
 
-    /**
-     * indicates whether or not the random variable's
+    /*
+     * indicates whether the random variable's
      * distribution has it stream reset to the default
      * stream, or not prior to each experiment.  Resetting
      * allows each experiment to use the same underlying random numbers
@@ -72,10 +72,10 @@ public class RandomVariable extends ModelElement implements RandomIfc, RandomEle
      * <p>
      * Setting it to true indicates that it does reset
      */
-    protected boolean myResetStartStreamOption;
+//    protected boolean myResetStartStreamOption;
 
-    /**
-     * indicates whether or not the random variable's
+    /*
+     * indicates whether the random variable's
      * distribution has it stream reset to the next sub-stream
      * stream, or not, prior to each replication.  Resetting
      * allows each replication to better ensure that each
@@ -86,7 +86,7 @@ public class RandomVariable extends ModelElement implements RandomIfc, RandomEle
      * Setting it to true indicates that it does jump to
      * the next sub-stream, true is the default
      */
-    protected boolean myAdvanceToNextSubStreamOption;
+//    protected boolean myAdvanceToNextSubStreamOption;
 
     /**
      * RandomIfc provides a reference to the underlying source of randomness
@@ -101,7 +101,7 @@ public class RandomVariable extends ModelElement implements RandomIfc, RandomEle
     protected RandomIfc myInitialRandomSource;
 
     /**
-     * A flag to indicate whether or not a ResponseVariable should be created
+     * A flag to indicate whether a ResponseVariable should be created
      * and used to capture the randomly generated values. Useful for control variate implementation
      */
     protected boolean myCaptureResponseFlag = false;
@@ -144,6 +144,7 @@ public class RandomVariable extends ModelElement implements RandomIfc, RandomEle
         setResetStartStreamOption(true);
         setResetNextSubStreamOption(true);
         myInitialRandomSourceChangeWarning = true;
+        getModel().addStream(myInitialRandomSource.getRandomNumberStream());
     }
 
     /**
@@ -154,7 +155,7 @@ public class RandomVariable extends ModelElement implements RandomIfc, RandomEle
     }
 
     /**
-     * Controls whether or not the change of the initial random source will be
+     * Controls whether the change of the initial random source will be
      * logged if made during the replication
      *
      * @param flag true means warning will be logged
@@ -183,22 +184,22 @@ public class RandomVariable extends ModelElement implements RandomIfc, RandomEle
 
     @Override
     public final boolean getResetStartStreamOption() {
-        return myResetStartStreamOption;
+        return myInitialRandomSource.getResetStartStreamOption();
     }
 
     @Override
     public final void setResetStartStreamOption(boolean b) {
-        myResetStartStreamOption = b;
+        myInitialRandomSource.setResetStartStreamOption(b);
     }
 
     @Override
     public final boolean getResetNextSubStreamOption() {
-        return myAdvanceToNextSubStreamOption;
+        return myInitialRandomSource.getResetNextSubStreamOption();
     }
 
     @Override
     public final void setResetNextSubStreamOption(boolean b) {
-        myAdvanceToNextSubStreamOption = b;
+        myInitialRandomSource.setResetNextSubStreamOption(b);
     }
 
     @Override
@@ -212,8 +213,8 @@ public class RandomVariable extends ModelElement implements RandomIfc, RandomEle
     }
 
     @Override
-    public final void advanceToNextSubstream() {
-        myRandomSource.advanceToNextSubstream();
+    public final void advanceToNextSubStream() {
+        myRandomSource.advanceToNextSubStream();
     }
 
     @Override
@@ -222,8 +223,8 @@ public class RandomVariable extends ModelElement implements RandomIfc, RandomEle
     }
 
     @Override
-    public final void resetStartSubstream() {
-        myRandomSource.resetStartSubstream();
+    public final void resetStartSubStream() {
+        myRandomSource.resetStartSubStream();
     }
 
     /**
@@ -395,9 +396,9 @@ public class RandomVariable extends ModelElement implements RandomIfc, RandomEle
     protected void beforeExperiment() {
         super.beforeExperiment();
         myRandomSource = myInitialRandomSource;
-        if (getResetStartStreamOption()) {
-            resetStartStream();
-        }
+//        if (getResetStartStreamOption()) { //TODO need to remove
+//            resetStartStream();
+//        }
     }
 
     /**
@@ -416,9 +417,9 @@ public class RandomVariable extends ModelElement implements RandomIfc, RandomEle
             myRandomSource = myInitialRandomSource;
         }
 
-        if (getResetNextSubStreamOption()) {
-            advanceToNextSubstream();
-        }
+//        if (getResetNextSubStreamOption()) { //TODO need to remove
+//            advanceToNextSubStream();
+//        }
 
     }
 }

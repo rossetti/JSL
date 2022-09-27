@@ -303,6 +303,10 @@ public class RNStreamFactory extends Identity {
          */
         private double myPrevU;
 
+        private boolean advanceToNextSubStreamOption = true;
+
+        private boolean resetStartStreamOption = true;
+
         private RNStream() {
             this(null);
         }
@@ -392,11 +396,11 @@ public class RNStreamFactory extends Identity {
         public final void resetStartStream() {
             for (int i = 0; i < 6; ++i)
                 Bg[i] = Ig[i];
-            resetStartSubstream();
+            resetStartSubStream();
         }
 
         @Override
-        public final void resetStartSubstream() {
+        public final void resetStartSubStream() {
             Cg0 = Bg[0];
             Cg1 = Bg[1];
             Cg2 = Bg[2];
@@ -406,9 +410,9 @@ public class RNStreamFactory extends Identity {
         }
 
         @Override
-        public final void advanceToNextSubstream() {
+        public final void advanceToNextSubStream() {
             multMatVect(Bg, A1p76, m1, A2p76, m2);
-            resetStartSubstream();
+            resetStartSubStream();
         }
 
         /**
@@ -547,6 +551,25 @@ public class RNStreamFactory extends Identity {
             return sb.toString();
         }
 
+        @Override
+        public boolean getResetNextSubStreamOption() {
+            return advanceToNextSubStreamOption;
+        }
+
+        @Override
+        public boolean getResetStartStreamOption() {
+            return resetStartStreamOption;
+        }
+
+        @Override
+        public void setResetNextSubStreamOption(boolean b) {
+            advanceToNextSubStreamOption = b;
+        }
+
+        @Override
+        public void setResetStartStreamOption(boolean b) {
+            resetStartStreamOption = b;
+        }
     }
 
 //    public static void main(String[] args) {

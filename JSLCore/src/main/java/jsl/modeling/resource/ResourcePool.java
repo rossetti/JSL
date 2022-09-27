@@ -480,16 +480,16 @@ public class ResourcePool extends ModelElement implements RandomElementIfc {
     }
 
     @Override
-    public void resetStartSubstream() {
+    public void resetStartSubStream() {
         if (myRNG != null) {
-            myRNG.resetStartSubstream();
+            myRNG.resetStartSubStream();
         }
     }
 
     @Override
-    public void advanceToNextSubstream() {
+    public void advanceToNextSubStream() {
         if (myRNG != null) {
-            myRNG.advanceToNextSubstream();
+            myRNG.advanceToNextSubStream();
         }
     }
 
@@ -601,7 +601,7 @@ public class ResourcePool extends ModelElement implements RandomElementIfc {
     protected void afterReplication() {
         super.afterReplication();
         if (getResetNextSubStreamOption()) {
-            advanceToNextSubstream();
+            advanceToNextSubStream();
         }
 
     }

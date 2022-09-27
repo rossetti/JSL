@@ -65,13 +65,13 @@ public class TwoWayByChanceStationSender extends Station implements RandomElemen
     }
 
     @Override
-    public void resetStartSubstream() {
-        myTwoWaySender.resetStartSubstream();
+    public void resetStartSubStream() {
+        myTwoWaySender.resetStartSubStream();
     }
 
     @Override
-    public void advanceToNextSubstream() {
-        myTwoWaySender.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        myTwoWaySender.advanceToNextSubStream();
     }
 
     @Override

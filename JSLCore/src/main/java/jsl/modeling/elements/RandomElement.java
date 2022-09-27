@@ -30,7 +30,7 @@ import jsl.utilities.random.robj.DEmpiricalList;
 public class RandomElement<T> extends ModelElement implements RandomElementIfc {
 
     /**
-     * indicates whether or not the random variable's
+     * indicates whether the random variable's
      * distribution has it stream reset to the default
      * stream, or not prior to each experiment.  Resetting
      * allows each experiment to use the same underlying random numbers
@@ -38,10 +38,10 @@ public class RandomElement<T> extends ModelElement implements RandomElementIfc {
      * <p>
      * Setting it to true indicates that it does reset
      */
-    protected boolean myResetStartStreamOption;
+//    protected boolean myResetStartStreamOption;
 
     /**
-     * indicates whether or not the random variable's
+     * indicates whether the random variable's
      * distribution has it stream reset to the next substream
      * stream, or not, prior to each replication.  Resetting
      * allows each replication to better ensure that each
@@ -52,7 +52,7 @@ public class RandomElement<T> extends ModelElement implements RandomElementIfc {
      * Setting it to true indicates that it does jump to
      * the next substream, true is the default
      */
-    protected boolean myResetNextSubStreamOption;
+//    protected boolean myResetNextSubStreamOption;
 
     protected DEmpiricalList<T> myRandomList;
 
@@ -82,7 +82,7 @@ public class RandomElement<T> extends ModelElement implements RandomElementIfc {
      */
     @Override
     public final boolean getResetStartStreamOption() {
-        return myResetStartStreamOption;
+        return myRandomList.getResetStartStreamOption();
     }
 
     /**
@@ -93,7 +93,7 @@ public class RandomElement<T> extends ModelElement implements RandomElementIfc {
      */
     @Override
     public final void setResetStartStreamOption(boolean b) {
-        myResetStartStreamOption = b;
+        myRandomList.setResetStartStreamOption(b);
     }
 
     /**
@@ -105,7 +105,7 @@ public class RandomElement<T> extends ModelElement implements RandomElementIfc {
      */
     @Override
     public final boolean getResetNextSubStreamOption() {
-        return myResetNextSubStreamOption;
+        return myRandomList.getResetNextSubStreamOption();
     }
 
     /**
@@ -117,7 +117,7 @@ public class RandomElement<T> extends ModelElement implements RandomElementIfc {
      */
     @Override
     public final void setResetNextSubStreamOption(boolean b) {
-        myResetNextSubStreamOption = b;
+        myRandomList.setResetNextSubStreamOption(b);
     }
 
     @Override
@@ -191,8 +191,8 @@ public class RandomElement<T> extends ModelElement implements RandomElementIfc {
     }
 
     @Override
-    public final void advanceToNextSubstream() {
-        myRandomList.advanceToNextSubstream();
+    public final void advanceToNextSubStream() {
+        myRandomList.advanceToNextSubStream();
     }
 
     @Override
@@ -201,8 +201,8 @@ public class RandomElement<T> extends ModelElement implements RandomElementIfc {
     }
 
     @Override
-    public final void resetStartSubstream() {
-        myRandomList.resetStartSubstream();
+    public final void resetStartSubStream() {
+        myRandomList.resetStartSubStream();
     }
 
     @Override
@@ -236,7 +236,7 @@ public class RandomElement<T> extends ModelElement implements RandomElementIfc {
     protected void afterReplication() {
         super.afterReplication();
         if (getResetNextSubStreamOption()) {
-            advanceToNextSubstream();
+            advanceToNextSubStream();
         }
 
     }

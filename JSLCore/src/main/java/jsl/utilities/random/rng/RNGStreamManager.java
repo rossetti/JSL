@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import jsl.utilities.random.rng.RNStreamFactory.RNStream;
 
 /** A wrapper for holding a list of streams so that
  *  all streams can be managed together
@@ -76,16 +75,16 @@ public class RNGStreamManager implements RandomStreamManagerIfc {
     }
 
     @Override
-    public void resetStartSubstream() {
+    public void resetStartSubStream() {
         for (RNStreamIfc r : myStreams) {
-            r.resetStartSubstream();
+            r.resetStartSubStream();
         }
     }
 
     @Override
-    public void advanceToNextSubstream() {
+    public void advanceToNextSubStream() {
         for (RNStreamIfc r : myStreams) {
-            r.advanceToNextSubstream();
+            r.advanceToNextSubStream();
         }
     }
 
@@ -94,12 +93,12 @@ public class RNGStreamManager implements RandomStreamManagerIfc {
      *
      * @param n
      */
-    public void advanceToNextSubstream(int n) {
+    public void advanceToNextSubStream(int n) {
         if (n <= 0) {
             return;
         }
         for (int i = 1; i <= n; i++) {
-            advanceToNextSubstream();
+            advanceToNextSubStream();
         }
     }
 
@@ -233,5 +232,49 @@ public class RNGStreamManager implements RandomStreamManagerIfc {
         RNStreamIfc s = f.getStream();
         add(s);
         return s;
+    }
+
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        if(myStreams.isEmpty()){
+            throw new IllegalStateException("There were no streams present");
+        }
+
+        ListIterator<RNStreamIfc> listIterator = myStreams.listIterator();
+        boolean b = listIterator.next().getResetNextSubStreamOption();
+
+        while( listIterator.hasNext()){
+            b = b && listIterator.next().getResetNextSubStreamOption();
+        }
+        return b;
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        if(myStreams.isEmpty()){
+            throw new IllegalStateException("There were no streams present");
+        }
+
+        ListIterator<RNStreamIfc> listIterator = myStreams.listIterator();
+        boolean b = listIterator.next().getResetStartStreamOption();
+
+        while( listIterator.hasNext()){
+            b = b && listIterator.next().getResetStartStreamOption();
+        }
+        return b;
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        for (RNStreamIfc r : myStreams) {
+            r.setResetNextSubStreamOption(b);
+        }
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        for (RNStreamIfc r : myStreams) {
+            r.setResetStartStreamOption(b);
+        }
     }
 }

@@ -129,7 +129,7 @@ public class SimulationRunner {
             // and skip ahead to the right replication (advancing sub-streams)
             myModel.resetStartStream();
             if (simulationRun.parameters.firstReplication > 0) {
-                myModel.advanceSubstreams(simulationRun.parameters.firstReplication);
+                myModel.advanceSubStreams(simulationRun.parameters.firstReplication);
             }
 
             // set simulation run parameters and controls

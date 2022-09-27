@@ -149,7 +149,7 @@ abstract public class RandomList<T> extends ModelElement implements RListIfc<T>,
         super.afterReplication();
 
         if (getResetNextSubStreamOption()) {
-            advanceToNextSubstream();
+            advanceToNextSubStream();
         }
 
     }
@@ -294,8 +294,8 @@ abstract public class RandomList<T> extends ModelElement implements RListIfc<T>,
     }
 
     @Override
-    public void advanceToNextSubstream() {
-        myRList.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        myRList.advanceToNextSubStream();
     }
 
     @Override
@@ -304,8 +304,8 @@ abstract public class RandomList<T> extends ModelElement implements RListIfc<T>,
     }
 
     @Override
-    public void resetStartSubstream() {
-        myRList.resetStartSubstream();
+    public void resetStartSubStream() {
+        myRList.resetStartSubStream();
     }
 
     @Override

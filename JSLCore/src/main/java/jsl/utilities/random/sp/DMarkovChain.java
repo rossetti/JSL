@@ -151,16 +151,16 @@ public class DMarkovChain {
         myRNG = rng;
     }
 
-    public void advanceToNextSubstream() {
-        myRNG.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        myRNG.advanceToNextSubStream();
     }
 
     public void resetStartStream() {
         myRNG.resetStartStream();
     }
 
-    public void resetStartSubstream() {
-        myRNG.resetStartSubstream();
+    public void resetStartSubStream() {
+        myRNG.resetStartSubStream();
     }
 
     public void setAntitheticOption(boolean flag) {

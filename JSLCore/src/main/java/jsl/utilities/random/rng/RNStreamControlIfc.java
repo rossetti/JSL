@@ -15,11 +15,13 @@
  */
 package jsl.utilities.random.rng;
 
+import jsl.simulation.StreamOptionIfc;
+
 /**
  * Controls the movement through a pseudo-random number stream
  *
  */
-public interface RNStreamControlIfc {
+public interface RNStreamControlIfc extends StreamOptionIfc {
 
     /**
      * The resetStartStream method will position the RNG at the beginning of its
@@ -31,12 +33,12 @@ public interface RNStreamControlIfc {
     /**
      * Resets the position of the RNG at the start of the current substream
      */
-    void resetStartSubstream();
+    void resetStartSubStream();
 
     /**
      * Positions the RNG at the beginning of its next substream
      */
-    void advanceToNextSubstream();
+    void advanceToNextSubStream();
 
     /**
      * Tells the stream to start producing antithetic variates

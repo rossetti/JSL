@@ -21,7 +21,6 @@ import jsl.observers.ObservableIfc;
 import jsl.observers.ObserverIfc;
 import jsl.utilities.math.FunctionIfc;
 import jsl.utilities.random.RandomIfc;
-import jsl.utilities.random.rng.RNStreamControlIfc;
 import jsl.utilities.random.rng.RNStreamIfc;
 import jsl.utilities.random.rvariable.JSLRandom;
 import jsl.utilities.statistic.Statistic;
@@ -340,13 +339,13 @@ public class MetropolisHastings1D implements RandomIfc, ObservableIfc {
     }
 
     @Override
-    public void resetStartSubstream() {
-        myStream.resetStartSubstream();
+    public void resetStartSubStream() {
+        myStream.resetStartSubStream();
     }
 
     @Override
-    public void advanceToNextSubstream() {
-        myStream.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        myStream.advanceToNextSubStream();
     }
 
     @Override
@@ -357,6 +356,26 @@ public class MetropolisHastings1D implements RandomIfc, ObservableIfc {
     @Override
     public boolean getAntitheticOption() {
         return myStream.getAntitheticOption();
+    }
+
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        return myStream.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myStream.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myStream.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myStream.setResetStartStreamOption(b);
     }
 
     @Override

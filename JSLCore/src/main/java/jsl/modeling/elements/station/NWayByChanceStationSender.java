@@ -73,13 +73,13 @@ public class NWayByChanceStationSender extends Station implements RandomElementI
     }
 
     @Override
-    public void resetStartSubstream() {
-        myNWaySender.resetStartSubstream();
+    public void resetStartSubStream() {
+        myNWaySender.resetStartSubStream();
     }
 
     @Override
-    public void advanceToNextSubstream() {
-        myNWaySender.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        myNWaySender.advanceToNextSubStream();
     }
 
     @Override

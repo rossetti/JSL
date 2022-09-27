@@ -1247,8 +1247,8 @@ public class Queue<T extends QObject> extends ModelElement implements
 
     private class RandomDiscipline extends QueueDiscipline implements RandomElementIfc {
 
-        private boolean myResetStartStreamOption = true;
-        private boolean myResetNextSubStreamOption = true;
+//        private boolean myResetStartStreamOption = true;
+//        private boolean myResetNextSubStreamOption = true;
         private int myNext;
         private RNStreamIfc myStream = JSLRandom.nextRNStream();
 
@@ -1290,8 +1290,8 @@ public class Queue<T extends QObject> extends ModelElement implements
         }
 
         @Override
-        public void advanceToNextSubstream() {
-            myStream.advanceToNextSubstream();
+        public void advanceToNextSubStream() {
+            myStream.advanceToNextSubStream();
         }
 
         @Override
@@ -1300,8 +1300,8 @@ public class Queue<T extends QObject> extends ModelElement implements
         }
 
         @Override
-        public void resetStartSubstream() {
-            myStream.resetStartSubstream();
+        public void resetStartSubStream() {
+            myStream.resetStartSubStream();
         }
 
         @Override
@@ -1314,26 +1314,26 @@ public class Queue<T extends QObject> extends ModelElement implements
             return myStream.getAntitheticOption();
         }
 
+
         @Override
-        public final boolean getResetStartStreamOption() {
-            return myResetStartStreamOption;
+        public boolean getResetNextSubStreamOption() {
+            return myStream.getResetNextSubStreamOption();
         }
 
         @Override
-        public final void setResetStartStreamOption(boolean b) {
-            myResetStartStreamOption = b;
+        public boolean getResetStartStreamOption() {
+            return myStream.getResetStartStreamOption();
         }
 
         @Override
-        public final boolean getResetNextSubStreamOption() {
-            return myResetNextSubStreamOption;
+        public void setResetNextSubStreamOption(boolean b) {
+            myStream.setResetNextSubStreamOption(b);
         }
 
         @Override
-        public final void setResetNextSubStreamOption(boolean b) {
-            myResetNextSubStreamOption = b;
+        public void setResetStartStreamOption(boolean b) {
+            myStream.setResetStartStreamOption(b);
         }
-
 
         @Override
         protected void beforeExperiment() {
@@ -1345,7 +1345,7 @@ public class Queue<T extends QObject> extends ModelElement implements
         @Override
         protected void afterReplication() {
             if (getResetNextSubStreamOption()) {
-                myStream.advanceToNextSubstream();
+                myStream.advanceToNextSubStream();
             }
         }
 

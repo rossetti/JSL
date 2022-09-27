@@ -110,16 +110,36 @@ public class BivariateNormal implements RNStreamControlIfc, ParametersIfc {
         myRNG.setAntitheticOption(flag);
     }
 
-    public void resetStartSubstream() {
-        myRNG.resetStartSubstream();
+    public void resetStartSubStream() {
+        myRNG.resetStartSubStream();
     }
 
     public void resetStartStream() {
         myRNG.resetStartStream();
     }
 
-    public void advanceToNextSubstream() {
-        myRNG.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        myRNG.advanceToNextSubStream();
+    }
+
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        return myRNG.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myRNG.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myRNG.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myRNG.setResetStartStreamOption(b);
     }
 
     /** Sets all the  parameters

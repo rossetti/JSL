@@ -68,13 +68,13 @@ public class MVIndependentRV implements MVRVariableIfc {
     }
 
     @Override
-    public void resetStartSubstream() {
-        myRV.resetStartSubstream();
+    public void resetStartSubStream() {
+        myRV.resetStartSubStream();
     }
 
     @Override
-    public void advanceToNextSubstream() {
-        myRV.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        myRV.advanceToNextSubStream();
     }
 
     @Override
@@ -95,5 +95,25 @@ public class MVIndependentRV implements MVRVariableIfc {
     @Override
     public void setRandomNumberStream(int streamNumber) {
         myRV.setRandomNumberStream(streamNumber);
+    }
+
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        return myRV.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myRV.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myRV.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myRV.setResetStartStreamOption(b);
     }
 }

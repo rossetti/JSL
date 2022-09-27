@@ -21,8 +21,8 @@ import jsl.modeling.elements.entity.EntityType;
 import jsl.modeling.elements.spatial.SpatialModel;
 import jsl.modeling.elements.variable.*;
 import jsl.observers.ObserverIfc;
+import jsl.utilities.random.rng.RNStreamIfc;
 import jsl.utilities.random.rvariable.RVParameterSetter;
-import jsl.utilities.reporting.JSL;
 import jsl.utilities.statistic.StatisticAccessorIfc;
 
 import java.lang.IllegalStateException;
@@ -39,22 +39,22 @@ public class Model extends ModelElement {
      * A list of all the response variables (including TimeWeighted) within the
      * model
      */
-    protected List<ResponseVariable> myResponseVariables;
+    private final List<ResponseVariable> myResponseVariables;
 
     /**
      * A list of all the Counters within the model
      */
-    protected List<Counter> myCounters;
+    private final List<Counter> myCounters;
 
     /**
      * A list of all the Variables within the model
      */
-    protected List<Variable> myVariables;
+    private final List<Variable> myVariables;
 
     /**
      * A list of all random elements within the model
      */
-    protected List<RandomElementIfc> myRandomElements;
+    private final List<RandomElementIfc> myRandomElements;
 
     /**
      * A Map that holds all the model elements in the order in which they are
@@ -63,7 +63,7 @@ public class Model extends ModelElement {
     private final Map<String, ModelElement> myModelElementMap;
 
     /**
-     * Indicates whether or not the model should automatically remove any
+     * Indicates whether the model should automatically remove any
      * elements that have been marked for removal prior to each replication. The
      * default is false;
      *
@@ -102,6 +102,8 @@ public class Model extends ModelElement {
      */
     private RVParameterSetter myRVParameterSetter;
 
+    private final Set<RNStreamIfc> myStreams = new LinkedHashSet<>();
+
 //    /**
 //     *
 //     * @return
@@ -125,11 +127,11 @@ public class Model extends ModelElement {
      */
     protected Model(String name) {
         super(name);
-        myModelElementMap = new LinkedHashMap<String, ModelElement>();
-        myResponseVariables = new ArrayList<ResponseVariable>();
-        myCounters = new ArrayList<Counter>();
-        myRandomElements = new ArrayList<RandomElementIfc>();
-        myVariables = new ArrayList<Variable>();
+        myModelElementMap = new LinkedHashMap<>();
+        myResponseVariables = new ArrayList<>();
+        myCounters = new ArrayList<>();
+        myRandomElements = new ArrayList<>();
+        myVariables = new ArrayList<>();
         myLengthOfWarmUp = 0.0; // zero means no warm up
         setModel(this);
         setParentModelElement(null);
@@ -139,6 +141,20 @@ public class Model extends ModelElement {
 
     private void addDefaultElements() {
         myDefaultEntityType = new EntityType(this, "DEFAULT_ENTITY_TYPE");
+    }
+
+    /**
+     * @param stream the stream that the model will manage
+     */
+    public final void addStream(RNStreamIfc stream) {
+        myStreams.add(stream);
+    }
+
+    /**
+     * @param stream the stream that the model will no longer manage
+     */
+    public final void removeStream(RNStreamIfc stream) {
+        myStreams.remove(stream);
     }
 
     /**
@@ -358,7 +374,7 @@ public class Model extends ModelElement {
      * @return a list of response variables and counters
      */
     public final List<StatisticAccessorIfc> getListOfAcrossReplicationStatistics() {
-        List<StatisticAccessorIfc> stats = new ArrayList<StatisticAccessorIfc>();
+        List<StatisticAccessorIfc> stats = new ArrayList<>();
 
         for (ResponseVariable r : myResponseVariables) {
             StatisticAccessorIfc stat = r.getAcrossReplicationStatistic();
@@ -497,11 +513,22 @@ public class Model extends ModelElement {
     }
 
     /**
+     * Returns an unmodifiable collection holding all the RNStreamIfc
+     * within the Model. The list is unchangeable, but the elements in the set
+     * can be still be accessed and changed as necessary
+     *
+     * @return An unmodifiable Set of the RNStreamIfc
+     */
+    public final Set<RNStreamIfc> getRandomStreams() {
+        return (Collections.unmodifiableSet(myStreams));
+    }
+
+    /**
      * Causes RandomElementIfc that have been added to the model to immediately
      * turn on their antithetic generating streams.
      */
     public final void turnOnAntithetic() {
-        for (RandomElementIfc rv : myRandomElements) {
+        for (RNStreamIfc rv : myStreams) {
             rv.setAntitheticOption(true);
         }
     }
@@ -511,7 +538,7 @@ public class Model extends ModelElement {
      * turn off their antithetic generating streams.
      */
     public final void turnOffAntithetic() {
-        for (RandomElementIfc rv : myRandomElements) {
+        for (RNStreamIfc rv : myStreams) {
             rv.setAntitheticOption(false);
         }
     }
@@ -522,12 +549,12 @@ public class Model extends ModelElement {
      *
      * @param n the number of times to advance
      */
-    public final void advanceSubstreams(int n) {
+    public final void advanceSubStreams(int n) {
         if (n <= 0) {
             return;
         }
         for (int i = 1; i <= n; i++) {
-            advanceToNextSubstream();
+            advanceToNextSubStream();
         }
     }
 
@@ -536,9 +563,11 @@ public class Model extends ModelElement {
      * advance their random number streams to the next substream in their
      * stream.
      */
-    public final void advanceToNextSubstream() {
-        for (RandomElementIfc rv : myRandomElements) {
-            rv.advanceToNextSubstream();
+    public final void advanceToNextSubStream() {
+        for (RNStreamIfc rv : myStreams) {
+            if (rv.getResetNextSubStreamOption()){
+                rv.advanceToNextSubStream();
+            }
         }
     }
 
@@ -548,8 +577,10 @@ public class Model extends ModelElement {
      * stream.
      */
     public final void resetStartStream() {
-        for (RandomElementIfc rv : myRandomElements) {
-            rv.resetStartStream();
+        for (RNStreamIfc rv : myStreams) {
+            if (rv.getResetStartStreamOption()){
+                rv.resetStartStream();
+            }
         }
     }
 
@@ -559,13 +590,13 @@ public class Model extends ModelElement {
      * stream.
      */
     public final void resetStartSubStream() {
-        for (RandomElementIfc rv : myRandomElements) {
-            rv.resetStartSubstream();
+        for (RNStreamIfc rv : myStreams) {
+            rv.resetStartSubStream();
         }
     }
 
     /**
-     * Fills up the provided collection with all of the response variables that
+     * Fills up the provided collection with all the response variables that
      * are contained by any model elements within the model. In other words, any
      * response variables (and subclasses, e.g. TimeWeighted that are in the
      * model element hierarchy below the model.
@@ -603,7 +634,7 @@ public class Model extends ModelElement {
     }
 
     /**
-     * Fills up the provided collection with all of the Counters that are
+     * Fills up the provided collection with all the Counters that are
      * contained by any model elements within the model. In other words, any
      * Counters that are in the model element hierarchy below the model.
      *
@@ -809,7 +840,7 @@ public class Model extends ModelElement {
      * @param option The option, true means to reset prior to each experiment
      */
     protected final void setAllRVResetStartStreamOptions(boolean option) {
-        for (RandomElementIfc rv : myRandomElements) {
+        for (RNStreamIfc rv : myStreams) {
             rv.setResetStartStreamOption(option);
         }
     }
@@ -825,7 +856,7 @@ public class Model extends ModelElement {
      * @param option The option, true means to reset prior to each replication
      */
     protected final void setAllRVResetNextSubStreamOptions(boolean option) {
-        for (RandomElementIfc rv : myRandomElements) {
+        for (RNStreamIfc rv : myStreams) {
             rv.setResetNextSubStreamOption(option);
         }
     }
@@ -1148,7 +1179,7 @@ public class Model extends ModelElement {
      */
     protected void setUpExperiment() {
 
-        advanceSubstreams(getExperiment().getNumberOfStreamAdvancesPriorToRunning());
+        advanceSubStreams(getExperiment().getNumberOfStreamAdvancesPriorToRunning());
 
         if (getExperiment().getAntitheticOption() == true) {
             // make sure the streams are not reset after all replications are run
@@ -1180,6 +1211,10 @@ public class Model extends ModelElement {
             myRVParameterSetter.applyParameterChanges(this);
         }
 
+        if (getExperiment().getResetStartStreamOption()){
+            //TODO need logging
+            resetStartSubStream();
+        }
         // do all model element beforeExperiment() actions
         beforeExperiment_();
     }
@@ -1211,7 +1246,7 @@ public class Model extends ModelElement {
                 // turn off anthethics
                 turnOffAntithetic();
                 // advance to next substream
-                advanceToNextSubstream();
+                advanceToNextSubStream();
             }
         }
     }
@@ -1253,6 +1288,9 @@ public class Model extends ModelElement {
     protected void afterReplication(Experiment e) {
         // do all model element replicationEnded() actions
         replicationEnded_();
+        if(getExperiment().getAdvanceNextSubStreamOption()){//TODO need logging
+            advanceToNextSubStream();
+        }
         // do all model element afterReplication() actions
         afterReplication_();
 

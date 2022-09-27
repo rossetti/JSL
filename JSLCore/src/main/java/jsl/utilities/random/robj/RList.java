@@ -26,6 +26,7 @@ import java.util.*;
  */
 abstract public class RList<T> implements RListIfc<T> {
 
+
     protected List<T> myElements;
 
     protected RNStreamIfc myStream;
@@ -187,8 +188,8 @@ abstract public class RList<T> implements RListIfc<T> {
     }
 
     @Override
-    public void advanceToNextSubstream() {
-        myStream.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        myStream.advanceToNextSubStream();
     }
 
     @Override
@@ -197,8 +198,8 @@ abstract public class RList<T> implements RListIfc<T> {
     }
 
     @Override
-    public void resetStartSubstream() {
-        myStream.resetStartSubstream();
+    public void resetStartSubStream() {
+        myStream.resetStartSubStream();
     }
 
     @Override
@@ -221,5 +222,25 @@ abstract public class RList<T> implements RListIfc<T> {
     public void setRandomNumberStream(RNStreamIfc stream) {
         Objects.requireNonNull(stream, "The supplied stream was null");
         myStream = stream;
+    }
+
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        return myStream.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myStream.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myStream.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myStream.setResetStartStreamOption(b);
     }
 }

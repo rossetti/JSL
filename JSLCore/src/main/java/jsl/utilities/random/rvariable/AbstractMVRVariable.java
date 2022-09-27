@@ -77,13 +77,13 @@ abstract public class AbstractMVRVariable implements MVRVariableIfc, IdentityIfc
     }
 
     @Override
-    public final void resetStartSubstream() {
-        myRNG.resetStartSubstream();
+    public final void resetStartSubStream() {
+        myRNG.resetStartSubStream();
     }
 
     @Override
-    public final void advanceToNextSubstream() {
-        myRNG.advanceToNextSubstream();
+    public final void advanceToNextSubStream() {
+        myRNG.advanceToNextSubStream();
     }
 
     @Override
@@ -94,5 +94,25 @@ abstract public class AbstractMVRVariable implements MVRVariableIfc, IdentityIfc
     @Override
     public final boolean getAntitheticOption() {
         return myRNG.getAntitheticOption();
+    }
+
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        return myRNG.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myRNG.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myRNG.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myRNG.setResetStartStreamOption(b);
     }
 }

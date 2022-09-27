@@ -77,8 +77,8 @@ public class DEmpiricalList<T> implements RElementIfc<T> {
     }
 
     @Override
-    public void advanceToNextSubstream() {
-        myRNG.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        myRNG.advanceToNextSubStream();
     }
 
     @Override
@@ -87,8 +87,8 @@ public class DEmpiricalList<T> implements RElementIfc<T> {
     }
 
     @Override
-    public void resetStartSubstream() {
-        myRNG.resetStartSubstream();
+    public void resetStartSubStream() {
+        myRNG.resetStartSubStream();
     }
 
     @Override
@@ -99,6 +99,26 @@ public class DEmpiricalList<T> implements RElementIfc<T> {
     @Override
     public final boolean getAntitheticOption() {
         return myRNG.getAntitheticOption();
+    }
+
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        return myRNG.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myRNG.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myRNG.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myRNG.setResetStartStreamOption(b);
     }
 
     /* (non-Javadoc)

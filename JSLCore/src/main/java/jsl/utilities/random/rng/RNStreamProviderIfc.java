@@ -131,7 +131,7 @@ public interface RNStreamProviderIfc {
     default void resetAllStreamsToStartOfCurrentSubStream() {
         int n = lastRNStreamNumber();
         for (int i = 1; i <= n; i++) {
-            rnStream(i).resetStartSubstream();
+            rnStream(i).resetStartSubStream();
         }
     }
 
@@ -144,7 +144,7 @@ public interface RNStreamProviderIfc {
     default void advanceAllStreamsToNextSubstream() {
         int n = lastRNStreamNumber();
         for (int i = 1; i <= n; i++) {
-            rnStream(i).advanceToNextSubstream();
+            rnStream(i).advanceToNextSubStream();
         }
     }
 

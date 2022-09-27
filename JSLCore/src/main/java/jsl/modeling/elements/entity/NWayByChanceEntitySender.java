@@ -90,7 +90,7 @@ public class NWayByChanceEntitySender extends EntityReceiver {
     }
 
     public final void resetStartSubstream() {
-        mySelector.resetStartSubstream();
+        mySelector.resetStartSubStream();
     }
 
     public final void resetStartStream() {
@@ -113,8 +113,8 @@ public class NWayByChanceEntitySender extends EntityReceiver {
         return mySelector.getAntitheticOption();
     }
 
-    public final void advanceToNextSubstream() {
-        mySelector.advanceToNextSubstream();
+    public final void advanceToNextSubStream() {
+        mySelector.advanceToNextSubStream();
     }
 
     @Override

@@ -88,8 +88,8 @@ public class AR1CorrelatedRNStream implements RNStreamIfc, SetRandomNumberStream
     }
 
     @Override
-    public final void advanceToNextSubstream() {
-        myAR1.advanceToNextSubstream();
+    public final void advanceToNextSubStream() {
+        myAR1.advanceToNextSubStream();
     }
 
     @Override
@@ -98,8 +98,8 @@ public class AR1CorrelatedRNStream implements RNStreamIfc, SetRandomNumberStream
     }
 
     @Override
-    public final void resetStartSubstream() {
-        myAR1.resetStartSubstream();
+    public final void resetStartSubStream() {
+        myAR1.resetStartSubStream();
     }
 
     @Override
@@ -160,5 +160,25 @@ public class AR1CorrelatedRNStream implements RNStreamIfc, SetRandomNumberStream
     @Override
     public RNStreamIfc newAntitheticInstance() {
         return newAntitheticInstance(null);
+    }
+
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        return myStream.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myStream.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myStream.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myStream.setResetStartStreamOption(b);
     }
 }

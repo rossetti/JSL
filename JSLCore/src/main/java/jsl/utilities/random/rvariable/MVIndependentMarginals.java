@@ -79,13 +79,13 @@ public class MVIndependentMarginals implements MVRVariableIfc{
     }
 
     @Override
-    public void resetStartSubstream() {
-        myRNStream.resetStartSubstream();
+    public void resetStartSubStream() {
+        myRNStream.resetStartSubStream();
     }
 
     @Override
-    public void advanceToNextSubstream() {
-        myRNStream.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        myRNStream.advanceToNextSubStream();
     }
 
     @Override
@@ -96,5 +96,25 @@ public class MVIndependentMarginals implements MVRVariableIfc{
     @Override
     public boolean getAntitheticOption() {
         return myRNStream.getAntitheticOption();
+    }
+
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        return myRNStream.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myRNStream.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myRNStream.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myRNStream.setResetStartStreamOption(b);
     }
 }

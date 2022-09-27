@@ -342,20 +342,40 @@ public class BivariateLogNormal implements RNStreamControlIfc, ParametersIfc {
         myBVN.setAntitheticOption(flag);
     }
 
-    public void resetStartSubstream() {
-        myBVN.resetStartSubstream();
+    public void resetStartSubStream() {
+        myBVN.resetStartSubStream();
     }
 
     public void resetStartStream() {
         myBVN.resetStartStream();
     }
 
-    public void advanceToNextSubstream() {
-        myBVN.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        myBVN.advanceToNextSubStream();
     }
 
     public boolean getAntitheticOption() {
         return myBVN.getAntitheticOption();
+    }
+
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        return myBVN.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myBVN.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myBVN.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myBVN.setResetStartStreamOption(b);
     }
 
     /** Fills the supplied array with 2 values

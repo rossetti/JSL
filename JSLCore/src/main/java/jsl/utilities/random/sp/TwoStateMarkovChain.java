@@ -231,8 +231,28 @@ public class TwoStateMarkovChain implements TwoStateMarkovChainIfc, IdentityIfc,
     }
 
     @Override
-    public void advanceToNextSubstream() {
-        myStream.advanceToNextSubstream();
+    public boolean getResetNextSubStreamOption() {
+        return myStream.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myStream.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myStream.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myStream.setResetStartStreamOption(b);
+    }
+
+    @Override
+    public void advanceToNextSubStream() {
+        myStream.advanceToNextSubStream();
     }
 
     @Override
@@ -241,8 +261,8 @@ public class TwoStateMarkovChain implements TwoStateMarkovChainIfc, IdentityIfc,
     }
 
     @Override
-    public void resetStartSubstream() {
-        myStream.resetStartSubstream();
+    public void resetStartSubStream() {
+        myStream.resetStartSubStream();
     }
 
     @Override

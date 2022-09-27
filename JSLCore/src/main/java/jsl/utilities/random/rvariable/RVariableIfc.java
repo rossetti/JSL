@@ -31,7 +31,7 @@ import java.util.stream.DoubleStream;
  * the next random value.  If sample() or getValue() is never called then getPreviousValue() returns Double.NaN.
  * Use sample() or getValue() to get a new random value and use getPreviousValue() to get the last sampled value.
  * <p>
- * The preferred approach to creating random variables is to sub-class AbstractRVariable.
+ * The preferred approach to creating random variables is to subclass AbstractRVariable.
  */
 public interface RVariableIfc extends RandomIfc, NewAntitheticInstanceIfc,
         PreviousValueIfc, DoubleSupplier {

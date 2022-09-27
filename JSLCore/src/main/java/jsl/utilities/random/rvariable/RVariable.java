@@ -122,13 +122,13 @@ abstract public class RVariable implements RVariableIfc, IdentityIfc {
     }
 
     @Override
-    public final void resetStartSubstream() {
-        myRNStream.resetStartSubstream();
+    public final void resetStartSubStream() {
+        myRNStream.resetStartSubStream();
     }
 
     @Override
-    public final void advanceToNextSubstream() {
-        myRNStream.advanceToNextSubstream();
+    public final void advanceToNextSubStream() {
+        myRNStream.advanceToNextSubStream();
     }
 
     @Override
@@ -149,5 +149,25 @@ abstract public class RVariable implements RVariableIfc, IdentityIfc {
     @Override
     public final void setRandomNumberStream(RNStreamIfc stream) {
         myRNStream = Objects.requireNonNull(stream,"RNStreamIfc stream must be non-null" );
+    }
+
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        return myRNStream.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myRNStream.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myRNStream.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myRNStream.setResetStartStreamOption(b);
     }
 }

@@ -233,8 +233,8 @@ public class DPopulation implements RandomIfc, SampleIfc, IdentityIfc, Parameter
     }
 
     @Override
-    public final void advanceToNextSubstream() {
-        myStream.advanceToNextSubstream();
+    public final void advanceToNextSubStream() {
+        myStream.advanceToNextSubStream();
     }
 
     @Override
@@ -243,8 +243,8 @@ public class DPopulation implements RandomIfc, SampleIfc, IdentityIfc, Parameter
     }
 
     @Override
-    public final void resetStartSubstream() {
-        myStream.resetStartSubstream();
+    public final void resetStartSubStream() {
+        myStream.resetStartSubStream();
     }
 
     @Override
@@ -267,6 +267,26 @@ public class DPopulation implements RandomIfc, SampleIfc, IdentityIfc, Parameter
     public final void setRandomNumberStream(RNStreamIfc stream) {
         Objects.requireNonNull(stream, "The supplied stream was null");
         myStream = stream;
+    }
+
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        return myStream.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myStream.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myStream.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myStream.setResetStartStreamOption(b);
     }
 
     @Override

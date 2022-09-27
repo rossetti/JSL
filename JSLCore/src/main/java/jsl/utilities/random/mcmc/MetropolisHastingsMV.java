@@ -29,8 +29,8 @@ import jsl.utilities.statistic.Statistic;
 import java.util.*;
 
 /**
- *  An implementation for a multi-Dimensional Metropolis Hasting process. The
- *  process is observable at each step
+ * An implementation for a multi-Dimensional Metropolis Hasting process. The
+ * process is observable at each step
  */
 public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumberStreamIfc, GetRandomNumberStreamIfc, ObservableIfc {
 
@@ -68,19 +68,18 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
     protected RNStreamIfc myStream;
 
     /**
-     *
-     * @param initialX the initial value to start generation process
-     * @param targetFun the target function
+     * @param initialX    the initial value to start generation process
+     * @param targetFun   the target function
      * @param proposalFun the proposal function
      */
     public MetropolisHastingsMV(double[] initialX, FunctionMVIfc targetFun, ProposalFunctionMVIfc proposalFun) {
-        if (initialX == null){
+        if (initialX == null) {
             throw new IllegalArgumentException("The initial state was null!");
         }
-        if (targetFun == null){
+        if (targetFun == null) {
             throw new IllegalArgumentException("The target function was null!");
         }
-        if (proposalFun == null){
+        if (proposalFun == null) {
             throw new IllegalArgumentException("The proposal function was null!");
         }
         myInitialX = Arrays.copyOf(initialX, initialX.length);
@@ -90,33 +89,33 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
         myProposalFun = proposalFun;
         myAcceptanceStat = new Statistic("Acceptance Statistics");
         myObservedStatList = new ArrayList<>();
-        for(int i=0;i<myInitialX.length;i++){
-            myObservedStatList.add(new Statistic("X:" + (i+1)));
+        for (int i = 0; i < myInitialX.length; i++) {
+            myObservedStatList.add(new Statistic("X:" + (i + 1)));
         }
         myStream = JSLRandom.nextRNStream();
         myObservableComponent = new ObservableComponent();
     }
 
     /**
-     *
-     * @param initialX the initial value to start the burn in period
+     * @param initialX     the initial value to start the burn in period
      * @param burnInAmount the number of samples in the burn in period
-     * @param targetFun the target function
-     * @param proposalFun the proposal function
+     * @param targetFun    the target function
+     * @param proposalFun  the proposal function
      */
     public static MetropolisHastingsMV create(double[] initialX, int burnInAmount, FunctionMVIfc targetFun,
-                                              ProposalFunctionMVIfc proposalFun){
+                                              ProposalFunctionMVIfc proposalFun) {
         MetropolisHastingsMV m = new MetropolisHastingsMV(initialX, targetFun, proposalFun);
         m.runBurnInPeriod(burnInAmount);
         return m;
     }
 
-    /** Runs a burn in period and assigns the initial value of the process to the last
+    /**
+     * Runs a burn in period and assigns the initial value of the process to the last
      * value from the burn in process.
      *
      * @param burnInAmount the amount to burn in
      */
-    public void runBurnInPeriod(int burnInAmount){
+    public void runBurnInPeriod(int burnInAmount) {
         double[] x = runAll(burnInAmount);
         myBurnInFlag = true;
         myInitializedFlag = false;
@@ -124,61 +123,57 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
         resetStatistics();
     }
 
-    /**  Resets statistics and sets the initial state the the initial value or to the value
-     *  found via the burn in period (if the burn in period was run).
-     *
+    /**
+     * Resets statistics and sets the initial state the initial value or to the value
+     * found via the burn in period (if the burn in period was run).
      */
-    public void initialize(){
+    public void initialize() {
         myInitializedFlag = true;
         myCurrentX = myInitialX;
         resetStatistics();
     }
 
     /**
-     *  Resets the automatically collected statistics
+     * Resets the automatically collected statistics
      */
-    public void resetStatistics(){
-        for(Statistic s: myObservedStatList){
+    public void resetStatistics() {
+        for (Statistic s : myObservedStatList) {
             s.reset();
         }
         myAcceptanceStat.reset();
     }
 
     /**
-     *
      * @return true if the process has been initialized
      */
-    public final boolean isInitialized(){
+    public final boolean isInitialized() {
         return myInitializedFlag;
     }
 
     /**
-     *
      * @return true if the process has been warmed up
      */
-    public final boolean isWarmedUp(){
+    public final boolean isWarmedUp() {
         return myBurnInFlag;
     }
 
     /**
-     *
-     * @param n  runs the process for n steps
+     * @param n runs the process for n steps
      * @return the value of the process after n steps
      */
-    public final double[] runAll(int n){
-        if (n <= 0){
+    public final double[] runAll(int n) {
+        if (n <= 0) {
             throw new IllegalArgumentException("The number of iterations to run was less than or equal to zero.");
         }
         initialize();
         double[] value = null;
-        for(int i=1;i<=n;i++){
+        for (int i = 1; i <= n; i++) {
             value = next();
         }
         return Arrays.copyOf(value, value.length);
     }
 
     /**
-     *
      * @return the current state (x) of the process
      */
     public final double[] getCurrentX() {
@@ -186,7 +181,6 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
     }
 
     /**
-     *
      * @return the last proposed state (y)
      */
     public final double[] getProposedY() {
@@ -194,7 +188,6 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
     }
 
     /**
-     *
      * @return the previous state (x) of the process
      */
     public final double[] getPrevX() {
@@ -202,7 +195,6 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
     }
 
     /**
-     *
      * @return the last value of the computed probability of acceptance
      */
     public final double getLastAcceptanceProbability() {
@@ -210,7 +202,6 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
     }
 
     /**
-     *
      * @return the last value of the target function evaluated at the proposed state (y)
      */
     public final double getFofProposedY() {
@@ -218,7 +209,6 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
     }
 
     /**
-     *
      * @return the last value of the target function evaluated at the current state (x)
      */
     public final double getFofCurrentX() {
@@ -226,7 +216,6 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
     }
 
     /**
-     *
      * @return statistics for the proportion of the proposed state (y) that are accepted
      */
     public Statistic getAcceptanceStat() {
@@ -234,19 +223,19 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
     }
 
     /**
-     *
      * @return statistics on the observed (generated) values of the process
      */
     public List<Statistic> getObservedStat() {
         return Collections.unmodifiableList(myObservedStatList);
     }
 
-    /** Moves the process one step
+    /**
+     * Moves the process one step
      *
      * @return the next value of the process after proposing the next state (y)
      */
-    public double[] next(){
-        if (!isInitialized()){
+    public double[] next() {
+        if (!isInitialized()) {
             initialize();
         }
         myPrevX = myCurrentX;
@@ -258,44 +247,44 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
         } else {
             myAcceptanceStat.collect(0.0);
         }
-        for(int i=0;i<myCurrentX.length;i++){
+        for (int i = 0; i < myCurrentX.length; i++) {
             myObservedStatList.get(0).collect(myCurrentX[i]);
         }
         myObservableComponent.notifyObservers(this, this);
         return myCurrentX;
     }
 
-    /** Computes the acceptance function for each step
+    /**
+     * Computes the acceptance function for each step
      *
-     * @param currentX the current state
+     * @param currentX  the current state
      * @param proposedY the proposed state
      * @return the evaluated acceptance function
      */
-    protected double acceptanceFunction(double[] currentX, double[] proposedY){
+    protected double acceptanceFunction(double[] currentX, double[] proposedY) {
         double fRatio = getFunctionRatio(currentX, proposedY);
         double pRatio = myProposalFun.getProposalRatio(currentX, proposedY);
-        double ratio = fRatio*pRatio;
+        double ratio = fRatio * pRatio;
         return Math.min(ratio, 1.0);
     }
 
     /**
-     *
-     * @param currentX the current state
+     * @param currentX  the current state
      * @param proposedY the proposed state
      * @return the ratio of f(y)/f(x) for the generation step
      */
-    protected double getFunctionRatio(double[] currentX, double[] proposedY){
+    protected double getFunctionRatio(double[] currentX, double[] proposedY) {
         double fx = myTargetFun.fx(currentX);
         double fy = myTargetFun.fx(proposedY);
-        if (fx < 0.0){
+        if (fx < 0.0) {
             throw new IllegalStateException("The target function was < 0 at current state");
         }
-        if (fy < 0.0){
+        if (fy < 0.0) {
             throw new IllegalStateException("The proposal function was < 0 at proposed state");
         }
         double ratio;
-        if (fx != 0.0){
-            ratio = fy/fx;
+        if (fx != 0.0) {
+            ratio = fy / fx;
             myFofCurrentX = fx;
             myFofProposedY = fy;
         } else {
@@ -307,7 +296,6 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
     }
 
     /**
-     *
      * @return the specified initial state or the state after the burn in period (if run)
      */
     public final double[] getInitialX() {
@@ -315,11 +303,10 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
     }
 
     /**
-     *
      * @param initialX the value to use for the initial state
      */
     public final void setInitialX(double[] initialX) {
-        if (initialX == null){
+        if (initialX == null) {
             throw new IllegalArgumentException("The initial state was null!");
         }
 
@@ -338,18 +325,38 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
     }
 
     @Override
+    public boolean getResetNextSubStreamOption() {
+        return myStream.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myStream.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myStream.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myStream.setResetStartStreamOption(b);
+    }
+
+    @Override
     public void resetStartStream() {
         myStream.resetStartStream();
     }
 
     @Override
-    public void resetStartSubstream() {
-        myStream.resetStartSubstream();
+    public void resetStartSubStream() {
+        myStream.resetStartSubStream();
     }
 
     @Override
-    public void advanceToNextSubstream() {
-        myStream.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        myStream.advanceToNextSubStream();
     }
 
     @Override
@@ -388,7 +395,7 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return asString();
     }
 
@@ -417,7 +424,7 @@ public class MetropolisHastingsMV implements RNStreamControlIfc, SetRandomNumber
         sb.append(System.lineSeparator());
         sb.append(myAcceptanceStat.asString());
         sb.append(System.lineSeparator());
-        for(Statistic s: myObservedStatList){
+        for (Statistic s : myObservedStatList) {
             sb.append(s.asString());
             sb.append(System.lineSeparator());
         }

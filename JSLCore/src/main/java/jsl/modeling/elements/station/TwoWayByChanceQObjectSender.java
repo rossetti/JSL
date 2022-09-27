@@ -85,13 +85,13 @@ public class TwoWayByChanceQObjectSender extends ModelElement implements SendQOb
     }
 
     @Override
-    public void resetStartSubstream() {
-        myRV.resetStartSubstream();
+    public void resetStartSubStream() {
+        myRV.resetStartSubStream();
     }
 
     @Override
-    public void advanceToNextSubstream() {
-        myRV.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        myRV.advanceToNextSubStream();
     }
 
     @Override
