@@ -58,8 +58,8 @@ public class RNStreamExample {
             System.out.println("u1 = " + u1 + "\t u2 = " + u2);
         }
 
-        g1.advanceToNextSubstream();
-        g2.advanceToNextSubstream();
+        g1.advanceToNextSubStream();
+        g2.advanceToNextSubStream();
         System.out.println("Advancing to the start of the next substream ");
         System.out.println("causes them to advance to the beginning of the next substream.");
 

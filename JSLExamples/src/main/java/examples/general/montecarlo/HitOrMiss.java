@@ -36,7 +36,7 @@ public class HitOrMiss {
         UniformRV u1RN = new UniformRV();
 //		Uniform u2RN = new Uniform();
         Statistic s = new Statistic();
-        u1RN.advanceToNextSubstream();
+        u1RN.advanceToNextSubStream();
 
         for (int i = 1; i <= 1000; i++) {
             double hit = 0.0;

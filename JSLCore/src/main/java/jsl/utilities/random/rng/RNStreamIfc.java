@@ -17,12 +17,14 @@
 
 package jsl.utilities.random.rng;
 
+import jsl.utilities.IdentityIfc;
+
 /**
  * Represents a random number stream with stream control
  *
  * @author rossetti
  */
-public interface RNStreamIfc extends RandU01Ifc, RNStreamControlIfc,
+public interface RNStreamIfc extends IdentityIfc, RandU01Ifc, RNStreamControlIfc,
         RNStreamNewInstanceIfc, GetAntitheticStreamIfc {
 
     /**

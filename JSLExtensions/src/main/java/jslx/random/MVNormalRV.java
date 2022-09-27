@@ -93,13 +93,13 @@ public class MVNormalRV implements MVRVariableIfc {
     }
 
     @Override
-    public void resetStartSubstream() {
-        normalRV.resetStartSubstream();
+    public void resetStartSubStream() {
+        normalRV.resetStartSubStream();
     }
 
     @Override
-    public void advanceToNextSubstream() {
-        normalRV.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        normalRV.advanceToNextSubStream();
     }
 
     @Override
@@ -110,6 +110,26 @@ public class MVNormalRV implements MVRVariableIfc {
     @Override
     public boolean getAntitheticOption() {
         return normalRV.getAntitheticOption();
+    }
+
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        return normalRV.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return normalRV.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        normalRV.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        normalRV.setResetStartStreamOption(b);
     }
 
     @Override

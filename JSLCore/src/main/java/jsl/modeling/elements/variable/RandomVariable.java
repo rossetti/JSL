@@ -20,6 +20,7 @@ import jsl.modeling.elements.RandomElementIfc;
 import jsl.simulation.Simulation;
 import jsl.utilities.random.RandomIfc;
 import jsl.utilities.random.rng.RNStreamIfc;
+import jsl.utilities.random.rng.RNStreamProvider;
 
 import java.util.Optional;
 
@@ -145,6 +146,8 @@ public class RandomVariable extends ModelElement implements RandomIfc, RandomEle
         setResetNextSubStreamOption(true);
         myInitialRandomSourceChangeWarning = true;
         getModel().addStream(myInitialRandomSource.getRandomNumberStream());
+        RNStreamProvider.logger.info("Initialized RandomVariable(id = {}, name = {}) with stream id = {}",
+                getId(), getName(), myInitialRandomSource.getStreamNumber());
     }
 
     /**

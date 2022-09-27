@@ -107,18 +107,18 @@ public class Bootstrap implements IdentityIfc, RNStreamControlIfc, SetRandomNumb
     }
 
     /**
-     * @param sampleSize the size of the original generate
-     * @param sampler something to generate the original generate of the provided size
-     * @return an instance of Bootstrap based on the generate
+     * @param sampleSize the size of the original sample
+     * @param sampler something to generate the original sample of the provided size
+     * @return an instance of Bootstrap based on the sample
      */
     public static Bootstrap create(int sampleSize, SampleIfc sampler) {
         return create(null, sampleSize, sampler);
     }
     /**
      * @param name         the name of bootstrap instance
-     * @param sampleSize the size of the original generate, must be greater than 1
-     * @param sampler something to generate the original generate of the provided size
-     * @return an instance of Bootstrap based on the generate
+     * @param sampleSize the size of the original sample, must be greater than 1
+     * @param sampler something to generate the original sample of the provided size
+     * @return an instance of Bootstrap based on the sample
      */
     public static Bootstrap create(String name, int sampleSize, SampleIfc sampler) {
         Objects.requireNonNull(sampler, "The sampler was null");
@@ -204,6 +204,26 @@ public class Bootstrap implements IdentityIfc, RNStreamControlIfc, SetRandomNumb
         return myName;
     }
 
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        return myOriginalPop.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myOriginalPop.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myOriginalPop.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myOriginalPop.setResetStartStreamOption(b);
+    }
+
     /**
      * The resetStartStream method will position the RNG at the beginning of its
      * stream. This is the same location in the stream as assigned when the RNG
@@ -218,16 +238,16 @@ public class Bootstrap implements IdentityIfc, RNStreamControlIfc, SetRandomNumb
      * Resets the position of the RNG at the start of the current substream
      */
     @Override
-    public void resetStartSubstream() {
-        myOriginalPop.resetStartSubstream();
+    public void resetStartSubStream() {
+        myOriginalPop.resetStartSubStream();
     }
 
     /**
      * Positions the RNG at the beginning of its next substream
      */
     @Override
-    public void advanceToNextSubstream() {
-        myOriginalPop.advanceToNextSubstream();
+    public void advanceToNextSubStream() {
+        myOriginalPop.advanceToNextSubStream();
     }
 
     /**

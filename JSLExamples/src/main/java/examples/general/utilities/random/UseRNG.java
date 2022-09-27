@@ -140,7 +140,7 @@ public class UseRNG {
             System.out.println("u = " + s1.randU01());
         }
 
-        s1.advanceToNextSubstream();
+        s1.advanceToNextSubStream();
         System.out.println("advanced");
         for (int i = 1; i <= 3; i++) {
             System.out.println("u = " + s1.randU01());

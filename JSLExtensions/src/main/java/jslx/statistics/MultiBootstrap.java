@@ -264,10 +264,10 @@ public class MultiBootstrap implements RNStreamControlIfc {
     }
 
     /** Gets a map with key = name, where name is the associated bootstrap name
-     *  and the value is the an array holding the generate averages for each
+     *  and the value is the array holding the sample averages for each
      *  bootstrap samples within the bootstrap
      *
-     * @return a map of the generate averages
+     * @return a map of the sample averages
      */
     public Map<String, double[]> getBootstrapSampleAverages() {
         Map<String, double[]> map = new LinkedHashMap<>();
@@ -280,10 +280,10 @@ public class MultiBootstrap implements RNStreamControlIfc {
     }
 
     /** Gets a map with key = name, where name is the associated bootstrap name
-     *  and the value is the an array holding the generate variances for each
+     *  and the value is an array holding the sample variances for each
      *  bootstrap samples within the bootstrap
      *
-     * @return a map of the generate averages
+     * @return a map of the sample variances
      */
     public Map<String, double[]> getBootstrapSampleVariances() {
         Map<String, double[]> map = new LinkedHashMap<>();
@@ -296,7 +296,7 @@ public class MultiBootstrap implements RNStreamControlIfc {
     }
 
     /** Gets a map with key = name, where name is the associated bootstrap name
-     *  and the value is List holding the generate data for each
+     *  and the value is List holding the sample data for each
      *  bootstrap generate within the bootstrap.  The size of the list is the number
      *  of bootstrap samples generated. Each element of the list is the data associated
      *  with each generate.
@@ -352,7 +352,7 @@ public class MultiBootstrap implements RNStreamControlIfc {
      *
      * @param name the name of the bootstrap
      * @param b the bootstrap generate number, b = 1, 2, ... to getNumBootstrapSamples()
-     * @return the generate generated for the bth bootstrap, if no samples are saved then
+     * @return the generated sample for the bth bootstrap, if no samples are saved then
      *     the array returned is of zero length
      */
     public double[] getBootstrapSampleData(String name, int b){
@@ -364,11 +364,11 @@ public class MultiBootstrap implements RNStreamControlIfc {
     }
 
     /** Gets a map with key = name, where name is the associated bootstrap name
-     *  and the value is the generate data for the bth
+     *  and the value is the sample data for the bth
      *  bootstrap generate.  The size of the array is the size of the generated
      *  bootstrap generate, the array may be of zero length if the samples were not saved
      *
-     * @param b the bootstrap generate number, b = 1, 2, ... to getNumBootstrapSamples()
+     * @param b the bootstrap sample number, b = 1, 2, ... to getNumBootstrapSamples()
      * @return a map holding the bth bootstrap data for each bootstrap
      */
     public Map<String, double[]> getBootstrapSampleData(int b){
@@ -457,9 +457,9 @@ public class MultiBootstrap implements RNStreamControlIfc {
      * for all bootstraps
      */
     @Override
-    public void resetStartSubstream() {
+    public void resetStartSubStream() {
         for (Bootstrap bs : myBootstraps.values()) {
-            bs.resetStartSubstream();
+            bs.resetStartSubStream();
         }
     }
 
@@ -467,9 +467,9 @@ public class MultiBootstrap implements RNStreamControlIfc {
      * Positions the RNG at the beginning of its next substream for all bootstraps
      */
     @Override
-    public void advanceToNextSubstream() {
+    public void advanceToNextSubStream() {
         for (Bootstrap bs : myBootstraps.values()) {
-            bs.advanceToNextSubstream();
+            bs.advanceToNextSubStream();
         }
     }
 
@@ -502,4 +502,47 @@ public class MultiBootstrap implements RNStreamControlIfc {
         return b;
     }
 
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        if(myBootstraps.isEmpty()){
+            throw new IllegalStateException("There were no streams present");
+        }
+
+        Iterator<Bootstrap> listIterator = myBootstraps.values().iterator();
+        boolean b = listIterator.next().getResetNextSubStreamOption();
+
+        while( listIterator.hasNext()){
+            b = b && listIterator.next().getResetNextSubStreamOption();
+        }
+        return b;
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        if(myBootstraps.isEmpty()){
+            throw new IllegalStateException("There were no streams present");
+        }
+
+        Iterator<Bootstrap> listIterator = myBootstraps.values().iterator();
+        boolean b = listIterator.next().getResetStartStreamOption();
+
+        while( listIterator.hasNext()){
+            b = b && listIterator.next().getResetStartStreamOption();
+        }
+        return b;
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        for (Bootstrap r : myBootstraps.values()) {
+            r.setResetNextSubStreamOption(b);
+        }
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        for (Bootstrap r : myBootstraps.values()) {
+            r.setResetStartStreamOption(b);
+        }
+    }
 }

@@ -746,7 +746,7 @@ public class Model extends ModelElement {
 
     /** The list is ordered parent-child, in the order of the model element hierarchy
      *
-     * @return all of the model elements in the model as a List
+     * @return all the model elements in the model as a List
      */
     public final List<ModelElement> getModelElements(){
         List<ModelElement> list = new ArrayList<>();
@@ -784,7 +784,7 @@ public class Model extends ModelElement {
 //    }
 
     /**
-     * Indicates whether or not the model will automatically remove elements
+     * Indicates whether the model will automatically remove elements
      * that are marked for removal prior to each replication. The default is
      * false.
      *

@@ -18,7 +18,10 @@ package jsl.utilities.random.rng;
 
 import jsl.simulation.Simulation;
 import jsl.utilities.reporting.JSL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +34,8 @@ import java.util.List;
  * The default stream if not set is the first stream.
  */
 public final class RNStreamProvider implements RNStreamProviderIfc {
+
+    public final static Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private int myStreamNumberWarningLimit = 5000;
 
@@ -98,6 +103,7 @@ public final class RNStreamProvider implements RNStreamProviderIfc {
             JSL.getInstance().LOGGER.warn("The number of streams made is now = {}", myStreams.size());
             JSL.getInstance().LOGGER.warn("Increase the stream warning limit if you don't want to see this message");
         }
+        logger.info("Provided stream {}, stream {} of {} streams", stream.getId(), lastRNStreamNumber(), myStreams.size());
         return stream;
     }
 

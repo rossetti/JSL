@@ -77,7 +77,7 @@ public class AntitheticVRT {
         for (int i = 1; i <= n; i++) {
             if ((i % 2) == 0) {
                 // even number
-                nf.resetStartSubstream();
+                nf.resetStartSubStream();
                 nf.setAntitheticOption(true);
                 xa = nf.getValue();
                 //System.out.println("\t xa = " + xa);
@@ -86,7 +86,7 @@ public class AntitheticVRT {
             } else {
                 // odd number
                 // there are so many substreams that advancing doesn't matter
-                nf.advanceToNextSubstream();
+                nf.advanceToNextSubStream();
                 nf.setAntitheticOption(false);
                 x = nf.getValue();
                 //System.out.print("x = " + x);

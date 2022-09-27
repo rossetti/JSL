@@ -62,6 +62,16 @@ public class AR1CorrelatedRNStream implements RNStreamIfc, SetRandomNumberStream
     }
 
     @Override
+    public String getName() {
+        return myStream.getName();
+    }
+
+    @Override
+    public int getId() {
+        return myStream.getId();
+    }
+
+    @Override
     public double randU01() {
         // generate the correlated normal
         double z = myAR1.getValue();
