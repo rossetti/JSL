@@ -59,7 +59,7 @@ public class DriverLicenseBureauWithQ extends SchedulingElement {
     private EndServiceEventAction myEndServiceEventAction;
 
     public DriverLicenseBureauWithQ(ModelElement parent) {
-        this(parent, 1, new ExponentialRV(1.0), new ExponentialRV(0.8));
+        this(parent, 1, new ExponentialRV(1.0, 1), new ExponentialRV(0.8, 2));
     }
 
     public DriverLicenseBureauWithQ(ModelElement parent, int numServers, RandomIfc ad, RandomIfc sd) {
