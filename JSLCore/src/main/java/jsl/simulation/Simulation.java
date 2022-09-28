@@ -1075,6 +1075,11 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
         @Override
         protected final void initializeIterations() {
             super.initializeIterations();
+            Simulation.LOGGER.info("Starting the simulation for {}", Simulation.this.getName());
+            Simulation.LOGGER.info("{} simulating all {} replications of length {} with warm up {}",
+                    getName(), myExperiment.getNumberOfReplications(), myExperiment.getLengthOfReplication(),
+                    myExperiment.getLengthOfWarmUp());
+            Simulation.LOGGER.info("{} initializing the replications ...", getName());
             myExecutive.setTerminationWarningMessageOption(false);
             myExperiment.resetCurrentReplicationNumber();
             beforeExperiment();
@@ -1099,6 +1104,7 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
         @Override
         protected final void endIterations() {
             myModel.afterExperiment(myExperiment);
+            Simulation.LOGGER.info("The model executing its after experiment actions");
             afterExperiment();
             super.endIterations();
         }
@@ -1121,16 +1127,25 @@ public class Simulation implements ObservableIfc, IterativeProcessIfc,
         protected final void runStep() {
             myCurrentStep = next();
             myExperiment.incrementCurrentReplicationNumber();
+            Simulation.LOGGER.info("Running replication {} of {}", myExperiment.getCurrentReplicationNumber(),
+                    myExperiment.getNumberOfReplications());
             long tpr = getMaximumAllowedExecutionTimePerReplication();
             if (tpr > 0) {
                 myExecutive.setMaximumExecutionTime(tpr);
             }
             beforeReplication();
+            Simulation.LOGGER.info("The executive was initialized prior to running the replication");
             myExecutive.initialize();
+            Simulation.LOGGER.info("The model setup its replications");
             myModel.setUpReplication();
+            Simulation.LOGGER.info("The executive is running all events");
             myExecutive.executeAllEvents();
+            Simulation.LOGGER.info("The executive completed processing");
             myModel.afterReplication(myExperiment);
+            Simulation.LOGGER.info("The model executed its after replication actions");
             afterReplication();
+            Simulation.LOGGER.info("Completed replication {} of {}", myExperiment.getCurrentReplicationNumber(),
+                    myExperiment.getNumberOfReplications());
             if (getGarbageCollectAfterReplicationFlag()) {
                 System.gc();
             }

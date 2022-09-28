@@ -36,9 +36,12 @@ import jsl.utilities.GetValueIfc;
 import jsl.utilities.IdentityIfc;
 //import jsl.utilities.controls.Controls;
 import jsl.utilities.random.rvariable.ConstantRV;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 //import jsl.utilities.reporting.LogPrintWriter;
 
 import java.lang.IllegalStateException;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 
 /**
@@ -48,6 +51,8 @@ import java.util.*;
  * The ModelElement is a component in the composite pattern
  */
 public abstract class ModelElement implements IdentityIfc, ObservableIfc {
+
+    public final static Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * An "enum" to indicate that the model element was added to the model
@@ -200,42 +205,42 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
     /**
      * A general string that can be used to label the model element Unlike the
      * model element's name (e.g. getName()) the label does not have to be
-     * unique. By default it is set equal to the name of the model element.
+     * unique. By default, it is set equal to the name of the model element.
      */
     private String myLabel;
 
     /**
-     * A flag to control whether or not the model element reacts to before
+     * A flag to control whether the model element reacts to before
      * experiment actions.
      */
     protected boolean myBeforeExperimentOption;
 
     /**
-     * A flag to control whether or not the model element reacts to
+     * A flag to control whether the model element reacts to
      * initialization actions
      */
     protected boolean myInitializationOption;
 
     /**
-     * A flag to control whether or not the model element reacts to before
+     * A flag to control whether the model element reacts to before
      * replication actions.
      */
     protected boolean myBeforeReplicationOption;
 
     /**
-     * A flag to control whether or not the model element participates in monte
+     * A flag to control whether the model element participates in monte
      * carlo actions.
      */
     protected boolean myMonteCarloOption;
 
     /**
-     * A flag to control whether or not the model element reacts to end
+     * A flag to control whether the model element reacts to end
      * replication actions.
      */
     protected boolean myReplicationEndedOption;
 
     /**
-     * A flag to control whether or not the model element reacts to after
+     * A flag to control whether the model element reacts to after
      * replication actions.
      */
     protected boolean myAfterReplicationOption;
@@ -247,19 +252,19 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
     protected boolean myWarmUpOption;
 
     /**
-     * Specifies whether or not this model element participates in time update
+     * Specifies whether this model element participates in time update
      * event specified by its parent
      */
     protected boolean myTimedUpdateOption;
 
     /**
-     * Indicates whether or not update notifications will be sent by this model
+     * Indicates whether update notifications will be sent by this model
      * element. The default is true.
      */
     private boolean myUpdateNotificationFlag = true;
 
     /**
-     * A flag to control whether or not the model element reacts to after
+     * A flag to control whether the model element reacts to after
      * experiment actions.
      */
     protected boolean myAfterExperimentOption;
@@ -275,25 +280,25 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
     private ModelElement myParentModelElement;
 
     /**
-     * Can be used by sub-classes to assist in implementing the ControllableIfc
+     * Can be used by subclasses to assist in implementing the ControllableIfc
      * By default myControls is null, unless setControls() is called Use the
      * protected method getControls() to access this in subclasses.
      */
 //    private Controls myControls;
 
     /**
-     * The action listener that reacts to the warm up event.
+     * The action listener that reacts to the warmup event.
      */
     protected WarmUpEventAction myWarmUpActionListener;
 
     /**
-     * A reference to the warm up event
+     * A reference to the warmup event
      */
     protected JSLEvent myWarmUpEvent;
 
     /**
-     * Indicates whether or not the warm up action occurred sometime during the
-     * simulation. False indicates that the warm up action has not occurred
+     * Indicates whether the warmup action occurred sometime during the
+     * simulation. False indicates that the warmup action has not occurred
      */
     protected boolean myWarmUpIndicator = false;
 
@@ -303,9 +308,9 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
     protected int myWarmUpPriority = JSLEvent.DEFAULT_WARMUP_EVENT_PRIORITY;
 
     /**
-     * The length of time from the start of the simulation to the warm up event.
+     * The length of time from the start of the simulation to the warmup event.
      */
-    protected double myLengthOfWarmUp = 0.0; // zero is no warm up
+    protected double myLengthOfWarmUp = 0.0; // zero is no warmup
 
     /**
      * The action listener that reacts to the timed update event.
@@ -2181,6 +2186,7 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
 //        }
 
         if (getBeforeExperimentOption()) {
+            logger.trace("{} executing beforeExperiment()", getName());
             beforeExperiment();
             notifyBeforeExperimentObservers();
         }
@@ -2194,7 +2200,7 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
     protected final void beforeReplication_() {
 
         if (getLengthOfWarmUp() > 0) {
-            // the warm up period is > 0, ==> element wants a warm up event
+            // the warm up period is > 0, ==> element wants a warmup event
             myWarmUpActionListener = new WarmUpEventAction();
             myWarmUpEvent = getExecutive().scheduleEvent(myWarmUpActionListener,
                     getLengthOfWarmUp(), myWarmUpPriority, null,
@@ -2220,6 +2226,7 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
         }
 
         if (getBeforeReplicationOption()) {
+            logger.trace("{} executing beforeReplication()", getName());
             beforeReplication();
             notifyBeforeReplicationObservers();
         }
@@ -2245,6 +2252,7 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
 
         // now initialize the model element itself
         if (getInitializationOption()) {
+            logger.trace("{} executing initialize()", getName());
             initialize();
             notifyInitializationObservers();
         }
@@ -2255,8 +2263,8 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
      * The registerConditionalActions_ method allows model elements to be
      * register any conditional actions after initialization.
      * <p>
-     * It is called by default before each replication, right after the
-     * initialize() method is invoked
+     * It is called by default before each replication, right after the method
+     * initialize() is invoked
      * <p>
      * This method ensures that each contained model element has its
      * registerConditionalActions() method called and that any observers will be
@@ -2272,7 +2280,7 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
                 m.registerConditionalActions_(e);
             }
         }
-
+        logger.trace("{} executing registerConditionalActions()", getName());
         registerConditionalActions(e);
         notifyConditionalActionRegistrationObservers();
 
@@ -2289,6 +2297,7 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
     protected final void montecarlo_() {
 
         if (getMonteCarloOption()) {
+            logger.trace("{} executing montecarlo()", getName());
             montecarlo();
             notifyMonteCarloObservers();
         }
@@ -2303,12 +2312,16 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
 
     /**
      * The warmUp_ method is called once during each replication. This method
-     * ensures that each contained model element that requires a warm up action
-     * will performs its actions.
+     * ensures that each contained model element that requires a warmup action
+     * will perform its actions.
      */
     protected void warmUp_() {
 
-        // if we get here the warm up was scheduled, so do it
+        // if we get here the warmup was scheduled, so do it
+        if (this == getModel()){
+            Simulation.LOGGER.info("Executing the warm up actions for the model at time {}", getTime());
+        }
+        logger.trace("{} executing warmUp()", getName());
         warmUp();
         myWarmUpIndicator = true;
         notifyWarmUpObservers();
@@ -2326,11 +2339,12 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
     /**
      * The timedUpdate_ method is called multiple times during each replication.
      * This method ensures that each contained model element that requires a
-     * timed update action will performs its actions.
+     * timed update action will perform its actions.
      */
     protected final void timedUpdate_() {
 
         if (getTimedUpdateOption()) {
+            logger.trace("{} executing timedUpdate()", getName());
             timedUpdate();
             notifyTimedUpdateObservers();
         }
@@ -2346,8 +2360,8 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
 
     /**
      * The replicationEnded_ method is called when a replication ends This
-     * method ensures that each contained model element that requires a end of
-     * replication action will performs its actions.
+     * method ensures that each contained model element that requires an end of
+     * replication action will perform its actions.
      */
     protected final void replicationEnded_() {
 
@@ -2358,6 +2372,7 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
         }
 
         if (getReplicationEndedOption()) {
+            logger.trace("{} executing replicationEnded()", getName());
             replicationEnded();
             notifyReplicationEndedObservers();
         }
@@ -2366,8 +2381,8 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
 
     /**
      * The afterReplication_ method is called at the end of each replication.
-     * This method ensures that each contained model element that requires a end
-     * of replication action will performs its actions.
+     * This method ensures that each contained model element that requires an after
+     * replication action will perform its actions.
      */
     protected final void afterReplication_() {
 
@@ -2378,6 +2393,7 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
         }
 
         if (getAfterReplicationOption()) {
+            logger.trace("{} executing afterReplication()", getName());
             afterReplication();
             notifyAfterReplicationObservers();
         }
@@ -2399,6 +2415,7 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
         }
 
         if (getAfterExperimentOption()) {
+            logger.trace("{} executing afterExperiment()", getName());
             afterExperiment();
             notifyAfterExperimentObservers();
         }
@@ -2410,10 +2427,10 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
      * that
      * the model element has been changed in some fashion that the update
      * observers need notification. This method ensures that each contained
-     * model element that requires an update action will performs its actions.
+     * model element that requires an update action will perform its actions.
      */
     protected final void update() {
-
+        logger.trace("{} executing update()", getName());
         notifyUpdateObservers();
 
         if (!myModelElements.isEmpty()) {
@@ -2550,9 +2567,10 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
         // add the model element to the list of children
         myModelElements.add(modelElement);
 
-        // set it's parent to this element
+        // set its parent to this element
         modelElement.setParentModelElement(this);
-
+        Simulation.LOGGER.trace("Added model element {} to the model with parent {}", modelElement.getName(),
+                modelElement.getParentModelElement().getName());
     }
 
     /**
@@ -2644,10 +2662,11 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
             ModelElement child = myModelElements.get(myModelElements.size() - 1);
             child.removeFromModel();
         }
-
-        // if the model element has a warm up event, cancel it
+        logger.info("ModelElement: {} executing removeFromModel()", getName());
+        // if the model element has a warmup event, cancel it
         if (myWarmUpEvent != null) {
             if (myWarmUpEvent.isScheduled()) {
+                logger.info("ModelElement: {} cancelling warm up event", getName());
                 myWarmUpEvent.setCanceledFlag(true);
             }
             myWarmUpEvent = null;
@@ -2656,13 +2675,14 @@ public abstract class ModelElement implements IdentityIfc, ObservableIfc {
         // if the model element has a timed update event, cancel it
         if (myTimedUpdateEvent != null) {
             if (myTimedUpdateEvent.isScheduled()) {
+                logger.info("ModelElement: {} cancelling timed update event", getName());
                 myTimedUpdateEvent.setCanceledFlag(true);
             }
             myTimedUpdateEvent = null;
             myTimedUpdateActionListener = null;
         }
 
-        // allow the sub-classes to provide specific removal behavior
+        // allow the subclasses to provide specific removal behavior
         removedFromModel();
 
         // notify any model element observers of the removal

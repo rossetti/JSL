@@ -944,6 +944,7 @@ public class Model extends ModelElement {
                 sb.append("Attempted to add the model element: ");
                 sb.append(modelElement.getName());
                 sb.append(" while the simulation was running.");
+                Simulation.LOGGER.error(sb.toString());
                 throw new IllegalStateException(sb.toString());
             }
         }
@@ -960,6 +961,7 @@ public class Model extends ModelElement {
             sb.append(modelElement.getName());
             sb.append(" has already been added to the Model.\n");
             sb.append("Every model element must have a unique name");
+            Simulation.LOGGER.error(sb.toString());
             throw new IllegalArgumentException(sb.toString());
         }
 
@@ -1178,7 +1180,7 @@ public class Model extends ModelElement {
      *  Represents what to do to set up an experiment
      */
     protected void setUpExperiment() {
-
+        Simulation.LOGGER.info("Setting up experiment {} for the simulation.", getExperiment().getExperimentName());
         advanceSubStreams(getExperiment().getNumberOfStreamAdvancesPriorToRunning());
 
         if (getExperiment().getAntitheticOption() == true) {
@@ -1212,7 +1214,7 @@ public class Model extends ModelElement {
         }
 
         if (getExperiment().getResetStartStreamOption()){
-            //TODO need logging
+            Simulation.LOGGER.info("Resetting the streams to their initial starting location.");
             resetStartSubStream();
         }
         // do all model element beforeExperiment() actions
@@ -1235,6 +1237,7 @@ public class Model extends ModelElement {
     private void handleAntitheticReplications() {
         // handle antithetic replications
         if (getExperiment().getAntitheticOption() == true) {
+            Simulation.LOGGER.info("Executing handleAntitheticReplications() setup");
             if ((getExperiment().getCurrentReplicationNumber() % 2) == 0) {
                 // even number replication
                 // return to beginning of substream
@@ -1288,7 +1291,8 @@ public class Model extends ModelElement {
     protected void afterReplication(Experiment e) {
         // do all model element replicationEnded() actions
         replicationEnded_();
-        if(getExperiment().getAdvanceNextSubStreamOption()){//TODO need logging
+        if(getExperiment().getAdvanceNextSubStreamOption()){
+            Simulation.LOGGER.info("Advancing the streams to the start of their next sub-stream.");
             advanceToNextSubStream();
         }
         // do all model element afterReplication() actions
@@ -1298,6 +1302,7 @@ public class Model extends ModelElement {
 
     protected void afterExperiment(Experiment e) {
         // do all model element afterExperiment() actions
+        Simulation.LOGGER.info("Performing after experiment actions for model elements.");
         afterExperiment_();
     }
 
@@ -1314,6 +1319,7 @@ public class Model extends ModelElement {
         double t = e.getLengthOfReplication();
         //getExecutive().scheduleEndEvent(t);
         if (!Double.isInfinite(t)) {
+            Simulation.LOGGER.info("Scheduling end of replication event for time {}", t);
             JSLEvent event = getExecutive().scheduleEndEvent(t, this);
             event.setModelElement(Model.this);
         }

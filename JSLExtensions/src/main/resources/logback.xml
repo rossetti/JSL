@@ -125,6 +125,57 @@
         </encoder>
     </appender>
 
+    <appender name="JSL_STREAMS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/jslStreams.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>logs/jslStreams.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 2 days' worth of history capped at 30MB total size -->
+            <maxHistory>2</maxHistory>
+            <totalSizeCap>30MB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="JSL_ME" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/jslModelElement.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>logs/jslModelElement.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 2 days' worth of history capped at 30MB total size -->
+            <maxHistory>2</maxHistory>
+            <totalSizeCap>30MB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="JSL_SIM" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/jslSim.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>logs/jslSim.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 2 days' worth of history capped at 30MB total size -->
+            <maxHistory>2</maxHistory>
+            <totalSizeCap>30MB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <logger name="jslx.dbutilities.dbutil.DatabaseIfc" level="DEBUG" additivity="false">
         <appender-ref ref="JSLDB" />
     </logger>
@@ -147,6 +198,18 @@
 
     <logger name="jsl.controls.Control" level="DEBUG" additivity="false">
         <appender-ref ref="CONTROLS_FILE" />
+    </logger>
+
+    <logger name="jsl.utilities.random.rng.RNStreamProvider" level="INFO" additivity="false">
+        <appender-ref ref="JSL_STREAMS" />
+    </logger>
+
+    <logger name="jsl.simulation.ModelElement" level="INFO" additivity="false">
+        <appender-ref ref="JSL_ME" />
+    </logger>
+
+    <logger name="jsl.simulation.Simulation" level="INFO" additivity="false">
+        <appender-ref ref="JSL_SIM" />
     </logger>
 
     <root level="INFO">
