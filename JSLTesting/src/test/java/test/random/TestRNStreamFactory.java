@@ -93,7 +93,7 @@ public class TestRNStreamFactory {
         RNStreamFactory rm = new RNStreamFactory();
         RNStreamIfc rng = rm.getStream();
         for (int i = 0; i < advance; i++) {
-            rng.advanceToNextSubstream();
+            rng.advanceToNextSubStream();
         }
         double sum = 0.0;
         for (int i = 1; i <= count; i++) {
@@ -146,8 +146,8 @@ public class TestRNStreamFactory {
 
         assertTrue(s1 != s2);
 
-        g1.advanceToNextSubstream();
-        g1.advanceToNextSubstream();
+        g1.advanceToNextSubStream();
+        g1.advanceToNextSubStream();
         System.out.println("Advancing to the start of the next substream ");
         System.out.println("causes them to advance to the beginning of the next substream.");
 

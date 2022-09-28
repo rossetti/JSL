@@ -15,7 +15,7 @@
  */
 package test.misc;
 
-import examples.queueing.DriverLicenseBureauWithQ;
+import examples.general.queueing.DriverLicenseBureauWithQ;
 import jsl.simulation.ExperimentGetIfc;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;

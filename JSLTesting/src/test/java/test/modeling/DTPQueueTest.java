@@ -21,8 +21,8 @@
  */
 package test.modeling;
 
-import examples.models.DTPFunctionalTest;
-import examples.models.DTPQueueModel;
+import examples.general.models.DTPFunctionalTest;
+import examples.general.models.DTPQueueModel;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;
 import jsl.simulation.SimulationReporter;
@@ -86,7 +86,7 @@ public class DTPQueueTest {
         driveThroughPharmacy.setServiceRS(new ExponentialRV(3.0));
 
         // set the parameters of the experiment
-        sim.setNumberOfReplications(75);
+        sim.setNumberOfReplications(150);
         sim.setLengthOfReplication(20000.0);
         sim.setLengthOfWarmUp(5000.0);
         SimulationReporter r = sim.makeSimulationReporter();
@@ -111,18 +111,22 @@ public class DTPQueueTest {
         System.out.printf("k = %d, p = %f, aNB = %f, bNB = %f, aNB - bNB = %f%n", k, p, aNB, bNB, (aNB - bNB));
         assertTrue(JSLMath.within(aNB, bNB, p));
         k = sNS.getAcrossReplicationStatistic().getLeadingDigitRule(1.0) + 1;
+        k = sNS.getAcrossReplicationStatistic().getLeadingDigitRule(1.0) + 2;
         p = Math.pow(10.0, k);
         System.out.printf("k = %d, p = %f, aNS = %f, bNS = %f, aNS - bNS = %f%n", k, p, aNS, bNS, (aNS - bNS));
         assertTrue(JSLMath.within(aNS, bNS, p));
         k = sNQ.getAcrossReplicationStatistic().getLeadingDigitRule(1.0) + 1;
+        k = sNQ.getAcrossReplicationStatistic().getLeadingDigitRule(1.0) + 2;
         p = Math.pow(10.0, k);
         System.out.printf("k = %d, p = %f, aNQ = %f, bNQ = %f, aNQ - bNQ = %f%n", k, p, aNQ, bNQ, (aNQ - bNQ));
         assertTrue(JSLMath.within(aNQ, bNQ, p));
         k = sTQ.getAcrossReplicationStatistic().getLeadingDigitRule(1.0) + 1;
+        k = sTQ.getAcrossReplicationStatistic().getLeadingDigitRule(1.0) + 2;
         p = Math.pow(10.0, k);
         System.out.printf("k = %d, p = %f, aTQ = %f, bTQ = %f, aTQ - bTQ = %f%n", k, p, aTQ, bTQ, (aTQ - bTQ));
         assertTrue(JSLMath.within(aTQ, bTQ, p));
         k = sST.getAcrossReplicationStatistic().getLeadingDigitRule(1.0) + 1;
+        k = sST.getAcrossReplicationStatistic().getLeadingDigitRule(1.0) + 2;
         p = Math.pow(10.0, k);
         System.out.printf("k = %d, p = %f, aTST = %f, bTST = %f, aST - bST = %f%n", k, p, aST, bST, (aST - bST));
         assertTrue(JSLMath.within(aST, bST, p));

@@ -58,6 +58,7 @@ public class TestDEmpirical {
         assertTrue(JSLArrayUtil.compareArrays(makePairs, pp) == true);
 
         RNStreamIfc defaultStream = JSLRandom.getDefaultRNStream();
+        defaultStream.resetStartStream();
 
         DEmpiricalRV d = new DEmpiricalRV(x, p, defaultStream);
 

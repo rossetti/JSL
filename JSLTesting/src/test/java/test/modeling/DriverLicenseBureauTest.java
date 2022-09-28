@@ -15,7 +15,7 @@
  */
 package test.modeling;
 
-import examples.queueing.DriverLicenseBureau;
+import examples.general.queueing.DriverLicenseBureau;
 import jsl.simulation.ExperimentGetIfc;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;
@@ -51,7 +51,7 @@ public class DriverLicenseBureauTest {
         myDLB = new DriverLicenseBureau(myModel);
 
         // set the parameters of the experiment
-        mySim.setNumberOfReplications(20);
+        mySim.setNumberOfReplications(50);
         mySim.setLengthOfReplication(200000.0);
         mySim.setLengthOfWarmUp(50000.0);
     }
@@ -67,6 +67,8 @@ public class DriverLicenseBureauTest {
         // run the simulation
         mySim.run();
 
+        System.out.println(mySim.makeSimulationReporter().getHalfWidthSummaryReport());
+
         StatisticAccessorIfc sNB = myDLB.getNBAcrossReplicationStatistic();
         StatisticAccessorIfc sNS = myDLB.getNSAcrossReplicationStatistic();
         StatisticAccessorIfc sNQ = myDLB.getNQAcrossReplicationStatistic();
@@ -79,7 +81,7 @@ public class DriverLicenseBureauTest {
         p = Math.pow(10.0, k);
         assertTrue(JSLMath.within(sNS.getAverage(), 1.0, p));
 
-        k = sNQ.getLeadingDigitRule(1.0) + 1;
+        k = sNQ.getLeadingDigitRule(1.0) + 2;
         p = Math.pow(10.0, k);
         assertTrue(JSLMath.within(sNQ.getAverage(), 0.5, p));
 
@@ -95,6 +97,7 @@ public class DriverLicenseBureauTest {
 
         // run the simulation
         mySim.run();
+        System.out.println(mySim.makeSimulationReporter().getHalfWidthSummaryReport());
 
         StatisticAccessorIfc sNB = myDLB.getNBAcrossReplicationStatistic();
         StatisticAccessorIfc sNS = myDLB.getNSAcrossReplicationStatistic();

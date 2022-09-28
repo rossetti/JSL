@@ -394,8 +394,9 @@ public class RNStreamFactory extends Identity {
 
         @Override
         public final void resetStartStream() {
-            for (int i = 0; i < 6; ++i)
+            for (int i = 0; i < 6; ++i){
                 Bg[i] = Ig[i];
+            }
             resetStartSubStream();
             RNStreamProvider.logger.trace("Resetting stream {} to the start of its stream", getId());
             RNStreamProvider.logger.trace(this.toString());

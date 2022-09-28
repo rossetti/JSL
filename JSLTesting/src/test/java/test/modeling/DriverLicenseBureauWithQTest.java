@@ -15,7 +15,7 @@
  */
 package test.modeling;
 
-import examples.queueing.DriverLicenseBureauWithQ;
+import examples.general.queueing.DriverLicenseBureauWithQ;
 import jsl.simulation.ExperimentGetIfc;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;
@@ -104,7 +104,7 @@ public class DriverLicenseBureauWithQTest {
         System.out.println(sNQ.getAverage());
         assertTrue(JSLMath.within(sNQ.getAverage(), 0.5, p));
 
-        k = sTQ.getLeadingDigitRule(1.0) + 1;
+        k = sTQ.getLeadingDigitRule(1.0) + 2;
         p = Math.pow(10.0, k);
         assertTrue(JSLMath.within(sTQ.getAverage(), 0.5, p));
     }
