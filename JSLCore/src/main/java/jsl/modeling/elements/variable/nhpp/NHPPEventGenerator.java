@@ -20,49 +20,53 @@ import jsl.modeling.elements.EventGenerator;
 import jsl.modeling.elements.EventGeneratorIfc;
 import jsl.utilities.random.RandomIfc;
 import jsl.modeling.elements.EventGeneratorActionIfc;
+import jsl.utilities.random.rng.GetRandomNumberStreamIfc;
+import jsl.utilities.random.rng.RNStreamControlIfc;
+import jsl.utilities.random.rng.RNStreamIfc;
+import jsl.utilities.random.rng.SetRandomNumberStreamIfc;
 
 /**
  * @author rossetti
- *
  */
-public class NHPPEventGenerator extends ModelElement implements EventGeneratorIfc {
+public class NHPPEventGenerator extends ModelElement implements EventGeneratorIfc, RNStreamControlIfc,
+        SetRandomNumberStreamIfc, GetRandomNumberStreamIfc {
 
     protected EventGenerator myEventGenerator;
 
     protected NHPPTimeBtwEventRV myTBARV;
 
     /**
-     * @param parent the parent
+     * @param parent       the parent
      * @param rateFunction the rate function
-     * @param listener   the listener for generation
+     * @param listener     the listener for generation
      */
     public NHPPEventGenerator(ModelElement parent, InvertibleCumulativeRateFunctionIfc rateFunction,
-            EventGeneratorActionIfc listener) {
+                              EventGeneratorActionIfc listener) {
         this(parent, rateFunction, listener, null);
     }
 
     /**
-     * @param parent the parent
+     * @param parent       the parent
      * @param rateFunction the rate function
-     * @param listener   the listener for generation
-     * @param name the name to assign
+     * @param listener     the listener for generation
+     * @param name         the name to assign
      */
     public NHPPEventGenerator(ModelElement parent, InvertibleCumulativeRateFunctionIfc rateFunction,
-            EventGeneratorActionIfc listener, String name) {
+                              EventGeneratorActionIfc listener, String name) {
         super(parent, name);
         myTBARV = new NHPPTimeBtwEventRV(this, rateFunction);
         myEventGenerator = new EventGenerator(this, listener, myTBARV, myTBARV);
     }
 
     /**
-     * @param parent the parent
+     * @param parent       the parent
      * @param rateFunction the rate function
-     * @param listener   the listener for generation
-     * @param lastrate  the last rate
-     * @param name the name to assign
+     * @param listener     the listener for generation
+     * @param lastrate     the last rate
+     * @param name         the name to assign
      */
     public NHPPEventGenerator(ModelElement parent, InvertibleCumulativeRateFunctionIfc rateFunction,
-            EventGeneratorActionIfc listener, double lastrate, String name) {
+                              EventGeneratorActionIfc listener, double lastrate, String name) {
         super(parent, name);
         myTBARV = new NHPPTimeBtwEventRV(this, rateFunction, lastrate);
         myEventGenerator = new EventGenerator(this, listener, myTBARV, myTBARV);
@@ -212,5 +216,68 @@ public class NHPPEventGenerator extends ModelElement implements EventGeneratorIf
     @Override
     public void turnOffGenerator() {
         myEventGenerator.turnOffGenerator();
+    }
+
+    @Override
+    public void setRandomNumberStream(RNStreamIfc stream) {
+        myTBARV.setRandomNumberStream(stream);
+    }
+
+    @Override
+    public RNStreamIfc getRandomNumberStream() {
+        return myTBARV.getRandomNumberStream();
+    }
+
+    @Override
+    public boolean getResetStartStreamOption() {
+        return myTBARV.getResetStartStreamOption();
+    }
+
+    @Override
+    public void setResetStartStreamOption(boolean b) {
+        myTBARV.setResetStartStreamOption(b);
+    }
+
+    @Override
+    public boolean getResetNextSubStreamOption() {
+        return myTBARV.getResetNextSubStreamOption();
+    }
+
+    @Override
+    public void setResetNextSubStreamOption(boolean b) {
+        myTBARV.setResetNextSubStreamOption(b);
+    }
+
+    @Override
+    public void setAntitheticOption(boolean flag) {
+        myTBARV.setAntitheticOption(flag);
+    }
+
+    @Override
+    public boolean getAntitheticOption() {
+        return myTBARV.getAntitheticOption();
+    }
+
+    @Override
+    public void advanceToNextSubStream() {
+        myTBARV.advanceToNextSubStream();
+    }
+
+    @Override
+    public void resetStartStream() {
+        myTBARV.resetStartStream();
+    }
+
+    @Override
+    public void resetStartSubStream() {
+        myTBARV.resetStartSubStream();
+    }
+
+    public InvertibleCumulativeRateFunctionIfc getRateFunction() {
+        return myTBARV.getRateFunction();
+    }
+
+    public void setRateFunction(InvertibleCumulativeRateFunctionIfc rateFunction) {
+        myTBARV.setRateFunction(rateFunction);
     }
 }
