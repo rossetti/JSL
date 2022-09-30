@@ -45,8 +45,8 @@ public class JSLBatchingDemos {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        //runBatchingExample();
-        //sequentialBatchingExample();
+//        runBatchingExample();
+
         batchingASingleResponse();
     }
 
@@ -62,8 +62,8 @@ public class JSLBatchingDemos {
         Model m = sim.getModel();
         // add DriveThroughPharmacy to the main model
         DriveThroughPharmacyWithQ driveThroughPharmacy = new DriveThroughPharmacyWithQ(m);
-        driveThroughPharmacy.setArrivalRS(new ExponentialRV(1.0));
-        driveThroughPharmacy.setServiceRS(new ExponentialRV(0.7));
+        driveThroughPharmacy.setArrivalRS(new ExponentialRV(1.0, 1));
+        driveThroughPharmacy.setServiceRS(new ExponentialRV(0.7, 2));
 
         // create the batching element for the simulation
         StatisticalBatchingElement be = new StatisticalBatchingElement(m);
@@ -101,8 +101,8 @@ public class JSLBatchingDemos {
         Model m = sim.getModel();
         // add DriveThroughPharmacy to the main model
         DriveThroughPharmacyWithQ driveThroughPharmacy = new DriveThroughPharmacyWithQ(m);
-        driveThroughPharmacy.setArrivalRS(new ExponentialRV(6.0));
-        driveThroughPharmacy.setServiceRS(new ExponentialRV(3.0));
+        driveThroughPharmacy.setArrivalRS(new ExponentialRV(6.0, 1));
+        driveThroughPharmacy.setServiceRS(new ExponentialRV(3.0, 2));
 
         // make a time weighted batching element, accepting the default batching parameters
         TWBatchingElement twbe = new TWBatchingElement(driveThroughPharmacy);
