@@ -132,6 +132,7 @@ public class RandomElement<T> extends ModelElement implements RandomElementIfc {
     @Override
     public final void setRandomNumberStream(RNStreamIfc stream) {
         myRandomList.setRandomNumberStream(stream);
+        getModel().addStream(stream);
     }
 
     /**
@@ -226,9 +227,9 @@ public class RandomElement<T> extends ModelElement implements RandomElementIfc {
     @Override
     protected void beforeExperiment() {
         super.beforeExperiment();
-        if (getResetStartStreamOption()) {
-            resetStartStream();
-        }
+//        if (getResetStartStreamOption()) {
+//            resetStartStream();
+//        }
 
     }
 
@@ -239,9 +240,9 @@ public class RandomElement<T> extends ModelElement implements RandomElementIfc {
     @Override
     protected void afterReplication() {
         super.afterReplication();
-        if (getResetNextSubStreamOption()) {
-            advanceToNextSubStream();
-        }
+//        if (getResetNextSubStreamOption()) {
+//            advanceToNextSubStream();
+//        }
 
     }
 }

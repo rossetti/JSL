@@ -167,17 +167,18 @@ public class RandomVariable extends ModelElement implements RandomIfc, RandomEle
         myInitialRandomSourceChangeWarning = flag;
     }
 
-    /**  Changes the stream for the *initial random source*.
+    /**
+     * Changes the stream for the *initial random source*.
      *
      * @param stream the reference to the random number stream, must not be null
      */
     @Override
     public void setRandomNumberStream(RNStreamIfc stream) {
         myInitialRandomSource.setRandomNumberStream(stream);
+        getModel().addStream(myInitialRandomSource.getRandomNumberStream());
     }
 
     /**
-     *
      * @return the random number stream associated with the initial random source
      */
     @Override
@@ -264,6 +265,9 @@ public class RandomVariable extends ModelElement implements RandomIfc, RandomEle
             }
         }
         myInitialRandomSource = source;
+        RNStreamProvider.logger.info("Random source with stream id {} was assigned to RandomVariable(id = {}, name = {})",
+                source.getRandomNumberStream().getId(), getId(), getName());
+        getModel().addStream(myInitialRandomSource.getRandomNumberStream());
     }
 
     /**
@@ -355,7 +359,7 @@ public class RandomVariable extends ModelElement implements RandomIfc, RandomEle
     }
 
     @Override
-    public final double sample(){
+    public final double sample() {
         return getValue();
     }
 

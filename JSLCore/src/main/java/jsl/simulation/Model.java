@@ -22,6 +22,7 @@ import jsl.modeling.elements.spatial.SpatialModel;
 import jsl.modeling.elements.variable.*;
 import jsl.observers.ObserverIfc;
 import jsl.utilities.random.rng.RNStreamIfc;
+import jsl.utilities.random.rng.RNStreamProvider;
 import jsl.utilities.random.rvariable.RVParameterSetter;
 import jsl.utilities.statistic.StatisticAccessorIfc;
 
@@ -147,7 +148,10 @@ public class Model extends ModelElement {
      * @param stream the stream that the model will manage
      */
     public final void addStream(RNStreamIfc stream) {
-        myStreams.add(stream);
+        boolean b = myStreams.add(stream);
+        if (b){
+            RNStreamProvider.logger.info("Stream id = {} add to model stream control.", stream.getId());
+        }
     }
 
     /**

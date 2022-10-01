@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import jsl.simulation.ModelElement;
+import jsl.utilities.random.rng.RNStreamProvider;
 import jsl.utilities.random.robj.DUniformList;
 import jsl.utilities.random.robj.RList;
 import jsl.utilities.random.robj.RListIfc;
@@ -101,6 +102,9 @@ abstract public class RandomList<T> extends ModelElement implements RListIfc<T>,
         setResetStartStreamOption(true);
         setResetNextSubStreamOption(true);
         myRList = new DUniformList<T>();
+        getModel().addStream(myRList.getRandomNumberStream());
+        RNStreamProvider.logger.info("Initialized RandomVariable(id = {}, name = {}) with stream id = {}",
+                getId(), getName(), myRList.getStreamNumber());
         setInitialList(initialList);
     }
 
@@ -135,9 +139,9 @@ abstract public class RandomList<T> extends ModelElement implements RListIfc<T>,
     protected void beforeExperiment() {
         super.beforeExperiment();
 
-        if (getResetStartStreamOption()) {
-            resetStartStream();
-        }
+//        if (getResetStartStreamOption()) {
+//            resetStartStream();
+//        }
 
     }
 
@@ -148,23 +152,23 @@ abstract public class RandomList<T> extends ModelElement implements RListIfc<T>,
     protected void afterReplication() {
         super.afterReplication();
 
-        if (getResetNextSubStreamOption()) {
-            advanceToNextSubStream();
-        }
+//        if (getResetNextSubStreamOption()) {
+//            advanceToNextSubStream();
+//        }
 
     }
 
-    /** Allows the user to change the random list after it has
-     *  been initialized by the initial list.  The supplied
-     *  list will be used directly instead of the current list
-     * @param list
-     */
-    public void setRandomList(RList<T> list) {
-        if (list == null) {
-            throw new IllegalArgumentException("The list was null");
-        }
-        myRList = list.newInstance();
-    }
+//    /** Allows the user to change the random list after it has
+//     *  been initialized by the initial list.  The supplied
+//     *  list will be used directly instead of the current list
+//     * @param list
+//     */
+//    public void setRandomList(RList<T> list) {
+//        if (list == null) {
+//            throw new IllegalArgumentException("The list was null");
+//        }
+//        myRList = list.newInstance();
+//    }
 
     /** Sets the initial list to be used to initialize
      *  the list at the beginning of each replication

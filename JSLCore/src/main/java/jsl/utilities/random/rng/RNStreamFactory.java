@@ -511,6 +511,15 @@ public class RNStreamFactory extends Identity {
 
         @Override
         public String toString() {
+            final StringBuilder sb = new StringBuilder("RNStream{");
+            sb.append("Id=").append(myId);
+            sb.append(", Name='").append(myName).append('\'');
+            sb.append(", anti=").append(anti);
+            sb.append('}');
+            return sb.toString();
+        }
+
+        public String asString(){
             StringBuilder sb = new StringBuilder();
 
             sb.append("The RngStream\n");
