@@ -5,6 +5,7 @@ import jsl.observers.ControlVariateDataCollector;
 import jsl.observers.ReplicationDataCollector;
 import jsl.simulation.Model;
 import jsl.simulation.Simulation;
+import jsl.utilities.random.rvariable.ExponentialRV;
 import jsl.utilities.reporting.JSL;
 import jslx.CSVUtil;
 
@@ -16,8 +17,8 @@ import java.util.List;
 public class ResponseCollectorExample {
 
     public static void main(String[] args) {
-//        responseCollectorDemo();
-        controlVariateCollectorDemo();
+        responseCollectorDemo();
+//        controlVariateCollectorDemo();
     }
 
     public static void responseCollectorDemo() {
@@ -25,6 +26,8 @@ public class ResponseCollectorExample {
         Model m = sim.getModel();
         // add DriveThroughPharmacy to the main model
         DriveThroughPharmacyWithQ driveThroughPharmacy = new DriveThroughPharmacyWithQ(m);
+        driveThroughPharmacy.setArrivalRS(new ExponentialRV(1.0, 1));
+        driveThroughPharmacy.setServiceRS(new ExponentialRV(0.7, 2));
         // set the parameters of the experiment
         sim.setNumberOfReplications(10);
         sim.setLengthOfWarmUp(1000.0);
