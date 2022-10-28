@@ -14,19 +14,16 @@
  *    limitations under the License.
  */
 
-package jslx.statistics;
+package jsl.utilities.statistic;
 
-import jsl.utilities.statistic.Statistic;
-
-@Deprecated
-public interface EstimatorIfc {
+public interface BSEstimatorIfc {
 
     double getEstimate(double[] data);
 
     /**
      * A predefined EstimatorIfc that estimates the mean of the data
      */
-    class Average implements EstimatorIfc {
+    class Average implements BSEstimatorIfc {
         private Statistic s = new Statistic();
         @Override
         public double getEstimate(double[] data) {
@@ -39,7 +36,7 @@ public interface EstimatorIfc {
     /**
      * A predefined EstimatorIfc that estimates the variance of the data
      */
-    class Variance implements EstimatorIfc {
+    class Variance implements BSEstimatorIfc {
         private Statistic s = new Statistic();
         @Override
         public double getEstimate(double[] data) {
@@ -52,7 +49,7 @@ public interface EstimatorIfc {
     /**
      * A predefined EstimatorIfc that estimates the median of the data
      */
-    class Median implements EstimatorIfc {
+    class Median implements BSEstimatorIfc {
         public double getEstimate(double[] data) {
             return Statistic.getMedian(data);
         }
@@ -61,7 +58,7 @@ public interface EstimatorIfc {
     /**
      * A predefined EstimatorIfc that estimates the minimum of the data
      */
-    class Minimum implements EstimatorIfc {
+    class Minimum implements BSEstimatorIfc {
         public double getEstimate(double[] data) {
             return Statistic.getMin(data);
         }
@@ -70,7 +67,7 @@ public interface EstimatorIfc {
     /**
      * A predefined EstimatorIfc that estimates the maximum of the data
      */
-    class Maximum implements EstimatorIfc {
+    class Maximum implements BSEstimatorIfc {
         public double getEstimate(double[] data) {
             return Statistic.getMax(data);
         }

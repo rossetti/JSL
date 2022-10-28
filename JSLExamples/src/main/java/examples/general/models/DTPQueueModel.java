@@ -154,8 +154,8 @@ public class DTPQueueModel extends SchedulingElement {
         Model m = sim.getModel();
         // add DriveThroughPharmacy to the main model
         DTPQueueModel driveThroughPharmacy = new DTPQueueModel(m);
-        driveThroughPharmacy.setArrivalRS(new ExponentialRV(6.0));
-        driveThroughPharmacy.setServiceRS(new ExponentialRV(3.0));
+        driveThroughPharmacy.setArrivalRS(new ExponentialRV(6.0,1));
+        driveThroughPharmacy.setServiceRS(new ExponentialRV(3.0,2));
 
         Optional<QueueResponse<QObject>> queueResponse = driveThroughPharmacy.getQueueResponse();
         if (queueResponse.isPresent()){

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package jslx.statistics;
+package jsl.utilities.statistic;
 
 import jsl.utilities.IdentityIfc;
 import jsl.utilities.Interval;
@@ -29,8 +29,6 @@ import jsl.utilities.random.robj.DPopulation;
 import jsl.utilities.random.rvariable.EmpiricalRV;
 import jsl.utilities.random.rvariable.JSLRandom;
 import jsl.utilities.random.rvariable.RVariableIfc;
-import jsl.utilities.statistic.Statistic;
-import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import java.util.*;
 
@@ -45,7 +43,6 @@ import java.util.*;
  * Hyndman, R. J. and Fan, Y. (1996) Sample quantiles in statistical packages,
  * American Statistician 50, 361–365 as the default.  This can be changed by the user.
  */
-@Deprecated
 public class Bootstrap implements IdentityIfc, RNStreamControlIfc, SetRandomNumberStreamIfc, GetRandomNumberStreamIfc {
 
     /**
@@ -62,11 +59,9 @@ public class Bootstrap implements IdentityIfc, RNStreamControlIfc, SetRandomNumb
     protected final Statistic myAcrossBSStat;
     protected final List<Statistic> myBSStatList;
     protected final Statistic myOriginalPopStat;
-    protected final Percentile myPercentileCalc;
     protected final double[] myOrginalData;
     protected int myNumBSSamples;
     protected double myOrgEstimate;
-    protected Percentile.EstimationType myQuantileType;
     protected double myDefaultLevel = 0.95;
 
     /**
@@ -103,8 +98,6 @@ public class Bootstrap implements IdentityIfc, RNStreamControlIfc, SetRandomNumb
         myAcrossBSStat = new Statistic("Across Bootstrap Statistics");
         myAcrossBSStat.setSaveOption(true);
         myBSStatList = new ArrayList<>();
-        myPercentileCalc = new Percentile();
-        myQuantileType = Percentile.EstimationType.R_8;
     }
 
     /**
@@ -135,7 +128,7 @@ public class Bootstrap implements IdentityIfc, RNStreamControlIfc, SetRandomNumb
      * @param numBootstrapSamples the number of bootstrap samples to generate, must be greater than 1
      */
     public final void generateSamples(int numBootstrapSamples) {
-        generateSamples(numBootstrapSamples, new EstimatorIfc.Average(), false);
+        generateSamples(numBootstrapSamples, new BSEstimatorIfc.Average(), false);
     }
 
     /**
@@ -145,7 +138,7 @@ public class Bootstrap implements IdentityIfc, RNStreamControlIfc, SetRandomNumb
      * @param saveBootstrapSamples   indicates that the statistics and data of each bootstrap generate should be saved
      */
     public final void generateSamples(int numBootstrapSamples, boolean saveBootstrapSamples) {
-        generateSamples(numBootstrapSamples, new EstimatorIfc.Average(), saveBootstrapSamples);
+        generateSamples(numBootstrapSamples, new BSEstimatorIfc.Average(), saveBootstrapSamples);
     }
 
     /**
@@ -154,7 +147,7 @@ public class Bootstrap implements IdentityIfc, RNStreamControlIfc, SetRandomNumb
      * @param numBootstrapSamples the number of bootstrap samples to generate
      * @param estimator           a function of the data
      */
-    public final void generateSamples(int numBootstrapSamples, EstimatorIfc estimator) {
+    public final void generateSamples(int numBootstrapSamples, BSEstimatorIfc estimator) {
         generateSamples(numBootstrapSamples, estimator, false);
     }
 
@@ -165,7 +158,7 @@ public class Bootstrap implements IdentityIfc, RNStreamControlIfc, SetRandomNumb
      * @param estimator           a function of the data
      * @param saveBootstrapSamples   indicates that the statistics and data of each bootstrap generate should be saved
      */
-    public void generateSamples(int numBootstrapSamples, EstimatorIfc estimator,
+    public void generateSamples(int numBootstrapSamples, BSEstimatorIfc estimator,
                                    boolean saveBootstrapSamples) {
         Objects.requireNonNull(estimator, "The estimator function was null");
         if (numBootstrapSamples <= 1) {
@@ -188,7 +181,7 @@ public class Bootstrap implements IdentityIfc, RNStreamControlIfc, SetRandomNumb
                 myBSStatList.add(bs);
             }
         }
-        myPercentileCalc.setData(myAcrossBSStat.getSavedData());
+//        myPercentileCalc.setData(myAcrossBSStat.getSavedData());
     }
 
     /**
@@ -297,15 +290,15 @@ public class Bootstrap implements IdentityIfc, RNStreamControlIfc, SetRandomNumb
         this.myDefaultLevel = level;
     }
 
-    /**
-     * @param type the type to set, must not be null.
-     */
-    public final void setDefaultQuantileEstimationType(Percentile.EstimationType type) {
-        if (type == null) {
-            throw new IllegalArgumentException("The supplied type was null");
-        }
-        myQuantileType = type;
-    }
+//    /**
+//     * @param type the type to set, must not be null.
+//     */
+//    public final void setDefaultQuantileEstimationType(Percentile.EstimationType type) {
+//        if (type == null) {
+//            throw new IllegalArgumentException("The supplied type was null");
+//        }
+//        myQuantileType = type;
+//    }
 
     /**
      * @return the number of requested bootstrap samples
@@ -584,8 +577,8 @@ public class Bootstrap implements IdentityIfc, RNStreamControlIfc, SetRandomNumb
         }
         double a = 1.0 - level;
         double ad2 = a / 2.0;
-        double llq = myPercentileCalc.evaluate(100.0 * ad2);
-        double ulq = myPercentileCalc.evaluate(100.0 * (1.0 - ad2));
+        double llq = Statistic.percentile(myAcrossBSStat.getSavedData(), ad2);
+        double ulq = Statistic.percentile(myAcrossBSStat.getSavedData(), (1.0 - ad2));
         double estimate = getOriginalDataEstimate();
         double ll = 2.0 * estimate - ulq;
         double ul = 2.0 * estimate - llq;
@@ -622,8 +615,8 @@ public class Bootstrap implements IdentityIfc, RNStreamControlIfc, SetRandomNumb
         }
         double a = 1.0 - level;
         double ad2 = a / 2.0;
-        double llq = myPercentileCalc.evaluate(100.0 * ad2);
-        double ulq = myPercentileCalc.evaluate(100.0 * (1.0 - ad2));
+        double llq = Statistic.percentile(myAcrossBSStat.getSavedData(), ad2);
+        double ulq = Statistic.percentile(myAcrossBSStat.getSavedData(), (1.0 - ad2));
         Interval ci = new Interval(llq, ulq);
         return ci;
     }

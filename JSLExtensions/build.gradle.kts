@@ -8,7 +8,7 @@ plugins {
     // uncomment for signing the jars during publishing task
     signing
     // necessary because some classes use javafx
-    id("org.openjfx.javafxplugin") version "0.0.8"
+//    id("org.openjfx.javafxplugin") version "0.0.8"
 }
 
 tasks.withType<JavaCompile> {
@@ -27,11 +27,11 @@ repositories {
     mavenCentral()
 }
 
-javafx {
-    version = "12"
-    modules("javafx.controls", "javafx.fxml")
-    configuration = "api"
-}
+//javafx {
+//    version = "12"
+//    modules("javafx.controls", "javafx.fxml")
+//    configuration = "api"
+//}
 
 dependencies {
 
@@ -39,7 +39,8 @@ dependencies {
     // this permits changes to the JSLCore to be immediately reflected in JSLExtensions
 	api(project(":JSLCore"))
 
-    api(group = "com.opencsv", name = "opencsv", version = "5.6")
+    //TODO consider supercsv
+    api(group = "com.opencsv", name = "opencsv", version = "5.7.1")
 
     api(group = "org.apache.commons", name = "commons-math3", version = "3.6.1")
 
@@ -56,7 +57,7 @@ dependencies {
 //    api(group = "tech.tablesaw", name = "tablesaw-excel", version = "0.38.1")
 
     //https://github.com/knowm/XChart
-//    api(group ="org.knowm.xchart", name = "xchart", version = "3.8.0")
+//    api(group ="org.knowm.xchart", name = "xchart", version = "3.8.2")
 
     // https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-smile
 //    api(group = "tech.tablesaw", name = "tablesaw-smile", version = "0.42.0")
@@ -70,18 +71,20 @@ dependencies {
     api(group = "com.google.guava", name = "guava", version = "31.1-jre")
 
     // https://db.apache.org/derby/releases/release-10.15.1.3.cgi#New+Features
+    //TODO 10.16.1.1 causes some kind of class path error
     implementation(group = "org.apache.derby", name = "derby", version = "10.15.2.0")
     implementation(group = "org.apache.derby", name = "derbyshared", version = "10.15.2.0")
     implementation(group = "org.apache.derby", name = "derbyclient", version = "10.15.2.0")
     implementation(group = "org.apache.derby", name = "derbytools", version = "10.15.2.0")
 
-    implementation(group = "org.postgresql", name = "postgresql", version = "42.3.5")
+    implementation(group = "org.postgresql", name = "postgresql", version = "42.5.0")
     
-    implementation(group = "org.xerial", name = "sqlite-jdbc", version = "3.36.0.3")
+    implementation(group = "org.xerial", name = "sqlite-jdbc", version = "3.39.3.0")
 
     implementation(group = "com.zaxxer", name = "HikariCP", version = "5.0.1")
 
     // https://mvnrepository.com/artifact/org.jooq/jooq
+    //TODO version 3.17.4 causes some kind of class not found error
     api(group = "org.jooq", name = "jooq", version = "3.16.6")
     // https://mvnrepository.com/artifact/org.jooq/jooq-meta
     api(group = "org.jooq", name = "jooq-meta", version = "3.16.6")
@@ -102,9 +105,9 @@ dependencies {
 
     //TODO work to update version of POI or consider using https://github.com/dhatim/fastexcel/ instead
     // https://mvnrepository.com/artifact/org.apache.poi/poi
-    api(group = "org.apache.poi", name = "poi", version = "5.2.2")
+    api(group = "org.apache.poi", name = "poi", version = "5.2.3")
     // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
-    api(group = "org.apache.poi", name = "poi-ooxml", version = "5.2.2")
+    api(group = "org.apache.poi", name = "poi-ooxml", version = "5.2.3")
 
     // May 18, 2022 added dependency to SSJ to utilize quasi-monte carlo functionality
     // still deciding to allow api or just implementation

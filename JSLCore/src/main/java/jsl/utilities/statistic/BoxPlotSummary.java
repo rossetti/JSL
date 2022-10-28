@@ -65,29 +65,7 @@ public class BoxPlotSummary {
      * @return the quantile
      */
     public final double quantile(double p) {
-        if ((p <= 0.0) || (p >= 1.0)) {
-            throw new IllegalArgumentException("Percentile value must be (0,1)");
-        }
-        int n = orderStatistics.length;
-        if (n == 1) {
-            return orderStatistics[0];
-        }
-        double index = 1 + (n - 1) * p;
-        if (index < 1.0){
-            return orderStatistics[0];
-        }
-        if (index >= n){
-            return orderStatistics[n - 1];
-        }
-        int lo = (int) Math.floor(index);
-        int hi = (int) Math.ceil(index);
-        double h = index - lo;
-//        System.out.printf("n = %d p = %f  index = %f  lo = %d  hi = %d  h = %f %n", n, p, index, lo, hi, h);
-//        System.out.printf("orderStatistics[%d] = %f  orderStatistics[%d] = %f  %n", lo, orderStatistics[lo - 1], hi, orderStatistics[hi - 1]);
-        // correct for 0 based arrays
-        lo = lo - 1;
-        hi = hi - 1;
-        return (1.0 - h) * orderStatistics[lo] + h * orderStatistics[hi];
+        return Statistic.quantile(orderStatistics, p);
     }
 
     /**
@@ -97,25 +75,7 @@ public class BoxPlotSummary {
      * @return the percentile
      */
     public final double percentile(double p) {
-        if ((p <= 0.0) || (p > 1.0)) {
-            throw new IllegalArgumentException("Percentile value must be (0,1]");
-        }
-        int n = orderStatistics.length;
-        if (n == 1) {
-            return orderStatistics[0];
-        }
-        double pos = p * (n + 1);
-        if (pos < 1.0) {
-            return orderStatistics[0];
-        } else if (pos >= n) {
-            return orderStatistics[n - 1];
-        } else {
-            double d = pos - Math.floor(pos);
-            int fpos = (int) Math.floor(pos) - 1; // correct for 0 based arrays
-            double lower = orderStatistics[fpos];
-            double upper = orderStatistics[fpos + 1];
-            return (lower + d * (upper - lower));
-        }
+        return Statistic.percentile(orderStatistics, p);
     }
 
     /**

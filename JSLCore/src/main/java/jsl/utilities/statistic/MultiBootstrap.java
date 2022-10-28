@@ -14,13 +14,11 @@
  *    limitations under the License.
  */
 
-package jslx.statistics;
+package jsl.utilities.statistic;
 
 import jsl.utilities.random.SampleIfc;
 import jsl.utilities.random.rng.RNStreamControlIfc;
 import jsl.utilities.random.rvariable.RVariableIfc;
-//import tech.tablesaw.api.DoubleColumn;
-//import tech.tablesaw.api.Table;
 
 import java.util.*;
 
@@ -33,7 +31,6 @@ import java.util.*;
  * The name provided for each dataset (or sampler) should be unique and will be used
  * to identify the associated bootstrap results. We call this name a addFactor.
  */
-@Deprecated
 public class MultiBootstrap implements RNStreamControlIfc {
 
     /**
@@ -198,7 +195,7 @@ public class MultiBootstrap implements RNStreamControlIfc {
      * @param numBootstrapSamples the number of bootstrap samples to generate
      */
     public final void generateSamples(int numBootstrapSamples) {
-        generateSamples(numBootstrapSamples, new EstimatorIfc.Average(), false);
+        generateSamples(numBootstrapSamples, new BSEstimatorIfc.Average(), false);
     }
 
     /**
@@ -208,7 +205,7 @@ public class MultiBootstrap implements RNStreamControlIfc {
      * @param saveBootstrapSamples indicates that the statistics and data of each bootstrap generate should be saved
      */
     public final void generateSamples(int numBootstrapSamples, boolean saveBootstrapSamples) {
-        generateSamples(numBootstrapSamples, new EstimatorIfc.Average(), saveBootstrapSamples);
+        generateSamples(numBootstrapSamples, new BSEstimatorIfc.Average(), saveBootstrapSamples);
     }
 
     /**
@@ -217,7 +214,7 @@ public class MultiBootstrap implements RNStreamControlIfc {
      * @param numBootstrapSamples the number of bootstrap samples to generate
      * @param estimator           a function of the data
      */
-    public final void generateSamples(int numBootstrapSamples, EstimatorIfc estimator) {
+    public final void generateSamples(int numBootstrapSamples, BSEstimatorIfc estimator) {
         generateSamples(numBootstrapSamples, estimator, false);
     }
 
@@ -229,7 +226,7 @@ public class MultiBootstrap implements RNStreamControlIfc {
      * @param estimator            a function of the data
      * @param saveBootstrapSamples indicates that the statistics and data of each bootstrap generate should be saved
      */
-    public void generateSamples(int numBootstrapSamples, EstimatorIfc estimator,
+    public void generateSamples(int numBootstrapSamples, BSEstimatorIfc estimator,
                                 boolean saveBootstrapSamples) {
         Map<String, Integer> map = new LinkedHashMap<>();
         for (String name : myBootstraps.keySet()) {
@@ -248,7 +245,7 @@ public class MultiBootstrap implements RNStreamControlIfc {
      * @param estimator            a function of the data
      * @param saveBootstrapSamples indicates that the statistics and data of each bootstrap generate should be saved
      */
-    public void generateSamples(Map<String, Integer> numBootstrapSamples, EstimatorIfc estimator,
+    public void generateSamples(Map<String, Integer> numBootstrapSamples, BSEstimatorIfc estimator,
                                 boolean saveBootstrapSamples) {
         if (numBootstrapSamples == null) {
             throw new IllegalArgumentException("The specification of the bootstrap generate sizes was null.");

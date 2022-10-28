@@ -261,6 +261,68 @@ public class Statistic extends AbstractStatistic {
     }
 
     /**
+     * Uses definition 7, as per R definitions
+     *
+     * @param p the percentile, must be within (0, 1)
+     * @return the quantile
+     */
+    public static double quantile(double[] data, double p) {
+        Objects.requireNonNull(data, "The supplied array was null");
+        if ((p <= 0.0) || (p >= 1.0)) {
+            throw new IllegalArgumentException("Percentile value must be (0,1)");
+        }
+        Arrays.sort(data);
+        int n = data.length;
+        if (n == 1) {
+            return data[0];
+        }
+        double index = 1 + (n - 1) * p;
+        if (index < 1.0){
+            return data[0];
+        }
+        if (index >= n){
+            return data[n - 1];
+        }
+        int lo = (int) Math.floor(index);
+        int hi = (int) Math.ceil(index);
+        double h = index - lo;
+        // correct for 0 based arrays
+        lo = lo - 1;
+        hi = hi - 1;
+        return (1.0 - h) * data[lo] + h * data[hi];
+    }
+
+    /**
+     * As per Apache Math commons
+     *
+     * @param p the percentile, must be within (0, 1)
+     * @return the percentile
+     */
+    public static double percentile(double[] data, double p) {
+        Objects.requireNonNull(data, "The supplied array was null");
+        if ((p <= 0.0) || (p >= 1.0)) {
+            throw new IllegalArgumentException("Percentile value must be (0,1)");
+        }
+        Arrays.sort(data);
+        int n = data.length;
+        if (n == 1) {
+            return data[0];
+        }
+        double pos = p * (n + 1);
+        if (pos < 1.0) {
+            return data[0];
+        } else if (pos >= n) {
+            return data[n - 1];
+        } else {
+            double d = pos - Math.floor(pos);
+            int fpos = (int) Math.floor(pos) - 1; // correct for 0 based arrays
+            double lower = data[fpos];
+            double upper = data[fpos + 1];
+            return (lower + d * (upper - lower));
+        }
+    }
+
+    /**
      * @param data the data to count
      * @param x    the ordinate to check
      * @return the number of data points less than or equal to x

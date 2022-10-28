@@ -14,19 +14,17 @@
  *    limitations under the License.
  */
 
-package jslx.statistics;
+package jsl.utilities.statistic;
 
 import jsl.utilities.Interval;
 import jsl.utilities.distributions.StudentT;
 import jsl.utilities.JSLArrayUtil;
-import jsl.utilities.statistic.Statistic;
 
 import java.util.Arrays;
 
-@Deprecated
 public class JackKnifeEstimator {
 
-    protected EstimatorIfc myEstimator;
+    protected BSEstimatorIfc myEstimator;
     protected Statistic myOriginalPopStat;
     protected double[] myOrginalData;
     protected double myOrgEstimate;
@@ -34,7 +32,7 @@ public class JackKnifeEstimator {
     protected double myJNEofSE;
     protected double myDefaultLevel = 0.95;
 
-    public JackKnifeEstimator(double[] originalData, EstimatorIfc estimator){
+    public JackKnifeEstimator(double[] originalData, BSEstimatorIfc estimator){
         if (estimator == null){
             throw new IllegalArgumentException("The estimator function was null");
         }
