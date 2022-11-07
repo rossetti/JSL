@@ -6,7 +6,7 @@ plugins {
 version = "1.0-SNAPSHOT"
 
 repositories {
-    jcenter()
+    //jcenter()
     mavenCentral()
 }
 

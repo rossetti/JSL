@@ -62,7 +62,7 @@ public class WelchDataArrayObserver extends ModelElementObserver {
      * @param responseVariable the ResponseVariable to observe
      * @return the created WelchDataArrayObserver
      */
-    public static WelchDataArrayObserver createWelchFileObserver(ResponseVariable responseVariable){
+    public static WelchDataArrayObserver createWelchArrayObserver(ResponseVariable responseVariable){
         return new WelchDataArrayObserver(responseVariable,1.0);
     }
 
@@ -72,7 +72,7 @@ public class WelchDataArrayObserver extends ModelElementObserver {
      * @param maxNumObs the limit on the number of observations in each replication to store
      * @param maxNumReps the limit on the number of replications
      */
-    public static WelchDataArrayObserver createWelchFileObserver(ResponseVariable responseVariable, int maxNumObs, int maxNumReps){
+    public static WelchDataArrayObserver createWelchArrayObserver(ResponseVariable responseVariable, int maxNumObs, int maxNumReps){
         return new WelchDataArrayObserver(responseVariable, maxNumObs, maxNumReps, 1.0);
     }
 
@@ -83,7 +83,7 @@ public class WelchDataArrayObserver extends ModelElementObserver {
      * @param timeWeighted the TimeWeighted to observe
      * @return the created WelchDataArrayObserver
      */
-    public static WelchDataArrayObserver createWelchFileObserver(TimeWeighted timeWeighted){
+    public static WelchDataArrayObserver createWelchArrayObserver(TimeWeighted timeWeighted){
         return new WelchDataArrayObserver(timeWeighted,10.0);
     }
 
@@ -96,7 +96,7 @@ public class WelchDataArrayObserver extends ModelElementObserver {
      * @param maxNumReps the limit on the number of replications
      * @return the created WelchDataArrayObserver
      */
-    public static WelchDataArrayObserver createWelchFileObserver(TimeWeighted timeWeighted, int maxNumObs, int maxNumReps, double deltaTInterval){
+    public static WelchDataArrayObserver createWelchArrayObserver(TimeWeighted timeWeighted, int maxNumObs, int maxNumReps, double deltaTInterval){
         return new WelchDataArrayObserver(timeWeighted, maxNumObs, maxNumReps, deltaTInterval);
     }
 

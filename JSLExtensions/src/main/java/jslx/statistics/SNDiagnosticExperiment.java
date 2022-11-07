@@ -24,6 +24,7 @@ import jsl.utilities.distributions.Uniform;
 import jsl.utilities.random.rvariable.RVariableIfc;
 import jsl.utilities.statistic.Statistic;
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
+import jsl.utilities.statistic.MultiBootstrap;
 
 import java.util.*;
 
@@ -186,7 +187,7 @@ public class SNDiagnosticExperiment {
         mySimOutput = new double[numBootstrapSamples];
         for (int i = 0; i < numBootstrapSamples; i++) {
             Map<String, RVariableIfc> row = mySimulationInputTable.row(i);
-            // returns the generate mean for the replications
+            // returns the generated mean for the replications
             mySimOutput[i] = mySim.runReplications(numReplications, row);
         }
 
