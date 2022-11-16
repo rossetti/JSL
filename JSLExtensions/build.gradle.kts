@@ -108,6 +108,9 @@ dependencies {
     api(group = "org.apache.poi", name = "poi", version = "5.2.3")
     // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
     api(group = "org.apache.poi", name = "poi-ooxml", version = "5.2.3")
+    // this is needed because POI uses log4j internally and SXSSFWorkbook() causes a logging that isn't captured
+// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-to-slf4j
+    implementation("org.apache.logging.log4j:log4j-to-slf4j:2.19.0")
 
     // May 18, 2022 added dependency to SSJ to utilize quasi-monte carlo functionality
     // still deciding to allow api or just implementation
