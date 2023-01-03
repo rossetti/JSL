@@ -515,7 +515,7 @@ public class TabularInputFile extends TabularFile implements Iterable<RowGetterI
      */
     public final LinkedHashMap<String, String[]> getTextColumns(int maxRows, boolean removeMissing) {
         LinkedHashMap<String, String[]> map = new LinkedHashMap<>();
-        List<String> names = getNumericColumnNames();
+        List<String> names = getTextColumnNames();
         for (String name : names) {
             String[] values = getTextColumn(name, maxRows, removeMissing);
             map.put(name, values);
