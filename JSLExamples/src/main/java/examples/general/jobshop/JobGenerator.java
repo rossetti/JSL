@@ -32,11 +32,12 @@ import jsl.utilities.random.RandomIfc;
 public class JobGenerator extends EventGenerator {
 
     protected RandomElement<JobType> myJobTypes;
+    protected JobShop myJobShop;
 
     /**
      * @param parent
      */
-    public JobGenerator(ModelElement parent, List<JobType> jobTypes, double[] typeCDf) {
+    public JobGenerator(JobShop parent, List<JobType> jobTypes, double[] typeCDf) {
         this(parent, jobTypes, typeCDf, null, null, Long.MAX_VALUE, Double.POSITIVE_INFINITY, null);
     }
 
@@ -44,7 +45,7 @@ public class JobGenerator extends EventGenerator {
      * @param parent
      * @param name
      */
-    public JobGenerator(ModelElement parent, List<JobType> jobTypes, double[] typeCDf, String name) {
+    public JobGenerator(JobShop parent, List<JobType> jobTypes, double[] typeCDf, String name) {
         this(parent, jobTypes, typeCDf, null, null, Long.MAX_VALUE, Double.POSITIVE_INFINITY, name);
     }
 
@@ -52,7 +53,7 @@ public class JobGenerator extends EventGenerator {
      * @param parent
      * @param timeUntilFirst
      */
-    public JobGenerator(ModelElement parent, List<JobType> jobTypes, double[] typeCDf, RandomIfc timeUntilFirst) {
+    public JobGenerator(JobShop parent, List<JobType> jobTypes, double[] typeCDf, RandomIfc timeUntilFirst) {
         this(parent, jobTypes, typeCDf, timeUntilFirst, null, Long.MAX_VALUE, Double.POSITIVE_INFINITY, null);
     }
 
@@ -61,7 +62,7 @@ public class JobGenerator extends EventGenerator {
      * @param timeUntilFirst
      * @param timeUntilNext
      */
-    public JobGenerator(ModelElement parent, List<JobType> jobTypes, double[] typeCDf, RandomIfc timeUntilFirst,
+    public JobGenerator(JobShop parent, List<JobType> jobTypes, double[] typeCDf, RandomIfc timeUntilFirst,
             RandomIfc timeUntilNext) {
         this(parent, jobTypes, typeCDf, timeUntilFirst, timeUntilNext, Long.MAX_VALUE, Double.POSITIVE_INFINITY, null);
     }
@@ -72,7 +73,7 @@ public class JobGenerator extends EventGenerator {
      * @param timeUntilNext
      * @param name
      */
-    public JobGenerator(ModelElement parent, List<JobType> jobTypes, double[] typeCDf, RandomIfc timeUntilFirst,
+    public JobGenerator(JobShop parent, List<JobType> jobTypes, double[] typeCDf, RandomIfc timeUntilFirst,
             RandomIfc timeUntilNext, String name) {
         this(parent, jobTypes, typeCDf, timeUntilFirst, timeUntilNext, Long.MAX_VALUE, Double.POSITIVE_INFINITY, name);
     }
@@ -83,7 +84,7 @@ public class JobGenerator extends EventGenerator {
      * @param timeUntilNext
      * @param maxNum
      */
-    public JobGenerator(ModelElement parent, List<JobType> jobTypes, double[] typeCDf, RandomIfc timeUntilFirst,
+    public JobGenerator(JobShop parent, List<JobType> jobTypes, double[] typeCDf, RandomIfc timeUntilFirst,
             RandomIfc timeUntilNext, Long maxNum) {
         this(parent, jobTypes, typeCDf, timeUntilFirst, timeUntilNext, maxNum, Double.POSITIVE_INFINITY, null);
     }
@@ -95,7 +96,7 @@ public class JobGenerator extends EventGenerator {
      * @param maxNum
      * @param timeUntilLast
      */
-    public JobGenerator(ModelElement parent, List<JobType> jobTypes, double[] typeCDf, RandomIfc timeUntilFirst,
+    public JobGenerator(JobShop parent, List<JobType> jobTypes, double[] typeCDf, RandomIfc timeUntilFirst,
             RandomIfc timeUntilNext, Long maxNum,
             double timeUntilLast) {
         this(parent, jobTypes, typeCDf, timeUntilFirst, timeUntilNext, maxNum, timeUntilLast, null);
@@ -109,10 +110,11 @@ public class JobGenerator extends EventGenerator {
      * @param timeUntilLast
      * @param name
      */
-    public JobGenerator(ModelElement parent, List<JobType> jobTypes, double[] typeCDf, RandomIfc timeUntilFirst,
+    public JobGenerator(JobShop parent, List<JobType> jobTypes, double[] typeCDf, RandomIfc timeUntilFirst,
                         RandomIfc timeUntilNext, Long maxNum,
                         double timeUntilLast, String name) {
         super(parent, null, timeUntilFirst, timeUntilNext, maxNum, timeUntilLast, name);
+        myJobShop = parent;
         //myJobTypes = new DEmpiricalList<JobType>();
         myJobTypes = new RandomElement<JobType>(this, jobTypes, typeCDf);
     }
@@ -121,6 +123,7 @@ public class JobGenerator extends EventGenerator {
     protected void generate(JSLEvent event) {
         if (!myJobTypes.isEmpty()) {
             // create the job
+            myJobShop.myNumInSystem.increment();
             Job job = new Job(getTime());
             // tell it to start its sequence
             job.doNextJobStep();
@@ -151,6 +154,7 @@ public class JobGenerator extends EventGenerator {
                 w.arrive(this);
             } else {
                 myType.getSystemTime().setValue(getTime() - getCreateTime());
+                myJobShop.departSystem(this);
             }
         }
 

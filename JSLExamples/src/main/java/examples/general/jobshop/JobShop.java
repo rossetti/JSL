@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import jsl.modeling.elements.variable.ResponseVariable;
+import jsl.modeling.elements.variable.TimeWeighted;
 import jsl.simulation.Model;
 import jsl.simulation.ModelElement;
 import jsl.simulation.Simulation;
@@ -36,6 +38,9 @@ public class JobShop extends ModelElement {
 
     private List<JobGenerator> myJobGenerators;
 
+    final ResponseVariable mySystemTime;
+    final TimeWeighted myNumInSystem;
+
     public JobShop(ModelElement parent) {
         this(parent, null);
     }
@@ -45,6 +50,8 @@ public class JobShop extends ModelElement {
         myWorkStations = new ArrayList<WorkStation>();
         mySequences = new ArrayList<Sequence>();
         myJobGenerators = new ArrayList<JobGenerator>();
+        mySystemTime = new ResponseVariable(this, name + ":SystemTime");
+        myNumInSystem = new TimeWeighted(this, name + ":NumInSystem");
     }
 
     public WorkStation addWorkStation() {
@@ -83,6 +90,11 @@ public class JobShop extends ModelElement {
 
     public JobType createJobType(String name, Sequence sequence){
         return new JobType(this, name, sequence);
+    }
+
+    protected void departSystem(JobGenerator.Job job){
+        myNumInSystem.decrement();
+        mySystemTime.setValue(getTime() - job.getCreateTime());
     }
 
     public static void main(String[] args) throws IOException {
@@ -134,11 +146,12 @@ public class JobShop extends ModelElement {
 
 
         // set the parameters of the experiment
-        sim.setNumberOfReplications(30);
+        sim.setNumberOfReplications(500);
 
-        sim.setLengthOfReplication(10000.0);
-        sim.setLengthOfWarmUp(5000.0);
-
+//        sim.setLengthOfReplication(10000.0);
+//        sim.setLengthOfWarmUp(5000.0);
+        sim.setLengthOfReplication(365.0*8.0);
+//        sim.setLengthOfWarmUp(5000.0);
         // tell the experiment to run
         sim.run();
 
@@ -146,7 +159,7 @@ public class JobShop extends ModelElement {
         //r.printAcrossReplicationStatistics();
         r.writeFullAcrossReplicationStatistics("JobShop");
         r.writeAcrossReplicationSummaryStatistics("JobShop Summary");
-        r.printAcrossReplicationSummaryStatistics();
+        r.printHalfWidthSummaryReport();
 
         //r.showAcrossReplicationSummaryStatisticsAsPDF();
         //sim.getJSLDatabase().getAcrossRepStatRecords().format(new PrintWriter(System.out));
