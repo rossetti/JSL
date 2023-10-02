@@ -15,7 +15,7 @@ abstract public class MVCDF {
 
     public MVCDF(int nDim) {
         if (nDim <= 1) {
-            throw new IllegalArgumentException("Some abs(lamdba[i]) was >= 1");
+            throw new IllegalArgumentException("The dimension must be >= 2");
         }
         this.nDim = nDim;
         a = new double[nDim];
