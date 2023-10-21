@@ -48,9 +48,9 @@ public class CaptureWarmUpData {
      */
     public static void main(String[] args) throws IOException {
         //illustrateTracingResponseVariables();
-        illustrateWelchDataArrayProcessing();
+ //       illustrateWelchDataArrayProcessing();
  //       illustrateWelchDataFileProcessing();
- //      illustrateInitializationBiasTestResults();
+       illustrateInitializationBiasTestResults();
 
 //        illustrateJavaFxWelchPlot();
     }
