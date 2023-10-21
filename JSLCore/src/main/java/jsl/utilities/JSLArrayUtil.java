@@ -2064,7 +2064,7 @@ public class JSLArrayUtil {
         if (array.length == 0) {
             return false;
         }
-        for (int i = 1; i < array.length; i++) {
+        for (int i = 0; i < array.length; i++) {
             if (array[i] <= 0.0) {
                 return false;
             }
