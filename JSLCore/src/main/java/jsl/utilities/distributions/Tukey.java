@@ -39,21 +39,20 @@ import jsl.utilities.reporting.JSL;
 import static java.lang.Math.*;
 
 /**
- *    Computes the probability and quantile that the studentized
- *    range, each based on n means and with df degrees of freedom
- *
- *    See functions: qtukey() and ptukey() from statistical software: R
- *
- *    The algorithm is based on that of the reference.
- *
- *  REFERENCE
- *    {@literal
- *    Copenhaver, Margaret Diponzio & Holland, Burt S.
- *    Multiple comparisons of simple effects in
- *    the two-way analysis of variance with fixed effects.
- *    Journal of Statistical Computation and Simulation,
- *    Vol.30, pp.1-15, 1988}
- *
+ * Computes the probability and quantile that the studentized
+ * range, each based on n means and with df degrees of freedom
+ * <p>
+ * See functions: qtukey() and ptukey() from statistical software: R
+ * <p>
+ * The algorithm is based on that of the reference.
+ * <p>
+ * REFERENCE
+ * {@literal
+ * Copenhaver, Margaret Diponzio & Holland, Burt S.
+ * Multiple comparisons of simple effects in
+ * the two-way analysis of variance with fixed effects.
+ * Journal of Statistical Computation and Simulation,
+ * Vol.30, pp.1-15, 1988}
  */
 public class Tukey {
 
@@ -84,24 +83,25 @@ public class Tukey {
     private static int qTukeyMaxIterations = 50;
 
     /**
-     *  Sets the precision for the computation of the invCDF
-     *  Default is 0.0001
+     * Sets the precision for the computation of the invCDF
+     * Default is 0.0001
+     *
      * @param eps the desired precision
      */
-    public static void setQTukeyPrecision(double eps){
-        if (eps <= 0.0){
+    public static void setQTukeyPrecision(double eps) {
+        if (eps <= 0.0) {
             qTukeyEPS = 0.0001;
         }
         qTukeyEPS = eps;
     }
 
     /**
-     *  Sets the maximum number of iterations for the computation of invCDF
-     *  default is 50
+     * Sets the maximum number of iterations for the computation of invCDF
+     * default is 50
      *
      * @param iterations the number of iterations
      */
-    public static void setQTukeyMaxIterations(int iterations){
+    public static void setQTukeyMaxIterations(int iterations) {
         qTukeyMaxIterations = max(50, iterations);
     }
 
@@ -115,7 +115,7 @@ public class Tukey {
         if ((p < 0.0) || (p > 1.0)) {
             throw new IllegalArgumentException("Supplied probability was " + p + " Probability must be (0,1)");
         }
-        if (nMeans <= 1.0) {
+        if (nMeans < 2.0) {
             throw new IllegalArgumentException("The number of groups must be >= 2");
         }
         if (df < 1.0) {
@@ -131,16 +131,13 @@ public class Tukey {
      * @return the probability integral over [0, q]
      */
     public static double cdf(double q, double nMeans, double df) {
-        if (nMeans <= 1.0) {
+        if (nMeans < 2.0) {
             throw new IllegalArgumentException("The number of groups must be >= 2");
         }
         if (df < 1.0) {
             throw new IllegalArgumentException("The degrees of freedom must be >= 1");
         }
-        if (q < 0.0) {
-            throw new IllegalArgumentException("The value of the range for evaluation must be >= 0.0");
-        }
-        if (q == 0.0){
+        if (q <= 0.0) {
             return 0.0;
         }
         return ptukey(q, nMeans, df, 1.0, true, false);
@@ -372,7 +369,7 @@ public class Tukey {
     with range distribution.
      */
 
-    public static double ptukey(double q, double nMeans, double df, double nRanges, boolean lower_tail, boolean log_p) {
+    private static double ptukey(double q, double nMeans, double df, double nRanges, boolean lower_tail, boolean log_p) {
         final int nlegq = 16, ihalfq = 8;
         final double M_LN2 = 0.693147180559945309417232121458;
         /*  const double eps = 1.0; not used if = 1 */
@@ -583,7 +580,7 @@ public class Tukey {
      *  If the difference between successive iterates is less than eps,
      *  the search is terminated
      */
-    public static double qtukey(double p, double nMeans, double df, double nRanges, boolean lower_tail, boolean log_p) {
+    private static double qtukey(double p, double nMeans, double df, double nRanges, boolean lower_tail, boolean log_p) {
         final double eps = qTukeyEPS;
         final int maxiter = qTukeyMaxIterations;
 
@@ -591,22 +588,20 @@ public class Tukey {
         int iter;
 
         if (Double.isNaN(p) || Double.isNaN(nRanges) || Double.isNaN(nMeans) || Double.isNaN(df)) {
-            //ML_ERROR(ME_DOMAIN, "qtukey");
             return p + nRanges + nMeans + df;
         }
 
         /* df must be > 1 ; there must be at least two values */
         if (df < 2 || nRanges < 1 || nMeans < 2) return Double.NaN;
 
-        //R_Q_P01_boundaries(p, 0, ML_POSINF);
         if (log_p) {
             if (p > 0)
                 return Double.NaN;
-            if (p == 0) /* upper bound*/
+            if (p == 0)
                 return lower_tail ? Double.POSITIVE_INFINITY : 0;
             if (p == Double.NEGATIVE_INFINITY)
                 return lower_tail ? 0 : Double.POSITIVE_INFINITY;
-        } else { /* !log_p */
+        } else {
             if (p < 0 || p > 1)
                 return Double.NaN;
             if (p == 0)
@@ -615,7 +610,6 @@ public class Tukey {
                 return lower_tail ? Double.POSITIVE_INFINITY : 0;
         }
 
-        //p = R_DT_qIv(p); /* lower_tail,non-log "p" */
         p = (log_p ? (lower_tail ? exp(p) : -expm1(p)) : (lower_tail ? (p) : (0.5 - (p) + 0.5)));
 
         /* Initial value */
@@ -624,7 +618,7 @@ public class Tukey {
 
         /* Find prob(value < x0) */
 
-        valx0 = ptukey(x0, nMeans, df, nRanges, /*LOWER*/true, /*LOG_P*/false) - p;
+        valx0 = ptukey(x0, nMeans, df, nRanges, true, false) - p;
 
         /* Find the second iterate and prob(value < x1). */
         /* If the first iterate has probability value */
@@ -635,7 +629,7 @@ public class Tukey {
             x1 = max(0.0, x0 - 1.0);
         else
             x1 = x0 + 1.0;
-        valx1 = ptukey(x1, nMeans, df, nRanges, /*LOWER*/true, /*LOG_P*/false) - p;
+        valx1 = ptukey(x1, nMeans, df, nRanges, true, false) - p;
 
         /* Find new iterate */
 
@@ -652,7 +646,7 @@ public class Tukey {
             }
             /* Find prob(value < new iterate) */
 
-            valx1 = ptukey(ans, nMeans, df, nRanges, /*LOWER*/true, /*LOG_P*/false) - p;
+            valx1 = ptukey(ans, nMeans, df, nRanges, true, false) - p;
             x1 = ans;
 
             /* If the difference between two successive */
@@ -664,7 +658,6 @@ public class Tukey {
         }
 
         /* The process did not converge in 'maxiter' iterations */
-        //ML_ERROR(ME_NOCONV, "qtukey");
         JSL.getInstance().LOGGER.warn("The computation of invCDF did not converge after {} iterations", maxiter);
         return Double.NaN;
     }
